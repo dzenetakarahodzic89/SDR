@@ -1,41 +1,58 @@
 #DO NOT MODIFY THIS FILE!!!
-#Use application-override.yml instead.
-
+#Use application-override.properties instead.
 server:
-  port: 8123
-
+  port: '8123'
 spring:
   application:
     name: ${application.name}
   profiles:
-    active: '@spring.profiles.active@'
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.Oracle12cDialect
-        jdbc:
-          fetch_size: '500'
-          batch_size: '50'
-        format_sql: 'false'
-    show-sql: 'false'
-    hibernate:
-      ddl-auto: validate
+    active: 'default'
   datasource:
-    password: n2bvigorzira
-    hikari:
-      minimumIdle: '2'
-      maximumPoolSize: '4'
-    driver-class-name: oracle.jdbc.driver.OracleDriver
+    driver-class-name: org.postgresql.Driver
+    password: '!n2bvigor!'
     username: n2bvigor
-    url: jdbc:oracle:thin:@172.20.20.45:5432/test
+    url: jdbc:postgresql://172.20.20.45:5432/test
+  jersey:
+    application-path: sdr
+  config:
+    import: optional:configserver:http://172.20.20.45:8888/
+  cloud:   
+   config:
+      enabled: true
+   discovery:
+      service-id: configuration
+      enabled: true
 
+uaa:
+  service:
+    location: http://uaa
+root:
+  logging:
+    level: info
+zira:
+  logging:
+    level: debug
+    
 management:
   endpoints:
     web:
       exposure:
         include: health,info,prometheus,loggers
-
-logging:
-  level:
-    zira: debug   
-    root: info
+image:
+  default:
+    url:http://172.20.20.45:82//vigor//img/mario.jpg
+     
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://172.20.20.45:8081/eureka
+  
+feign:
+  client:
+    config:
+     default:
+      connectTimeout: 160000000
+      readTimeout: 160000000

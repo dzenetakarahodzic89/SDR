@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SampleModelEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final Long serialVersionUID = 1L;
 
     private Long id;
     private String docname;
