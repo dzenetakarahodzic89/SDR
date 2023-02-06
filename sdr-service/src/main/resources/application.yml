@@ -1,0 +1,41 @@
+#DO NOT MODIFY THIS FILE!!!
+#Use application-override.yml instead.
+
+server:
+  port: 8123
+
+spring:
+  application:
+    name: ${application.name}
+  profiles:
+    active: '@spring.profiles.active@'
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.Oracle12cDialect
+        jdbc:
+          fetch_size: '500'
+          batch_size: '50'
+        format_sql: 'false'
+    show-sql: 'false'
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    password: n2bvigorzira
+    hikari:
+      minimumIdle: '2'
+      maximumPoolSize: '4'
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    username: n2bvigor
+    url: jdbc:oracle:thin:@172.20.20.45:5432/test
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,loggers
+
+logging:
+  level:
+    zira: debug   
+    root: info

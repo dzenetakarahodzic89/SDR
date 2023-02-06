@@ -1,0 +1,16 @@
+# DO NOT MODIFY THIS FILE!!!
+# Use bootstrap-override.properties instead.
+spring:
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+    kubernetes:
+      discovery:
+        enabled: true
+      config:
+        enabled: true
+        sources:
+          - name: application-default
+          - name: sdr-default
+          - name: ${application.name}-properties
