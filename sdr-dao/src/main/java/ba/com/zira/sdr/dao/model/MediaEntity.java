@@ -52,7 +52,7 @@ public class MediaEntity implements Serializable {
     private String modifiedBy;
 
     @Column(name = "object_id")
-    private double objectId;
+    private Long objectId;
 
     @Column(name = "object_type")
     private String objectType;
