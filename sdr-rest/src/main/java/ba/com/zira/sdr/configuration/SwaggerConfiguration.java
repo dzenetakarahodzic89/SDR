@@ -28,7 +28,7 @@ public class SwaggerConfiguration {
 
     @Bean
     public GroupedOpenApi multisearchApi() {
-        return GroupedOpenApi.builder().group("multisearch-api").packagesToScan("ba.com.zira.rpgcreation.rest.multisearch")
+        return GroupedOpenApi.builder().group("multisearch-api").packagesToScan("ba.com.zira.sdr.rest.multisearch")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
