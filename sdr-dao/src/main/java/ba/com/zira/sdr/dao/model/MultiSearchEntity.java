@@ -19,7 +19,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Builder
-@Table(name = "sdr_multi_search")
+@Table(name = "sat_multi_search")
 @NamedQuery(name = "MultiSearchEntity.find", query = "SELECT ms FROM MultiSearchEntity ms")
 public class MultiSearchEntity implements Serializable {
 
