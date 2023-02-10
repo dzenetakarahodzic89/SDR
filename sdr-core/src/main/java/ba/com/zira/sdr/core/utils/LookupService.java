@@ -1,0 +1,103 @@
+package ba.com.zira.sdr.core.utils;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
+
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import ba.com.zira.sdr.api.model.media.CoverImageHelper;
+import ba.com.zira.sdr.dao.MediaStoreDAO;
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
+public class LookupService {
+
+    @Value("${image.default.url:http://172.20.20.45:82//vigor//img/mario.jpg}")
+    String defaultImageUrl;
+
+    @NonNull
+    MediaStoreDAO mediaStoreDAO;
+
+    private static SecureRandom random = new SecureRandom();
+
+    public static String get(final Long key, final Map<Long, String> lookup) {
+        if (key != null) {
+            return lookup.get(key) == null ? null : lookup.get(key);
+        }
+        return null;
+    }
+
+    public static Long gets(final Long key, final Map<Long, Long> lookup) {
+        if (key != null) {
+            return lookup.get(key) == null ? null : lookup.get(key);
+        }
+        return null;
+    }
+
+    public static String getString(final String key, final Map<String, String> lookup) {
+        if (key != null) {
+            return lookup.get(key) == null ? null : lookup.get(key);
+        }
+        return null;
+    }
+
+    public static Double getDouble(final Long key, final Map<Long, Double> lookup) {
+        if (key != null) {
+            return lookup.get(key) == null ? null : lookup.get(key);
+        }
+        return null;
+    }
+
+    public static LocalDateTime getDate(final Long key, final Map<Long, LocalDateTime> lookup) {
+        if (key != null) {
+            return lookup.get(key) == null ? null : lookup.get(key);
+        }
+        return null;
+    }
+
+    public static String getImageUrl(final Long key, final Map<Long, List<CoverImageHelper>> lookup, final Random rand) {
+        if (key != null) {
+            return lookup.get(key) == null ? null : lookup.get(key).get(rand.nextInt(lookup.get(key).size())).getUrl();
+        }
+        return null;
+    }
+
+    public <E> void lookupCoverImage(final List<E> values, final Function<E, Long> getter, final String objectType,
+            final BiConsumer<E, String> setter, final Function<E, String> getterForImage) {
+
+        List<Long> ids = values.parallelStream().map(getter).distinct().collect(Collectors.toList());
+
+        if (!(ids == null || ids.isEmpty())) {
+            Map<Long, List<CoverImageHelper>> lookup = mediaStoreDAO.getUrlsForList(ids, objectType, "COVER_IMAGE");
+            values.parallelStream().forEach(r -> setter.accept(r, getImageUrl(getter.apply(r), lookup, random)));
+            values.parallelStream().forEach(r -> handleDefaultImage(r, setter, getterForImage));
+        }
+    }
+
+    public <E> void lookupMultiSearchCoverImage(final List<E> values, final Function<E, Long> getterForId,
+            final Function<E, String> getterForType, final BiConsumer<E, String> setter, final Function<E, String> getterForImage) {
+
+        Map<String, List<E>> mapByType = values.parallelStream().collect(Collectors.groupingBy(getterForType));
+
+        for (Map.Entry<String, List<E>> entry : mapByType.entrySet()) {
+            lookupCoverImage(entry.getValue(), getterForId, entry.getKey(), setter, getterForImage);
+        }
+    }
+
+    public <E> void handleDefaultImage(final E r, final BiConsumer<E, String> setter, final Function<E, String> getterForImage) {
+        if (getterForImage.apply(r) == null) {
+            setter.accept(r, defaultImageUrl);
+        }
+
+    }
+
+}
