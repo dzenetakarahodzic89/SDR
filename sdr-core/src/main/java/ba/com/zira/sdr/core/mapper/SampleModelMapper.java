@@ -1,4 +1,4 @@
-package ba.com.zira.sdr.mapper;
+package ba.com.zira.sdr.core.mapper;
 
 import java.util.List;
 
