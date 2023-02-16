@@ -130,4 +130,8 @@ public class SongEntity implements Serializable {
     @OneToMany(mappedBy = "songB")
     private List<SongSimilarityEntity> songSimilarityForB;
 
+    // bi-directional many-to-one association to UserRecommendationDetailEntity
+    @OneToMany(mappedBy = "song")
+    private List<UserRecommendationDetailEntity> userRecommendationDetails;
+
 }

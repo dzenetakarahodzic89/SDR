@@ -5,8 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -22,22 +20,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * The persistent class for the "sat_album" database table.
+ * The persistent class for the "sat_era" database table.
  *
  */
 @Entity
-@Table(name = "sat_album")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@NamedQuery(name = "AlbumEntity.findAll", query = "SELECT a FROM AlbumEntity a")
-public class AlbumEntity implements Serializable {
+@Table(name = "sat_era")
+@NamedQuery(name = "EraEntity.findAll", query = "SELECT e FROM EraEntity e")
+public class EraEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name = "SAT_ALBUM_ID_GENERATOR", sequenceName = "SAT_ALBUM_SEQ")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_ALBUM_ID_GENERATOR")
+    @SequenceGenerator(name = "SAT_ERA_ID_GENERATOR", sequenceName = "SAT_ERA_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_ERA_ID_GENERATOR")
     @Column(name = "id")
     private Long id;
 
@@ -47,8 +45,8 @@ public class AlbumEntity implements Serializable {
     @Column(name = "created_by")
     private String createdBy;
 
-    @Column(name = "date_of_release")
-    private LocalDateTime dateOfRelease;
+    @Column(name = "end_date")
+    private LocalDateTime endDate;
 
     @Column(name = "information")
     private String information;
@@ -62,16 +60,17 @@ public class AlbumEntity implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "scope")
+    private String scope;
+
+    @Column(name = "start_date")
+    private LocalDateTime startDate;
+
     @Column(name = "status")
     private String status;
 
-    // bi-directional many-to-one association to SongArtistEntity
-    @OneToMany(mappedBy = "album")
-    private List<SongArtistEntity> songArtists;
-
-    // bi-directional many-to-one association to ConnectedMediaEntity
-    @ManyToOne
-    @JoinColumn(name = "era_id")
-    private EraEntity era;
+    // bi-directional many-to-one association to ConnectedMediaDetailEntity
+    @OneToMany(mappedBy = "era")
+    private List<AlbumEntity> albums;
 
 }
