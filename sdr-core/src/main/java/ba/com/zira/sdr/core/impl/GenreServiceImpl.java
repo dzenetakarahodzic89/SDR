@@ -98,7 +98,7 @@ public class GenreServiceImpl implements GenreService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<Genre> delete(final EntityRequest<Long> request) throws ApiException {
-        genreRequestValidation.validateExistsGenreRequest(request);
+        genreRequestValidation.validateGenreDeleteRequest(request);
 
         var genreEntity = genreDAO.findByPK(request.getEntity());
         genreDAO.remove(genreEntity);

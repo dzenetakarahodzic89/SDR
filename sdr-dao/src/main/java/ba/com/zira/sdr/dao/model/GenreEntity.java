@@ -13,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.PreRemove;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -78,16 +77,5 @@ public class GenreEntity implements Serializable {
     // bi-directional many-to-one association to SongEntity
     @OneToMany(mappedBy = "genre")
     private List<SongEntity> songs;
-
-    @PreRemove
-    private void removeSubGenres() {
-        for (GenreEntity subGenre : subGenres) {
-            subGenre.setMainGenre(null);
-        }
-
-        for (SongEntity song : songs) {
-            song.setGenre(null);
-        }
-    }
 
 }

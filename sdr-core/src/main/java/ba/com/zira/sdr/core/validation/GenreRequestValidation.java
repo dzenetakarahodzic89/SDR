@@ -50,6 +50,15 @@ public class GenreRequestValidation {
         return ValidationResponse.of(request, errors);
     }
 
+    public ValidationResponse validateGenreDeleteRequest(final EntityRequest<Long> request) {
+        ValidationErrors errors = new ValidationErrors();
+        errors.put(genreExists(request.getEntity()));
+        errors.put(subGenresExist(request.getEntity()));
+        errors.put(songsExist(request.getEntity()));
+
+        return ValidationResponse.of(request, errors);
+    }
+
     private ValidationError nameExists(String name) {
 
         if (genreDAO.existsByName(name)) {
@@ -72,6 +81,21 @@ public class GenreRequestValidation {
         if (!genreDAO.existsByPK(id)) {
             return ValidationError.of("GENRE_NOT_FOUND", "Genre with id: " + id + " does not exist!");
         }
+        return null;
+    }
+
+    private ValidationError subGenresExist(Long id) {
+        if (genreDAO.subGenresExist(id)) {
+            return ValidationError.of("SUBGENRES_EXIST", "Genres with subgenres attached to them are not allowed to be deleted.");
+        }
+        return null;
+    }
+
+    private ValidationError songsExist(Long id) {
+        if (genreDAO.songsExist(id)) {
+            return ValidationError.of("SONGS_EXIST", "Genres with songs attached to them are not allowed to be deleted.");
+        }
+
         return null;
     }
 
