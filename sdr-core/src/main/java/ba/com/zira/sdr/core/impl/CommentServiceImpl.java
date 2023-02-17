@@ -95,11 +95,4 @@ public class CommentServiceImpl implements CommentService {
         commentDAO.removeByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
     }
-
 }
-
-
-
-
-
-
