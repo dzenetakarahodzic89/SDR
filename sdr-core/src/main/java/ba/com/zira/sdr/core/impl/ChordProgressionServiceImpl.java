@@ -32,7 +32,6 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
 
     @Override
     public ListPayloadResponse<ChordProgressionResponse> getAll(EmptyRequest req) throws ApiException {
-        System.out.println(chordProgressionDAO.getAllChordProgressions());
         List<ChordProgressionResponse> chordProgressionList = chordProgressionDAO.getAllChordProgressions();
         return new ListPayloadResponse<>(req, ResponseCode.OK, chordProgressionList);
     }
