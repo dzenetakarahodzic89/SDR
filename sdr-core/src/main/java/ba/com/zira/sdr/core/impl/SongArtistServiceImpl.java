@@ -1,12 +1,8 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
-import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
-import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.model.Filter;
 import ba.com.zira.commons.model.FilterExpression;
@@ -30,12 +26,6 @@ public class SongArtistServiceImpl implements SongArtistService {
     SongArtistMapper songArtistMapper;
 
     // TODO: add validation object for validating inupt requests
-
-    @Override
-    public ListPayloadResponse<SongArtistResponse> getAll(EmptyRequest request) {
-        List<SongArtistEntity> songArtistEntities = songArtistDAO.findAll();
-        return new ListPayloadResponse<>(request, ResponseCode.OK, songArtistMapper.entitiesToDtos(songArtistEntities));
-    }
 
     @Override
     public PagedPayloadResponse<SongArtistResponse> getFiltered(FilterRequest filterRequest) {
