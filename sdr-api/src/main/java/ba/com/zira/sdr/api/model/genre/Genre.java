@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "Properties of a Genre response")
-public class GenreModel implements Serializable {
+public class Genre implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "Unique identifier of the genre")
@@ -31,8 +31,8 @@ public class GenreModel implements Serializable {
     @Schema(description = "Type")
     private String type;
     @Schema(description = "Main genre")
-    private GenreModel mainGenre;
+    private Genre mainGenre;
     @Schema(description = "Subgenres")
-    private List<SubGenreModel> subGenres;
+    private List<SubGenre> subGenres;
 
 }

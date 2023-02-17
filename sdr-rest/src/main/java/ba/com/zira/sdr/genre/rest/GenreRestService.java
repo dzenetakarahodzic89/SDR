@@ -19,9 +19,9 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.GenreService;
-import ba.com.zira.sdr.api.model.genre.GenreModel;
-import ba.com.zira.sdr.api.model.genre.GenreModelCreateRequest;
-import ba.com.zira.sdr.api.model.genre.GenreModelUpdateRequest;
+import ba.com.zira.sdr.api.model.genre.Genre;
+import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
+import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,21 +37,21 @@ public class GenreRestService {
 
     @Operation(summary = "Find genres based on filter criteria")
     @GetMapping
-    public PagedPayloadResponse<GenreModel> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
+    public PagedPayloadResponse<Genre> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
             throws ApiException {
         return genreService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
     @Operation(summary = "Create a genre")
     @PostMapping
-    public PayloadResponse<GenreModel> create(@RequestBody final GenreModelCreateRequest genre) throws ApiException {
+    public PayloadResponse<Genre> create(@RequestBody final GenreCreateRequest genre) throws ApiException {
         return genreService.create(new EntityRequest<>(genre));
     }
 
     @Operation(summary = "Update a genre")
     @PutMapping(value = "{id}")
-    public PayloadResponse<GenreModel> edit(@Parameter(required = true, description = "ID of the genre") @PathVariable final Long id,
-            @RequestBody final GenreModelUpdateRequest genre) throws ApiException {
+    public PayloadResponse<Genre> edit(@Parameter(required = true, description = "ID of the genre") @PathVariable final Long id,
+            @RequestBody final GenreUpdateRequest genre) throws ApiException {
         if (genre != null) {
             genre.setId(id);
         }
@@ -60,14 +60,14 @@ public class GenreRestService {
 
     @Operation(summary = "Activate genre")
     @PutMapping(value = "{id}/activate")
-    public PayloadResponse<GenreModel> activate(@Parameter(required = true, description = "ID of the genre") @PathVariable final Long id)
+    public PayloadResponse<Genre> activate(@Parameter(required = true, description = "ID of the genre") @PathVariable final Long id)
             throws ApiException {
         return genreService.activate(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Delete a genre")
     @DeleteMapping(value = "{id}/delete")
-    public PayloadResponse<GenreModel> delete(@Parameter(required = true, description = "ID of the genre") @PathVariable final Long id)
+    public PayloadResponse<Genre> delete(@Parameter(required = true, description = "ID of the genre") @PathVariable final Long id)
             throws ApiException {
         return genreService.delete(new EntityRequest<>(id));
     }

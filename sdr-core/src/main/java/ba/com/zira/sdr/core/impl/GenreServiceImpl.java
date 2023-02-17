@@ -15,10 +15,10 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.GenreService;
-import ba.com.zira.sdr.api.model.genre.GenreModel;
-import ba.com.zira.sdr.api.model.genre.GenreModelCreateRequest;
-import ba.com.zira.sdr.api.model.genre.GenreModelUpdateRequest;
-import ba.com.zira.sdr.core.mapper.GenreModelMapper;
+import ba.com.zira.sdr.api.model.genre.Genre;
+import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
+import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
+import ba.com.zira.sdr.core.mapper.GenreMapper;
 import ba.com.zira.sdr.core.validation.GenreRequestValidation;
 import ba.com.zira.sdr.dao.GenreDAO;
 import ba.com.zira.sdr.dao.model.GenreEntity;
@@ -29,21 +29,21 @@ import lombok.AllArgsConstructor;
 public class GenreServiceImpl implements GenreService {
 
     GenreDAO genreDAO;
-    GenreModelMapper genreModelMapper;
+    GenreMapper genreMapper;
     GenreRequestValidation genreRequestValidation;
 
     @Override
-    public PagedPayloadResponse<GenreModel> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<Genre> find(final FilterRequest request) throws ApiException {
         PagedData<GenreEntity> genreEntities = genreDAO.findAll(request.getFilter());
-        return new PagedPayloadResponse<>(request, ResponseCode.OK, genreEntities, genreModelMapper::entitiesToDtos);
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, genreEntities, genreMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<GenreModel> create(final EntityRequest<GenreModelCreateRequest> request) throws ApiException {
-        genreRequestValidation.validateGenreModelCreateRequest(request);
+    public PayloadResponse<Genre> create(final EntityRequest<GenreCreateRequest> request) throws ApiException {
+        genreRequestValidation.validateGenreCreateRequest(request);
 
-        var genreEntity = genreModelMapper.dtoToEntity(request.getEntity());
+        var genreEntity = genreMapper.dtoToEntity(request.getEntity());
 
         if (request.getEntity().getMainGenreID() != null) {
             var mainGenreEntity = genreDAO.findByPK(request.getEntity().getMainGenreID());
@@ -55,18 +55,18 @@ public class GenreServiceImpl implements GenreService {
         genreEntity.setCreatedBy(request.getUserId());
 
         genreDAO.persist(genreEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, genreModelMapper.entityToDto(genreEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, genreMapper.entityToDto(genreEntity));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<GenreModel> update(final EntityRequest<GenreModelUpdateRequest> request) throws ApiException {
-        genreRequestValidation.validateGenreModelUpdateRequest(request);
+    public PayloadResponse<Genre> update(final EntityRequest<GenreUpdateRequest> request) throws ApiException {
+        genreRequestValidation.validateGenreUpdateRequest(request);
 
         var genreEntity = genreDAO.findByPK(request.getEntity().getId());
         System.out.println(genreEntity.getName());
         System.out.println(genreEntity.getType());
-        genreModelMapper.updateEntity(request.getEntity(), genreEntity);
+        genreMapper.updateEntity(request.getEntity(), genreEntity);
 
         System.out.println(request.getEntity().toString());
         System.out.println(genreEntity.getName());
@@ -79,31 +79,31 @@ public class GenreServiceImpl implements GenreService {
         genreEntity.setModified(Timestamp.valueOf(LocalDateTime.now()));
         genreEntity.setModifiedBy(request.getUserId());
         genreDAO.merge(genreEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, genreModelMapper.entityToDto(genreEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, genreMapper.entityToDto(genreEntity));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<GenreModel> activate(final EntityRequest<Long> request) throws ApiException {
-        genreRequestValidation.validateExistsGenreModelRequest(request);
+    public PayloadResponse<Genre> activate(final EntityRequest<Long> request) throws ApiException {
+        genreRequestValidation.validateExistsGenreRequest(request);
 
         var genreEntity = genreDAO.findByPK(request.getEntity());
         genreEntity.setStatus(Status.ACTIVE.value());
         genreEntity.setModified(Timestamp.valueOf(LocalDateTime.now()));
         genreEntity.setModifiedBy(request.getUser().getUserId());
         genreDAO.merge(genreEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, genreModelMapper.entityToDto(genreEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, genreMapper.entityToDto(genreEntity));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<GenreModel> delete(final EntityRequest<Long> request) throws ApiException {
-        genreRequestValidation.validateExistsGenreModelRequest(request);
+    public PayloadResponse<Genre> delete(final EntityRequest<Long> request) throws ApiException {
+        genreRequestValidation.validateExistsGenreRequest(request);
 
         var genreEntity = genreDAO.findByPK(request.getEntity());
         genreDAO.remove(genreEntity);
 
-        return new PayloadResponse<>(request, ResponseCode.OK, genreModelMapper.entityToDto(genreEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, genreMapper.entityToDto(genreEntity));
 
     }
 

@@ -6,8 +6,8 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
-import ba.com.zira.sdr.api.model.genre.GenreModelCreateRequest;
-import ba.com.zira.sdr.api.model.genre.GenreModelUpdateRequest;
+import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
+import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
 import ba.com.zira.sdr.dao.GenreDAO;
 import lombok.AllArgsConstructor;
 
@@ -16,7 +16,7 @@ import lombok.AllArgsConstructor;
 public class GenreRequestValidation {
     private GenreDAO genreDAO;
 
-    public ValidationResponse validateGenreModelCreateRequest(final EntityRequest<GenreModelCreateRequest> request) {
+    public ValidationResponse validateGenreCreateRequest(final EntityRequest<GenreCreateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
 
         errors.put(nameExists(request.getEntity().getName()));
@@ -28,7 +28,7 @@ public class GenreRequestValidation {
         return ValidationResponse.of(request, errors);
     }
 
-    public ValidationResponse validateGenreModelUpdateRequest(final EntityRequest<GenreModelUpdateRequest> request) {
+    public ValidationResponse validateGenreUpdateRequest(final EntityRequest<GenreUpdateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(genreExists(request.getEntity().getId()));
 
@@ -43,7 +43,7 @@ public class GenreRequestValidation {
         return ValidationResponse.of(request, errors);
     }
 
-    public ValidationResponse validateExistsGenreModelRequest(final EntityRequest<Long> request) {
+    public ValidationResponse validateExistsGenreRequest(final EntityRequest<Long> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(genreExists(request.getEntity()));
 
