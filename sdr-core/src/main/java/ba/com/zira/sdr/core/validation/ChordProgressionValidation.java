@@ -6,6 +6,7 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
 import ba.com.zira.sdr.dao.ChordProgressionDAO;
 import lombok.AllArgsConstructor;
 
@@ -14,13 +15,12 @@ import lombok.AllArgsConstructor;
 public class ChordProgressionValidation {
     ChordProgressionDAO chordProgressionDAO;
 
-    // public ValidationResponse validateUpdateChordProgressionRequest(final
-    // EntityRequest<ChordProgressionUpdateRequest> request) {
-    // ValidationErrors errors = new ValidationErrors();
-    // errors.put(exists(request.getEntity().getId()));
-    //
-    // return ValidationResponse.of(request, errors);
-    // }
+    public ValidationResponse validateUpdateChordProgressionRequest(final EntityRequest<ChordProgressionUpdateRequest> request) {
+        ValidationErrors errors = new ValidationErrors();
+        errors.put(exists(request.getEntity().getId()));
+
+        return ValidationResponse.of(request, errors);
+    }
 
     public ValidationResponse validateExistsChordProgressionRequest(final EntityRequest<Long> request) {
         ValidationErrors errors = new ValidationErrors();

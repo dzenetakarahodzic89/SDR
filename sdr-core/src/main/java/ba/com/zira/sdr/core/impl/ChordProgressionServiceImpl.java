@@ -16,6 +16,7 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.ChordProgressionService;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionCreateRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
 import ba.com.zira.sdr.core.mapper.ChordProgressionMapper;
 import ba.com.zira.sdr.core.validation.ChordProgressionValidation;
 import ba.com.zira.sdr.dao.ChordProgressionDAO;
@@ -31,6 +32,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
 
     @Override
     public ListPayloadResponse<ChordProgressionResponse> getAll(EmptyRequest req) throws ApiException {
+        System.out.println(chordProgressionDAO.getAllChordProgressions());
         List<ChordProgressionResponse> chordProgressionList = chordProgressionDAO.getAllChordProgressions();
         return new ListPayloadResponse<>(req, ResponseCode.OK, chordProgressionList);
     }
@@ -55,6 +57,20 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
         var chordDeleteEntity = chordProgressionDAO.findByPK(request.getEntity());
         chordProgressionDAO.removeByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, chordProgressionMapper.entityToDto(chordDeleteEntity));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<ChordProgressionResponse> update(EntityRequest<ChordProgressionUpdateRequest> request) throws ApiException {
+        chordProgressionValidator.validateUpdateChordProgressionRequest(request);
+
+        var chordProgressionEntity = chordProgressionDAO.findByPK(request.getEntity().getId());
+        chordProgressionMapper.updateEntity(request.getEntity(), chordProgressionEntity);
+
+        chordProgressionEntity.setModified(LocalDateTime.now());
+        chordProgressionEntity.setModifiedBy(request.getUserId());
+        chordProgressionDAO.merge(chordProgressionEntity);
+        return new PayloadResponse<>(request, ResponseCode.OK, chordProgressionMapper.entityToDto(chordProgressionEntity));
     }
 
 }

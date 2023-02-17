@@ -7,6 +7,7 @@ import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionCreateRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
 
 public interface ChordProgressionService {
     ListPayloadResponse<ChordProgressionResponse> getAll(EmptyRequest req) throws ApiException;
@@ -14,4 +15,6 @@ public interface ChordProgressionService {
     PayloadResponse<ChordProgressionResponse> create(EntityRequest<ChordProgressionCreateRequest> request) throws ApiException;
 
     PayloadResponse<ChordProgressionResponse> delete(EntityRequest<Long> id) throws ApiException;
+
+    PayloadResponse<ChordProgressionResponse> update(EntityRequest<ChordProgressionUpdateRequest> request) throws ApiException;
 }
