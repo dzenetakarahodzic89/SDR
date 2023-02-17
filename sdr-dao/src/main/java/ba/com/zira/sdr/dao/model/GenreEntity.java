@@ -1,5 +1,9 @@
 package ba.com.zira.sdr.dao.model;
 
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,12 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -77,5 +78,16 @@ public class GenreEntity implements Serializable {
     // bi-directional many-to-one association to SongEntity
     @OneToMany(mappedBy = "genre")
     private List<SongEntity> songs;
+
+    @PreRemove
+    private void removeSubGenres() {
+        for (GenreEntity subGenre : subGenres) {
+            subGenre.setMainGenre(null);
+        }
+
+        for (SongEntity song : songs) {
+            song.setGenre(null);
+        }
+    }
 
 }
