@@ -45,7 +45,9 @@ public class CommentServiceImpl implements CommentService {
         commentEntity.setStatus(Status.ACTIVE.value());
         commentEntity.setCreated(LocalDateTime.now());
         commentEntity.setCreatedBy(request.getUserId());
+        commentEntity.setUserCode(request.getUserId());
 
+        
         commentDAO.persist(commentEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
     }
@@ -81,17 +83,23 @@ public class CommentServiceImpl implements CommentService {
         return new PayloadResponse<>(request, ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
     }
     
+   
+    
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<CommentModel> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<CommentModel> delete(final EntityRequest<Long> request) {
         commentRequestValidation.validateExistsCommentModelRequest(request);
 
-        var commentEntity = commentDAO.findByPK(request.getEntity());
-       
-        commentEntity.setStatus(Status.ACTIVE.value());
-        commentEntity.setModified(LocalDateTime.now());
-        commentEntity.setModifiedBy(request.getUser().getUserId());
-        commentDAO.merge(commentEntity);
+        CommentEntity commentEntity = commentDAO.findByPK(request.getEntity());
+
+        commentDAO.removeByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
     }
+
 }
+
+
+
+
+
+

@@ -3,7 +3,7 @@ package ba.com.zira.sdr.api.model.comment;
 import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
-
+import ba.com.zira.sdr.api.enums.ObjectType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data; 
 
@@ -22,5 +22,5 @@ public class CommentModelCreateRequest implements Serializable {
     @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
     private String status;
     @Schema(description = " Type of the object_type")
-    private String objectType;
+    private ObjectType objectType;
 }
