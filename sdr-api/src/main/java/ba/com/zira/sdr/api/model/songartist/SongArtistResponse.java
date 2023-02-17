@@ -14,13 +14,22 @@ public class SongArtistResponse implements Serializable {
     @Schema(description = "Unique identifier of song-artist record")
     private Long id;
     @Schema(description = "Id of a song that this artist wrote")
-    private Long song;
+    private Long songId;
     @Schema(description = "Id of a label that this record has")
-    private Long label;
+    private Long labelId;
     @Schema(description = "Id of an artist that wrote this song")
-    private Long artist;
+    private Long artistId;
     @Schema(description = "Id of an album that this song belongs to")
-    private Long album;
+    private Long albumId;
+
+    @Schema(description = "Name of a song that this artist wrote")
+    private String songName;
+    @Schema(description = "Name of a label that this record has")
+    private String labelName;
+    @Schema(description = "Name of an artist that wrote this song")
+    private String artistName;
+    @Schema(description = "Name of an album that this song belongs to")
+    private String albumName;
 
     @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
     private String status;

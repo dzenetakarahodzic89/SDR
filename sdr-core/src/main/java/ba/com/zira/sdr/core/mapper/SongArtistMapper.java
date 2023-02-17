@@ -14,10 +14,14 @@ public interface SongArtistMapper {
     // @Mapping(source = "documentName", target = "docname")
     // SampleModelEntity dtoToEntity(SampleModelCreateRequest sampleModel);
 
-    @Mapping(target = "artist", source = "artist.id")
-    @Mapping(target = "song", source = "song.id")
-    @Mapping(target = "label", source = "label.id")
-    @Mapping(target = "album", source = "album.id")
+    @Mapping(target = "artistId", source = "artist.id")
+    @Mapping(target = "songId", source = "song.id")
+    @Mapping(target = "labelId", source = "label.id")
+    @Mapping(target = "albumId", source = "album.id")
+    @Mapping(target = "artistName", source = "artist.name")
+    @Mapping(target = "songName", source = "song.name")
+    @Mapping(target = "labelName", source = "label.name")
+    @Mapping(target = "albumName", source = "album.name")
     SongArtistResponse entityToDto(SongArtistEntity songArtistEntity);
 
     // @Mapping(source = "documentName", target = "docname")

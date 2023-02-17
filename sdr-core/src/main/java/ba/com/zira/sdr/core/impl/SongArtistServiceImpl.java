@@ -29,8 +29,9 @@ public class SongArtistServiceImpl implements SongArtistService {
 
     @Override
     public PagedPayloadResponse<SongArtistResponse> getFiltered(FilterRequest filterRequest) {
-        Filter processedFilter = this.processFilterAsSongArtistReadRequest(filterRequest.getFilter());
-        PagedData<SongArtistEntity> songArtistEntities = songArtistDAO.findAll(processedFilter);
+        // Filter processedFilter =
+        // this.processFilterAsSongArtistReadRequest(filterRequest.getFilter());
+        PagedData<SongArtistEntity> songArtistEntities = songArtistDAO.findAll(filterRequest.getFilter());
         return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, songArtistEntities, songArtistMapper::entitiesToDtos);
     }
 
