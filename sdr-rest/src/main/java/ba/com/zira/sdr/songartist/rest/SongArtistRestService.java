@@ -1,12 +1,18 @@
 package ba.com.zira.sdr.songartist.rest;
 
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
+import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
+import ba.com.zira.commons.message.response.PagedPayloadResponse;
+import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.SongArtistService;
 import ba.com.zira.sdr.api.model.songartist.SongArtistResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,9 +27,16 @@ public class SongArtistRestService {
     private SongArtistService songArtistService;
 
     @Operation(summary = "Return all song artist records")
-    @GetMapping
+    @GetMapping(value = "all")
     public ListPayloadResponse<SongArtistResponse> getAll() throws ApiException {
         EmptyRequest request = new EmptyRequest();
         return songArtistService.getAll(request);
+    }
+
+    @Operation(summary = "Find song-artist records based on filter criteria")
+    @GetMapping(value = "filtered")
+    public PagedPayloadResponse<SongArtistResponse> getFiltered(@RequestParam Map<String, Object> filterCriteria,
+            final QueryConditionPage queryCriteria) throws ApiException {
+        return songArtistService.getFiltered(new FilterRequest(filterCriteria, queryCriteria));
     }
 }
