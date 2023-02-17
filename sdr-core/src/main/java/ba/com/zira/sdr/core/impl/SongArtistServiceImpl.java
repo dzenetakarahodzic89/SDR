@@ -16,6 +16,7 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.SongArtistService;
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.api.model.songartist.SongArtistResponse;
+import ba.com.zira.sdr.api.model.songartist.SongArtistUpdateRequest;
 import ba.com.zira.sdr.core.mapper.SongArtistMapper;
 import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
@@ -50,6 +51,21 @@ public class SongArtistServiceImpl implements SongArtistService {
 
         songArtistDAO.persist(songArtistEntity);
 
+        return new PayloadResponse<>(entityRequest, ResponseCode.OK, songArtistMapper.entityToDto(songArtistEntity));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<SongArtistResponse> update(final EntityRequest<SongArtistUpdateRequest> entityRequest) throws ApiException {
+        // TODO: validate data with validation class
+
+        SongArtistEntity songArtistEntity = songArtistDAO.findByPK(entityRequest.getEntity().getId());
+        songArtistMapper.updateEntity(entityRequest.getEntity(), songArtistEntity);
+
+        songArtistEntity.setModified(LocalDateTime.now());
+        songArtistEntity.setModifiedBy(entityRequest.getUserId());
+
+        songArtistDAO.merge(songArtistEntity);
         return new PayloadResponse<>(entityRequest, ResponseCode.OK, songArtistMapper.entityToDto(songArtistEntity));
     }
 }

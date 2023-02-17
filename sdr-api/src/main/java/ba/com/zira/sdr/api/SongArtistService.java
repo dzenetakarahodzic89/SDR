@@ -7,11 +7,14 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.api.model.songartist.SongArtistResponse;
+import ba.com.zira.sdr.api.model.songartist.SongArtistUpdateRequest;
 
 public interface SongArtistService {
 
     PagedPayloadResponse<SongArtistResponse> get(final FilterRequest filterRequest) throws ApiException;
 
     PayloadResponse<SongArtistResponse> create(final EntityRequest<SongArtistCreateRequest> entityRequest) throws ApiException;
+
+    PayloadResponse<SongArtistResponse> update(final EntityRequest<SongArtistUpdateRequest> entityRequest) throws ApiException;
 
 }

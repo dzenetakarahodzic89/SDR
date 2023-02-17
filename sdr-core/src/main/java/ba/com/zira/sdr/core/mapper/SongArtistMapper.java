@@ -4,20 +4,26 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.api.model.songartist.SongArtistResponse;
+import ba.com.zira.sdr.api.model.songartist.SongArtistUpdateRequest;
+import ba.com.zira.sdr.dao.AlbumDAO;
+import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.LabelDAO;
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { SongDAO.class, ArtistDAO.class, LabelDAO.class, AlbumDAO.class })
 public interface SongArtistMapper {
 
     // @Mapping(source = "documentName", target = "docname")
     // SampleModelEntity dtoToEntity(SampleModelCreateRequest sampleModel);
 
-    @Mapping(target = "song.id", source = "songId")
-    @Mapping(target = "label.id", source = "labelId")
-    @Mapping(target = "artist.id", source = "artistId")
+    @Mapping(target = "song", source = "songId")
+    @Mapping(target = "label", source = "labelId")
+    @Mapping(target = "artist", source = "artistId")
     @Mapping(target = "album.id", source = "albumId")
     SongArtistEntity dtoToEntity(SongArtistCreateRequest songArtistCreateRequest);
 
@@ -31,9 +37,11 @@ public interface SongArtistMapper {
     @Mapping(target = "albumName", source = "album.name")
     SongArtistResponse entityToDto(SongArtistEntity songArtistEntity);
 
-    // @Mapping(source = "documentName", target = "docname")
-    // void updateEntity(SampleModelUpdateRequest sampleModel, @MappingTarget
-    // SampleModelEntity sampleModelEntity);
+    @Mapping(source = "songId", target = "song")
+    @Mapping(source = "labelId", target = "label")
+    @Mapping(source = "artistId", target = "artist")
+    @Mapping(source = "albumId", target = "album")
+    void updateEntity(SongArtistUpdateRequest songArtistUpdateRequest, @MappingTarget SongArtistEntity songArtistEntity);
 
     List<SongArtistResponse> entitiesToDtos(List<SongArtistEntity> sampleModelEntity);
 }
