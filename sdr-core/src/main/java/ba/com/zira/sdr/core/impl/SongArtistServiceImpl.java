@@ -18,6 +18,7 @@ import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.api.model.songartist.SongArtistResponse;
 import ba.com.zira.sdr.api.model.songartist.SongArtistUpdateRequest;
 import ba.com.zira.sdr.core.mapper.SongArtistMapper;
+import ba.com.zira.sdr.core.validation.SongArtistRequestValidation;
 import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
 import lombok.AllArgsConstructor;
@@ -27,8 +28,7 @@ import lombok.AllArgsConstructor;
 public class SongArtistServiceImpl implements SongArtistService {
     SongArtistDAO songArtistDAO;
     SongArtistMapper songArtistMapper;
-
-    // TODO: add validation object for validating inupt requests
+    SongArtistRequestValidation songArtistRequestValidation;
 
     @Override
     public PagedPayloadResponse<SongArtistResponse> get(final FilterRequest filterRequest) throws ApiException {
@@ -39,6 +39,8 @@ public class SongArtistServiceImpl implements SongArtistService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<SongArtistResponse> create(final EntityRequest<SongArtistCreateRequest> entityRequest) throws ApiException {
+        songArtistRequestValidation.validateCreateSongArtistRequest(entityRequest);
+
         SongArtistEntity songArtistEntity = songArtistMapper.dtoToEntity(entityRequest.getEntity());
 
         songArtistEntity.setStatus(Status.ACTIVE.value());
@@ -57,7 +59,7 @@ public class SongArtistServiceImpl implements SongArtistService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<SongArtistResponse> update(final EntityRequest<SongArtistUpdateRequest> entityRequest) throws ApiException {
-        // TODO: validate data with validation class
+        songArtistRequestValidation.validateUpdateSongArtistRequest(entityRequest);
 
         SongArtistEntity songArtistEntity = songArtistDAO.findByPK(entityRequest.getEntity().getId());
         songArtistMapper.updateEntity(entityRequest.getEntity(), songArtistEntity);
@@ -67,5 +69,16 @@ public class SongArtistServiceImpl implements SongArtistService {
 
         songArtistDAO.merge(songArtistEntity);
         return new PayloadResponse<>(entityRequest, ResponseCode.OK, songArtistMapper.entityToDto(songArtistEntity));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<SongArtistResponse> delete(final EntityRequest<Long> entityRequest) {
+        songArtistRequestValidation.validateDeleteSongArtistRequest(entityRequest);
+
+        SongArtistEntity deletedEntity = songArtistDAO.findByPK(entityRequest.getEntity());
+
+        songArtistDAO.removeByPK(entityRequest.getEntity());
+        return new PayloadResponse<>(entityRequest, ResponseCode.OK, songArtistMapper.entityToDto(deletedEntity));
     }
 }

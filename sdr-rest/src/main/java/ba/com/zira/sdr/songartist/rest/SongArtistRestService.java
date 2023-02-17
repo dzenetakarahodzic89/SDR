@@ -2,6 +2,7 @@ package ba.com.zira.sdr.songartist.rest;
 
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,4 +57,14 @@ public class SongArtistRestService {
         }
         return songArtistService.update(new EntityRequest<>(songArtistUpdateRequest));
     }
+
+    @Operation(summary = "Delete song artist")
+    @DeleteMapping(value = "{id}")
+    public PayloadResponse<SongArtistResponse> delete(
+            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) throws ApiException {
+        EntityRequest<Long> entityRequest = new EntityRequest<>();
+        entityRequest.setEntity(id);
+        return songArtistService.delete(entityRequest);
+    }
+
 }

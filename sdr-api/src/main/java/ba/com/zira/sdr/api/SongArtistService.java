@@ -17,4 +17,6 @@ public interface SongArtistService {
 
     PayloadResponse<SongArtistResponse> update(final EntityRequest<SongArtistUpdateRequest> entityRequest) throws ApiException;
 
+    PayloadResponse<SongArtistResponse> delete(final EntityRequest<Long> entityRequest);
+
 }
