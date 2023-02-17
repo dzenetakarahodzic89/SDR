@@ -17,6 +17,7 @@ import ba.com.zira.sdr.api.ChordProgressionService;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionCreateRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
 import ba.com.zira.sdr.core.mapper.ChordProgressionMapper;
+import ba.com.zira.sdr.core.validation.ChordProgressionValidation;
 import ba.com.zira.sdr.dao.ChordProgressionDAO;
 import lombok.AllArgsConstructor;
 
@@ -26,6 +27,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
 
     ChordProgressionDAO chordProgressionDAO;
     ChordProgressionMapper chordProgressionMapper;
+    ChordProgressionValidation chordProgressionValidator;
 
     @Override
     public ListPayloadResponse<ChordProgressionResponse> getAll(EmptyRequest req) throws ApiException {
@@ -45,6 +47,14 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
 
         chordProgressionDAO.persist(chordProgressEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, chordProgressionMapper.entityToDto(chordProgressEntity));
+    }
+
+    @Override
+    public PayloadResponse<ChordProgressionResponse> delete(EntityRequest<Long> request) throws ApiException {
+        chordProgressionValidator.validateExistsChordProgressionRequest(request);
+        var chordDeleteEntity = chordProgressionDAO.findByPK(request.getEntity());
+        chordProgressionDAO.removeByPK(request.getEntity());
+        return new PayloadResponse<>(request, ResponseCode.OK, chordProgressionMapper.entityToDto(chordDeleteEntity));
     }
 
 }
