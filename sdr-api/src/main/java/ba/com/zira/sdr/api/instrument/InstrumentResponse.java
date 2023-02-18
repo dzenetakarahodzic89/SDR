@@ -21,7 +21,7 @@ public class InstrumentResponse implements Serializable {
     private String createdBy;
 
     @Schema(description = "Instrument information")
-    private String instrumetnInformation;
+    private String information;
 
     @Schema(description = "Last modification date")
     private LocalDateTime modified;

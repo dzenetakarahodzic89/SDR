@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Properties of song-artist create request")
+@Schema(description = "Properties of instrument create request")
 public class InstrumentUpdateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 

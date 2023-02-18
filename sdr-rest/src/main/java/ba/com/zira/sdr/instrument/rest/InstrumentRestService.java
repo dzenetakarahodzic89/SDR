@@ -47,7 +47,7 @@ public class InstrumentRestService {
         return instrumentService.create(new EntityRequest<>(instrument));
     }
 
-    @Operation(summary = "Delete song artist")
+    @Operation(summary = "Delete instrment")
     @DeleteMapping(value = "{id}")
     public PayloadResponse<InstrumentResponse> delete(
             @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) throws ApiException {

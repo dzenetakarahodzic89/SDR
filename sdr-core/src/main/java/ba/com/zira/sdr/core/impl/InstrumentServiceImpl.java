@@ -31,8 +31,8 @@ public class InstrumentServiceImpl implements InstrumentService {
 
     @Override
     public PagedPayloadResponse<InstrumentResponse> get(final FilterRequest filterRequest) throws ApiException {
-        PagedData<InstrumentEntity> songArtistEntities = instrumentDAO.findAll(filterRequest.getFilter());
-        return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, songArtistEntities, instrumentMapper::entitiesToDtos);
+        PagedData<InstrumentEntity> instrumentEntities = instrumentDAO.findAll(filterRequest.getFilter());
+        return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, instrumentEntities, instrumentMapper::entitiesToDtos);
     }
 
     @Override
@@ -53,14 +53,14 @@ public class InstrumentServiceImpl implements InstrumentService {
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> entityRequest) throws ApiException {
         // instrumentRequestValidation.validateUpdateInstrumentRequest(entityRequest);
-        InstrumentEntity songArtistEntity = instrumentDAO.findByPK(entityRequest.getEntity().getId());
-        instrumentMapper.updateEntity(entityRequest.getEntity(), songArtistEntity);
+        InstrumentEntity instrumentEntity = instrumentDAO.findByPK(entityRequest.getEntity().getId());
+        instrumentMapper.updateEntity(entityRequest.getEntity(), instrumentEntity);
 
-        songArtistEntity.setModified(LocalDateTime.now());
-        songArtistEntity.setModifiedBy(entityRequest.getUserId());
+        instrumentEntity.setModified(LocalDateTime.now());
+        instrumentEntity.setModifiedBy(entityRequest.getUserId());
 
-        instrumentDAO.merge(songArtistEntity);
-        return new PayloadResponse<>(entityRequest, ResponseCode.OK, instrumentMapper.entityToDto(songArtistEntity));
+        instrumentDAO.persist(instrumentEntity);
+        return new PayloadResponse<>(entityRequest, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
     @Override
@@ -68,12 +68,12 @@ public class InstrumentServiceImpl implements InstrumentService {
     public PayloadResponse<InstrumentResponse> activate(final EntityRequest<Long> request) throws ApiException {
         // sampleRequestValidation.validateExistsSampleModelRequest(request);
 
-        var sampleModelEntity = instrumentDAO.findByPK(request.getEntity());
-        sampleModelEntity.setStatus(Status.ACTIVE.value());
-        sampleModelEntity.setModified(LocalDateTime.now());
-        sampleModelEntity.setModifiedBy(request.getUser().getUserId());
-        instrumentDAO.merge(sampleModelEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(sampleModelEntity));
+        var instrumentEntity = instrumentDAO.findByPK(request.getEntity());
+        instrumentEntity.setStatus(Status.INACTIVE.value());
+        instrumentEntity.setModified(LocalDateTime.now());
+        instrumentEntity.setModifiedBy(request.getUser().getUserId());
+        instrumentDAO.persist(instrumentEntity);
+        return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
     @Override
