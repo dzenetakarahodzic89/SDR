@@ -1,24 +1,23 @@
 package ba.com.zira.sdr.core.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.springframework.stereotype.Component;
 
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
 
+@Component
 @Mapper(componentModel = "spring")
+
 public interface ArtistMapper {
 
-    @Mapping(target = "name", source = "name")
-    @Mapping(target = "dateOfBirth", source = "dateOfBirth")
-    @Mapping(target = "dateOfDeath", source = "dateOfDeath")
-    @Mapping(target = "information", source = "information")
-    @Mapping(target = "status", source = "status")
-    @Mapping(target = "surname", source = "surname")
-    @Mapping(target = "type", source = "type")
-    ArtistResponse entityToDto(ArtistEntity entity);
+    ArtistResponse entityToDto(ArtistEntity artistEntity);
 
-    ArtistEntity dtoToEntity(ArtistCreateRequest request);
+    ArtistEntity dtoToEntity(ArtistCreateRequest artistRequest);
+
+    void updateEntity(ArtistUpdateRequest artistRequest, @MappingTarget ArtistEntity artistEntity);
 
 }

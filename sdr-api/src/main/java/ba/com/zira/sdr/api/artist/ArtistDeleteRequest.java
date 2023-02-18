@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Properties for creation of a artist")
+@Schema(description = "Properties for delete a artist")
 public class ArtistDeleteRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 

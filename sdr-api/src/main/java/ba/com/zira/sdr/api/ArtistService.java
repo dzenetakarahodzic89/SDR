@@ -8,6 +8,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistDeleteRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 
 public interface ArtistService {
 
@@ -16,4 +17,7 @@ public interface ArtistService {
     PayloadResponse<ArtistResponse> create(EntityRequest<ArtistCreateRequest> request) throws ApiException;
 
     PayloadResponse<ArtistResponse> delete(EntityRequest<ArtistDeleteRequest> request) throws ApiException;
+
+    PayloadResponse<ArtistResponse> update(EntityRequest<ArtistUpdateRequest> request) throws ApiException;
+
 }

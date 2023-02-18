@@ -16,7 +16,9 @@ import ba.com.zira.sdr.api.ArtistService;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistDeleteRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
+import ba.com.zira.sdr.core.validation.ArtistValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import lombok.AllArgsConstructor;
 
@@ -25,6 +27,7 @@ import lombok.AllArgsConstructor;
 public class ArtistImpl implements ArtistService {
     ArtistDAO artistDAO;
     ArtistMapper artistMapper;
+    ArtistValidation artistRequestValidation;
 
     @Override
     public ListPayloadResponse<ArtistResponse> getAll(EmptyRequest req) throws ApiException {
@@ -51,6 +54,22 @@ public class ArtistImpl implements ArtistService {
     public PayloadResponse<ArtistResponse> delete(final EntityRequest<ArtistDeleteRequest> request) throws ApiException {
         artistDAO.removeByPK(request.getEntity().getId());
         return new PayloadResponse<>(request, ResponseCode.OK, null);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<ArtistResponse> update(final EntityRequest<ArtistUpdateRequest> request) throws ApiException {
+        artistRequestValidation.validateUpdateArtistRequest(request);
+
+        var artistEntity = artistDAO.findByPK(request.getEntity().getId());
+        artistMapper.updateEntity(request.getEntity(), artistEntity);
+        artistEntity.setCreated(LocalDateTime.now());
+        artistEntity.setCreatedBy(request.getUserId());
+        artistEntity.setModified(LocalDateTime.now());
+        artistEntity.setModifiedBy(request.getUserId());
+
+        artistDAO.merge(artistEntity);
+        return new PayloadResponse<>(request, ResponseCode.OK, artistMapper.entityToDto(artistEntity));
     }
 
 }
