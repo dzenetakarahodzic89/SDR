@@ -27,12 +27,6 @@ public class LyricUpdateRequest implements Serializable {
     @Schema(description = "Language used in the lyric")
     private String language;
     @NotBlank
-    @Schema(description = "Last modification date")
-    private LocalDateTime modified;
-    @NotBlank
-    @Schema(description = "User that modified the lyric")
-    private String modifiedBy;
-    @NotBlank
     @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
     private String status;
     @NotBlank

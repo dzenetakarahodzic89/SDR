@@ -40,12 +40,14 @@ public class LyricServiceImpl implements LyricService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<Lyric> create(final EntityRequest<LyricCreateRequest> request) throws ApiException {
-        lyricRequestValidation.validateCreateLyricRequest(request);
+        // lyricRequestValidation.validateCreateLyricRequest(request);
 
         var lyricEntity = lyricMapper.dtoToEntity(request.getEntity());
         lyricEntity.setStatus(Status.ACTIVE.value());
         lyricEntity.setCreated(LocalDateTime.now());
         lyricEntity.setCreatedBy(request.getUserId());
+        lyricEntity.setModified(LocalDateTime.now());
+        lyricEntity.setModifiedBy(request.getUserId());
 
         lyricDAO.persist(lyricEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, lyricMapper.entityToDto(lyricEntity));
