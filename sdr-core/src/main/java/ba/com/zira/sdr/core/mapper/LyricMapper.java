@@ -3,6 +3,7 @@ package ba.com.zira.sdr.core.mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import ba.com.zira.sdr.api.model.lyric.Lyric;
@@ -19,6 +20,7 @@ import ba.com.zira.sdr.dao.model.LyricEntity;
 @Mapper(componentModel = "spring")
 public interface LyricMapper {
 
+    @Mapping(target = "song.id", source = "songID")
     LyricEntity dtoToEntity(LyricCreateRequest lyric);
 
     Lyric entityToDto(LyricEntity lyricEntity);

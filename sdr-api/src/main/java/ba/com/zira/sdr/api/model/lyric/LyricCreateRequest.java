@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -37,5 +38,9 @@ public class LyricCreateRequest implements Serializable {
     @NotBlank
     @Schema(description = "The text of the song")
     private String text;
+
+    @NotNull
+    @Schema(description = "ID of the song")
+    private Long songID;
 
 }
