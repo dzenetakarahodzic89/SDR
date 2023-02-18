@@ -14,3 +14,4 @@ target/
 mdr-service/application.pid
 
 mdr-core/test-output/
+sdr-service
