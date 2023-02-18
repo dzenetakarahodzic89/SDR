@@ -11,12 +11,13 @@ import lombok.Data;
 public class InstrumentResponse implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "Unique identifier of the instrument")
+    @Schema(description = "Unique identifier of the sample")
+
     private Long id;
 
     @Schema(description = "Creation date")
     private LocalDateTime created;
-
+    
     @Schema(description = "User that created the instrument")
     private String createdBy;
 
@@ -24,6 +25,7 @@ public class InstrumentResponse implements Serializable {
     private String instrumentName;
     @Schema(description = "Instrument information")
     private String instrumentInformation;
+ 
 
     @Schema(description = "Last modification date")
     private LocalDateTime modified;
@@ -36,5 +38,5 @@ public class InstrumentResponse implements Serializable {
 
     @Schema(description = "Instrument type")
     private String instrumentType;
-
 }
+

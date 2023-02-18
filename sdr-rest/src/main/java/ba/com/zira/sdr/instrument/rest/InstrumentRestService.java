@@ -47,6 +47,7 @@ public class InstrumentRestService {
         return instrumentService.create(new EntityRequest<>(instrument));
     }
 
+
     @Operation(summary = "Delete instrument")
     @DeleteMapping(value = "{id}")
     public PayloadResponse<InstrumentResponse> delete(
@@ -67,4 +68,5 @@ public class InstrumentRestService {
         return instrumentService.update(new EntityRequest<>(instrumentUpdateRequest));
     }
 
+ 
 }
