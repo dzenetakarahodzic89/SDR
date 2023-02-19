@@ -88,10 +88,10 @@ public class LabelServiceImpl implements LabelService {
 
         var labelEntity = labelDAO.findByPK(request.getEntity());
 
-        if (labelEntity.getStatus() == Status.INACTIVE.value()) {
-            labelEntity.setStatus(Status.ACTIVE.value());
-        } else {
+        if ((labelEntity.getStatus()).toLowerCase().equals((Status.ACTIVE.value()).toLowerCase())) {
             labelEntity.setStatus(Status.INACTIVE.value());
+        } else {
+            labelEntity.setStatus(Status.ACTIVE.value());
         }
 
         labelEntity.setModified(LocalDateTime.now());
