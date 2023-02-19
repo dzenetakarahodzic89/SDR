@@ -20,8 +20,10 @@ public class InstrumentResponse implements Serializable {
     @Schema(description = "User that created the sample")
     private String createdBy;
 
+    @Schema(description = "Instrument name")
+    private String instrumentName;
     @Schema(description = "Instrument information")
-    private String information;
+    private String instrumentInformation;
 
     @Schema(description = "Last modification date")
     private LocalDateTime modified;
@@ -29,13 +31,10 @@ public class InstrumentResponse implements Serializable {
     @Schema(description = "User that modified the instrument")
     private String modifiedBy;
 
-    @Schema(description = "Instrument name")
-    private String name;
-
     @Schema(description = "Instrument status", allowableValues = { "Inactive", "Active" })
-    private String status;
+    private String instrumentStatus;
 
     @Schema(description = "Instrument type")
-    private String type;
+    private String instrumentType;
 
 }

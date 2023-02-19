@@ -16,13 +16,13 @@ public class InstrumentCreateRequest implements Serializable {
     @Schema(description = "Unique identifier of the sample")
     private Long id;
 
-    @Schema(description = "Instrument information")
-    private String information;
-
     @Schema(description = "Instrument name")
-    private String name;
+    private String instrumentName;
+
+    @Schema(description = "Instrument information")
+    private String instrumentInformation;
 
     @Schema(description = "Instrument type")
-    private String type;
+    private String instrumentType;
 
 }
