@@ -20,11 +20,13 @@ import ba.com.zira.sdr.dao.model.LyricEntity;
 @Mapper(componentModel = "spring")
 public interface LyricMapper {
 
-    @Mapping(target = "song.id", source = "songID")
+    @Mapping(source = "songId", target = "song.id")
     LyricEntity dtoToEntity(LyricCreateRequest lyric);
 
+    @Mapping(source = "song.id", target = "songId")
     Lyric entityToDto(LyricEntity lyricEntity);
 
+    @Mapping(source = "songId", target = "song.id")
     void updateEntity(LyricUpdateRequest lyric, @MappingTarget LyricEntity lyricEntity);
 
     List<Lyric> entitiesToDtos(List<LyricEntity> lyricEntity);

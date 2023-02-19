@@ -7,7 +7,6 @@ import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
 import ba.com.zira.sdr.api.LyricService;
-import ba.com.zira.sdr.api.model.lyric.LyricCreateRequest;
 import ba.com.zira.sdr.api.model.lyric.LyricUpdateRequest;
 import ba.com.zira.sdr.dao.LyricDAO;
 import lombok.AllArgsConstructor;
@@ -25,13 +24,13 @@ import lombok.AllArgsConstructor;
 public class LyricRequestValidation {
 
     private LyricDAO lyricDAO;
-
-    public ValidationResponse validateCreateLyricRequest(final EntityRequest<LyricCreateRequest> request) {
-        ValidationErrors errors = new ValidationErrors();
-        errors.put(exists(request.getEntity().getId()));
-
-        return ValidationResponse.of(request, errors);
-    }
+    /*
+     * public ValidationResponse validateCreateLyricRequest(final
+     * EntityRequest<LyricCreateRequest> request) { ValidationErrors errors =
+     * new ValidationErrors(); errors.put(exists(request.getEntity().getId()));
+     * 
+     * return ValidationResponse.of(request, errors); }
+     */
 
     public ValidationResponse validateUpdateLyricRequest(final EntityRequest<LyricUpdateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
