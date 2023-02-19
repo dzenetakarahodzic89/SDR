@@ -18,6 +18,7 @@ import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.core.mapper.InstrumentMapper;
+import ba.com.zira.sdr.core.validation.InstrumentRequestValidation;
 import ba.com.zira.sdr.dao.InstrumentDAO;
 import ba.com.zira.sdr.dao.model.InstrumentEntity;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ import lombok.AllArgsConstructor;
 public class InstrumentServiceImpl implements InstrumentService {
     InstrumentDAO instrumentDAO;
     InstrumentMapper instrumentMapper;
+    InstrumentRequestValidation instrumentRequestValidation;
 
     @Override
     public PagedPayloadResponse<InstrumentResponse> get(final FilterRequest filterRequest) throws ApiException {
@@ -52,7 +54,7 @@ public class InstrumentServiceImpl implements InstrumentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> entityRequest) throws ApiException {
-        // instrumentRequestValidation.validateUpdateInstrumentRequest(entityRequest);
+        instrumentRequestValidation.validateUpdateInstrumentRequest(entityRequest);
         InstrumentEntity instrumentEntity = instrumentDAO.findByPK(entityRequest.getEntity().getId());
         instrumentMapper.updateEntity(entityRequest.getEntity(), instrumentEntity);
 
@@ -66,10 +68,10 @@ public class InstrumentServiceImpl implements InstrumentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<InstrumentResponse> activate(final EntityRequest<Long> request) throws ApiException {
-        // sampleRequestValidation.validateExistsSampleModelRequest(request);
+        instrumentRequestValidation.validateExistsInstrumentRequest(request);
 
         var instrumentEntity = instrumentDAO.findByPK(request.getEntity());
-        instrumentEntity.setStatus(Status.INACTIVE.value());
+        instrumentEntity.setStatus(Status.ACTIVE.value());
         instrumentEntity.setModified(LocalDateTime.now());
         instrumentEntity.setModifiedBy(request.getUser().getUserId());
         instrumentDAO.persist(instrumentEntity);
@@ -79,7 +81,7 @@ public class InstrumentServiceImpl implements InstrumentService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<InstrumentResponse> delete(final EntityRequest<Long> entityRequest) {
-        // instruentRequestValidation.validateDeleteInstrumentRequest(entityRequest);
+        instrumentRequestValidation.validateExistsInstrumentRequest(entityRequest);
         InstrumentEntity deletedEntity = instrumentDAO.findByPK(entityRequest.getEntity());
 
         instrumentDAO.removeByPK(entityRequest.getEntity());
