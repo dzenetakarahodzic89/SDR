@@ -38,5 +38,6 @@ public class InstrumentResponse implements Serializable {
 
     @Schema(description = "Instrument type")
     private String instrumentType;
+
 }
 

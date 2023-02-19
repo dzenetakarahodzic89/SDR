@@ -17,6 +17,9 @@ public class InstrumentCreateRequest implements Serializable {
     @Schema(description = "instrument name")
     private String instrumentName;
 
+    @Schema(description = "Instrument name")
+    private String instrumentName;
+
     @Schema(description = "Instrument information")
     private String instrumentInformation;
 
