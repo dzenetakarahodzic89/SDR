@@ -18,6 +18,7 @@ import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
 import ba.com.zira.sdr.core.mapper.PersonMapper;
+import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.model.PersonEntity;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ import lombok.AllArgsConstructor;
 public class PersonServiceImpl implements PersonService {
 	PersonDAO personDAO;
 	PersonMapper personMapper;
+	PersonRequestValidation personRequestValidation;
 
 	@Override
 	public PagedPayloadResponse<PersonResponse> find(final FilterRequest filterRequest) throws ApiException {
@@ -53,7 +55,7 @@ public class PersonServiceImpl implements PersonService {
 	@Transactional(rollbackFor = Exception.class)
 	public PayloadResponse<PersonResponse> update(final EntityRequest<PersonUpdateRequest> entityRequest)
 			throws ApiException {
-
+		personRequestValidation.validateUpdatePersonRequest(entityRequest);
 		PersonEntity personEntity = personDAO.findByPK(entityRequest.getEntity().getId());
 		personMapper.updateEntity(entityRequest.getEntity(), personEntity);
 
@@ -67,7 +69,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public PayloadResponse<PersonResponse> activate(final EntityRequest<Long> request) throws ApiException {
-
+		personRequestValidation.validateExistsPersonRequest(request);
 		var personEntity = personDAO.findByPK(request.getEntity());
 		personEntity.setStatus(Status.ACTIVE.value());
 		personEntity.setModified(LocalDateTime.now());
@@ -79,7 +81,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public PayloadResponse<PersonResponse> delete(final EntityRequest<Long> entityRequest) {
-
+		personRequestValidation.validateExistsPersonRequest(entityRequest);
 		PersonEntity deletedEntity = personDAO.findByPK(entityRequest.getEntity());
 
 		personDAO.removeByPK(entityRequest.getEntity());
