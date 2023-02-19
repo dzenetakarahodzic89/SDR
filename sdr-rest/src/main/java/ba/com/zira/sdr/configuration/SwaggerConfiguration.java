@@ -25,6 +25,13 @@ public class SwaggerConfiguration {
         return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
+    
+    @Bean
+    public GroupedOpenApi commentApi() {
+        return GroupedOpenApi.builder().group("comment-api").packagesToScan("ba.com.zira.sdr.comment.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
 
     @Bean
     public GroupedOpenApi multisearchApi() {
@@ -39,11 +46,6 @@ public class SwaggerConfiguration {
                 .license(new License().name("ZIRA proprietary service").url("http://www.zira.com.ba/")));
     }
     
-    @Bean
-    public GroupedOpenApi commentApi() {
-        return GroupedOpenApi.builder().group("comment-api").packagesToScan("ba.com.zira.sdr.comment.rest")
-                .addOperationCustomizer(ziraOperationCustomizer).build();
-    }
-
+    
 
 }

@@ -35,7 +35,7 @@ public class CommentRestService {
 
     private CommentService commentService;
 
-    @Operation(summary = "Find Samples base on filter criteria")
+    @Operation(summary = "Find Comment base on filter criteria")
     @GetMapping
     public PagedPayloadResponse<CommentModel> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
             throws ApiException {
@@ -68,11 +68,11 @@ public class CommentRestService {
         return commentService.delete(new EntityRequest<>(id));
     }
 
-  @Operation(summary = "Activate sample")
+  @Operation(summary = "Activate comment")
   
   @PutMapping(value = "{id}/activate") public PayloadResponse<CommentModel>
   activate(@Parameter(required = true, description =
-  "ID of the sample") @PathVariable final Long id) throws ApiException { return
+  "ID of the comment") @PathVariable final Long id) throws ApiException { return
   commentService.activate(new EntityRequest<>(id)); } 
   
  

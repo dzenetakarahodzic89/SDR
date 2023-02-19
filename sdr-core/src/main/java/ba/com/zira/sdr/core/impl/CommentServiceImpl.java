@@ -46,6 +46,8 @@ public class CommentServiceImpl implements CommentService {
         commentEntity.setCreated(LocalDateTime.now());
         commentEntity.setCreatedBy(request.getUserId());
         commentEntity.setUserCode(request.getUserId());
+        commentEntity.setModified(LocalDateTime.now());
+        commentEntity.setModifiedBy(request.getUserId());
 
         
         commentDAO.persist(commentEntity);
