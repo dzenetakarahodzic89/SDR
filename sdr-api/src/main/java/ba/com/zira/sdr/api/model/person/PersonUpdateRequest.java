@@ -14,15 +14,23 @@ public class PersonUpdateRequest implements Serializable {
 	private Long id;
 
 	@Schema(description = "Information about user")
-	private String information;
+	private String personInformation;
 
 	@Schema(description = "User name")
-	private String Name;
+	private String personName;
 
 	@Schema(description = "User surname")
-	private String Surname;
+	private String personSurname;
 
 	@Schema(description = "User's gender")
-	private String gender;
+	private String personGender;
+
+	/*
+	 * @Schema(description = "Date of birth") private LocalDateTime
+	 * personDateOfBirth;
+	 * 
+	 * @Schema(description = "Date of death") private LocalDateTime
+	 * personDateOfDeath;
+	 */
 
 }

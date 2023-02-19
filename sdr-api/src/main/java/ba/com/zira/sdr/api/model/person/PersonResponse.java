@@ -13,27 +13,40 @@ public class PersonResponse implements Serializable {
 
 	@Schema(description = "Unique identifier of the sample")
 	private Long id;
+
 	@Schema(description = "Creation date")
 	private LocalDateTime created;
+
 	@Schema(description = "User that created the sample")
 	private String createdBy;
-	@Schema(description = "Date of birth")
-	private LocalDateTime dateOfBirth;
-	@Schema(description = "Date of death")
-	private LocalDateTime dateOfDeath;
+
+	/*
+	 * @Schema(description = "Date of birth") private LocalDateTime
+	 * personDateOfBirth;
+	 * 
+	 * @Schema(description = "Date of death") private LocalDateTime
+	 * personDateOfDeath;
+	 */
+
 	@Schema(description = "User's gender")
-	private String gender;
+	private String personGender;
+
 	@Schema(description = "Information about user")
-	private String information;
+	private String personInformation;
+
 	@Schema(description = "Last modification date")
 	private LocalDateTime modified;
+
 	@Schema(description = "User that modified the sample")
 	private String modifiedBy;
+
 	@Schema(description = "User name")
-	private String name;
+	private String personName;
+
 	@Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
-	private String status;
+	private String personStatus;
+
 	@Schema(description = "User surname")
-	private String surname;
+	private String personSurname;
 
 }
