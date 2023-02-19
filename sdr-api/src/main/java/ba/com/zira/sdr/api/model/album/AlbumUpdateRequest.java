@@ -11,8 +11,12 @@ import lombok.Data;
 
 @Data
 @Schema(description = "Properties for creation of a Album")
-public class AlbumCreateRequest implements Serializable {
+public class AlbumUpdateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    @NotNull
+    @Schema(description = "Release date of album")
+    private Long id;
 
     @NotNull
     @Schema(description = "Release date of album")

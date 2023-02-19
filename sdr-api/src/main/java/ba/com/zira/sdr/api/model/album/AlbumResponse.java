@@ -4,17 +4,16 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Properties for creation of a Album")
-public class AlbumCreateRequest implements Serializable {
+@Schema(description = "Properties of album response")
+public class AlbumResponse implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "Release date of album")
     private LocalDateTime dateOfRelease;
 
@@ -30,7 +29,7 @@ public class AlbumCreateRequest implements Serializable {
     @Schema(description = "Album status")
     private String status;
 
-    @NotNull
+    @NotBlank
     @Schema(description = "Album era")
     private Long eraId;
 }
