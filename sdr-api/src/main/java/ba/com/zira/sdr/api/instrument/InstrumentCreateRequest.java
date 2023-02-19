@@ -8,15 +8,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Properties for instrument creat request")
+@Schema(description = "Properties for instrument create request")
 public class InstrumentCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotNull
-    @Schema(description = "Unique identifier of the sample")
+    @Schema(description = "Unique identifier of the instrument")
     private Long id;
 
-    @Schema(description = "Instrument name")
+    @Schema(description = "instrument name")
     private String instrumentName;
 
     @Schema(description = "Instrument information")
