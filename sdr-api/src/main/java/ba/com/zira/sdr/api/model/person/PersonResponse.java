@@ -20,13 +20,11 @@ public class PersonResponse implements Serializable {
 	@Schema(description = "User that created the sample")
 	private String createdBy;
 
-	/*
-	 * @Schema(description = "Date of birth") private LocalDateTime
-	 * personDateOfBirth;
-	 * 
-	 * @Schema(description = "Date of death") private LocalDateTime
-	 * personDateOfDeath;
-	 */
+	@Schema(description = "Date of birth")
+	private LocalDateTime personDateOfBirth;
+
+	@Schema(description = "Date of death")
+	private LocalDateTime personDateOfDeath;
 
 	@Schema(description = "User's gender")
 	private String personGender;

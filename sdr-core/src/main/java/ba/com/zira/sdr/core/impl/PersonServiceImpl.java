@@ -47,7 +47,7 @@ public class PersonServiceImpl implements PersonService {
 		personEntity.setModified(LocalDateTime.now());
 		personEntity.setModifiedBy(request.getUserId());
 
-		personDAO.merge(personEntity);
+		personDAO.persist(personEntity);
 		return new PayloadResponse<>(request, ResponseCode.OK, personMapper.entityToDto(personEntity));
 	}
 

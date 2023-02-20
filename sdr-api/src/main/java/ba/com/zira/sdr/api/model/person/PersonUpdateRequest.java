@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.api.model.person;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -25,12 +26,10 @@ public class PersonUpdateRequest implements Serializable {
 	@Schema(description = "User's gender")
 	private String personGender;
 
-	/*
-	 * @Schema(description = "Date of birth") private LocalDateTime
-	 * personDateOfBirth;
-	 * 
-	 * @Schema(description = "Date of death") private LocalDateTime
-	 * personDateOfDeath;
-	 */
+	@Schema(description = "Date of birth")
+	private LocalDateTime personDateOfBirth;
+
+	@Schema(description = "Date of death")
+	private LocalDateTime personDateOfDeath;
 
 }
