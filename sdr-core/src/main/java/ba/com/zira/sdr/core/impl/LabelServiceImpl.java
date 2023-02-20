@@ -61,8 +61,6 @@ public class LabelServiceImpl implements LabelService {
         labelEntity.setStatus(Status.ACTIVE.value());
         labelEntity.setCreated(LocalDateTime.now());
         labelEntity.setCreatedBy(request.getUserId());
-        labelEntity.setModified(LocalDateTime.now());
-        labelEntity.setModifiedBy(request.getUserId());
         labelDAO.persist(labelEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, labelMapper.entityToDto(labelEntity));
     }
@@ -106,6 +104,7 @@ public class LabelServiceImpl implements LabelService {
         labelReqVal.validateExistsLabelRequest(request);
 
         var labelEntity = labelDAO.findByPK(request.getEntity());
+
         labelDAO.remove(labelEntity);
 
         return new PayloadResponse<>(request, ResponseCode.OK, labelMapper.entityToDto(labelEntity));

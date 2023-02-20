@@ -44,7 +44,7 @@ public interface LabelService {
      * {@link ApiException} will be generated/returned with corresponding error
      * message and {@link ResponseCode}.
      */
-    PayloadResponse<LabelResponse> create(EntityRequest<LabelCreateRequest> request) throws ApiException;
+    public PayloadResponse<LabelResponse> create(EntityRequest<LabelCreateRequest> request) throws ApiException;
 
     /**
      * Validate received label data and update label.
@@ -58,7 +58,7 @@ public interface LabelService {
      *             {@link ApiException} will be generated/returned with
      *             corresponding error message and {@link ResponseCode}.
      */
-    PayloadResponse<LabelResponse> update(EntityRequest<LabelUpdateRequest> request) throws ApiException;
+    public PayloadResponse<LabelResponse> update(EntityRequest<LabelUpdateRequest> request) throws ApiException;
 
     /**
      * Change label status
@@ -73,7 +73,7 @@ public interface LabelService {
      *             corresponding error message and {@link ResponseCode}.
      *
      */
-    PayloadResponse<LabelResponse> changeStatus(EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<LabelResponse> changeStatus(EntityRequest<Long> request) throws ApiException;
 
-    PayloadResponse<LabelResponse> delete(final EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<LabelResponse> delete(final EntityRequest<Long> request) throws ApiException;
 }
