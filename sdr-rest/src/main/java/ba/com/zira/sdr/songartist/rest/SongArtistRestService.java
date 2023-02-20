@@ -35,14 +35,14 @@ public class SongArtistRestService {
     private SongArtistService songArtistService;
 
     @Operation(summary = "Find song-artist records based on filter criteria")
-    @GetMapping()
+    @GetMapping
     public PagedPayloadResponse<SongArtistResponse> get(@RequestParam Map<String, Object> filterCriteria,
             final QueryConditionPage queryCriteria) throws ApiException {
         return songArtistService.get(new FilterRequest(filterCriteria, queryCriteria));
     }
 
     @Operation(summary = "Create song artist")
-    @PostMapping()
+    @PostMapping
     public PayloadResponse<SongArtistResponse> create(@RequestBody final SongArtistCreateRequest songArtist) throws ApiException {
         return songArtistService.create(new EntityRequest<>(songArtist));
     }
