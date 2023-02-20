@@ -75,5 +75,5 @@ public interface LabelService {
      */
     public PayloadResponse<LabelResponse> changeStatus(EntityRequest<Long> request) throws ApiException;
 
-    public PayloadResponse<LabelResponse> delete(final EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException;
 }

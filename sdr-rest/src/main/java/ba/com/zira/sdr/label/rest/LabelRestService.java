@@ -69,24 +69,15 @@ public class LabelRestService {
     }
 
     @Operation(summary = "Change label status")
-    @PutMapping(value = "{id}/changeStatus")
+    @PutMapping(value = "{id}/change-status")
     public PayloadResponse<LabelResponse> changeStatus(
             @Parameter(required = true, description = "ID of the label") @PathVariable final Long id) throws ApiException {
         return labelService.changeStatus(new EntityRequest<>(id));
     }
 
-    /*
-     * @Operation(summary = "Delete label")
-     *
-     * @DeleteMapping(value = "{id}/delete") public PayloadResponse<Label>
-     * delete(@Parameter(required = true, description =
-     * "ID of the label") @PathVariable final Long id) throws ApiException {
-     * return labelService.delete(new EntityRequest<>(id)); }
-     */
-
     @Operation(summary = "Delete label")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<LabelResponse> delete(@Parameter(required = true, description = "ID of the label") @PathVariable final Long id)
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the label") @PathVariable final Long id)
             throws ApiException {
 
         return labelService.delete(new EntityRequest<>(id));

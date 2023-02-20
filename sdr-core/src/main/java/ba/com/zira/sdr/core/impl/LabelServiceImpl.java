@@ -100,14 +100,17 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<LabelResponse> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
         labelReqVal.validateExistsLabelRequest(request);
 
         var labelEntity = labelDAO.findByPK(request.getEntity());
-
+        if (labelEntity.getFounder() != null) {
+            return new PayloadResponse<>(request, ResponseCode.ACCESS_DENIED, "Access denied because there is relation with founder");
+        }
         labelDAO.remove(labelEntity);
 
-        return new PayloadResponse<>(request, ResponseCode.OK, labelMapper.entityToDto(labelEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, "Label successfully deleted!");
+
     }
 
 }
