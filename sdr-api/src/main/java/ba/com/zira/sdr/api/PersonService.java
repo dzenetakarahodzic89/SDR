@@ -17,8 +17,6 @@ public interface PersonService {
 
 	PayloadResponse<PersonResponse> update(final EntityRequest<PersonUpdateRequest> entityRequest) throws ApiException;
 
-	PayloadResponse<PersonResponse> activate(EntityRequest<Long> request) throws ApiException;
-
 	PayloadResponse<PersonResponse> delete(final EntityRequest<Long> entityRequest);
 
 }

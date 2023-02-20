@@ -59,14 +59,6 @@ public class PersonRestService {
 		return personService.update(new EntityRequest<>(person));
 	}
 
-	@Operation(summary = "Activate person")
-	@PutMapping(value = "{id}/activate")
-	public PayloadResponse<PersonResponse> activate(
-			@Parameter(required = true, description = "ID of the person") @PathVariable final Long id)
-			throws ApiException {
-		return personService.activate(new EntityRequest<>(id));
-	}
-
 	@Operation(summary = "Delete person")
 	@DeleteMapping(value = "{id}")
 	public PayloadResponse<PersonResponse> delete(

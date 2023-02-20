@@ -68,18 +68,6 @@ public class PersonServiceImpl implements PersonService {
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public PayloadResponse<PersonResponse> activate(final EntityRequest<Long> request) throws ApiException {
-		personRequestValidation.validateExistsPersonRequest(request);
-		var personEntity = personDAO.findByPK(request.getEntity());
-		personEntity.setStatus(Status.ACTIVE.value());
-		personEntity.setModified(LocalDateTime.now());
-		personEntity.setModifiedBy(request.getUser().getUserId());
-		personDAO.persist(personEntity);
-		return new PayloadResponse<>(request, ResponseCode.OK, personMapper.entityToDto(personEntity));
-	}
-
-	@Override
-	@Transactional(rollbackFor = Exception.class)
 	public PayloadResponse<PersonResponse> delete(final EntityRequest<Long> entityRequest) {
 		personRequestValidation.validateExistsPersonRequest(entityRequest);
 		PersonEntity deletedEntity = personDAO.findByPK(entityRequest.getEntity());
