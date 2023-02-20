@@ -1,25 +1,27 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
-import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
-import ba.com.zira.commons.message.response.ListPayloadResponse;
+import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
+import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.ChordProgressionService;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionCreateRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
+import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.ChordProgressionMapper;
 import ba.com.zira.sdr.core.validation.ChordProgressionValidation;
 import ba.com.zira.sdr.dao.ChordProgressionDAO;
+import ba.com.zira.sdr.dao.model.ChordProgressionEntity;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -29,12 +31,6 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
     ChordProgressionDAO chordProgressionDAO;
     ChordProgressionMapper chordProgressionMapper;
     ChordProgressionValidation chordProgressionValidator;
-
-    @Override
-    public ListPayloadResponse<ChordProgressionResponse> getAll(EmptyRequest req) throws ApiException {
-        List<ChordProgressionResponse> chordProgressionList = chordProgressionDAO.getAllChordProgressions();
-        return new ListPayloadResponse<>(req, ResponseCode.OK, chordProgressionList);
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -68,6 +64,18 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
         chordProgressionEntity.setModifiedBy(request.getUserId());
         chordProgressionDAO.merge(chordProgressionEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, chordProgressionMapper.entityToDto(chordProgressionEntity));
+    }
+
+    @Override
+    public PagedPayloadResponse<ChordProgressionResponse> find(final FilterRequest request) throws ApiException {
+        PagedData<ChordProgressionEntity> genreEntities = chordProgressionDAO.findAll(request.getFilter());
+        PagedData<ChordProgressionResponse> genres = new PagedData<ChordProgressionResponse>();
+        genres.setRecords(chordProgressionMapper.entitiesToDtos(genreEntities.getRecords()));
+        PagedDataMetadataMapper.remapMetadata(genreEntities, genres);
+        genres.getRecords().forEach(genre -> {
+            genre.setSongNames(chordProgressionDAO.songsByChordProgression(genre.getId()));
+        });
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, genres);
     }
 
 }

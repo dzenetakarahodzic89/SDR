@@ -41,6 +41,13 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi chordProgression() {
+        return GroupedOpenApi.builder().group("chordProgression-api").packagesToScan("ba.com.zira.sdr.chordprogression.rest")
+
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi multisearchApi() {
         return GroupedOpenApi.builder().group("multisearch-api").packagesToScan("ba.com.zira.sdr.multisearch.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();

@@ -14,27 +14,27 @@ import lombok.AllArgsConstructor;
 @Component("personRequestValidation")
 public class PersonRequestValidation {
 
-	private PersonDAO personDAO;
+    private PersonDAO personDAO;
 
-	public ValidationResponse validateUpdatePersonRequest(final EntityRequest<PersonUpdateRequest> request) {
-		ValidationErrors errors = new ValidationErrors();
-		errors.put(exists(request.getEntity().getId()));
+    public ValidationResponse validateUpdatePersonRequest(final EntityRequest<PersonUpdateRequest> request) {
+        ValidationErrors errors = new ValidationErrors();
+        errors.put(exists(request.getEntity().getId()));
 
-		return ValidationResponse.of(request, errors);
-	}
+        return ValidationResponse.of(request, errors);
+    }
 
-	public ValidationResponse validateExistsPersonRequest(final EntityRequest<Long> request) {
-		ValidationErrors errors = new ValidationErrors();
-		errors.put(exists(request.getEntity()));
+    public ValidationResponse validateExistsPersonRequest(final EntityRequest<Long> request) {
+        ValidationErrors errors = new ValidationErrors();
+        errors.put(exists(request.getEntity()));
 
-		return ValidationResponse.of(request, errors);
-	}
+        return ValidationResponse.of(request, errors);
+    }
 
-	private ValidationError exists(Long id) {
-		if (!personDAO.existsByPK(id)) {
-			return ValidationError.of("PERSON_NOT_FOUND", "Person with id: " + id + " does not exist!");
-		}
-		return null;
-	}
+    private ValidationError exists(Long id) {
+        if (!personDAO.existsByPK(id)) {
+            return ValidationError.of("PERSON_NOT_FOUND", "Person with id: " + id + " does not exist!");
+        }
+        return null;
+    }
 
 }

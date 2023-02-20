@@ -16,14 +16,12 @@ public class AudioDBIntegrationRequestValidation {
 
     private AudioDBIntegrationDAO audioDBIntegrationDAO;
 
-
     public ValidationResponse validateUpdateAudioDBIntegrationRequest(final EntityRequest<AudioDBIntegrationUpdateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(exists(request.getEntity().getId()));
 
         return ValidationResponse.of(request, errors);
     }
-
 
     public ValidationResponse validateExistsAudioDBIntegrationRequest(final EntityRequest<Long> request) {
         ValidationErrors errors = new ValidationErrors();
@@ -34,12 +32,9 @@ public class AudioDBIntegrationRequestValidation {
 
     private ValidationError exists(Long id) {
         if (!audioDBIntegrationDAO.existsByPK(id)) {
-            return ValidationError.of("SAMPLE_NOT_FOUND","Sample with id: " + id + " does not exist!");
+            return ValidationError.of("SAMPLE_NOT_FOUND", "Sample with id: " + id + " does not exist!");
         }
         return null;
     }
 
-
-
 }
-
