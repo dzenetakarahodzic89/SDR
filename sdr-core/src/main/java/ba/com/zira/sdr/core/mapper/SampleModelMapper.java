@@ -17,6 +17,7 @@ import ba.com.zira.sdr.dao.model.SampleModelEntity;
  * @author zira
  *
  */
+
 @Mapper(componentModel = "spring")
 public interface SampleModelMapper {
 
