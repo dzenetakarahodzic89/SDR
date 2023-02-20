@@ -19,9 +19,9 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.CommentService;
-import ba.com.zira.sdr.api.model.comment.CommentModel;
-import ba.com.zira.sdr.api.model.comment.CommentModelCreateRequest;
-import ba.com.zira.sdr.api.model.comment.CommentModelUpdateRequest;
+import ba.com.zira.sdr.api.model.comment.Comment;
+import ba.com.zira.sdr.api.model.comment.CommentCreateRequest;
+import ba.com.zira.sdr.api.model.comment.CommentUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,14 +37,14 @@ public class CommentRestService {
 
     @Operation(summary = "Find Comment base on filter criteria")
     @GetMapping
-    public PagedPayloadResponse<CommentModel> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
+    public PagedPayloadResponse<Comment> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
             throws ApiException {
         return commentService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
     @Operation(summary = "Create comment")
     @PostMapping
-    public PayloadResponse<CommentModel> create(@RequestBody final CommentModelCreateRequest comment) throws ApiException {
+    public PayloadResponse<Comment> create(@RequestBody final CommentCreateRequest comment) throws ApiException {
         return commentService.create(new EntityRequest<>(comment));
     }
 
@@ -52,8 +52,8 @@ public class CommentRestService {
     
     @Operation(summary = "Update Comment")
     @PutMapping(value = "{id}")
-    public PayloadResponse<CommentModel> edit(@Parameter(required = true, description = "ID of the comment") @PathVariable final Long id,
-            @RequestBody final CommentModelUpdateRequest comment) throws ApiException {
+    public PayloadResponse<Comment> edit(@Parameter(required = true, description = "ID of the comment") @PathVariable final Long id,
+            @RequestBody final CommentUpdateRequest comment) throws ApiException {
         if (comment != null) {
             comment.setId(id);
         }
@@ -64,16 +64,10 @@ public class CommentRestService {
     
     @Operation(summary = "Delete comment")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<CommentModel> delete(@Parameter(required = true, description = "ID of the sample") @PathVariable final Long id) throws ApiException {
+    public PayloadResponse<Comment> delete(@Parameter(required = true, description = "ID of the sample") @PathVariable final Long id) throws ApiException {
         return commentService.delete(new EntityRequest<>(id));
     }
 
-  @Operation(summary = "Activate comment")
-  
-  @PutMapping(value = "{id}/activate") public PayloadResponse<CommentModel>
-  activate(@Parameter(required = true, description =
-  "ID of the comment") @PathVariable final Long id) throws ApiException { return
-  commentService.activate(new EntityRequest<>(id)); } 
   
  
 }

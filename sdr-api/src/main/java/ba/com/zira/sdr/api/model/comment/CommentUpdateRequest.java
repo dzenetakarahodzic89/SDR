@@ -10,12 +10,12 @@ import lombok.Data;
 
 @Data
 @Schema(description = "Properties for update a comment")
-public class CommentModelUpdateRequest implements Serializable {
+public class CommentUpdateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Min(1)
     @Schema(description = "Unique identifier of the comment")
-    private long id;
+    private Long id;
     @NotBlank
     @Schema(description = "Content of comment")
     private String content;

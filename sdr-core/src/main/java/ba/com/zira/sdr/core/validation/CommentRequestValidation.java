@@ -6,7 +6,7 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
-import ba.com.zira.sdr.api.model.comment.CommentModelUpdateRequest;
+import ba.com.zira.sdr.api.model.comment.CommentUpdateRequest;
 import ba.com.zira.sdr.dao.CommentDAO;
 import ba.com.zira.sdr.api.CommentService;
 import lombok.AllArgsConstructor;
@@ -33,7 +33,7 @@ public class CommentRequestValidation {
      * 
      * @return {@link ValidationResponse}
      */
-    public ValidationResponse validateUpdateCommentModelRequest(final EntityRequest<CommentModelUpdateRequest> request) {
+    public ValidationResponse validateUpdateCommentModelRequest(final EntityRequest<CommentUpdateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(exists(request.getEntity().getId()));
         

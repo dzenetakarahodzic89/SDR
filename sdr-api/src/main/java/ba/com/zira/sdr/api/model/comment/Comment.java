@@ -8,15 +8,13 @@ import lombok.Data;
 
 @Data
 @Schema(description = "Properties of a comment response")
-public class CommentModel implements Serializable {
+public class Comment implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "Unique identifier of the comment")
     private Long id;
     @Schema(description = "Contet of comment")
     private String content;
-    //@Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
-    //private String status;
     @Schema(description = "Creation date")
     private LocalDateTime created;
     @Schema(description = "User that created the comment")
@@ -26,7 +24,7 @@ public class CommentModel implements Serializable {
     @Schema(description = "User that modified the comment") //only person who create comment can edit
     private String modifiedBy;
     @Schema(description = "Id of the object")
-    private long objectId;
+    private Long objectId;
     @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
     private String status;
     @Schema(description = "user code")

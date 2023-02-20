@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "Properties for creation of a comment")
-public class CommentModelCreateRequest implements Serializable {
+public class CommentCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank
@@ -18,7 +18,7 @@ public class CommentModelCreateRequest implements Serializable {
     @Schema(description = "User that created the comment")
     private String createdBy;
     @Schema(description = "Id of the object")
-    private long objectId;
+    private Long objectId;
     @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
     private String status;
     @Schema(description = " Type of the object_type")
