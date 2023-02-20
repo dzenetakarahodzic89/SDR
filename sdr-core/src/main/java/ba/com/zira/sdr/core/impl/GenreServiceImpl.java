@@ -45,8 +45,8 @@ public class GenreServiceImpl implements GenreService {
 
         var genreEntity = genreMapper.dtoToEntity(request.getEntity());
 
-        if (request.getEntity().getMainGenreID() != null) {
-            var mainGenreEntity = genreDAO.findByPK(request.getEntity().getMainGenreID());
+        if (request.getEntity().getMainGenreId() != null) {
+            var mainGenreEntity = genreDAO.findByPK(request.getEntity().getMainGenreId());
             genreEntity.setMainGenre(mainGenreEntity);
         }
 
@@ -64,33 +64,15 @@ public class GenreServiceImpl implements GenreService {
         genreRequestValidation.validateGenreUpdateRequest(request);
 
         var genreEntity = genreDAO.findByPK(request.getEntity().getId());
-        System.out.println(genreEntity.getName());
-        System.out.println(genreEntity.getType());
         genreMapper.updateEntity(request.getEntity(), genreEntity);
 
-        System.out.println(request.getEntity().toString());
-        System.out.println(genreEntity.getName());
-        System.out.println(genreEntity.getType());
-        if (request.getEntity().getMainGenreID() != null) {
-            var mainGenreEntity = genreDAO.findByPK(request.getEntity().getMainGenreID());
+        if (request.getEntity().getMainGenreId() != null) {
+            var mainGenreEntity = genreDAO.findByPK(request.getEntity().getMainGenreId());
             genreEntity.setMainGenre(mainGenreEntity);
         }
 
         genreEntity.setModified(Timestamp.valueOf(LocalDateTime.now()));
         genreEntity.setModifiedBy(request.getUserId());
-        genreDAO.merge(genreEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, genreMapper.entityToDto(genreEntity));
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Genre> activate(final EntityRequest<Long> request) throws ApiException {
-        genreRequestValidation.validateExistsGenreRequest(request);
-
-        var genreEntity = genreDAO.findByPK(request.getEntity());
-        genreEntity.setStatus(Status.ACTIVE.value());
-        genreEntity.setModified(Timestamp.valueOf(LocalDateTime.now()));
-        genreEntity.setModifiedBy(request.getUser().getUserId());
         genreDAO.merge(genreEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, genreMapper.entityToDto(genreEntity));
     }

@@ -29,7 +29,7 @@ public class GenreUpdateRequest implements Serializable {
     @Schema(description = "Type")
     private String type;
 
-    @Schema(description = "Main genre ID")
-    private Long mainGenreID;
+    @Schema(description = "Main genre Id")
+    private Long mainGenreId;
 
 }

@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.dao;
 
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,7 @@ import ba.com.zira.sdr.dao.model.SongEntity;
 @Repository
 public class GenreDAO extends AbstractDAO<GenreEntity, Long> {
 
-    public boolean existsByName(String name) {
+    public Boolean existsByName(String name) {
         var hql = "select g from GenreEntity g where g.name = :name";
         TypedQuery<GenreEntity> q = entityManager.createQuery(hql, GenreEntity.class).setParameter("name", name);
         try {
@@ -23,7 +24,7 @@ public class GenreDAO extends AbstractDAO<GenreEntity, Long> {
         }
     }
 
-    public boolean existsByName(String name, Long id) {
+    public Boolean existsByName(String name, Long id) {
         var hql = "select g from GenreEntity g where g.name = :name and g.id != :id";
         TypedQuery<GenreEntity> q = entityManager.createQuery(hql, GenreEntity.class).setParameter("name", name).setParameter("id", id);
         try {
@@ -34,14 +35,14 @@ public class GenreDAO extends AbstractDAO<GenreEntity, Long> {
         }
     }
 
-    public boolean subGenresExist(Long id) {
+    public Boolean subGenresExist(Long id) {
         var hql = "select g from GenreEntity g where g.mainGenre.id = :id";
         TypedQuery<GenreEntity> q = entityManager.createQuery(hql, GenreEntity.class).setParameter("id", id);
-
         try {
-            q.setFirstResult(0);
-            q.setMaxResults(1);
+
             q.getSingleResult();
+            return true;
+        } catch (NonUniqueResultException e) {
             return true;
         } catch (NoResultException e) {
             return false;
@@ -49,14 +50,14 @@ public class GenreDAO extends AbstractDAO<GenreEntity, Long> {
 
     }
 
-    public boolean songsExist(Long id) {
+    public Boolean songsExist(Long id) {
         var hql = "select s from SongEntity s where s.genre.id = :id";
         TypedQuery<SongEntity> q = entityManager.createQuery(hql, SongEntity.class).setParameter("id", id);
-
         try {
-            q.setFirstResult(0);
-            q.setMaxResults(1);
+
             q.getSingleResult();
+            return true;
+        } catch (NonUniqueResultException e) {
             return true;
         } catch (NoResultException e) {
             return false;

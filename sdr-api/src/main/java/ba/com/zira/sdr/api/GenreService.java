@@ -13,12 +13,10 @@ public interface GenreService {
 
     public PagedPayloadResponse<Genre> find(final FilterRequest request) throws ApiException;
 
-    PayloadResponse<Genre> create(EntityRequest<GenreCreateRequest> request) throws ApiException;
+    public PayloadResponse<Genre> create(EntityRequest<GenreCreateRequest> request) throws ApiException;
 
-    PayloadResponse<Genre> update(EntityRequest<GenreUpdateRequest> request) throws ApiException;
+    public PayloadResponse<Genre> update(EntityRequest<GenreUpdateRequest> request) throws ApiException;
 
-    PayloadResponse<Genre> activate(EntityRequest<Long> request) throws ApiException;
-
-    PayloadResponse<Genre> delete(EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<Genre> delete(EntityRequest<Long> request) throws ApiException;
 
 }

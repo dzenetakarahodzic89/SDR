@@ -12,18 +12,18 @@ import ba.com.zira.sdr.api.model.genre.SubGenre;
 import ba.com.zira.sdr.dao.model.GenreEntity;
 
 @Mapper(componentModel = "spring")
-public abstract class GenreMapper {
+public interface GenreMapper {
 
-    public abstract GenreEntity dtoToEntity(GenreCreateRequest genre);
+    GenreEntity dtoToEntity(GenreCreateRequest genre);
 
-    public abstract Genre entityToDto(GenreEntity genreEntity);
+    Genre entityToDto(GenreEntity genreEntity);
 
-    public abstract List<Genre> entitiesToDtos(List<GenreEntity> genreEntities);
+    List<Genre> entitiesToDtos(List<GenreEntity> genreEntities);
 
-    public abstract GenreEntity updateEntity(GenreUpdateRequest genre, @MappingTarget GenreEntity genreEntity);
+    void updateEntity(GenreUpdateRequest genre, @MappingTarget GenreEntity genreEntity);
 
-    public abstract SubGenre entityToSubGenreDto(GenreEntity genreEntity);
+    SubGenre entityToSubGenreDto(GenreEntity genreEntity);
 
-    public abstract List<SubGenre> entitiesToSubGenreDtos(List<GenreEntity> genreEntities);
+    List<SubGenre> entitiesToSubGenreDtos(List<GenreEntity> genreEntities);
 
 }

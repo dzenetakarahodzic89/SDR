@@ -21,8 +21,8 @@ public class GenreRequestValidation {
 
         errors.put(nameExists(request.getEntity().getName()));
 
-        if (request.getEntity().getMainGenreID() != null) {
-            errors.put(genreExists(request.getEntity().getMainGenreID()));
+        if (request.getEntity().getMainGenreId() != null) {
+            errors.put(genreExists(request.getEntity().getMainGenreId()));
         }
 
         return ValidationResponse.of(request, errors);
@@ -36,8 +36,8 @@ public class GenreRequestValidation {
             errors.put(nameExists(request.getEntity().getName(), request.getEntity().getId()));
         }
 
-        if (request.getEntity().getMainGenreID() != null) {
-            errors.put(genreExists(request.getEntity().getMainGenreID()));
+        if (request.getEntity().getMainGenreId() != null) {
+            errors.put(genreExists(request.getEntity().getMainGenreId()));
         }
 
         return ValidationResponse.of(request, errors);

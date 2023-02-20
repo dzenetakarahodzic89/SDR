@@ -50,7 +50,7 @@ public class GenreRestService {
 
     @Operation(summary = "Update a genre")
     @PutMapping(value = "{id}")
-    public PayloadResponse<Genre> edit(@Parameter(required = true, description = "ID of the genre") @PathVariable final Long id,
+    public PayloadResponse<Genre> edit(@Parameter(required = true, description = "Id of the genre") @PathVariable final Long id,
             @RequestBody final GenreUpdateRequest genre) throws ApiException {
         if (genre != null) {
             genre.setId(id);
@@ -58,16 +58,9 @@ public class GenreRestService {
         return genreService.update(new EntityRequest<>(genre));
     }
 
-    @Operation(summary = "Activate genre")
-    @PutMapping(value = "{id}/activate")
-    public PayloadResponse<Genre> activate(@Parameter(required = true, description = "ID of the genre") @PathVariable final Long id)
-            throws ApiException {
-        return genreService.activate(new EntityRequest<>(id));
-    }
-
     @Operation(summary = "Delete a genre")
     @DeleteMapping(value = "{id}/delete")
-    public PayloadResponse<Genre> delete(@Parameter(required = true, description = "ID of the genre") @PathVariable final Long id)
+    public PayloadResponse<Genre> delete(@Parameter(required = true, description = "Id of the genre") @PathVariable final Long id)
             throws ApiException {
         return genreService.delete(new EntityRequest<>(id));
     }
