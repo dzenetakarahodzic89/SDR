@@ -13,11 +13,9 @@ public interface MoritsIntegrationService {
 
     public PagedPayloadResponse<MoritsIntegration> find(final FilterRequest request) throws ApiException;
 
-    PayloadResponse<MoritsIntegration> create(EntityRequest<MoritsIntegrationCreateRequest> request) throws ApiException;
+    public PayloadResponse<MoritsIntegration> create(EntityRequest<MoritsIntegrationCreateRequest> request) throws ApiException;
 
-    PayloadResponse<MoritsIntegration> update(EntityRequest<MoritsIntegrationUpdateRequest> request) throws ApiException;
+    public PayloadResponse<MoritsIntegration> update(EntityRequest<MoritsIntegrationUpdateRequest> request) throws ApiException;
 
-    PayloadResponse<MoritsIntegration> activate(EntityRequest<Long> request) throws ApiException;
-
-    PayloadResponse<MoritsIntegration> delete(EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<MoritsIntegration> delete(EntityRequest<Long> request) throws ApiException;
 }

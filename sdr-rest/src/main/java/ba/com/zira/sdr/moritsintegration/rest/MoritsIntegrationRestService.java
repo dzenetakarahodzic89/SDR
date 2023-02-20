@@ -29,7 +29,7 @@ import lombok.AllArgsConstructor;
 
 @Tag(name = "moritsintegration", description = "Morits Lyrics Integration API")
 @RestController
-@RequestMapping(value = "moritsintegration")
+@RequestMapping(value = "morits-integration")
 @AllArgsConstructor
 public class MoritsIntegrationRestService {
 
@@ -58,14 +58,6 @@ public class MoritsIntegrationRestService {
             moritsIntegration.setId(id);
         }
         return moritsIntegrationService.update(new EntityRequest<>(moritsIntegration));
-    }
-
-    @Operation(summary = "Activate morits lyric integration")
-    @PutMapping(value = "{id}/activate")
-    public PayloadResponse<MoritsIntegration> activate(
-            @Parameter(required = true, description = "ID of the morits lyric integration") @PathVariable final Long id)
-            throws ApiException {
-        return moritsIntegrationService.activate(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Delete morits lyric integration")
