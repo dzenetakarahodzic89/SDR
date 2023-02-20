@@ -47,8 +47,8 @@ public class SongArtistRestService {
 
     @Operation(summary = "Delete song artist")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<SongArtistResponse> delete(
-            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) throws ApiException {
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the record") @PathVariable final Long id)
+            throws ApiException {
         EntityRequest<Long> entityRequest = new EntityRequest<>();
         entityRequest.setEntity(id);
         return songArtistService.delete(entityRequest);

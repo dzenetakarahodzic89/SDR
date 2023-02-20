@@ -66,12 +66,10 @@ public class SongArtistServiceImpl implements SongArtistService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SongArtistResponse> delete(final EntityRequest<Long> entityRequest) {
+    public PayloadResponse<String> delete(final EntityRequest<Long> entityRequest) {
         songArtistRequestValidation.validateDeleteSongArtistRequest(entityRequest);
-
-        SongArtistEntity deletedEntity = songArtistDAO.findByPK(entityRequest.getEntity());
-
         songArtistDAO.removeByPK(entityRequest.getEntity());
-        return new PayloadResponse<>(entityRequest, ResponseCode.OK, songArtistMapper.entityToDto(deletedEntity));
+
+        return new PayloadResponse<>(entityRequest, ResponseCode.OK, "Deleted record successfully!");
     }
 }
