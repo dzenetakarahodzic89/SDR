@@ -15,8 +15,6 @@ import ba.com.zira.sdr.dao.model.CountryEntity;
 public interface CountryMapper {
     CountryEntity dtoToEntity(CountryCreateRequest countryCreateRequest);
 
-    CountryEntity dtoToEntity(CountryUpdateRequest countryUpdateRequest);
-
     CountryResponse entityToDto(CountryEntity countryEntity);
 
     void updateEntity(CountryUpdateRequest updateRequest, @MappingTarget CountryEntity countryEntity);

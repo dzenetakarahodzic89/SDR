@@ -18,6 +18,7 @@ import ba.com.zira.sdr.api.model.country.CountryCreateRequest;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.country.CountryUpdateRequest;
 import ba.com.zira.sdr.core.mapper.CountryMapper;
+import ba.com.zira.sdr.core.validation.CountryRequestValidation;
 import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.model.CountryEntity;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ import lombok.AllArgsConstructor;
 public class CountryServiceImpl implements CountryService {
     CountryDAO countryDAO;
     CountryMapper countryMapper;
+    CountryRequestValidation countryRequestValidation;
 
     @Override
     public PagedPayloadResponse<CountryResponse> get(FilterRequest filterRequest) throws ApiException {
@@ -50,6 +52,8 @@ public class CountryServiceImpl implements CountryService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<CountryResponse> update(EntityRequest<CountryUpdateRequest> request) throws ApiException {
+        countryRequestValidation.validateUpdateCountryRequest(request);
+
         CountryEntity countryEntity = countryDAO.findByPK(request.getEntity().getId());
         countryMapper.updateEntity(request.getEntity(), countryEntity);
         countryDAO.merge(countryEntity);
@@ -59,6 +63,7 @@ public class CountryServiceImpl implements CountryService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException {
+        countryRequestValidation.validateDeleteCountryRequest(request);
         countryDAO.removeByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, "Country removed successfully!");
     }
