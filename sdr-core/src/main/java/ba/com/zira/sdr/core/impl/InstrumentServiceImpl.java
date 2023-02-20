@@ -47,7 +47,7 @@ public class InstrumentServiceImpl implements InstrumentService {
         instrumentEntity.setCreatedBy(request.getUserId());
         instrumentEntity.setModifiedBy(request.getUserId());
 
-        instrumentDAO.merge(instrumentEntity);
+        instrumentDAO.persist(instrumentEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
@@ -61,7 +61,7 @@ public class InstrumentServiceImpl implements InstrumentService {
         instrumentEntity.setModified(LocalDateTime.now());
         instrumentEntity.setModifiedBy(entityRequest.getUserId());
 
-        instrumentDAO.persist(instrumentEntity);
+        instrumentDAO.merge(instrumentEntity);
         return new PayloadResponse<>(entityRequest, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
@@ -74,7 +74,7 @@ public class InstrumentServiceImpl implements InstrumentService {
         instrumentEntity.setStatus(Status.ACTIVE.value());
         instrumentEntity.setModified(LocalDateTime.now());
         instrumentEntity.setModifiedBy(request.getUser().getUserId());
-        instrumentDAO.persist(instrumentEntity);
+        instrumentDAO.merge(instrumentEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 

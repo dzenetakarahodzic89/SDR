@@ -12,10 +12,7 @@ import lombok.Data;
 public class InstrumentCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @NotNull
-    @Schema(description = "Unique identifier of the instrument")
-    private Long id;
-
+    
     @Schema(description = "instrument name")
     private String instrumentName;
 
