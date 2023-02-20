@@ -26,27 +26,9 @@ public class SwaggerConfiguration {
 				.addOperationCustomizer(ziraOperationCustomizer).build();
 	}
 
-    @Bean
-    public GroupedOpenApi genreApi() {
-        return GroupedOpenApi.builder().group("genre-api").packagesToScan("ba.com.zira.sdr.genre.rest")
-                .addOperationCustomizer(ziraOperationCustomizer).build();
-    }
-
-    @Bean
-    public GroupedOpenApi multisearchApi() {
-        return GroupedOpenApi.builder().group("multisearch-api").packagesToScan("ba.com.zira.sdr.multisearch.rest")
-                .addOperationCustomizer(ziraOperationCustomizer).build();
-    }
-
-    @Bean
-    public GroupedOpenApi artistSongApi() {
-        return GroupedOpenApi.builder().group("songartist-api").packagesToScan("ba.com.zira.sdr.songartist.rest")
-                .addOperationCustomizer(ziraOperationCustomizer).build();
-    }
-
 	@Bean
-	public GroupedOpenApi sampleApi() {
-		return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
+	public GroupedOpenApi genreApi() {
+		return GroupedOpenApi.builder().group("genre-api").packagesToScan("ba.com.zira.sdr.genre.rest")
 				.addOperationCustomizer(ziraOperationCustomizer).build();
 	}
 
@@ -56,11 +38,23 @@ public class SwaggerConfiguration {
 				.addOperationCustomizer(ziraOperationCustomizer).build();
 	}
 
-    @Bean
-    public OpenAPI ziraOpenAPI() {
-        return new OpenAPI().info(new Info().title("ZIRA API").description("ZIRA API").version("0.0.1-SNAPSHOT")
-                .contact(new Contact().name("ZIRA").url("http://www.zira.com.ba").email("info@zira.com.ba"))
-                .license(new License().name("ZIRA proprietary service").url("http://www.zira.com.ba/")));
-    }
+	@Bean
+	public GroupedOpenApi artistSongApi() {
+		return GroupedOpenApi.builder().group("songartist-api").packagesToScan("ba.com.zira.sdr.songartist.rest")
+				.addOperationCustomizer(ziraOperationCustomizer).build();
+	}
+
+	@Bean
+	public GroupedOpenApi sampleApi() {
+		return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
+				.addOperationCustomizer(ziraOperationCustomizer).build();
+	}
+
+	@Bean
+	public OpenAPI ziraOpenAPI() {
+		return new OpenAPI().info(new Info().title("ZIRA API").description("ZIRA API").version("0.0.1-SNAPSHOT")
+				.contact(new Contact().name("ZIRA").url("http://www.zira.com.ba").email("info@zira.com.ba"))
+				.license(new License().name("ZIRA proprietary service").url("http://www.zira.com.ba/")));
+	}
 
 }
