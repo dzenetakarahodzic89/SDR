@@ -40,14 +40,11 @@ public class LyricServiceImpl implements LyricService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<Lyric> create(final EntityRequest<LyricCreateRequest> request) throws ApiException {
-        // lyricRequestValidation.validateCreateLyricRequest(request);
 
         var lyricEntity = lyricMapper.dtoToEntity(request.getEntity());
         lyricEntity.setStatus(Status.ACTIVE.value());
         lyricEntity.setCreated(LocalDateTime.now());
         lyricEntity.setCreatedBy(request.getUserId());
-        lyricEntity.setModified(LocalDateTime.now());
-        lyricEntity.setModifiedBy(request.getUserId());
 
         lyricDAO.persist(lyricEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, lyricMapper.entityToDto(lyricEntity));
@@ -63,19 +60,6 @@ public class LyricServiceImpl implements LyricService {
 
         lyricEntity.setModified(LocalDateTime.now());
         lyricEntity.setModifiedBy(request.getUserId());
-        lyricDAO.merge(lyricEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, lyricMapper.entityToDto(lyricEntity));
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Lyric> activate(final EntityRequest<Long> request) throws ApiException {
-        lyricRequestValidation.validateExistsLyricRequest(request);
-
-        var lyricEntity = lyricDAO.findByPK(request.getEntity());
-        lyricEntity.setStatus(Status.ACTIVE.value());
-        lyricEntity.setModified(LocalDateTime.now());
-        lyricEntity.setModifiedBy(request.getUser().getUserId());
         lyricDAO.merge(lyricEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, lyricMapper.entityToDto(lyricEntity));
     }

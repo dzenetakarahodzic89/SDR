@@ -11,12 +11,6 @@ import ba.com.zira.sdr.api.model.lyric.LyricCreateRequest;
 import ba.com.zira.sdr.api.model.lyric.LyricUpdateRequest;
 import ba.com.zira.sdr.dao.model.LyricEntity;
 
-/**
- * Defined mapper interface for mapping a DTO to Entity model class
- *
- * @author zira
- *
- */
 @Mapper(componentModel = "spring")
 public interface LyricMapper {
 

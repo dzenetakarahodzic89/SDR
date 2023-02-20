@@ -41,7 +41,7 @@ public class SwaggerConfiguration {
 
     @Bean
     public GroupedOpenApi lyricApi() {
-        return GroupedOpenApi.builder().group("lyric-api").packagesToScan("ba.com.zira.sdr.rest")
+        return GroupedOpenApi.builder().group("lyric-api").packagesToScan("ba.com.zira.sdr.lyric.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 

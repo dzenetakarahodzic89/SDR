@@ -1,4 +1,4 @@
-package ba.com.zira.sdr.rest;
+package ba.com.zira.sdr.lyric.rest;
 
 import java.util.Map;
 
@@ -56,13 +56,6 @@ public class LyricRestService {
             lyric.setId(id);
         }
         return lyricService.update(new EntityRequest<>(lyric));
-    }
-
-    @Operation(summary = "Activate lyric")
-    @PutMapping(value = "{id}/activate")
-    public PayloadResponse<Lyric> activate(@Parameter(required = true, description = "ID of the lyric") @PathVariable final Long id)
-            throws ApiException {
-        return lyricService.activate(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Delete lyric")
