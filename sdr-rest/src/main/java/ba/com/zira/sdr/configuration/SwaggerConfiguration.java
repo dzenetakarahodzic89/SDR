@@ -23,6 +23,8 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi audioDBIntegrationApi() {
         return GroupedOpenApi.builder().group("audioDBIntegration-api").packagesToScan("ba.com.zira.sdr.audiodbintegration.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
 
     public GroupedOpenApi personApi() {
         return GroupedOpenApi.builder().group("person-api").packagesToScan("ba.com.zira.sdr.person.rest")
@@ -30,14 +32,10 @@ public class SwaggerConfiguration {
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
-    @Bean
-<<<<<<< sdr-rest/src/main/java/ba/com/zira/sdr/configuration/SwaggerConfiguration.java
-    public GroupedOpenApi sampleApi() {
-        return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
-=======
+
     public GroupedOpenApi genreApi() {
         return GroupedOpenApi.builder().group("genre-api").packagesToScan("ba.com.zira.sdr.genre.rest")
->>>>>>> sdr-rest/src/main/java/ba/com/zira/sdr/configuration/SwaggerConfiguration.java
+
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
