@@ -25,6 +25,31 @@ public class SwaggerConfiguration {
         return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
+    
+    @Bean
+    public GroupedOpenApi commentApi() {
+        return GroupedOpenApi.builder().group("comment-api").packagesToScan("ba.com.zira.sdr.comment.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+
+    @Bean
+    public GroupedOpenApi genreApi() {
+        return GroupedOpenApi.builder().group("genre-api").packagesToScan("ba.com.zira.sdr.genre.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi albumApi() {
+        return GroupedOpenApi.builder().group("album-api").packagesToScan("ba.com.zira.sdr.album.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi labelApi() {
+        return GroupedOpenApi.builder().group("label-api").packagesToScan("ba.com.zira.sdr.label.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
 
     @Bean
     public GroupedOpenApi multisearchApi() {
@@ -50,5 +75,7 @@ public class SwaggerConfiguration {
                 .contact(new Contact().name("ZIRA").url("http://www.zira.com.ba").email("info@zira.com.ba"))
                 .license(new License().name("ZIRA proprietary service").url("http://www.zira.com.ba/")));
     }
+    
+    
 
 }
