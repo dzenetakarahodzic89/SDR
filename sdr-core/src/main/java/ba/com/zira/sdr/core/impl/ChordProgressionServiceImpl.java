@@ -43,8 +43,6 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
         chordProgressEntity.setStatus(Status.ACTIVE.value());
         chordProgressEntity.setCreated(LocalDateTime.now());
         chordProgressEntity.setCreatedBy(request.getUserId());
-        chordProgressEntity.setModified(LocalDateTime.now());
-        chordProgressEntity.setModifiedBy(request.getUserId());
 
         chordProgressionDAO.persist(chordProgressEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, chordProgressionMapper.entityToDto(chordProgressEntity));
