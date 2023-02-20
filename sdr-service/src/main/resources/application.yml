@@ -46,7 +46,7 @@ eureka:
   instance:
     preferIpAddress: true
   client:
-    registerWithEureka: true
+    registerWithEureka: false
     serviceUrl:
       defaultZone: http://172.20.20.45:8081/eureka
   
