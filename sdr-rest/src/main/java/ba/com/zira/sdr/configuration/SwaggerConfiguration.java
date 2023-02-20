@@ -21,12 +21,18 @@ public class SwaggerConfiguration {
     }
 
     @Bean
-    public GroupedOpenApi audioDBIntegrationApi() {
-        return GroupedOpenApi.builder().group("audioDBIntegration-api").packagesToScan("ba.com.zira.sdr.audiodbintegration.rest")
+    public GroupedOpenApi instrumentApi() {
+        return GroupedOpenApi.builder().group("instrument-api").packagesToScan("ba.com.zira.sdr.instrument.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
-    @Bean
+    public GroupedOpenApi audioDBIntegrationApi() {
+        return GroupedOpenApi.builder().group("audioDBIntegration-api").packagesToScan("ba.com.zira.sdr.audiodbintegration.rest")
+
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+ 
+
     public GroupedOpenApi personApi() {
         return GroupedOpenApi.builder().group("person-api").packagesToScan("ba.com.zira.sdr.person.rest")
 
@@ -40,12 +46,18 @@ public class SwaggerConfiguration {
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
-    @Bean
+ @Bean
     public GroupedOpenApi chordProgression() {
-        return GroupedOpenApi.builder().group("chordProgression-api").packagesToScan("ba.com.zira.sdr.chordprogression.rest")
-
+        return GroupedOpenApi.builder().group("moritsintegration-api").packagesToScan("ba.com.zira.sdr.moritsintegration.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
+
+    @Bean
+    public GroupedOpenApi moritsIntegrationApi() {
+        return GroupedOpenApi.builder().group("moritsintegration-api").packagesToScan("ba.com.zira.sdr.moritsintegration.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
 
     @Bean
     public GroupedOpenApi multisearchApi() {
