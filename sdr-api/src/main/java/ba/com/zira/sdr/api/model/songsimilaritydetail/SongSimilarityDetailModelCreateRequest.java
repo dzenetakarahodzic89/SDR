@@ -15,7 +15,7 @@ public class SongSimilarityDetailModelCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank
-    @Schema(description = "Name of the songsimilaritydetail document")
-    private String documentName;
+    @Schema(description = "Name of the person who created it")
+    private String createdBy;
 
 }

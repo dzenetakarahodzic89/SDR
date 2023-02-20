@@ -19,4 +19,6 @@ public class SongSimilarityDetailModelUpdateRequest implements Serializable {
     @NotBlank
     @Schema(description = "Name of the sample document")
     private String documentName;
+    @Schema(description = "User that modified the sample")
+    private String modifiedBy;
 }
