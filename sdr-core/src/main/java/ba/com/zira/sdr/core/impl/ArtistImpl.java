@@ -32,7 +32,7 @@ public class ArtistImpl implements ArtistService {
     @Override
     public ListPayloadResponse<ArtistResponse> getAll(EmptyRequest req) throws ApiException {
 
-        List<ArtistResponse> multiSearchList = artistDAO.getAllArtists();
+        List<ArtistResponse> multiSearchList = artistDAO.getAllArtists1();
         return new ListPayloadResponse<>(req, ResponseCode.OK, multiSearchList);
     }
 

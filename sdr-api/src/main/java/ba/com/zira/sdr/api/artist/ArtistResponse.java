@@ -2,7 +2,9 @@ package ba.com.zira.sdr.api.artist;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import ba.com.zira.sdr.api.model.lov.LoV;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -23,6 +25,8 @@ public class ArtistResponse implements Serializable {
     private String status;
     private String surname;
     private String type;
+    private List<LoV> personArtists;
+    private List<LoV> songArtists;
 
     public ArtistResponse() {
     };
@@ -50,6 +54,21 @@ public class ArtistResponse implements Serializable {
         this.status = status;
         this.surname = surname;
         this.type = type;
+    }
+
+    public ArtistResponse(Long id, String name, LocalDateTime dateOfBirth, LocalDateTime dateOfDeath, String information, String status,
+            String surname, String type, List<LoV> personArtists, List<LoV> songArtists) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.dateOfDeath = dateOfDeath;
+        this.information = information;
+        this.status = status;
+        this.surname = surname;
+        this.type = type;
+        this.personArtists = personArtists;
+        this.songArtists = songArtists;
     }
 
 }
