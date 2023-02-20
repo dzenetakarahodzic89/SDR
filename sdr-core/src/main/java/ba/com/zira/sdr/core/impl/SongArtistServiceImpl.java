@@ -18,7 +18,11 @@ import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.api.model.songartist.SongArtistResponse;
 import ba.com.zira.sdr.core.mapper.SongArtistMapper;
 import ba.com.zira.sdr.core.validation.SongArtistRequestValidation;
+import ba.com.zira.sdr.dao.AlbumDAO;
+import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.LabelDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
 import lombok.AllArgsConstructor;
 
@@ -26,6 +30,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SongArtistServiceImpl implements SongArtistService {
     SongArtistDAO songArtistDAO;
+    AlbumDAO albumDAO;
+    LabelDAO labelDAO;
+    ArtistDAO artistDAO;
+    SongDAO songDAO;
     SongArtistMapper songArtistMapper;
     SongArtistRequestValidation songArtistRequestValidation;
 
@@ -47,7 +55,11 @@ public class SongArtistServiceImpl implements SongArtistService {
         songArtistEntity.setCreated(LocalDateTime.now());
         songArtistEntity.setCreatedBy(entityRequest.getUserId());
 
-        songArtistEntity = songArtistDAO.persist(songArtistEntity);
+        songArtistEntity.setAlbum(albumDAO.findByPK(songArtistEntity.getAlbum().getId()));
+        songArtistEntity.setSong(songDAO.findByPK(songArtistEntity.getSong().getId()));
+        songArtistEntity.setLabel(labelDAO.findByPK(songArtistEntity.getLabel().getId()));
+        songArtistEntity.setArtist(artistDAO.findByPK(songArtistEntity.getArtist().getId()));
+        songArtistDAO.persist(songArtistEntity);
 
         return new PayloadResponse<>(entityRequest, ResponseCode.OK, songArtistMapper.entityToDto(songArtistEntity));
     }
