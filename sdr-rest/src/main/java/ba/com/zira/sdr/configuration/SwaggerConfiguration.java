@@ -25,6 +25,25 @@ public class SwaggerConfiguration {
         return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
+    
+    @Bean
+    public GroupedOpenApi commentApi() {
+        return GroupedOpenApi.builder().group("comment-api").packagesToScan("ba.com.zira.sdr.comment.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+
+    @Bean
+    public GroupedOpenApi genreApi() {
+        return GroupedOpenApi.builder().group("genre-api").packagesToScan("ba.com.zira.sdr.genre.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi albumApi() {
+        return GroupedOpenApi.builder().group("album-api").packagesToScan("ba.com.zira.sdr.album.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
 
     @Bean
     public GroupedOpenApi labelApi() {
@@ -39,10 +58,18 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi artistSongApi() {
+        return GroupedOpenApi.builder().group("songartist-api").packagesToScan("ba.com.zira.sdr.songartist.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public OpenAPI ziraOpenAPI() {
         return new OpenAPI().info(new Info().title("ZIRA API").description("ZIRA API").version("0.0.1-SNAPSHOT")
                 .contact(new Contact().name("ZIRA").url("http://www.zira.com.ba").email("info@zira.com.ba"))
                 .license(new License().name("ZIRA proprietary service").url("http://www.zira.com.ba/")));
     }
+    
+    
 
 }
