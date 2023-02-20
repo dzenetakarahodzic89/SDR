@@ -73,10 +73,4 @@ public class AlbumImpl implements AlbumService {
         return new PayloadResponse<>(request, ResponseCode.OK, albumMapper.entityToDto(albumEntity));
     }
 
-    @Override
-    public PayloadResponse<AlbumResponse> activate(final EntityRequest<Long> request) throws ApiException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

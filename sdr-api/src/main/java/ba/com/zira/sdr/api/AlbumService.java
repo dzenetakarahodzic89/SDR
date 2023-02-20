@@ -17,6 +17,4 @@ public interface AlbumService {
     PayloadResponse<AlbumResponse> update(EntityRequest<AlbumUpdateRequest> request) throws ApiException;
 
     PayloadResponse<AlbumResponse> delete(EntityRequest<Long> request) throws ApiException;
-
-    PayloadResponse<AlbumResponse> activate(EntityRequest<Long> request) throws ApiException;
 }
