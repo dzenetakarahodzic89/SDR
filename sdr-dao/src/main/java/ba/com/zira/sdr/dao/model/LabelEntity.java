@@ -1,5 +1,9 @@
 package ba.com.zira.sdr.dao.model;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,10 +15,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,7 +36,7 @@ public class LabelEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name = "SAT_LABEL_ID_GENERATOR", sequenceName = "SAT_LABEL_SEQ")
+    @SequenceGenerator(name = "SAT_LABEL_ID_GENERATOR", sequenceName = "SAT_LABEL_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_LABEL_ID_GENERATOR")
     @Column(name = "id")
     private Long id;
