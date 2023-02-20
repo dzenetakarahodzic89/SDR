@@ -11,12 +11,12 @@ import ba.com.zira.sdr.api.model.songartist.SongArtistUpdateRequest;
 
 public interface SongArtistService {
 
-    PagedPayloadResponse<SongArtistResponse> get(final FilterRequest filterRequest) throws ApiException;
+    public PagedPayloadResponse<SongArtistResponse> get(final FilterRequest filterRequest) throws ApiException;
 
-    PayloadResponse<SongArtistResponse> create(final EntityRequest<SongArtistCreateRequest> entityRequest) throws ApiException;
+    public PayloadResponse<SongArtistResponse> create(final EntityRequest<SongArtistCreateRequest> entityRequest) throws ApiException;
 
-    PayloadResponse<SongArtistResponse> update(final EntityRequest<SongArtistUpdateRequest> entityRequest) throws ApiException;
+    public PayloadResponse<SongArtistResponse> update(final EntityRequest<SongArtistUpdateRequest> entityRequest) throws ApiException;
 
-    PayloadResponse<SongArtistResponse> delete(final EntityRequest<Long> entityRequest);
+    public PayloadResponse<SongArtistResponse> delete(final EntityRequest<Long> entityRequest);
 
 }
