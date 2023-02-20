@@ -6,24 +6,23 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
-import ba.com.zira.sdr.api.model.audiodb.AudioDBIntegrationUpdateRequest;
-import ba.com.zira.sdr.dao.AudioDBIntegrationDAO;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
+import ba.com.zira.sdr.dao.ChordProgressionDAO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-@Component("audioDBIntegrationRequestValidation")
-public class AudioDBIntegrationRequestValidation {
+@Component("chordProgressionValidation")
+public class ChordProgressionValidation {
+    ChordProgressionDAO chordProgressionDAO;
 
-    private AudioDBIntegrationDAO audioDBIntegrationDAO;
-
-    public ValidationResponse validateUpdateAudioDBIntegrationRequest(final EntityRequest<AudioDBIntegrationUpdateRequest> request) {
+    public ValidationResponse validateUpdateChordProgressionRequest(final EntityRequest<ChordProgressionUpdateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(exists(request.getEntity().getId()));
 
         return ValidationResponse.of(request, errors);
     }
 
-    public ValidationResponse validateExistsAudioDBIntegrationRequest(final EntityRequest<Long> request) {
+    public ValidationResponse validateExistsChordProgressionRequest(final EntityRequest<Long> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(exists(request.getEntity()));
 
@@ -31,10 +30,9 @@ public class AudioDBIntegrationRequestValidation {
     }
 
     private ValidationError exists(Long id) {
-        if (!audioDBIntegrationDAO.existsByPK(id)) {
-            return ValidationError.of("SAMPLE_NOT_FOUND", "Sample with id: " + id + " does not exist!");
+        if (!chordProgressionDAO.existsByPK(id)) {
+            return ValidationError.of("CHORD_PROGRESSION_NOT_FOUND", "Chord progression with id: " + id + " does not exist!");
         }
         return null;
     }
-
 }

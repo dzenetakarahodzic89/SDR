@@ -1,12 +1,12 @@
 package ba.com.zira.sdr.dao;
 
-import javax.persistence.TypedQuery;
-
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.persistence.TypedQuery;
+
+import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.media.CoverImageHelper;

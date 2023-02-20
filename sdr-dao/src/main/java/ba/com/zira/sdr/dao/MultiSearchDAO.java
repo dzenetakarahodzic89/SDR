@@ -1,10 +1,10 @@
 package ba.com.zira.sdr.dao;
 
+import java.util.List;
+
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.multisearch.MultiSearchResponse;

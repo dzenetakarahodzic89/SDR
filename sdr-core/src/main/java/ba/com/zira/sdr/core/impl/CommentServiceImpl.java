@@ -1,10 +1,9 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -47,27 +46,25 @@ public class CommentServiceImpl implements CommentService {
         commentEntity.setCreatedBy(request.getUserId());
         commentEntity.setUserCode(request.getUserId());
         commentDAO.persist(commentEntity);
-        return new PayloadResponse<>(request,ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
     }
 
-    
-      @Override
-      
-      @Transactional(rollbackFor = Exception.class)
-      public PayloadResponse<Comment> update(final EntityRequest<CommentUpdateRequest> request) throws ApiException {
-      commentRequestValidation.validateUpdateCommentModelRequest(request);
-      
-      var commentEntity = commentDAO.findByPK(request.getEntity().getId());
-      commentModelMapper.updateEntity(request.getEntity(), commentEntity);
-      
-      commentEntity.setModified(LocalDateTime.now());
-      commentEntity.setModifiedBy(request.getUserId());
-      commentDAO.merge(commentEntity);
-      return new PayloadResponse<>(request,ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
-      
-      }
-     
-    
+    @Override
+
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<Comment> update(final EntityRequest<CommentUpdateRequest> request) throws ApiException {
+        commentRequestValidation.validateUpdateCommentModelRequest(request);
+
+        var commentEntity = commentDAO.findByPK(request.getEntity().getId());
+        commentModelMapper.updateEntity(request.getEntity(), commentEntity);
+
+        commentEntity.setModified(LocalDateTime.now());
+        commentEntity.setModifiedBy(request.getUserId());
+        commentDAO.merge(commentEntity);
+        return new PayloadResponse<>(request, ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
+
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<Comment> delete(final EntityRequest<Long> request) {
