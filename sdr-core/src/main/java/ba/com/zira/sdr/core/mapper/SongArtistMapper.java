@@ -18,9 +18,6 @@ import ba.com.zira.sdr.dao.model.SongArtistEntity;
 @Mapper(componentModel = "spring", uses = { SongDAO.class, ArtistDAO.class, LabelDAO.class, AlbumDAO.class })
 public interface SongArtistMapper {
 
-    // @Mapping(source = "documentName", target = "docname")
-    // SampleModelEntity dtoToEntity(SampleModelCreateRequest sampleModel);
-
     @Mapping(target = "song", source = "songId")
     @Mapping(target = "label", source = "labelId")
     @Mapping(target = "artist", source = "artistId")
