@@ -25,7 +25,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class AlbumImpl implements AlbumService {
+public class AlbumServiceImpl implements AlbumService {
 
     AlbumDAO albumDAO;
     AlbumMapper albumMapper;
