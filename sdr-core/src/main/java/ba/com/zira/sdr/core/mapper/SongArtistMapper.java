@@ -18,9 +18,9 @@ import ba.com.zira.sdr.dao.model.SongArtistEntity;
 @Mapper(componentModel = "spring", uses = { SongDAO.class, ArtistDAO.class, LabelDAO.class, AlbumDAO.class })
 public interface SongArtistMapper {
 
-    @Mapping(target = "song", source = "songId")
-    @Mapping(target = "label", source = "labelId")
-    @Mapping(target = "artist", source = "artistId")
+    @Mapping(target = "song.id", source = "songId")
+    @Mapping(target = "label.id", source = "labelId")
+    @Mapping(target = "artist.id", source = "artistId")
     @Mapping(target = "album.id", source = "albumId")
     SongArtistEntity dtoToEntity(SongArtistCreateRequest songArtistCreateRequest);
 
