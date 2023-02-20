@@ -21,33 +21,14 @@ public class SwaggerConfiguration {
     }
 
     @Bean
-    public GroupedOpenApi sampleApi() {
-        return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
+    public GroupedOpenApi personApi() {
+        return GroupedOpenApi.builder().group("person-api").packagesToScan("ba.com.zira.sdr.person.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
-    
-    @Bean
-    public GroupedOpenApi commentApi() {
-        return GroupedOpenApi.builder().group("comment-api").packagesToScan("ba.com.zira.sdr.comment.rest")
-                .addOperationCustomizer(ziraOperationCustomizer).build();
-    }
-
 
     @Bean
     public GroupedOpenApi genreApi() {
         return GroupedOpenApi.builder().group("genre-api").packagesToScan("ba.com.zira.sdr.genre.rest")
-                .addOperationCustomizer(ziraOperationCustomizer).build();
-    }
-
-    @Bean
-    public GroupedOpenApi albumApi() {
-        return GroupedOpenApi.builder().group("album-api").packagesToScan("ba.com.zira.sdr.album.rest")
-                .addOperationCustomizer(ziraOperationCustomizer).build();
-    }
-
-    @Bean
-    public GroupedOpenApi labelApi() {
-        return GroupedOpenApi.builder().group("label-api").packagesToScan("ba.com.zira.sdr.label.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
@@ -64,6 +45,12 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi sampleApi() {
+        return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi countryApi() {
         return GroupedOpenApi.builder().group("country-api").packagesToScan("ba.com.zira.sdr.country.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -75,7 +62,5 @@ public class SwaggerConfiguration {
                 .contact(new Contact().name("ZIRA").url("http://www.zira.com.ba").email("info@zira.com.ba"))
                 .license(new License().name("ZIRA proprietary service").url("http://www.zira.com.ba/")));
     }
-    
-    
 
 }
