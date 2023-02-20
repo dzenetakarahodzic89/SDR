@@ -48,9 +48,6 @@ public class SongArtistServiceImpl implements SongArtistService {
         songArtistEntity.setCreated(LocalDateTime.now());
         songArtistEntity.setCreatedBy(entityRequest.getUserId());
 
-        songArtistEntity.setModified(LocalDateTime.now());
-        songArtistEntity.setModifiedBy(entityRequest.getUserId());
-
         songArtistDAO.persist(songArtistEntity);
 
         return new PayloadResponse<>(entityRequest, ResponseCode.OK, songArtistMapper.entityToDto(songArtistEntity));
