@@ -67,11 +67,4 @@ public class InstrumentRestService {
         return instrumentService.update(new EntityRequest<>(instrumentUpdateRequest));
     }
 
-    @Operation(summary = "Activate Instrument")
-    @PutMapping(value = "{id}/activate")
-    public PayloadResponse<InstrumentResponse> activate(
-            @Parameter(required = true, description = "ID of the sample") @PathVariable final Long id) throws ApiException {
-        return instrumentService.activate(new EntityRequest<>(id));
-    }
-
 }

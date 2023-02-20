@@ -65,18 +65,6 @@ public class InstrumentServiceImpl implements InstrumentService {
         return new PayloadResponse<>(entityRequest, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<InstrumentResponse> activate(final EntityRequest<Long> request) throws ApiException {
-        instrumentRequestValidation.validateExistsInstrumentRequest(request);
-
-        var instrumentEntity = instrumentDAO.findByPK(request.getEntity());
-        instrumentEntity.setStatus(Status.ACTIVE.value());
-        instrumentEntity.setModified(LocalDateTime.now());
-        instrumentEntity.setModifiedBy(request.getUser().getUserId());
-        instrumentDAO.merge(instrumentEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

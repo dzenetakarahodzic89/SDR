@@ -17,8 +17,6 @@ public interface InstrumentService {
 
     PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> entityRequest) throws ApiException;
 
-    PayloadResponse<InstrumentResponse> activate(EntityRequest<Long> request) throws ApiException;
-
     PayloadResponse<InstrumentResponse> delete(final EntityRequest<Long> entityRequest);
 
 }
