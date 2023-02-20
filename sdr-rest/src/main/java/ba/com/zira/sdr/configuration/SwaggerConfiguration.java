@@ -31,7 +31,6 @@ public class SwaggerConfiguration {
 
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
- 
 
     public GroupedOpenApi personApi() {
         return GroupedOpenApi.builder().group("person-api").packagesToScan("ba.com.zira.sdr.person.rest")
@@ -46,9 +45,9 @@ public class SwaggerConfiguration {
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
- @Bean
-    public GroupedOpenApi chordProgression() {
-        return GroupedOpenApi.builder().group("moritsintegration-api").packagesToScan("ba.com.zira.sdr.moritsintegration.rest")
+    @Bean
+    public GroupedOpenApi chordProgressionApi() {
+        return GroupedOpenApi.builder().group("chordprogression-api").packagesToScan("ba.com.zira.sdr.chordprogression.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
@@ -57,7 +56,6 @@ public class SwaggerConfiguration {
         return GroupedOpenApi.builder().group("moritsintegration-api").packagesToScan("ba.com.zira.sdr.moritsintegration.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
-
 
     @Bean
     public GroupedOpenApi multisearchApi() {
