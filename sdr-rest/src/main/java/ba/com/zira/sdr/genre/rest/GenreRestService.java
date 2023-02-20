@@ -60,7 +60,7 @@ public class GenreRestService {
 
     @Operation(summary = "Delete a genre")
     @DeleteMapping(value = "{id}/delete")
-    public PayloadResponse<Genre> delete(@Parameter(required = true, description = "Id of the genre") @PathVariable final Long id)
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "Id of the genre") @PathVariable final Long id)
             throws ApiException {
         return genreService.delete(new EntityRequest<>(id));
     }

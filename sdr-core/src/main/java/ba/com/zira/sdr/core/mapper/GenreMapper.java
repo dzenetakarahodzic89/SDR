@@ -8,7 +8,6 @@ import org.mapstruct.MappingTarget;
 import ba.com.zira.sdr.api.model.genre.Genre;
 import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
 import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
-import ba.com.zira.sdr.api.model.genre.SubGenre;
 import ba.com.zira.sdr.dao.model.GenreEntity;
 
 @Mapper(componentModel = "spring")
@@ -21,9 +20,5 @@ public interface GenreMapper {
     List<Genre> entitiesToDtos(List<GenreEntity> genreEntities);
 
     void updateEntity(GenreUpdateRequest genre, @MappingTarget GenreEntity genreEntity);
-
-    SubGenre entityToSubGenreDto(GenreEntity genreEntity);
-
-    List<SubGenre> entitiesToSubGenreDtos(List<GenreEntity> genreEntities);
 
 }

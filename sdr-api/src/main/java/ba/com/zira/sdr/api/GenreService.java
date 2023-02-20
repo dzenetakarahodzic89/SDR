@@ -17,6 +17,6 @@ public interface GenreService {
 
     public PayloadResponse<Genre> update(EntityRequest<GenreUpdateRequest> request) throws ApiException;
 
-    public PayloadResponse<Genre> delete(EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
 }

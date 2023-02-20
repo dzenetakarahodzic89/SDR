@@ -18,9 +18,11 @@ import ba.com.zira.sdr.api.GenreService;
 import ba.com.zira.sdr.api.model.genre.Genre;
 import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
 import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
+import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.GenreMapper;
 import ba.com.zira.sdr.core.validation.GenreRequestValidation;
 import ba.com.zira.sdr.dao.GenreDAO;
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.GenreEntity;
 import lombok.AllArgsConstructor;
 
@@ -31,11 +33,19 @@ public class GenreServiceImpl implements GenreService {
     GenreDAO genreDAO;
     GenreMapper genreMapper;
     GenreRequestValidation genreRequestValidation;
+    SongDAO songDAO;
 
     @Override
     public PagedPayloadResponse<Genre> find(final FilterRequest request) throws ApiException {
         PagedData<GenreEntity> genreEntities = genreDAO.findAll(request.getFilter());
-        return new PagedPayloadResponse<>(request, ResponseCode.OK, genreEntities, genreMapper::entitiesToDtos);
+        PagedData<Genre> genres = new PagedData<Genre>();
+        genres.setRecords(genreMapper.entitiesToDtos(genreEntities.getRecords()));
+        PagedDataMetadataMapper.remapMetadata(genreEntities, genres);
+        genres.getRecords().forEach(genre -> {
+            genre.setSongNames(songDAO.songsByGenre(genre.getId()));
+            genre.setSubGenreNames(genreDAO.subGenresByMainGenre(genre.getId()));
+        });
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, genres);
     }
 
     @Override
@@ -79,13 +89,13 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Genre> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
         genreRequestValidation.validateGenreDeleteRequest(request);
 
         var genreEntity = genreDAO.findByPK(request.getEntity());
         genreDAO.remove(genreEntity);
 
-        return new PayloadResponse<>(request, ResponseCode.OK, genreMapper.entityToDto(genreEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, "Genre successfully deleted!");
 
     }
 

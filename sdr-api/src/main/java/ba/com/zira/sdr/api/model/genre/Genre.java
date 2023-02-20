@@ -2,7 +2,7 @@ package ba.com.zira.sdr.api.model.genre;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -33,6 +33,7 @@ public class Genre implements Serializable {
     @Schema(description = "Main genre")
     private Genre mainGenre;
     @Schema(description = "Subgenres")
-    private List<SubGenre> subGenres;
-
+    private Map<Long, String> subGenreNames;
+    @Schema(description = "Songs")
+    private Map<Long, String> songNames;
 }
