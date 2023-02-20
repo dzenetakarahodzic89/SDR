@@ -8,7 +8,6 @@ import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
-import ba.com.zira.sdr.api.model.songartist.SongArtistUpdateRequest;
 import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.LabelDAO;
@@ -24,25 +23,6 @@ public class SongArtistRequestValidation {
     private AlbumDAO albumDAO;
     private LabelDAO labelDAO;
     private ArtistDAO artistDAO;
-
-    public ValidationResponse validateUpdateSongArtistRequest(final EntityRequest<SongArtistUpdateRequest> entityRequest) {
-        ValidationErrors errors = new ValidationErrors();
-        errors.put(exists(songArtistDAO, entityRequest.getEntity().getId(), "SONG_ARTIST_NOT_FOUND", "Song-Artist"));
-        if (entityRequest.getEntity().getAlbumId() != null) {
-            errors.put(exists(albumDAO, entityRequest.getEntity().getAlbumId(), "ALBUM_FK_NOT_FOUND", "Album"));
-        }
-        if (entityRequest.getEntity().getLabelId() != null) {
-            errors.put(exists(labelDAO, entityRequest.getEntity().getLabelId(), "LABEL_FK_NOT_FOUND", "Label"));
-        }
-        if (entityRequest.getEntity().getArtistId() != null) {
-            errors.put(exists(artistDAO, entityRequest.getEntity().getArtistId(), "ARTIST_FK_NOT_FOUND", "Artist"));
-        }
-        if (entityRequest.getEntity().getSongId() != null) {
-            errors.put(exists(songDAO, entityRequest.getEntity().getSongId(), "SONG_FK_NOT_FOUND", "Song"));
-        }
-
-        return ValidationResponse.of(entityRequest, errors);
-    }
 
     public ValidationResponse validateCreateSongArtistRequest(final EntityRequest<SongArtistCreateRequest> entityRequest) {
         ValidationErrors errors = new ValidationErrors();

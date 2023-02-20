@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,7 +20,6 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.SongArtistService;
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.api.model.songartist.SongArtistResponse;
-import ba.com.zira.sdr.api.model.songartist.SongArtistUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,17 +43,6 @@ public class SongArtistRestService {
     @PostMapping
     public PayloadResponse<SongArtistResponse> create(@RequestBody final SongArtistCreateRequest songArtist) throws ApiException {
         return songArtistService.create(new EntityRequest<>(songArtist));
-    }
-
-    @Operation(summary = "Update song artist")
-    @PutMapping(value = "{id}")
-    public PayloadResponse<SongArtistResponse> edit(
-            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id,
-            @RequestBody final SongArtistUpdateRequest songArtistUpdateRequest) throws ApiException {
-        if (songArtistUpdateRequest != null) {
-            songArtistUpdateRequest.setId(id);
-        }
-        return songArtistService.update(new EntityRequest<>(songArtistUpdateRequest));
     }
 
     @Operation(summary = "Delete song artist")
