@@ -1,67 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<springProperty scope="context" name="rootLogLevel"
-		source="root.logging.level" defaultValue="info" />
-	<springProperty scope="context" name="ziraLogLevel"
-		source="zira.logging.level" defaultValue="debug" />
-
-	<springProperty scope="context" name="LOGS"
-		source="zira.logging.file.path" defaultValue="./logs" />
-	<springProperty scope="context" name="LOGS_ARCHIVE"
-		source="zira.logging.file.archive.path" defaultValue="./logs" />
-	<springProperty scope="context" name="logMaxFileSize"
-		source="zira.logging.max.file.size" defaultValue="100MB" />
-	<springProperty scope="context" name="logMaxHistoryDays"
-		source="zira.logging.max.history.days" defaultValue="30" />
-
-	//Profile used for builds with PRM
-	<springProfile name="logConsole">
-		<appender name="STDOUT"
-			class="ch.qos.logback.core.ConsoleAppender">
-			<layout class="ch.qos.logback.classic.PatternLayout">
-				<Pattern>
-					%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
-				</Pattern>
-			</layout>
-		</appender>
-		<logger name="ba.com.zira" level="${ziraLogLevel}" />
-
-		<root level="${rootLogLevel}">
-			<appender-ref ref="STDOUT" />
-		</root>
-	</springProfile>
-
-	//Profile used for builds with fatjar
-	<springProfile name="logFile">
-		<appender name="RollingFile"
-			class="ch.qos.logback.core.rolling.RollingFileAppender">
-			<file>${LOGS}/${application.name}.log</file>
-			<encoder>
-				<pattern>
-					%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
-				</pattern>
-			</encoder>
-
-			<rollingPolicy
-				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-				<!-- rollover daily and when the file reaches 10 MegaBytes -->
-				<fileNamePattern>${LOGS_ARCHIVE}/${application.name}-%d{yyyy-MM-dd}.%i.log.zip
-				</fileNamePattern>
-				<maxHistory>${logMaxHistoryDays}</maxHistory>
-				<timeBasedFileNamingAndTriggeringPolicy
-					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-					<maxFileSize>${logMaxFileSize}</maxFileSize>
-				</timeBasedFileNamingAndTriggeringPolicy>
-			</rollingPolicy>
-		</appender>
-
-		<logger name="ba.com.zira" level="${ziraLogLevel}"
-			additivity="false">
-			<appender-ref ref="RollingFile" />
-		</logger>
-
-		<root level="${rootLogLevel}">
-			<appender-ref ref="RollingFile" />
-		</root>
-	</springProfile>
+	<springProperty scope="context" name="rootLogLevel" source="root.logging.level"
+        defaultValue="info"/>
+	<springProperty scope="context" name="ziraLogLevel" source="zira.logging.level"
+        defaultValue="debug"/>
+    <springProperty scope="context" name="LOGS" source="zira.logging.file.path"
+        defaultValue="./logs"/>
+    <springProperty scope="context" name="LOGS_ARCHIVE" source="zira.logging.file.archive.path"
+        defaultValue="./logs"/>
+    <springProperty scope="context" name="logMaxFileSize" source="zira.logging.max.file.size"
+        defaultValue="100MB"/>
+    <springProperty scope="context" name="logMaxHistoryDays" source="zira.logging.max.history.days"
+        defaultValue="30"/>
+        
+    //Profile used for builds with PRM
+    <springProfile name="logConsole">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>
+                    %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+                </Pattern>
+            </layout>
+        </appender>
+        <logger name="ba.com.zira" level="${ziraLogLevel}"/>
+    
+        <root level="${rootLogLevel}">
+            <appender-ref ref="STDOUT" />
+        </root> 
+    </springProfile>
+    
+    //Profile used for builds with fatjar
+    <springProfile name="logFile">
+        <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOGS}/${application.name}.log</file>
+            <encoder>
+                <pattern>
+                    %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+                </pattern>
+            </encoder>
+     
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- rollover daily and when the file reaches 10 MegaBytes -->
+                <fileNamePattern>${LOGS_ARCHIVE}/${application.name}-%d{yyyy-MM-dd}.%i.log.zip
+                </fileNamePattern>
+                <maxHistory>${logMaxHistoryDays}</maxHistory>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>${logMaxFileSize}</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+        </appender>
+        
+        <logger name="ba.com.zira" level="${ziraLogLevel}" additivity="false">
+            <appender-ref ref="RollingFile" />
+        </logger>
+    
+        <root level="${rootLogLevel}">
+            <appender-ref ref="RollingFile" />
+        </root>
+    </springProfile>
 </configuration>
