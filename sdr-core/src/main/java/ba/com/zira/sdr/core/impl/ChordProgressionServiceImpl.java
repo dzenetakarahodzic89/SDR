@@ -45,11 +45,10 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
     }
 
     @Override
-    public PayloadResponse<ChordProgressionResponse> delete(EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException {
         chordProgressionValidator.validateExistsChordProgressionRequest(request);
-        var chordDeleteEntity = chordProgressionDAO.findByPK(request.getEntity());
         chordProgressionDAO.removeByPK(request.getEntity());
-        return new PayloadResponse<>(request, ResponseCode.OK, chordProgressionMapper.entityToDto(chordDeleteEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, "successfully deleted record.");
     }
 
     @Override
@@ -68,14 +67,14 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
 
     @Override
     public PagedPayloadResponse<ChordProgressionResponse> find(final FilterRequest request) throws ApiException {
-        PagedData<ChordProgressionEntity> genreEntities = chordProgressionDAO.findAll(request.getFilter());
-        PagedData<ChordProgressionResponse> genres = new PagedData<ChordProgressionResponse>();
-        genres.setRecords(chordProgressionMapper.entitiesToDtos(genreEntities.getRecords()));
-        PagedDataMetadataMapper.remapMetadata(genreEntities, genres);
-        genres.getRecords().forEach(genre -> {
-            genre.setSongNames(chordProgressionDAO.songsByChordProgression(genre.getId()));
+        PagedData<ChordProgressionEntity> chordProgressionEntities = chordProgressionDAO.findAll(request.getFilter());
+        PagedData<ChordProgressionResponse> chordProgressions = new PagedData<ChordProgressionResponse>();
+        chordProgressions.setRecords(chordProgressionMapper.entitiesToDtos(chordProgressionEntities.getRecords()));
+        PagedDataMetadataMapper.remapMetadata(chordProgressionEntities, chordProgressions);
+        chordProgressions.getRecords().forEach(chord -> {
+            chord.setSongNames(chordProgressionDAO.songsByChordProgression(chord.getId()));
         });
-        return new PagedPayloadResponse<>(request, ResponseCode.OK, genres);
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, chordProgressions);
     }
 
 }

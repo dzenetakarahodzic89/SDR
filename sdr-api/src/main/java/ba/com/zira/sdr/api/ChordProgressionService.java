@@ -14,7 +14,7 @@ public interface ChordProgressionService {
 
     PayloadResponse<ChordProgressionResponse> create(EntityRequest<ChordProgressionCreateRequest> request) throws ApiException;
 
-    PayloadResponse<ChordProgressionResponse> delete(EntityRequest<Long> id) throws ApiException;
+    PayloadResponse<String> delete(EntityRequest<Long> id) throws ApiException;
 
     PayloadResponse<ChordProgressionResponse> update(EntityRequest<ChordProgressionUpdateRequest> request) throws ApiException;
 }

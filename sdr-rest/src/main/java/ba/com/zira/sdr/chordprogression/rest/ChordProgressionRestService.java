@@ -60,8 +60,8 @@ public class ChordProgressionRestService {
 
     @Operation(summary = "Delete chord progression")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<ChordProgressionResponse> delete(
-            @Parameter(required = true, description = "ID of the chord") @PathVariable final Long id) throws ApiException {
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the chord") @PathVariable final Long id)
+            throws ApiException {
         return chordProgressionService.delete(new EntityRequest<>(id));
     }
 }
