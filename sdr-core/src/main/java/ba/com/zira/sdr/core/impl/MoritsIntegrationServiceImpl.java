@@ -44,8 +44,6 @@ public class MoritsIntegrationServiceImpl implements MoritsIntegrationService {
         moritsIntegrationEntity.setCreated(LocalDateTime.now());
         moritsIntegrationEntity.setCreatedBy(request.getUserId());
         moritsIntegrationEntity.setStatus(Status.ACTIVE.value());
-        moritsIntegrationEntity.setModified(LocalDateTime.now());
-        moritsIntegrationEntity.setModifiedBy(request.getUserId());
 
         moritsIntegrationDAO.persist(moritsIntegrationEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, moritsIntegrationMapper.entityToDto(moritsIntegrationEntity));
@@ -61,19 +59,6 @@ public class MoritsIntegrationServiceImpl implements MoritsIntegrationService {
 
         moritsIntegrationEntity.setModified(LocalDateTime.now());
         moritsIntegrationEntity.setModifiedBy(request.getUserId());
-        moritsIntegrationDAO.merge(moritsIntegrationEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, moritsIntegrationMapper.entityToDto(moritsIntegrationEntity));
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<MoritsIntegration> activate(final EntityRequest<Long> request) throws ApiException {
-        moritsIntegrationRequestValidation.validateExistsMoritsIntegrationRequest(request);
-
-        var moritsIntegrationEntity = moritsIntegrationDAO.findByPK(request.getEntity());
-        moritsIntegrationEntity.setStatus(Status.ACTIVE.value());
-        moritsIntegrationEntity.setModified(LocalDateTime.now());
-        moritsIntegrationEntity.setModifiedBy(request.getUser().getUserId());
         moritsIntegrationDAO.merge(moritsIntegrationEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, moritsIntegrationMapper.entityToDto(moritsIntegrationEntity));
     }
