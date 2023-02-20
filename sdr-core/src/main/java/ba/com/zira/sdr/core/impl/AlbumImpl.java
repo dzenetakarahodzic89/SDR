@@ -45,8 +45,6 @@ public class AlbumImpl implements AlbumService {
         albumEntity.setCreated(LocalDateTime.now());
         albumEntity.setStatus(Status.ACTIVE.value());
         albumEntity.setCreatedBy(request.getUserId());
-        albumEntity.setModified(LocalDateTime.now());
-        albumEntity.setModifiedBy(request.getUserId());
         albumDAO.persist(albumEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, albumMapper.entityToDto(albumEntity));
     }
