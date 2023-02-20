@@ -21,14 +21,22 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi audioDBIntegrationApi() {
+        return GroupedOpenApi.builder().group("audioDBIntegration-api").packagesToScan("ba.com.zira.sdr.audiodbintegration.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi personApi() {
         return GroupedOpenApi.builder().group("person-api").packagesToScan("ba.com.zira.sdr.person.rest")
+
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
     @Bean
     public GroupedOpenApi genreApi() {
         return GroupedOpenApi.builder().group("genre-api").packagesToScan("ba.com.zira.sdr.genre.rest")
+
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
