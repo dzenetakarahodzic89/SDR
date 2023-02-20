@@ -8,13 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,24 +20,36 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * The persistent class for the "sat_album" database table.
+ * The persistent class for the "sat_connected_media_detail" database table.
  *
  */
 @Entity
-@Table(name = "sat_album")
+@Table(name = "sat_connected_media_detail")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@NamedQuery(name = "AlbumEntity.findAll", query = "SELECT a FROM AlbumEntity a")
-public class AlbumEntity implements Serializable {
+@NamedQuery(name = "ConnectedMediaDetailEntity.findAll", query = "SELECT c FROM ConnectedMediaDetailEntity c")
+public class ConnectedMediaDetailEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name = "SAT_ALBUM_ID_GENERATOR", sequenceName = "SAT_ALBUM_SEQ")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_ALBUM_ID_GENERATOR")
+    @SequenceGenerator(name = "SAT_CONNECTED_MEDIA_DETAIL_ID_GENERATOR", sequenceName = "SAT_CONNECTED_MEDIA_DETAIL_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_CONNECTED_MEDIA_DETAIL_ID_GENERATOR")
     @Column(name = "id")
     private Long id;
+
+    @Column(name = "connection_date")
+    private LocalDateTime connectionDate;
+
+    @Column(name = "connection_link")
+    private String connectionLink;
+
+    @Column(name = "connection_source")
+    private String connectionSource;
+
+    @Column(name = "connection_type")
+    private String connectionType;
 
     @Column(name = "created")
     private LocalDateTime created;
@@ -47,31 +57,18 @@ public class AlbumEntity implements Serializable {
     @Column(name = "created_by")
     private String createdBy;
 
-    @Column(name = "date_of_release")
-    private LocalDateTime dateOfRelease;
-
-    @Column(name = "information")
-    private String information;
-
     @Column(name = "modified")
     private LocalDateTime modified;
 
     @Column(name = "modified_by")
     private String modifiedBy;
 
-    @Column(name = "name")
-    private String name;
-
     @Column(name = "status")
     private String status;
 
-    // bi-directional many-to-one association to SongArtistEntity
-    @OneToMany(mappedBy = "album")
-    private List<SongArtistEntity> songArtists;
-
     // bi-directional many-to-one association to ConnectedMediaEntity
     @ManyToOne
-    @JoinColumn(name = "era_id")
-    private EraEntity era;
+    @JoinColumn(name = "connected_media_id")
+    private ConnectedMediaEntity connectedMedia;
 
 }

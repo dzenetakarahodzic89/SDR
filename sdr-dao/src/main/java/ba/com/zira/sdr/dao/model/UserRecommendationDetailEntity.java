@@ -8,13 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,22 +21,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * The persistent class for the "sat_album" database table.
+ * The persistent class for the "sat_user_recommendation_detail" database table.
  *
  */
 @Entity
-@Table(name = "sat_album")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@NamedQuery(name = "AlbumEntity.findAll", query = "SELECT a FROM AlbumEntity a")
-public class AlbumEntity implements Serializable {
+@Table(name = "sat_user_recommendation_detail")
+@NamedQuery(name = "UserRecommendationDetailEntity.findAll", query = "SELECT u FROM UserRecommendationDetailEntity u")
+public class UserRecommendationDetailEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name = "SAT_ALBUM_ID_GENERATOR", sequenceName = "SAT_ALBUM_SEQ")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_ALBUM_ID_GENERATOR")
+    @SequenceGenerator(name = "SAT_USER_RECOMMENDATION_DETAIL_ID_GENERATOR", sequenceName = "SAT_USER_RECOMMENDATION_DETAIL_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_USER_RECOMMENDATION_DETAIL_ID_GENERATOR")
     @Column(name = "id")
     private Long id;
 
@@ -47,31 +46,23 @@ public class AlbumEntity implements Serializable {
     @Column(name = "created_by")
     private String createdBy;
 
-    @Column(name = "date_of_release")
-    private LocalDateTime dateOfRelease;
-
-    @Column(name = "information")
-    private String information;
-
-    @Column(name = "modified")
-    private LocalDateTime modified;
-
-    @Column(name = "modified_by")
-    private String modifiedBy;
-
     @Column(name = "name")
     private String name;
 
     @Column(name = "status")
     private String status;
 
-    // bi-directional many-to-one association to SongArtistEntity
-    @OneToMany(mappedBy = "album")
-    private List<SongArtistEntity> songArtists;
+    @Column(name = "user_score")
+    private BigDecimal userScore;
 
-    // bi-directional many-to-one association to ConnectedMediaEntity
+    // bi-directional many-to-one association to UserRecommendationEntity
     @ManyToOne
-    @JoinColumn(name = "era_id")
-    private EraEntity era;
+    @JoinColumn(name = "user_recommendation_id")
+    private UserRecommendationEntity userRecommendation;
+
+    // bi-directional many-to-one association to UserRecommendationEntity
+    @ManyToOne
+    @JoinColumn(name = "song_id")
+    private SongEntity song;
 
 }
