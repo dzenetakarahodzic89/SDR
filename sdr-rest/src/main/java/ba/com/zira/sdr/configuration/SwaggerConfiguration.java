@@ -88,4 +88,10 @@ public class SwaggerConfiguration {
                 .license(new License().name("ZIRA proprietary service").url("http://www.zira.com.ba/")));
     }
 
+    @Bean
+    public GroupedOpenApi lyricApi() {
+        return GroupedOpenApi.builder().group("lyric-api").packagesToScan("ba.com.zira.sdr.lyric.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
 }
