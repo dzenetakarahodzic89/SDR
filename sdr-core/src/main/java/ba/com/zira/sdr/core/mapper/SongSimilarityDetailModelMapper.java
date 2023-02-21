@@ -3,6 +3,7 @@ package ba.com.zira.sdr.core.mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailModel;
@@ -11,15 +12,18 @@ import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailModelU
 import ba.com.zira.sdr.dao.model.SongSimilarityDetailEntity;
 
 @Mapper(componentModel = "spring")
-public abstract class SongSimilarityDetailModelMapper {
+public interface SongSimilarityDetailModelMapper {
 
-    public abstract SongSimilarityDetailEntity dtoToEntity(SongSimilarityDetailModelCreateRequest songsimilaritydetailModel);
+    @Mapping(source = "songSampleId", target = "song.id")
+    SongSimilarityDetailEntity dtoToEntity(SongSimilarityDetailModelCreateRequest songSimilarityDetail);
 
-    public abstract SongSimilarityDetailModel entityToDto(SongSimilarityDetailEntity songsimilaritydetailEntity);
+    @Mapping(source = "song.id", target = "songSampleId")
+    SongSimilarityDetailModel entityToDto(SongSimilarityDetailEntity songSimilarityDetailEntity);
 
-    public abstract List<SongSimilarityDetailModel> entitiesToDtos(List<SongSimilarityDetailEntity> songsimilaritydetailsEntities);
+    @Mapping(source = "songSampleId", target = "song.id")
+    void updateEntity(SongSimilarityDetailModelUpdateRequest songSimilarityDetail,
+            @MappingTarget SongSimilarityDetailEntity songSimilarityDetailEntitiy);
 
-    public abstract SongSimilarityDetailEntity updateEntity(SongSimilarityDetailModelUpdateRequest genreModel,
-            @MappingTarget SongSimilarityDetailEntity genreEntity);
+    List<SongSimilarityDetailModel> entitiesToDtos(List<SongSimilarityDetailEntity> songSimilarityDetailEntity);
 
 }

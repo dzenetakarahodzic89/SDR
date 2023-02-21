@@ -15,7 +15,19 @@ public class SongSimilarityDetailModelCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank
-    @Schema(description = "Name of the person who created it")
-    private String createdBy;
+    @Schema(description = "Grade of the song")
+    private String grade;
+
+    @NotBlank
+    @Schema(description = "User code")
+    private String userCode;
+
+    @Schema(description = "ID of the song sample")
+    private Long songSampleId;
+
+    public Long getId() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

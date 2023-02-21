@@ -14,11 +14,18 @@ public class SongSimilarityDetailModelUpdateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Min(1)
-    @Schema(description = "Unique identifier of the sample")
-    private long id;
+    @Schema(description = "Unique identifier of the song sample detail")
+    private Long id;
+
     @NotBlank
-    @Schema(description = "Name of the sample document")
-    private String documentName;
-    @Schema(description = "User that modified the sample")
-    private String modifiedBy;
+    @Schema(description = "Grade of the song")
+    private String grade;
+
+    @NotBlank
+    @Schema(description = "User code")
+    private String userCode;
+
+    @Schema(description = "ID of the song sample")
+    private Long songSampleId;
+
 }
