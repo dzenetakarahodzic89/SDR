@@ -21,10 +21,22 @@ public class SwaggerConfiguration {
     }
 
     @Bean
-    public GroupedOpenApi sampleApi() {
-        return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
+    public GroupedOpenApi instrumentApi() {
+        return GroupedOpenApi.builder().group("instrument-api").packagesToScan("ba.com.zira.sdr.instrument.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
+
+	@Bean
+    public GroupedOpenApi audioDBIntegrationApi() {
+        return GroupedOpenApi.builder().group("audioDBIntegration-api").packagesToScan("ba.com.zira.sdr.audiodbintegration.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+	@Bean
+    public GroupedOpenApi personApi() {
+        return GroupedOpenApi.builder().group("person-api").packagesToScan("ba.com.zira.sdr.person.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+	
 
     @Bean
     public GroupedOpenApi commentApi() {
@@ -39,14 +51,20 @@ public class SwaggerConfiguration {
     }
 
     @Bean
-    public GroupedOpenApi albumApi() {
-        return GroupedOpenApi.builder().group("album-api").packagesToScan("ba.com.zira.sdr.album.rest")
+    public GroupedOpenApi songfftresultApi() {
+        return GroupedOpenApi.builder().group("songfftresult-api").packagesToScan("ba.com.zira.sdr.songfftresult.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
     @Bean
-    public GroupedOpenApi labelApi() {
-        return GroupedOpenApi.builder().group("label-api").packagesToScan("ba.com.zira.sdr.label.rest")
+    public GroupedOpenApi chordProgressionApi() {
+        return GroupedOpenApi.builder().group("chordprogression-api").packagesToScan("ba.com.zira.sdr.chordprogression.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi moritsIntegrationApi() {
+        return GroupedOpenApi.builder().group("moritsintegration-api").packagesToScan("ba.com.zira.sdr.moritsintegration.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
@@ -62,7 +80,12 @@ public class SwaggerConfiguration {
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
-    @Bean
+	@Bean
+    public GroupedOpenApi sampleApi() {
+        return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+  	@Bean
     public GroupedOpenApi userRecommendationApi() {
         return GroupedOpenApi.builder().group("userrecommendation-api").packagesToScan("ba.com.zira.sdr.userrecommendation.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -71,6 +94,29 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi countryApi() {
         return GroupedOpenApi.builder().group("country-api").packagesToScan("ba.com.zira.sdr.country.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi lyricApi() {
+        return GroupedOpenApi.builder().group("lyric-api").packagesToScan("ba.com.zira.sdr.lyric.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi spotifyIntegrationApi() {
+        return GroupedOpenApi.builder().group("spotify-integration-api").packagesToScan("ba.com.zira.sdr.spotifyintegration.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    public GroupedOpenApi connectedMediaApi() {
+        return GroupedOpenApi.builder().group("connectedmedia-api").packagesToScan("ba.com.zira.sdr.connectedmedia.rest")
+         .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+    
+    @Bean
+    public GroupedOpenApi artistApi() {
+        return GroupedOpenApi.builder().group("artist-api").packagesToScan("ba.com.zira.sdr.artist.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 

@@ -1,9 +1,5 @@
 package ba.com.zira.sdr.core.utils;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
-
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,6 +8,10 @@ import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 
 import ba.com.zira.sdr.api.model.media.CoverImageHelper;
 import ba.com.zira.sdr.dao.MediaStoreDAO;

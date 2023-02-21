@@ -36,17 +36,17 @@ public class SampleRestService {
 
     @Operation(summary = "Find Samples base on filter criteria")
     @GetMapping
-    public PagedPayloadResponse<SampleModel> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria) 
+    public PagedPayloadResponse<SampleModel> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
             throws ApiException {
         return sampleService.find(new FilterRequest(filterCriteria, queryCriteria));
-    }  
-    
+    }
+
     @Operation(summary = "Create sample")
     @PostMapping
     public PayloadResponse<SampleModel> create(@RequestBody final SampleModelCreateRequest sample) throws ApiException {
         return sampleService.create(new EntityRequest<>(sample));
-    }  
-    
+    }
+
     @Operation(summary = "Update Sample")
     @PutMapping(value = "{id}")
     public PayloadResponse<SampleModel> edit(@Parameter(required = true, description = "ID of the sample") @PathVariable final Long id,
@@ -56,7 +56,7 @@ public class SampleRestService {
         }
         return sampleService.update(new EntityRequest<>(sample));
     }
-    
+
     @Operation(summary = "Activate sample")
     @PutMapping(value = "{id}/activate")
     public PayloadResponse<SampleModel> activate(@Parameter(required = true, description = "ID of the sample") @PathVariable final Long id)
