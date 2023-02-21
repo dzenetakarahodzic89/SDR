@@ -89,6 +89,12 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi connectedMediaApi() {
         return GroupedOpenApi.builder().group("connectedmedia-api").packagesToScan("ba.com.zira.sdr.connectedmedia.rest")
+         .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+    
+    @Bean
+    public GroupedOpenApi artistApi() {
+        return GroupedOpenApi.builder().group("artist-api").packagesToScan("ba.com.zira.sdr.artist.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
