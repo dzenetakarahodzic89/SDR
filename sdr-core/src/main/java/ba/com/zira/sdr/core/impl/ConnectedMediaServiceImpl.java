@@ -64,14 +64,4 @@ public class ConnectedMediaServiceImpl implements ConnectedMediaService {
         return new PayloadResponse<>(request, ResponseCode.OK, connectedMediaMapper.entityToDto(connectedMediaEntity));
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException {
-        connectedMediaRequestValidation.validateConnectedMediaDeleteRequest(request);
-
-        var connectedMediaEntity = connectedMediaDAO.findByPK(request.getEntity());
-        connectedMediaDAO.remove(connectedMediaEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, "Connected media is successfully deleted!");
-    }
-
 }

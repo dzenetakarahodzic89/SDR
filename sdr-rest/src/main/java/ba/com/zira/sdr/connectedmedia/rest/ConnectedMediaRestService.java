@@ -2,7 +2,6 @@ package ba.com.zira.sdr.connectedmedia.rest;
 
 import java.util.Map;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,13 +56,6 @@ public class ConnectedMediaRestService {
             connectedMedia.setId(id);
         }
         return connectedMediaService.update(new EntityRequest<>(connectedMedia));
-    }
-
-    @Operation(summary = "Delete a connected media")
-    @DeleteMapping(value = "{id}/delete")
-    public PayloadResponse<String> delete(
-            @Parameter(required = true, description = "Id of the connected media") @PathVariable final Long id) throws ApiException {
-        return connectedMediaService.delete(new EntityRequest<>(id));
     }
 
 }

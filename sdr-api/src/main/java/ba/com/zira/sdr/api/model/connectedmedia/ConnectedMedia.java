@@ -2,7 +2,9 @@ package ba.com.zira.sdr.api.model.connectedmedia;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import ba.com.zira.sdr.api.model.connectedmediadetail.ConnectedMediaDetailInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -27,5 +29,7 @@ public class ConnectedMedia implements Serializable {
     private String objectType;
     @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
     private String status;
+    @Schema(description = "Details")
+    private List<ConnectedMediaDetailInfo> connectedMediaDetails;
 
 }

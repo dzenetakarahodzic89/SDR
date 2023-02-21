@@ -10,7 +10,7 @@ import ba.com.zira.sdr.api.model.connectedmedia.ConnectedMediaCreateRequest;
 import ba.com.zira.sdr.api.model.connectedmedia.ConnectedMediaUpdateRequest;
 import ba.com.zira.sdr.dao.model.ConnectedMediaEntity;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { ConnectedMediaDetailMapper.class })
 public interface ConnectedMediaMapper {
     ConnectedMediaEntity dtoToEntity(ConnectedMediaCreateRequest connectedMediaCreateRequest);
 

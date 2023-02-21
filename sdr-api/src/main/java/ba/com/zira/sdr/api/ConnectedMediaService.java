@@ -16,6 +16,4 @@ public interface ConnectedMediaService {
 
     public PayloadResponse<ConnectedMedia> update(EntityRequest<ConnectedMediaUpdateRequest> request) throws ApiException;
 
-    public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
-
 }
