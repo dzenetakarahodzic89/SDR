@@ -45,10 +45,6 @@ public class SongArtistRequestValidationTest extends BasicTestConfiguration {
         this.validation = new SongArtistRequestValidation(songArtistDAO, songDAO, albumDAO, labelDAO, artistDAO);
     }
 
-    /**
-     * Update
-     */
-
     @Test
     public void validateCreateRequestIdsNotFound() {
         ArrayList<String> errorList = new ArrayList<>();
