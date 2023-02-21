@@ -29,7 +29,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class ArtistImpl implements ArtistService {
+public class ArtistServiceImpl implements ArtistService {
     ArtistDAO artistDAO;
     PersonArtistDAO personArtistDAO;
     SongArtistDAO songArtistDAO;
@@ -102,8 +102,8 @@ public class ArtistImpl implements ArtistService {
         artists.setRecords(artistMapper.entitiesToDtos(artistEntity.getRecords()));
         PagedDataMetadataMapper.remapMetadata(artistEntity, artists);
         artists.getRecords().forEach(artist -> {
-            artist.setSongArtistNames(songArtistDAO.SongArtistEntityByArtist(artist.getId()));
-            artist.setPersonArtistNames(personArtistDAO.PersonArtistEntityByArtist(artist.getId()));
+            artist.setSongArtistNames(songArtistDAO.songArtistEntityByArtist(artist.getId()));
+            artist.setPersonArtistNames(personArtistDAO.personArtistEntityByArtist(artist.getId()));
 
         });
         return new PagedPayloadResponse<>(request, ResponseCode.OK, artists);

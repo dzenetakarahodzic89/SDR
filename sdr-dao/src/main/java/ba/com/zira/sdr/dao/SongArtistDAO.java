@@ -14,7 +14,7 @@ import ba.com.zira.sdr.dao.model.SongArtistEntity;
 @Repository
 public class SongArtistDAO extends AbstractDAO<SongArtistEntity, Long> {
 
-    public Map<Long, String> SongArtistEntityByArtist(Long artistId) {
+    public Map<Long, String> songArtistEntityByArtist(Long artistId) {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.status) from SongArtistEntity s where s.artist.id = :id";
         TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setParameter("id", artistId);
         try {
