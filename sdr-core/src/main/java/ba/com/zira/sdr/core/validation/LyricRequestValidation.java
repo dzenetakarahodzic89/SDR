@@ -6,24 +6,24 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
-import ba.com.zira.sdr.api.model.audiodb.AudioDBIntegrationUpdateRequest;
-import ba.com.zira.sdr.dao.AudioDBIntegrationDAO;
+import ba.com.zira.sdr.api.model.lyric.LyricUpdateRequest;
+import ba.com.zira.sdr.dao.LyricDAO;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-@Component("audioDBIntegrationRequestValidation")
-public class AudioDBIntegrationRequestValidation {
+@Component("lyricRequestValidation")
+public class LyricRequestValidation {
 
-    private AudioDBIntegrationDAO audioDBIntegrationDAO;
+    private LyricDAO lyricDAO;
 
-    public ValidationResponse validateUpdateAudioDBIntegrationRequest(final EntityRequest<AudioDBIntegrationUpdateRequest> request) {
+    public ValidationResponse validateUpdateLyricRequest(final EntityRequest<LyricUpdateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(exists(request.getEntity().getId()));
 
         return ValidationResponse.of(request, errors);
     }
 
-    public ValidationResponse validateExistsAudioDBIntegrationRequest(final EntityRequest<Long> request) {
+    public ValidationResponse validateExistsLyricRequest(final EntityRequest<Long> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(exists(request.getEntity()));
 
@@ -31,8 +31,8 @@ public class AudioDBIntegrationRequestValidation {
     }
 
     private ValidationError exists(Long id) {
-        if (!audioDBIntegrationDAO.existsByPK(id)) {
-            return ValidationError.of("SAMPLE_NOT_FOUND", "Sample with id: " + id + " does not exist!");
+        if (!lyricDAO.existsByPK(id)) {
+            return ValidationError.of("LYRIC_NOT_FOUND", "Lyric with id: " + id + " does not exist!");
         }
         return null;
     }

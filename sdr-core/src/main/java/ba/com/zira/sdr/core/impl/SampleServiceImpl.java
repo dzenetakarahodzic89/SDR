@@ -41,6 +41,7 @@ public class SampleServiceImpl implements SampleService {
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<SampleModel> create(final EntityRequest<SampleModelCreateRequest> request) throws ApiException {
         var sampleModelEntity = sampleModelMapper.dtoToEntity(request.getEntity());
+
         sampleModelEntity.setStatus(Status.ACTIVE.value());
         sampleModelEntity.setCreated(LocalDateTime.now());
         sampleModelEntity.setCreatedBy(request.getUserId());
