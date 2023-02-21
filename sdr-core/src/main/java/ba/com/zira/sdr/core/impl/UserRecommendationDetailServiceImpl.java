@@ -52,8 +52,7 @@ public class UserRecommendationDetailServiceImpl implements UserRecommendationDe
 		UserRecommendationDetailEntity userRecommendationDetailEntity = userRecommendationDetailMapper
 				.dtoToEntity(entityRequest.getEntity());
 
-		userRecommendationDetailEntity.setStatus(Status.ACTIVE.value());
-
+		userRecommendationDetailEntity.setStatus(Status.INACTIVE.value());
 		userRecommendationDetailEntity.setCreated(LocalDateTime.now());
 		userRecommendationDetailEntity.setCreatedBy(entityRequest.getUserId());
 

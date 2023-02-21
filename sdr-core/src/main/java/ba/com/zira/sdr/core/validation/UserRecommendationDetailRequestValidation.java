@@ -33,7 +33,7 @@ public class UserRecommendationDetailRequestValidation {
 
 	public ValidationResponse validateDeleteUserRecommendationDetailRequest(final EntityRequest<Long> entityRequest) {
 		ValidationErrors errors = new ValidationErrors();
-		errors.put(exists(userRecommendatioDetailDAO, entityRequest.getEntity(), "USER_RECOMMENDATIO_DETAIL_NOT_FOUND",
+		errors.put(exists(userRecommendationDetailDAO, entityRequest.getEntity(), "USER_RECOMMENDATIO_DETAIL_NOT_FOUND",
 				"User-recommendation-detail"));
 
 		return ValidationResponse.of(entityRequest, errors);
