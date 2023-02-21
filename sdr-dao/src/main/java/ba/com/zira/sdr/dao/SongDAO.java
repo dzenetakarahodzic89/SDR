@@ -1,9 +1,5 @@
 package ba.com.zira.sdr.dao;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +9,11 @@ import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.dao.model.SongEntity;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.persistence.TypedQuery;
+import ba.com.zira.sdr.api.model.lov.LoV;
+
 
 @Repository
 public class SongDAO extends AbstractDAO<SongEntity, Long> {
@@ -27,4 +28,5 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         }
 
     }
+
 }
