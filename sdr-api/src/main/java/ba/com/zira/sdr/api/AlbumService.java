@@ -7,6 +7,7 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
+import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 
 public interface AlbumService {
@@ -17,4 +18,6 @@ public interface AlbumService {
     PayloadResponse<AlbumResponse> update(EntityRequest<AlbumUpdateRequest> request) throws ApiException;
 
     PayloadResponse<AlbumResponse> delete(EntityRequest<Long> request) throws ApiException;
+
+    PayloadResponse<AlbumSongResponse> songs(EntityRequest<Long> request) throws ApiException;
 }

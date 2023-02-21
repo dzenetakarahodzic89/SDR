@@ -1,6 +1,8 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +18,18 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.AlbumService;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
+import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.core.mapper.AlbumMapper;
+import ba.com.zira.sdr.core.mapper.SongArtistMapper;
+import ba.com.zira.sdr.core.mapper.SongMapper;
+import ba.com.zira.sdr.core.utils.PlayTimeHelper;
 import ba.com.zira.sdr.core.validation.AlbumRequestValidation;
 import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
+import ba.com.zira.sdr.dao.model.SongArtistEntity;
+import ba.com.zira.sdr.dao.model.SongEntity;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -28,7 +37,9 @@ import lombok.AllArgsConstructor;
 public class AlbumServiceImpl implements AlbumService {
 
     AlbumDAO albumDAO;
+    SongArtistMapper songArtistMapper;
     AlbumMapper albumMapper;
+    SongMapper songMapper;
     AlbumRequestValidation albumRequestValidation;
 
     @Override
@@ -69,6 +80,26 @@ public class AlbumServiceImpl implements AlbumService {
         var albumEntity = albumDAO.findByPK(request.getEntity());
         albumDAO.removeByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, albumMapper.entityToDto(albumEntity));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<AlbumSongResponse> songs(final EntityRequest<Long> request) throws ApiException {
+        var listSongArtist = albumDAO.findByPK(request.getEntity()).getSongArtists();
+        List<SongResponse> listSong = new ArrayList<>();
+        List<String> playTimes = new ArrayList<>();
+
+        listSongArtist.forEach((final SongArtistEntity songArtist) -> {
+            SongEntity s = songArtist.getSong();
+            listSong.add(songMapper.entityToDto(s));
+            playTimes.add(s.getPlaytime());
+        });
+
+        String totalPlayTime = PlayTimeHelper.totalPlayTime(playTimes);
+        AlbumSongResponse asp = new AlbumSongResponse();
+        asp.setSongs(listSong);
+        asp.setTotalPlayTime(totalPlayTime);
+        return new PayloadResponse<>(request, ResponseCode.OK, asp);
     }
 
 }
