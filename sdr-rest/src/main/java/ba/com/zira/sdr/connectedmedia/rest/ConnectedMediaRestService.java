@@ -26,9 +26,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
-@Tag(name = "connectedMedia", description = "Connected Media API")
+@Tag(name = "connected-media", description = "Connected Media API")
 @RestController
-@RequestMapping(value = "connectedMedia")
+@RequestMapping(value = "connected-media")
 @AllArgsConstructor
 public class ConnectedMediaRestService {
 
