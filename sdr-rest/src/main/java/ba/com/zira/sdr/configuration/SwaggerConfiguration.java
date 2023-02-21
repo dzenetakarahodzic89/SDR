@@ -46,6 +46,12 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi songfftresultApi() {
+        return GroupedOpenApi.builder().group("songfftresult-api").packagesToScan("ba.com.zira.sdr.songfftresult.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi chordProgressionApi() {
         return GroupedOpenApi.builder().group("chordprogression-api").packagesToScan("ba.com.zira.sdr.chordprogression.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -90,6 +96,11 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi spotifyIntegrationApi() {
         return GroupedOpenApi.builder().group("spotify-integration-api").packagesToScan("ba.com.zira.sdr.spotifyintegration.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    public GroupedOpenApi connectedMediaApi() {
+        return GroupedOpenApi.builder().group("connectedmedia-api").packagesToScan("ba.com.zira.sdr.connectedmedia.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
