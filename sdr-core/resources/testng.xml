@@ -13,6 +13,8 @@
 		<classes>
 			<class
 				name="ba.com.zira.sdr.test.suites.SongArtistRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.SongArtistServiceTest" />
 		</classes>
 	</test>
 </suite> 
