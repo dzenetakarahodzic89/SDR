@@ -11,6 +11,8 @@ import lombok.Data;
 @Data
 @Schema(description = "Properties to update a genre")
 public class ConnectedMediaUpdateRequest implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Min(1)
     @Schema(description = "Id of the connected media")
     private Long id;

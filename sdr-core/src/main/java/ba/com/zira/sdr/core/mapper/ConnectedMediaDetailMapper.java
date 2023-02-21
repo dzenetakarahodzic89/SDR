@@ -10,8 +10,8 @@ import ba.com.zira.sdr.dao.model.ConnectedMediaDetailEntity;
 @Mapper(componentModel = "spring")
 public interface ConnectedMediaDetailMapper {
 
-    ConnectedMediaDetailInfo entityToDto(ConnectedMediaDetailEntity connectedMediaEntity);
+    ConnectedMediaDetailInfo entityToInfoDto(ConnectedMediaDetailEntity connectedMediaEntity);
 
-    List<ConnectedMediaDetailInfo> entitiesToDtos(List<ConnectedMediaDetailEntity> connectedMediaEntities);
+    List<ConnectedMediaDetailInfo> entitiesToInfoDtos(List<ConnectedMediaDetailEntity> connectedMediaEntities);
 
 }
