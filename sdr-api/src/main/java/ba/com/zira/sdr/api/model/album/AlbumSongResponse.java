@@ -2,6 +2,7 @@ package ba.com.zira.sdr.api.model.album;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
 
@@ -21,4 +22,8 @@ public class AlbumSongResponse implements Serializable {
     @NotBlank
     @Schema(description = "Total playtime")
     String totalPlayTime;
+
+    @NotBlank
+    @Schema(description = "Map of songs")
+    Map<Long, SongResponse> map;
 }

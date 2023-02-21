@@ -2,7 +2,9 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,17 +90,19 @@ public class AlbumServiceImpl implements AlbumService {
         var listSongArtist = albumDAO.findByPK(request.getEntity()).getSongArtists();
         List<SongResponse> listSong = new ArrayList<>();
         List<String> playTimes = new ArrayList<>();
-
+        Map<Long, SongResponse> map = new HashMap<Long, SongResponse>();
         listSongArtist.forEach((final SongArtistEntity songArtist) -> {
             SongEntity s = songArtist.getSong();
             listSong.add(songMapper.entityToDto(s));
             playTimes.add(s.getPlaytime());
+            map.put(s.getId(), songMapper.entityToDto(s));
         });
 
         String totalPlayTime = PlayTimeHelper.totalPlayTime(playTimes);
         AlbumSongResponse asp = new AlbumSongResponse();
         asp.setSongs(listSong);
         asp.setTotalPlayTime(totalPlayTime);
+        asp.setMap(map);
         return new PayloadResponse<>(request, ResponseCode.OK, asp);
     }
 
