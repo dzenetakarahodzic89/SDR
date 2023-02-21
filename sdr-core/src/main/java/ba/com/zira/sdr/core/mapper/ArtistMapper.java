@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.core.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.springframework.stereotype.Component;
@@ -19,5 +21,7 @@ public interface ArtistMapper {
     ArtistEntity dtoToEntity(ArtistCreateRequest artistRequest);
 
     void updateEntity(ArtistUpdateRequest artistRequest, @MappingTarget ArtistEntity artistEntity);
+
+    List<ArtistResponse> entitiesToDtos(List<ArtistEntity> artistEntity);
 
 }

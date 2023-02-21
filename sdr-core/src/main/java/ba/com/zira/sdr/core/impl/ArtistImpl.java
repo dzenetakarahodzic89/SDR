@@ -1,40 +1,48 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
-import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
-import ba.com.zira.commons.message.response.ListPayloadResponse;
+import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
+import ba.com.zira.commons.model.PagedData;
+import ba.com.zira.commons.model.ValidationError;
+import ba.com.zira.commons.model.ValidationErrors;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.ArtistService;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
-import ba.com.zira.sdr.api.artist.ArtistDeleteRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
+import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.PersonArtistDAO;
+import ba.com.zira.sdr.dao.SongArtistDAO;
+import ba.com.zira.sdr.dao.model.ArtistEntity;
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
 public class ArtistImpl implements ArtistService {
     ArtistDAO artistDAO;
+    PersonArtistDAO personArtistDAO;
+    SongArtistDAO songArtistDAO;
     ArtistMapper artistMapper;
     ArtistValidation artistRequestValidation;
 
-    @Override
-    public ListPayloadResponse<ArtistResponse> getAll(EmptyRequest req) throws ApiException {
-
-        List<ArtistResponse> multiSearchList = artistDAO.getAllArtists1();
-        return new ListPayloadResponse<>(req, ResponseCode.OK, multiSearchList);
-    }
+    /*
+     * @Override public ListPayloadResponse<ArtistResponse> getAll(EmptyRequest
+     * req) throws ApiException {
+     *
+     * List<ArtistResponse> multiSearchList = artistDAO.getAllArtists(); return
+     * new ListPayloadResponse<>(req, ResponseCode.OK, multiSearchList); }
+     */
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -51,9 +59,24 @@ public class ArtistImpl implements ArtistService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ArtistResponse> delete(final EntityRequest<ArtistDeleteRequest> request) throws ApiException {
-        artistDAO.removeByPK(request.getEntity().getId());
-        return new PayloadResponse<>(request, ResponseCode.OK, null);
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
+        artistRequestValidation.validateExistsArtistRequest(request);
+        Long id = request.getEntity();
+
+        if (artistDAO.personArtistExist(id)) {
+            ValidationErrors errors = new ValidationErrors();
+            errors.put(ValidationError.of("PERSON_ARTIST_EXISTS", "Not allowed to be deleted."));
+            return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, "Artist delete validation error");
+        }
+
+        if (artistDAO.songArtistExist(id)) {
+            ValidationErrors errors = new ValidationErrors();
+            errors.put(ValidationError.of("SONG_ARTIST_EXISTS", "Not allowed to be deleted."));
+            return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, "Artist delete validation error");
+        }
+
+        artistDAO.remove(artistDAO.findByPK(id));
+        return new PayloadResponse<>(request, ResponseCode.OK, "Artist successfully deleted!");
     }
 
     @Override
@@ -72,4 +95,17 @@ public class ArtistImpl implements ArtistService {
         return new PayloadResponse<>(request, ResponseCode.OK, artistMapper.entityToDto(artistEntity));
     }
 
+    @Override
+    public PagedPayloadResponse<ArtistResponse> find(final FilterRequest request) throws ApiException {
+        PagedData<ArtistEntity> artistEntity = artistDAO.findAll(request.getFilter());
+        PagedData<ArtistResponse> artists = new PagedData<ArtistResponse>();
+        artists.setRecords(artistMapper.entitiesToDtos(artistEntity.getRecords()));
+        PagedDataMetadataMapper.remapMetadata(artistEntity, artists);
+        artists.getRecords().forEach(artist -> {
+            artist.setSongArtistNames(songArtistDAO.SongArtistEntityByArtist(artist.getId()));
+            artist.setPersonArtistNames(personArtistDAO.PersonArtistEntityByArtist(artist.getId()));
+
+        });
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, artists);
+    }
 }
