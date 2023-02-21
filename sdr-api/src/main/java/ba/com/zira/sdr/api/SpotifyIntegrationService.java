@@ -19,5 +19,5 @@ public interface SpotifyIntegrationService {
     public PayloadResponse<SpotifyIntegrationResponse> update(final EntityRequest<SpotifyIntegrationUpdateRequest> request)
             throws ApiException;
 
-    public PayloadResponse<SpotifyIntegrationResponse> delete(final EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException;
 }
