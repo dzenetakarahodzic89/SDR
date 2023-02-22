@@ -26,15 +26,21 @@ public class SwaggerConfiguration {
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
+	@Bean
     public GroupedOpenApi audioDBIntegrationApi() {
         return GroupedOpenApi.builder().group("audioDBIntegration-api").packagesToScan("ba.com.zira.sdr.audiodbintegration.rest")
-
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
-
+	@Bean
     public GroupedOpenApi personApi() {
         return GroupedOpenApi.builder().group("person-api").packagesToScan("ba.com.zira.sdr.person.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+	
 
+    @Bean
+    public GroupedOpenApi commentApi() {
+        return GroupedOpenApi.builder().group("comment-api").packagesToScan("ba.com.zira.sdr.comment.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
@@ -47,7 +53,6 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi genreApi() {
         return GroupedOpenApi.builder().group("genre-api").packagesToScan("ba.com.zira.sdr.genre.rest")
-
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
@@ -70,6 +75,12 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi playlistApi() {
+        return GroupedOpenApi.builder().group("playlist-api").packagesToScan("ba.com.zira.sdr.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi multisearchApi() {
         return GroupedOpenApi.builder().group("multisearch-api").packagesToScan("ba.com.zira.sdr.multisearch.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -81,9 +92,14 @@ public class SwaggerConfiguration {
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
-    @Bean
+	@Bean
     public GroupedOpenApi sampleApi() {
         return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+  	@Bean
+    public GroupedOpenApi userRecommendationApi() {
+        return GroupedOpenApi.builder().group("userrecommendation-api").packagesToScan("ba.com.zira.sdr.userrecommendation.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
