@@ -39,9 +39,9 @@ public class LabelRestService {
 
     @Operation(summary = "Find labels base on filter criteria")
     @GetMapping
-    public PagedPayloadResponse<LabelResponse> findAll(@RequestParam Map<String, Object> filterCriteria,
+    public PagedPayloadResponse<LabelResponse> find(@RequestParam Map<String, Object> filterCriteria,
             final QueryConditionPage queryCriteria) throws ApiException {
-        return labelService.findAll(new FilterRequest(filterCriteria, queryCriteria));
+        return labelService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
     @Operation(summary = "Find label base on id")
