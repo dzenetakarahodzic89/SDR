@@ -1,9 +1,9 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -41,6 +41,7 @@ public class SampleServiceImpl implements SampleService {
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<SampleModel> create(final EntityRequest<SampleModelCreateRequest> request) throws ApiException {
         var sampleModelEntity = sampleModelMapper.dtoToEntity(request.getEntity());
+
         sampleModelEntity.setStatus(Status.ACTIVE.value());
         sampleModelEntity.setCreated(LocalDateTime.now());
         sampleModelEntity.setCreatedBy(request.getUserId());
