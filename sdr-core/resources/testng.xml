@@ -25,4 +25,12 @@
 				name="ba.com.zira.sdr.test.suites.CommentServiceTest" />
 		</classes>
 	</test>
+	<test thread-count="5" name="Genre">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.GenreRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.GenreServiceTest"/>
+	    </classes>
+    </test>
 </suite> 

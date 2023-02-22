@@ -43,13 +43,6 @@ public class GenreRequestValidation {
         return ValidationResponse.of(request, errors);
     }
 
-    public ValidationResponse validateExistsGenreRequest(final EntityRequest<Long> request) {
-        ValidationErrors errors = new ValidationErrors();
-        errors.put(genreExists(request.getEntity()));
-
-        return ValidationResponse.of(request, errors);
-    }
-
     public ValidationResponse validateGenreDeleteRequest(final EntityRequest<Long> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(genreExists(request.getEntity()));
