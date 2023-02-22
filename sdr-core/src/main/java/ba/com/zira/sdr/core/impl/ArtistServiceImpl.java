@@ -31,10 +31,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ArtistServiceImpl implements ArtistService {
     ArtistDAO artistDAO;
-    PersonArtistDAO personArtistDAO;
-    SongArtistDAO songArtistDAO;
     ArtistMapper artistMapper;
     ArtistValidation artistRequestValidation;
+    PersonArtistDAO personArtistDAO;
+    SongArtistDAO songArtistDAO;
 
     /*
      * @Override public ListPayloadResponse<ArtistResponse> getAll(EmptyRequest
@@ -108,4 +108,16 @@ public class ArtistServiceImpl implements ArtistService {
         });
         return new PagedPayloadResponse<>(request, ResponseCode.OK, artists);
     }
+
+    /*
+     *
+     *
+     * @Override public ListPayloadResponse<ArtistResponse>
+     * getArtistsByEra(EntityRequest<Long> request) throws ApiException { Long
+     * eraId = request.getEntity(); List<ArtistEntity> artistEntities =
+     * artistDAO.findArtistsByEra(eraId); List<ArtistResponse> artists =
+     * artistMapper.entitiesToDtos(artistEntities); return new
+     * ListPayloadResponse<>(request, ResponseCode.OK, artists); }
+     */
+
 }

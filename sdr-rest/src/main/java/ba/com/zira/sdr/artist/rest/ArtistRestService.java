@@ -71,6 +71,17 @@ public class ArtistRestService {
             request.setId(id);
         }
         return artistService.update(new EntityRequest<>(request));
+
     }
 
+    /*
+     * @GetMapping(value = "/{eraId}") public
+     * ResponseEntity<ListPayloadResponse<ArtistResponse>>
+     * getArtistsByEra(@PathVariable("eraId") Long eraId) { EntityRequest<Long>
+     * request = new EntityRequest<>(eraId); try {
+     * ListPayloadResponse<ArtistResponse> response =
+     * artistService.getArtistsByEra(request); return new
+     * ResponseEntity<>(response, HttpStatus.OK); } catch (ApiException e) {
+     * return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); } }
+     */
 }

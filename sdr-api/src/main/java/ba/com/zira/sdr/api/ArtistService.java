@@ -22,4 +22,7 @@ public interface ArtistService {
 
     PayloadResponse<ArtistResponse> update(EntityRequest<ArtistUpdateRequest> request) throws ApiException;
 
+    // ListPayloadResponse<ArtistResponse> getArtistsByEra(EntityRequest<Long>
+    // request) throws ApiException;
+
 }

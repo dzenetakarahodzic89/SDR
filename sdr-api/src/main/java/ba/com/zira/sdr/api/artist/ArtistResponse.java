@@ -42,7 +42,7 @@ public class ArtistResponse implements Serializable {
     private Map<Long, String> songArtistNames;
 
     public ArtistResponse() {
-    };
+    }
 
     public ArtistResponse(String name, LocalDateTime dateOfBirth, LocalDateTime dateOfDeath, String information, String status,
             String surname, String type) {

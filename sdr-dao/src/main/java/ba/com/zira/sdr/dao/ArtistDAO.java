@@ -58,4 +58,41 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         }
     }
 
+    /*
+     * public List<ArtistEntity> findArtistsByEra(Long eraId) {
+     * TypedQuery<ArtistEntity> query = entityManager.createQuery(
+     * "SELECT a FROM ArtistEntity a JOIN a.songArtists sa JOIN sa.album era WHERE era.id = :eraId"
+     * , ArtistEntity.class); query.setParameter("eraId", eraId); return
+     * query.getResultList(); }
+     * 
+     * 
+     * public Map<String, Object> getArtistsByEra(Long eraId) {
+     * TypedQuery<ArtistEntity> query = entityManager.
+     * createQuery("SELECT DISTINCT a FROM ArtistEntity a JOIN a.artistPersons "
+     * +
+     * "ap JOIN ap.person p JOIN a.songArtists sa JOIN sa.album alb WHERE alb.era.id = :eraId"
+     * , ArtistEntity.class); query.setParameter("eraId", eraId);
+     * List<ArtistEntity> artists = query.getResultList(); List<ArtistResponse>
+     * soloArtists = new ArrayList<>(); List<ArtistResponse> groups = new
+     * ArrayList<>(); for (ArtistEntity artist : artists) { Map<Long, String>
+     * personArtistNames = new HashMap<>(); if (artist.getPersonArtists().size()
+     * == 1) { // solo artist PersonArtistEntity ap =
+     * artist.getPersonArtists().get(0);
+     * personArtistNames.put(ap.getPerson().getId(), ap.getPerson().getName());
+     * soloArtists.add(new ArtistResponse(artist.getId(), artist.getName(),
+     * artist.getCreated(), artist.getCreatedBy(), artist.getDateOfBirth(),
+     * artist.getDateOfDeath(), artist.getInformation(), artist.getModified(),
+     * artist.getModifiedBy(), artist.getStatus(), artist.getSurname(),
+     * artist.getType(), personArtistNames, null)); } else { // group for
+     * (PersonArtistEntity ap : artist.getPersonArtists()) {
+     * personArtistNames.put(ap.getPerson().getId(), ap.getPerson().getName());
+     * } groups.add(new ArtistResponse(artist.getId(), artist.getName(),
+     * artist.getCreated(), artist.getCreatedBy(), artist.getDateOfBirth(),
+     * artist.getDateOfDeath(), artist.getInformation(), artist.getModified(),
+     * artist.getModifiedBy(), artist.getStatus(), artist.getSurname(),
+     * artist.getType(), personArtistNames, null)); } } Map<String, Object>
+     * response = new HashMap<>(); response.put("soloArtists", soloArtists);
+     * response.put("groups", groups); return response; }
+     * 
+     */
 }
