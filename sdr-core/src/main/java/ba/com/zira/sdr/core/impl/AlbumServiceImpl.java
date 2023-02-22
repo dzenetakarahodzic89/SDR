@@ -1,13 +1,13 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -30,8 +30,6 @@ import ba.com.zira.sdr.core.utils.PlayTimeHelper;
 import ba.com.zira.sdr.core.validation.AlbumRequestValidation;
 import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
-import ba.com.zira.sdr.dao.model.SongArtistEntity;
-import ba.com.zira.sdr.dao.model.SongEntity;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -86,20 +84,18 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<AlbumSongResponse> songs(final EntityRequest<Long> request) throws ApiException {
-        var listSongArtist = albumDAO.findByPK(request.getEntity()).getSongArtists();
-        List<SongResponse> listSong = new ArrayList<>();
+    public PayloadResponse<AlbumSongResponse> findAllSongsForAlbum(final EntityRequest<Long> request) throws ApiException {
+        List<SongResponse> listSong = albumDAO.findSongsWithPlaytimeForAlbum(request.getEntity());
         List<String> playTimes = new ArrayList<>();
-        Map<Long, SongResponse> map = new HashMap<Long, SongResponse>();
-        listSongArtist.forEach((final SongArtistEntity songArtist) -> {
-            SongEntity s = songArtist.getSong();
-            listSong.add(songMapper.entityToDto(s));
+        Map<Long, SongResponse> map = new HashMap<>();
+
+        listSong.stream().forEach((final SongResponse s) -> {
             playTimes.add(s.getPlaytime());
-            map.put(s.getId(), songMapper.entityToDto(s));
+            map.put(s.getId(), s);
         });
 
         String totalPlayTime = PlayTimeHelper.totalPlayTime(playTimes);
-        AlbumSongResponse asp = new AlbumSongResponse();
+        var asp = new AlbumSongResponse();
         asp.setSongs(listSong);
         asp.setTotalPlayTime(totalPlayTime);
         asp.setMap(map);

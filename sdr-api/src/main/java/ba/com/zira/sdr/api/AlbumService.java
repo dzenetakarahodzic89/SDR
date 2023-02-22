@@ -10,14 +10,63 @@ import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 
+/**
+ * The Interface AlbumService.
+ */
 public interface AlbumService {
+
+    /**
+     * Find.
+     *
+     * @param request
+     *            the request
+     * @return the paged payload response
+     * @throws ApiException
+     *             the api exception
+     */
     public PagedPayloadResponse<AlbumResponse> find(final FilterRequest request) throws ApiException;
 
+    /**
+     * Creates the.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     * @throws ApiException
+     *             the api exception
+     */
     PayloadResponse<AlbumResponse> create(EntityRequest<AlbumCreateRequest> request) throws ApiException;
 
+    /**
+     * Update.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     * @throws ApiException
+     *             the api exception
+     */
     PayloadResponse<AlbumResponse> update(EntityRequest<AlbumUpdateRequest> request) throws ApiException;
 
+    /**
+     * Delete.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     * @throws ApiException
+     *             the api exception
+     */
     PayloadResponse<AlbumResponse> delete(EntityRequest<Long> request) throws ApiException;
 
-    PayloadResponse<AlbumSongResponse> songs(EntityRequest<Long> request) throws ApiException;
+    /**
+     * Find all songs for album.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     * @throws ApiException
+     *             the api exception
+     */
+    PayloadResponse<AlbumSongResponse> findAllSongsForAlbum(EntityRequest<Long> request) throws ApiException;
 }

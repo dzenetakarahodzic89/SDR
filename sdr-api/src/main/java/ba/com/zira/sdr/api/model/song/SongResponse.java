@@ -1,9 +1,9 @@
 package ba.com.zira.sdr.api.model.song;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import java.io.Serializable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -12,7 +12,7 @@ import lombok.Data;
 @Schema(description = "Properties of song response")
 public class SongResponse implements Serializable {
 
-    private static final long serialVesrionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @NotNull
     @Schema(description = "Song id")
@@ -25,5 +25,12 @@ public class SongResponse implements Serializable {
     @NotBlank
     @Schema(description = "Playtime")
     private String playtime;
+
+    public SongResponse(@NotNull Long id, @NotBlank String name, @NotBlank String playtime) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.playtime = playtime;
+    }
 
 }

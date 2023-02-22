@@ -1,10 +1,10 @@
 package ba.com.zira.sdr.api.model.album;
 
+import javax.validation.constraints.NotBlank;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import javax.validation.constraints.NotBlank;
 
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,7 +17,7 @@ public class AlbumSongResponse implements Serializable {
 
     @NotBlank
     @Schema(description = "Release date of album")
-    List<SongResponse> songs;
+    private List<SongResponse> songs;
 
     @NotBlank
     @Schema(description = "Total playtime")
@@ -25,5 +25,5 @@ public class AlbumSongResponse implements Serializable {
 
     @NotBlank
     @Schema(description = "Map of songs")
-    Map<Long, SongResponse> map;
+    private Map<Long, SongResponse> map;
 }

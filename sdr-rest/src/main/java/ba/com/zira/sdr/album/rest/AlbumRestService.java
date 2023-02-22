@@ -1,7 +1,5 @@
 package ba.com.zira.sdr.album.rest;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -70,9 +70,9 @@ public class AlbumRestService {
 
     @Operation(summary = "Get all songs from album")
     @GetMapping(value = "{id}/songs")
-    public PayloadResponse<AlbumSongResponse> songs(
+    public PayloadResponse<AlbumSongResponse> findAllSongsForAlbum(
             @Parameter(required = true, description = "ID of the album") @PathVariable final Long id) throws ApiException {
-        return albumService.songs(new EntityRequest(id));
+        return albumService.findAllSongsForAlbum(new EntityRequest<>(id));
     }
 
 }

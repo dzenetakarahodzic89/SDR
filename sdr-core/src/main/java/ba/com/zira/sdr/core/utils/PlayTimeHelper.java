@@ -4,8 +4,11 @@ import java.util.List;
 
 public class PlayTimeHelper {
 
+    private PlayTimeHelper() {
+    }
+
     public static String totalPlayTime(final List<String> playtimes) {
-        int seconds = 0;
+        var seconds = 0;
         for (var playtime : playtimes) {
             seconds += playTimeToSeconds(playtime);
         }
@@ -14,8 +17,7 @@ public class PlayTimeHelper {
 
     public static int playTimeToSeconds(final String playtime) {
         var elements = playtime.split(":");
-        int seconds = Integer.parseInt(elements[0]) * 3600 + Integer.parseInt(elements[1]) * 60 + Integer.parseInt(elements[2]);
-        return seconds;
+        return Integer.parseInt(elements[0]) * 3600 + Integer.parseInt(elements[1]) * 60 + Integer.parseInt(elements[2]);
     }
 
     public static String secondsToPlayTime(final int seconds) {
