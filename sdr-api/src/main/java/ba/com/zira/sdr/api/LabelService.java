@@ -11,8 +11,7 @@ import ba.com.zira.sdr.api.model.label.LabelResponse;
 import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
 
 /**
- * * Methods used to manipulate {@link LabelResponse} data. <br>
- * List of APIs implemented in this class with links:
+ * * Methods used to manipulate {@link LabelResponse} data. <br> List of APIs implemented in this class with links:
  * <ul>
  * <li>{@link #find}</li>
  * <li>{@link #findById}</li>
@@ -22,15 +21,40 @@ import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
  * </ul>
  *
  * @author zira
- *
  */
-
 public interface LabelService {
 
-    public PagedPayloadResponse<LabelResponse> find(final FilterRequest request) throws ApiException;
+    /**
+     * Find paged payload response.
+     *
+     * @param request
+     *         the request
+     * @return the paged payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PagedPayloadResponse<LabelResponse> find(final FilterRequest request) throws ApiException;
 
-    public PayloadResponse<LabelResponse> findById(final EntityRequest<Long> request) throws ApiException;
+    /**
+     * Find by id payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<LabelResponse> findById(final EntityRequest<Long> request) throws ApiException;
 
+    /**
+     * Create payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
     /*
      * Validate received label data and create new label.
      *
@@ -43,35 +67,30 @@ public interface LabelService {
      * {@link ApiException} will be generated/returned with corresponding error
      * message and {@link ResponseCode}.
      */
-    public PayloadResponse<LabelResponse> create(EntityRequest<LabelCreateRequest> request) throws ApiException;
+    PayloadResponse<LabelResponse> create(EntityRequest<LabelCreateRequest> request) throws ApiException;
 
     /**
      * Validate received label data and update label.
      *
      * @param request
-     *            EntityRequest containing the {@link LabelUpdateRequest} to
-     *            update.
+     *         EntityRequest containing the {@link LabelUpdateRequest} to            update.
      * @return created {@link LabelResponse}.
      * @throws ApiException
-     *             If there was a problem during API invocation then.
-     *             {@link ApiException} will be generated/returned with
-     *             corresponding error message and {@link ResponseCode}.
+     *         If there was a problem during API invocation then.             {@link ApiException} will be generated/returned with
+     *         corresponding error message and {@link ResponseCode}.
      */
-    public PayloadResponse<LabelResponse> update(EntityRequest<LabelUpdateRequest> request) throws ApiException;
+    PayloadResponse<LabelResponse> update(EntityRequest<LabelUpdateRequest> request) throws ApiException;
 
     /**
      * Change label status
      *
      * @param request
-     *            {@link EntityRequest} containing the {@link Long} id of
-     *            engine.
+     *         {@link EntityRequest} containing the {@link Long} id of            engine.
      * @return activated {@link LabelResponse}.
      * @throws ApiException
-     *             If there was a problem during API invocation then.
-     *             {@link ApiException} will be generated/returned with
-     *             corresponding error message and {@link ResponseCode}.
-     *
+     *         If there was a problem during API invocation then.             {@link ApiException} will be generated/returned with
+     *         corresponding error message and {@link ResponseCode}.
      */
 
-    public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
+    PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException;
 }

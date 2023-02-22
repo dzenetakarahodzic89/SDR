@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,6 +16,10 @@ import ba.com.zira.sdr.core.validation.ConnectedMediaRequestValidation;
 import ba.com.zira.sdr.dao.ConnectedMediaDAO;
 import ba.com.zira.sdr.dao.model.ConnectedMediaEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -31,14 +29,14 @@ public class ConnectedMediaServiceImpl implements ConnectedMediaService {
     ConnectedMediaRequestValidation connectedMediaRequestValidation;
 
     @Override
-    public PagedPayloadResponse<ConnectedMedia> find(FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<ConnectedMedia> find(FilterRequest request) {
         PagedData<ConnectedMediaEntity> connectedMediaEntities = connectedMediaDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, connectedMediaEntities, connectedMediaMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ConnectedMedia> create(EntityRequest<ConnectedMediaCreateRequest> request) throws ApiException {
+    public PayloadResponse<ConnectedMedia> create(EntityRequest<ConnectedMediaCreateRequest> request) {
         connectedMediaRequestValidation.validateConnectedMediaCreateRequest(request);
 
         var connectedMediaEntity = connectedMediaMapper.dtoToEntity(request.getEntity());
@@ -52,7 +50,7 @@ public class ConnectedMediaServiceImpl implements ConnectedMediaService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ConnectedMedia> update(EntityRequest<ConnectedMediaUpdateRequest> request) throws ApiException {
+    public PayloadResponse<ConnectedMedia> update(EntityRequest<ConnectedMediaUpdateRequest> request) {
         connectedMediaRequestValidation.validateConnectedMediaUpdateRequest(request);
 
         var connectedMediaEntity = connectedMediaDAO.findByPK(request.getEntity().getId());
