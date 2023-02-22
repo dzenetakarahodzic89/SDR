@@ -7,9 +7,11 @@ import java.util.Map;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class ArtistResponse implements Serializable {
     private static final long serialVersionUID = 1L;
     @Schema(description = "Unique identifier")
@@ -40,9 +42,6 @@ public class ArtistResponse implements Serializable {
     private Map<Long, String> personArtistNames;
     @Schema(description = "Song-artist")
     private Map<Long, String> songArtistNames;
-
-    public ArtistResponse() {
-    }
 
     public ArtistResponse(String name, LocalDateTime dateOfBirth, LocalDateTime dateOfDeath, String information, String status,
             String surname, String type) {

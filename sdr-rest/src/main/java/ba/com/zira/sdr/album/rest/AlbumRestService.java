@@ -1,7 +1,5 @@
 package ba.com.zira.sdr.album.rest;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -22,6 +22,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.AlbumService;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
+import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -57,7 +58,7 @@ public class AlbumRestService {
     @DeleteMapping(value = "{id}")
     public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the album") @PathVariable final Long id)
             throws ApiException {
-        return albumService.delete(new EntityRequest(id));
+        return albumService.delete(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Search albums")
@@ -65,6 +66,13 @@ public class AlbumRestService {
     public PagedPayloadResponse<AlbumResponse> search(final @RequestParam Map<String, Object> filterCriteria,
             final QueryConditionPage queryCriteria) throws ApiException {
         return albumService.find(new FilterRequest(filterCriteria, queryCriteria));
+    }
+
+    @Operation(summary = "Get all songs from album")
+    @GetMapping(value = "{id}/songs")
+    public PayloadResponse<AlbumSongResponse> findAllSongsForAlbum(
+            @Parameter(required = true, description = "ID of the album") @PathVariable final Long id) throws ApiException {
+        return albumService.findAllSongsForAlbum(new EntityRequest<>(id));
     }
 
 }

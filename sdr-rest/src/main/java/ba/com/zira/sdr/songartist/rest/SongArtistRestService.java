@@ -1,16 +1,5 @@
 package ba.com.zira.sdr.songartist.rest;
 
-import java.util.Map;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -24,6 +13,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Tag(name = "Song artist", description = "Song artist rest service")
 @RestController
@@ -47,8 +39,7 @@ public class SongArtistRestService {
 
     @Operation(summary = "Delete song artist")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the record") @PathVariable final Long id)
-            throws ApiException {
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the record") @PathVariable final Long id) {
         EntityRequest<Long> entityRequest = new EntityRequest<>();
         entityRequest.setEntity(id);
         return songArtistService.delete(entityRequest);

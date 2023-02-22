@@ -19,4 +19,5 @@ public class SampleModelUpdateRequest implements Serializable {
     @NotBlank
     @Schema(description = "Name of the sample document")
     private String documentName;
+
 }
