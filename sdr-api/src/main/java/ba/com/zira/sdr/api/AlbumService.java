@@ -57,7 +57,7 @@ public interface AlbumService {
      * @throws ApiException
      *             the api exception
      */
-    PayloadResponse<AlbumResponse> delete(EntityRequest<Long> request) throws ApiException;
+    PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
     /**
      * Find all songs for album.
