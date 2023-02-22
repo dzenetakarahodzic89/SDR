@@ -17,13 +17,22 @@ import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
  */
 public interface ChordProgressionService {
     /**
+     * Find list payload response.
+     *
+     * @return the list payload response
+     * @throws ApiException
+     *             the api exception
+     */
+    ListPayloadResponse<ChordProgressionByEraResponse> getChordByEras(EmptyRequest req) throws ApiException;
+
+    /**
      * Find paged payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the paged payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PagedPayloadResponse<ChordProgressionResponse> find(final FilterRequest request) throws ApiException;
 
@@ -31,10 +40,10 @@ public interface ChordProgressionService {
      * Create payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<ChordProgressionResponse> create(EntityRequest<ChordProgressionCreateRequest> request) throws ApiException;
 
@@ -42,10 +51,10 @@ public interface ChordProgressionService {
      * Delete payload response.
      *
      * @param id
-     *         the id
+     *            the id
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<String> delete(EntityRequest<Long> id) throws ApiException;
 
@@ -53,10 +62,10 @@ public interface ChordProgressionService {
      * Update payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<ChordProgressionResponse> update(EntityRequest<ChordProgressionUpdateRequest> request) throws ApiException;
 }
