@@ -7,11 +7,6 @@
 				name="ba.com.zira.sdr.test.suites.LyricRequestValidationTest" />
 			<class
 				name="ba.com.zira.sdr.test.suites.LyricServiceTest" />
-				name="ba.com.zira.sdr.test.suites.CountryServiceTest" />
-			<class
-				name="ba.com.zira.sdr.test.suites.AlbumRequestValidationTest" />
-			<class
-				name="ba.com.zira.sdr.test.suites.AlbumServiceValidationTest" />
 		</classes>
 	</test>
 	<test thread-count="5" name="SongArtist">
@@ -37,5 +32,24 @@
 	      	<class 
 	      		name="ba.com.zira.sdr.test.suites.GenreServiceTest"/>
 	    </classes>
-    </test>
-</suite> 
+
+	</test>
+	<test thread-count="5" name="Country">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.CountryRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.CountryServiceTest"/>
+		</classes>
+
+	</test>
+	<test thread-count="5" name="Album">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.AlbumRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.AlbumServiceTest"/>
+		</classes>
+
+	</test>
+</suite>
