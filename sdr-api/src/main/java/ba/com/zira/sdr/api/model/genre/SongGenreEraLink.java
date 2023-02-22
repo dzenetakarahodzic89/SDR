@@ -12,8 +12,6 @@ public class SongGenreEraLink implements Serializable {
     String songName;
     Long genreId;
     String genreName;
-    // Long mainGenreId;
-    // String mainGenreName;
     Long eraId;
     String eraName;
 
@@ -23,8 +21,6 @@ public class SongGenreEraLink implements Serializable {
         this.songName = songName;
         this.genreId = genreId;
         this.genreName = genreName;
-        // this.mainGenreId = mainGenreId;
-        // this.mainGenreName = mainGenreName;
         this.eraId = eraId;
         this.eraName = eraName;
     }

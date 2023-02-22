@@ -28,6 +28,7 @@ import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
 import ba.com.zira.sdr.core.impl.GenreServiceImpl;
 import ba.com.zira.sdr.core.mapper.GenreMapper;
 import ba.com.zira.sdr.core.validation.GenreRequestValidation;
+import ba.com.zira.sdr.dao.EraDAO;
 import ba.com.zira.sdr.dao.GenreDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.GenreEntity;
@@ -42,6 +43,7 @@ public class GenreServiceTest extends BasicTestConfiguration {
 
     private GenreDAO genreDAO;
     private SongDAO songDAO;
+    private EraDAO eraDAO;
     private RequestValidator requestValidator;
     private GenreRequestValidation genreRequestValidation;
     private GenreService genreService;
@@ -51,8 +53,9 @@ public class GenreServiceTest extends BasicTestConfiguration {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.genreDAO = Mockito.mock(GenreDAO.class);
         this.songDAO = Mockito.mock(SongDAO.class);
+        this.eraDAO = Mockito.mock(EraDAO.class);
         this.genreRequestValidation = Mockito.mock(GenreRequestValidation.class);
-        this.genreService = new GenreServiceImpl(genreDAO, genreMapper, genreRequestValidation, songDAO);
+        this.genreService = new GenreServiceImpl(genreDAO, genreMapper, genreRequestValidation, songDAO, eraDAO);
     }
 
     @Test(enabled = true)

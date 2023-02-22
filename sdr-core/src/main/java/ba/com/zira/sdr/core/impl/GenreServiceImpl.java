@@ -112,9 +112,6 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public ListPayloadResponse<GenreEraOverview> getGenresOverEras(EmptyRequest request) throws ApiException {
         List<SongGenreEraLink> links = songDAO.findSongGenreEraLinks();
-
-        System.out.println(links);
-
         Map<LoV, List<SongGenreEraLink>> songsByEras = new HashMap<>();
 
         links.stream().forEach(link -> {
@@ -138,27 +135,6 @@ public class GenreServiceImpl implements GenreService {
             var genreEraOverview = new GenreEraOverview(era.getId(), era.getName(), genrePercentageInEra);
             genresOverEras.add(genreEraOverview);
         });
-
-        /*
-         * List<GenreEraOverview> genresOverEras = new LinkedList<>(); var
-         * eraEntities = eraDAO.findAll(); eraEntities.forEach(era -> { Map<LoV,
-         * Double> genrePercentageInEra = new HashMap<>(); List<SongEntity>
-         * songsInEra = new LinkedList<>(); var albums = era.getAlbums();
-         * albums.forEach(album -> { var songArtists = album.getSongArtists();
-         * songArtists.forEach(songArtist -> { var song = songArtist.getSong();
-         * songsInEra.add(song); var genre = song.getGenre(); while
-         * (genre.getMainGenre() != null) { genre = genre.getMainGenre(); } var
-         * genreLoV = new LoV(genre.getId(), genre.getName()); Double
-         * numberOfSongs = 1.0; if (genrePercentageInEra.containsKey(genreLoV))
-         * { numberOfSongs += genrePercentageInEra.get(genreLoV); }
-         *
-         * genrePercentageInEra.put(genreLoV, numberOfSongs);
-         *
-         * }); }); genrePercentageInEra.replaceAll((key, value) -> (value /
-         * songsInEra.size()) * 100); var genreEraOverview = new
-         * GenreEraOverview(era.getId(), era.getName(), genrePercentageInEra);
-         * genresOverEras.add(genreEraOverview); });
-         */
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, genresOverEras);
     }

@@ -9,6 +9,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
@@ -45,27 +46,18 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         final CriteriaQuery<SongGenreEraLink> criteriaQuery = builder.createQuery(SongGenreEraLink.class);
         final Root<SongEntity> root = criteriaQuery.from(SongEntity.class);
         Join<SongEntity, SongArtistEntity> songArtists = root.join(SongEntity_.songArtists);
-        Join<SongEntity, GenreEntity> genres = root.join(SongEntity_.genre);
+        Join<SongEntity, GenreEntity> sgenres = root.join(SongEntity_.genre);
         Join<SongArtistEntity, AlbumEntity> albumArtist = songArtists.join(SongArtistEntity_.album);
         Join<AlbumEntity, EraEntity> eraAlbum = albumArtist.join(AlbumEntity_.era);
+        Join<GenreEntity, GenreEntity> genres = sgenres.join(GenreEntity_.mainGenre, JoinType.LEFT);
 
         Expression<Long> idSelectCase = builder.<Long> selectCase()
-                .when(genres.get(GenreEntity_.mainGenre).isNotNull(), genres.get(GenreEntity_.mainGenre).get(GenreEntity_.id))
-                .otherwise(genres.get(GenreEntity_.id));
+                .when(genres.get(GenreEntity_.id).isNotNull(), genres.get(GenreEntity_.id)).otherwise(sgenres.get(GenreEntity_.id));
         Expression<String> nameSelectCase = builder.<String> selectCase()
-                .when(genres.get(GenreEntity_.mainGenre).isNotNull(), genres.get(GenreEntity_.mainGenre).get(GenreEntity_.name))
-                .otherwise(genres.get(GenreEntity_.name));
+                .when(genres.get(GenreEntity_.name).isNotNull(), genres.get(GenreEntity_.name)).otherwise(sgenres.get(GenreEntity_.name));
 
         criteriaQuery.multiselect(root.get(SongEntity_.id), root.get(SongEntity_.name), idSelectCase, nameSelectCase,
                 eraAlbum.get(EraEntity_.id), eraAlbum.get(EraEntity_.name));
-
-        /*
-         * criteriaQuery.multiselect(root.get(SongEntity_.id),
-         * root.get(SongEntity_.name), genres.get(GenreEntity_.id),
-         * genres.get(GenreEntity_.name),
-         *
-         * eraAlbum.get(EraEntity_.id), eraAlbum.get(EraEntity_.name));
-         */
 
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
