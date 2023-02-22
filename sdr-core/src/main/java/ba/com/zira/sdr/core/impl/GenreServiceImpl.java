@@ -36,17 +36,50 @@ import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.GenreEntity;
 import lombok.AllArgsConstructor;
 
-
+/**
+ * The Class GenreServiceImpl.
+ */
 @Service
+
+/**
+ * Instantiates a new genre service impl.
+ *
+ * @param genreDAO
+ *            the genre DAO
+ * @param genreMapper
+ *            the genre mapper
+ * @param genreRequestValidation
+ *            the genre request validation
+ * @param songDAO
+ *            the song DAO
+ * @param eraDAO
+ *            the era DAO
+ */
 @AllArgsConstructor
 public class GenreServiceImpl implements GenreService {
 
+    /** The genre DAO. */
     GenreDAO genreDAO;
+
+    /** The genre mapper. */
     GenreMapper genreMapper;
+
+    /** The genre request validation. */
     GenreRequestValidation genreRequestValidation;
+
+    /** The song DAO. */
     SongDAO songDAO;
+
+    /** The era DAO. */
     EraDAO eraDAO;
 
+    /**
+     * Find genres.
+     *
+     * @param request
+     *            the request
+     * @return the paged payload response
+     */
     @Override
     public PagedPayloadResponse<Genre> find(final FilterRequest request) {
         PagedData<GenreEntity> genreEntities = genreDAO.findAll(request.getFilter());
@@ -60,6 +93,13 @@ public class GenreServiceImpl implements GenreService {
         return new PagedPayloadResponse<>(request, ResponseCode.OK, genres);
     }
 
+    /**
+     * Creates the genre.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<Genre> create(final EntityRequest<GenreCreateRequest> request) {
@@ -80,6 +120,13 @@ public class GenreServiceImpl implements GenreService {
         return new PayloadResponse<>(request, ResponseCode.OK, genreMapper.entityToDto(genreEntity));
     }
 
+    /**
+     * Update genre.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<Genre> update(final EntityRequest<GenreUpdateRequest> request) {
@@ -99,6 +146,13 @@ public class GenreServiceImpl implements GenreService {
         return new PayloadResponse<>(request, ResponseCode.OK, genreMapper.entityToDto(genreEntity));
     }
 
+    /**
+     * Delete genre.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<String> delete(final EntityRequest<Long> request) {
@@ -110,6 +164,15 @@ public class GenreServiceImpl implements GenreService {
 
     }
 
+    /**
+     * Gets the genres over eras.
+     *
+     * @param request
+     *            the request
+     * @return the genres over eras
+     * @throws ApiException
+     *             the api exception
+     */
     @Override
     public ListPayloadResponse<GenreEraOverview> getGenresOverEras(EmptyRequest request) throws ApiException {
         List<SongGenreEraLink> links = songDAO.findSongGenreEraLinks();
@@ -140,6 +203,13 @@ public class GenreServiceImpl implements GenreService {
         return new ListPayloadResponse<>(request, ResponseCode.OK, genresOverEras);
     }
 
+    /**
+     * Calculate genre percentage in era.
+     *
+     * @param songLinks
+     *            the song links
+     * @return the map
+     */
     private Map<LoV, Double> calculateGenrePercentageInEra(List<SongGenreEraLink> songLinks) {
         Map<LoV, Double> genrePercentageInEra = new HashMap<>();
         songLinks.forEach(link -> {
