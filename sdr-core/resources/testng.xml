@@ -13,5 +13,20 @@
 				name="ba.com.zira.sdr.test.suites.AlbumServiceValidationTest" />
 		</classes>
 	</test>
-	
+	<test thread-count="5" name="SongArtist">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.SongArtistRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.SongArtistServiceTest" />
+		</classes>
+	</test>
+	<test thread-count="5" name="Comment">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.CommentRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.CommentServiceTest" />
+		</classes>
+	</test>
 </suite> 
