@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<requiredFields>
+	<validateAbstractRequest>
+		<rule>user != null</rule>
+		<errorCode>USER</errorCode>
+		<errorMessage>User required!</errorMessage>
+	</validateAbstractRequest>
+	<validateAbstractRequest>
+		<rule>user != null &amp;&amp; user.userId != null &amp;&amp;
+			!(user.userId.isEmpty()) 
+		</rule>
+		<errorCode>USER_ID</errorCode>
+		<errorMessage>User ID required!</errorMessage>
+	</validateAbstractRequest>
+	<!-- REQUEST SPECIFIC VALIDATIONS -->
+	<default>
+		<requests>
+			<validateNumber>
+				<rule>
+					<path>Basic/notNullGreaterThanZero</path>
+					<context>entity</context>
+				</rule>
+			</validateNumber>
+			<validateString>
+				<rule>
+					<path>Basic/stringNotNullAndNotEmpty</path>
+					<context>entity</context>
+				</rule>
+			</validateString>
+			<!-- Request Validation rules -->
+			<validateCreateLineupCard>
+				<rule>
+					<path>Basic/notNull</path>
+					<context>entity</context>
+				</rule>
+				<rule>
+					<path>Player/idNotNull</path>
+					<context>entity</context>
+				</rule>
+				<rule>
+					<path>Position/idNotNull</path>
+					<context>entity</context>
+				</rule>
+				<rule>
+					<path>Lineup/idNotNull</path>
+					<context>entity</context>
+				</rule>
+			</validateCreateLineupCard>
+			<validateLineupCard>
+				<rule>
+					<path>Basic/notNull</path>
+					<context>entity</context>
+				</rule>
+				<rule>
+					<path>Uuid/idNotNull</path>
+					<context>entity</context>
+				</rule>
+			</validateLineupCard>
+			<validateUpdateId>
+				<rule>
+					<path>Update/idNotNull</path>
+					<context>entity</context>
+				</rule>
+			</validateUpdateId>
+			<validateUpdatePlayer>
+				<path>Update/idNotNull</path>
+				<context>entity</context>
+			</validateUpdatePlayer>
+			<!-- Request Validation rules -->
+		</requests>
+		<!-- VALIDATIONS -->
+		<dtos>
+			<!-- Class Validation rules -->
+			<Update>
+				<idNotNull>
+					<updatePlayerIdNotNull/>
+				</idNotNull>
+			</Update>
+			<Player>
+				<idNotNull>
+					<playerIdNotNull />
+				</idNotNull>
+			</Player>
+			<Position>
+				<idNotNull>
+					<positionIdNotNull />
+				</idNotNull>
+			</Position>
+			<Lineup>
+				<idNotNull>
+					<lineupUuidNotNull />
+				</idNotNull>
+			</Lineup>
+			<Uuid>
+				<idNotNull>
+					<uuidNotNull />
+				</idNotNull>
+			</Uuid>
+			<Update>
+				<idNotNull>
+					<seasonIdNotNull />
+				</idNotNull>
+			</Update>
+			<!-- Class Validation rules -->
+			<Basic>
+				<notNull>
+					<basicNotNull />
+				</notNull>
+				<greaterThanZero>
+					<basicGreaterThanZero />
+				</greaterThanZero>
+				<stringNotNullAndNotEmpty>
+					<basicStringNotNullAndNotEmpty />
+				</stringNotNullAndNotEmpty>
+				<isNumber>
+					<basicIsNumber />
+				</isNumber>
+				<notNullGreaterThanZero>
+					<basicNotNullGreaterThanZero />
+				</notNullGreaterThanZero>
+			</Basic>
+		</dtos>
+		<rules>
+			<!-- Basic Rules -->
+			<basicNotNull>
+				<spel>#{} != null</spel>
+				<errorCode>VALUE_NULL</errorCode>
+				<errorMessage>#{} Value is null!</errorMessage>
+			</basicNotNull>
+			<basicGreaterThanZero>
+				<spel>#{} > 0</spel>
+				<errorCode>NOT_GREATER_THAN_ZERO</errorCode>
+				<errorMessage>#{} Must be greater than zero!</errorMessage>
+			</basicGreaterThanZero>
+			<basicStringNotNullAndNotEmpty>
+				<spel>#{} != null &amp;&amp; !(#{}.isEmpty())</spel>
+				<errorCode>VALUE_NULL_OR_EMPTY</errorCode>
+				<errorMessage>#{} Value is null or empty!</errorMessage>
+			</basicStringNotNullAndNotEmpty>
+			<basicIsNumber>
+				<spel>#{}.matches("^[0-9]$")</spel>
+				<errorCode>NOT_A_NUMBER</errorCode>
+				<errorMessage>#{} Must be a number!</errorMessage>
+			</basicIsNumber>
+			<basicNotNullGreaterThanZero>
+				<spel>#{} != null &amp;&amp; #{} > 0</spel>
+				<errorCode>NOT_GREATER_THAN_ZERO</errorCode>
+				<errorMessage>#{} Must be greater than zero!</errorMessage>
+			</basicNotNullGreaterThanZero>
+			<seasonIdNotNull>
+				<spel>#{}id!= null</spel>
+				<errorCode>ID_NULL</errorCode>
+				<errorMessage>#{} Id can't be null!</errorMessage>
+			</seasonIdNotNull>
+			<playerIdNotNull>
+				<spel>#{} playerId!= null </spel>
+				<errorCode>ID_NULL</errorCode>
+				<errorMessage>#{} Player id must not be null!</errorMessage>
+			</playerIdNotNull>
+			<lineupUuidNotNull>
+				<spel>#{} lineupId!= null  &amp;&amp; !(#{} lineupId.isEmpty())</spel>
+				<errorCode>UUID_NULL</errorCode>
+				<errorMessage>#{} Lineup uuid must not be null or empty!</errorMessage>
+			</lineupUuidNotNull>
+			<positionIdNotNull>
+				<spel>#{} positionId!= null </spel>
+				<errorCode>POSITON_ID_NULL</errorCode>
+				<errorMessage>#{} Position id must not be null!</errorMessage>
+			</positionIdNotNull>
+			<uuidNotNull>
+				<spel>#{} uuid!= null </spel>
+				<errorCode>UUID_NULL</errorCode>
+				<errorMessage>#{} Uuid must not be null!</errorMessage>
+			</uuidNotNull>
+			<seasonIdNotNull>
+				<spel>#{}id!= null</spel>
+				<errorCode>ID_NULL</errorCode>
+				<errorMessage>#{} Id can't be null!</errorMessage>
+			</seasonIdNotNull>
+			<updatePlayerIdNotNull>
+				<spel>#{}id!= null</spel>
+				<errorCode>ID_NULL</errorCode>
+				<errorMessage>#{} Id can't be null!</errorMessage>
+			</updatePlayerIdNotNull>
+		</rules>
+	</default>
+</requiredFields>

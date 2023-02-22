@@ -1,9 +1,5 @@
 package ba.com.zira.sdr.test.configuration;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -16,21 +12,25 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.commons.validation.RequestValidator;
 import ba.com.zira.commons.validation.impl.RequestValidatorImpl;
 
 @Configuration
-@ComponentScan(basePackages = {"ba.com.zira.sdr.mapper" })
+@ComponentScan(basePackages = { "ba.com.zira.sdr.core.mapper" })
 @EnableAspectJAutoProxy
 public class ApplicationTestConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationTestConfiguration.class);
-    
+
     /**
      * Create Bean for Request validation
-     * 
+     *
      * @return RequestValidator
      * @throws ApiException
      *             ApiException
@@ -44,7 +44,7 @@ public class ApplicationTestConfiguration {
 
     /**
      * Load XMLs for validation rules.
-     * 
+     *
      * @return Map<String, XMLConfiguration>
      * @throws ApiException
      */
@@ -62,5 +62,5 @@ public class ApplicationTestConfiguration {
             throw ApiException.createFrom(ResponseCode.CONFIGURATION_ERROR, e.getMessage());
         }
     }
-    
+
 }

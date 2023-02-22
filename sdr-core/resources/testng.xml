@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite">
+	<test thread-count="5" name="Country">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.CountryRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.CountryServiceTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.AlbumRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.AlbumServiceValidationTest" />
+		</classes>
+	</test>
+	<test thread-count="5" name="SongArtist">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.SongArtistRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.SongArtistServiceTest" />
+		</classes>
+	</test>
+	<test thread-count="5" name="Comment">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.CommentRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.CommentServiceTest" />
+		</classes>
+	</test>
+	<test thread-count="5" name="Genre">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.GenreRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.GenreServiceTest"/>
+	    </classes>
+    </test>
+</suite> 
