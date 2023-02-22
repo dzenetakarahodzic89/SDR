@@ -52,4 +52,13 @@
 		</classes>
 
 	</test>
+		<test thread-count="5" name="Chord Progression">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.ChordProgressionRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.ChordProgressionServiceTest"/>
+		</classes>
+
+	</test>
 </suite>
