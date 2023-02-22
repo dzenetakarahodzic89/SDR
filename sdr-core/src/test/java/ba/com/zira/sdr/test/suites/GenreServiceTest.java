@@ -14,6 +14,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PayloadResponse;
@@ -24,7 +25,10 @@ import ba.com.zira.commons.validation.RequestValidator;
 import ba.com.zira.sdr.api.GenreService;
 import ba.com.zira.sdr.api.model.genre.Genre;
 import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
+import ba.com.zira.sdr.api.model.genre.GenreEraOverview;
 import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
+import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.core.impl.GenreServiceImpl;
 import ba.com.zira.sdr.core.mapper.GenreMapper;
 import ba.com.zira.sdr.core.validation.GenreRequestValidation;
@@ -303,6 +307,49 @@ public class GenreServiceTest extends BasicTestConfiguration {
             var genreDeleteResponse = genreService.delete(req);
 
             Assertions.assertThat(genreDeleteResponse.getPayload()).isEqualTo("Genre successfully deleted!");
+
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+
+    @Test(enabled = true)
+    public void testGetGenresOverEras() {
+        try {
+            var req = new EmptyRequest();
+
+            SongGenreEraLink firstSongGenreEraLink = new SongGenreEraLink(1L, "Test song 1", 1L, "Test genre 1", 1L, "Test era 1");
+            SongGenreEraLink secondSongGenreEraLink = new SongGenreEraLink(2L, "Test song 2", 1L, "Test genre 1", 1L, "Test era 1");
+            SongGenreEraLink thirdSongGenreEraLink = new SongGenreEraLink(3L, "Test song 3", 1L, "Test genre 1", 1L, "Test era 1");
+            SongGenreEraLink fourthSongGenreEraLink = new SongGenreEraLink(4L, "Test song 4", 2L, "Test genre 2", 1L, "Test era 1");
+            SongGenreEraLink fifthSongGenreEraLink = new SongGenreEraLink(5L, "Test song 5", 2L, "Test genre 2", 2L, "Test era 2");
+
+            List<SongGenreEraLink> songGenreEraLinks = new ArrayList<>();
+            songGenreEraLinks.add(firstSongGenreEraLink);
+            songGenreEraLinks.add(secondSongGenreEraLink);
+            songGenreEraLinks.add(thirdSongGenreEraLink);
+            songGenreEraLinks.add(fourthSongGenreEraLink);
+            songGenreEraLinks.add(fifthSongGenreEraLink);
+
+            Mockito.when(songDAO.findSongGenreEraLinks()).thenReturn(songGenreEraLinks);
+
+            Map<LoV, Double> firstGenrePercentageMap = new HashMap<>();
+            firstGenrePercentageMap.put(new LoV(1L, "Test genre 1"), 75.0);
+            firstGenrePercentageMap.put(new LoV(2L, "Test genre 2"), 25.0);
+            GenreEraOverview firstGenreEraOverview = new GenreEraOverview(1L, "Test era 1", firstGenrePercentageMap);
+
+            Map<LoV, Double> secondGenrePercentageMap = new HashMap<>();
+            secondGenrePercentageMap.put(new LoV(2L, "Test genre 2"), 100.0);
+            GenreEraOverview secondGenreEraOverview = new GenreEraOverview(2L, "Test era 2", secondGenrePercentageMap);
+
+            List<GenreEraOverview> genreEraOverviews = new ArrayList<>();
+            genreEraOverviews.add(firstGenreEraOverview);
+            genreEraOverviews.add(secondGenreEraOverview);
+
+            List<GenreEraOverview> response = genreService.getGenresOverEras(req).getPayload();
+
+            Assertions.assertThat(response).as("Check all elements").overridingErrorMessage("All elements should be equal.")
+                    .hasSameElementsAs(genreEraOverviews);
 
         } catch (Exception e) {
             Assert.fail();
