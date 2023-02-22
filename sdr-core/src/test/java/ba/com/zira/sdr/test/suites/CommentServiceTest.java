@@ -1,7 +1,34 @@
 package ba.com.zira.sdr.test.suites;
 
-import org.springframework.test.context.ContextConfiguration;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.assertj.core.api.Assertions;
+import org.junit.Assert;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EntityRequest;
+import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.PayloadResponse;
+import ba.com.zira.commons.model.PagedData;
+import ba.com.zira.commons.model.QueryConditionPage;
+import ba.com.zira.commons.validation.RequestValidator;
+import ba.com.zira.sdr.api.CommentService;
+import ba.com.zira.sdr.api.model.comment.Comment;
+import ba.com.zira.sdr.api.model.comment.CommentCreateRequest;
+import ba.com.zira.sdr.api.model.comment.CommentUpdateRequest;
+import ba.com.zira.sdr.core.impl.CommentServiceImpl;
+import ba.com.zira.sdr.core.mapper.CommentMapper;
+import ba.com.zira.sdr.core.validation.CommentRequestValidation;
+import ba.com.zira.sdr.dao.CommentDAO;
+import ba.com.zira.sdr.dao.model.CommentEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 

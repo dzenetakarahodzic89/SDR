@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -20,10 +25,6 @@ import ba.com.zira.sdr.dao.PersonArtistDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -98,16 +99,5 @@ public class ArtistServiceImpl implements ArtistService {
         });
         return new PagedPayloadResponse<>(request, ResponseCode.OK, artists);
     }
-
-    /*
-     *
-     *
-     * @Override public ListPayloadResponse<ArtistResponse>
-     * getArtistsByEra(EntityRequest<Long> request) throws ApiException { Long
-     * eraId = request.getEntity(); List<ArtistEntity> artistEntities =
-     * artistDAO.findArtistsByEra(eraId); List<ArtistResponse> artists =
-     * artistMapper.entitiesToDtos(artistEntities); return new
-     * ListPayloadResponse<>(request, ResponseCode.OK, artists); }
-     */
 
 }

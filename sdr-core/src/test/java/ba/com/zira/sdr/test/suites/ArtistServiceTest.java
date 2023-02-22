@@ -203,13 +203,13 @@ public class ArtistServiceTest extends BasicTestConfiguration {
 
             req.setEntity(1L);
 
-            // Mockito.when(requestValidator.validate(req)).thenReturn(null);
+            Mockito.when(requestValidator.validate(req)).thenReturn(null);
 
             Mockito.doNothing().when(artistDAO).removeByPK(req.getEntity());
 
-            var artistDeleteResponse = artistService.delete(req);
+            var artistResponse = artistService.delete(req);
 
-            Assertions.assertThat(artistDeleteResponse.getPayload()).isEqualTo("Artist successfully deleted!");
+            Assertions.assertThat(artistResponse.getPayload()).isEqualTo("Artist successfully deleted!");
 
         } catch (Exception e) {
             Assert.fail();
@@ -219,7 +219,6 @@ public class ArtistServiceTest extends BasicTestConfiguration {
     @Test(enabled = true)
     public void testUpdateArtist() {
         try {
-
             EntityRequest<ArtistUpdateRequest> request = new EntityRequest<>();
             LocalDateTime dateOfBirth = LocalDateTime.of(2007, 12, 3, 0, 0);
             ArtistEntity artistEntity = new ArtistEntity();
@@ -235,22 +234,10 @@ public class ArtistServiceTest extends BasicTestConfiguration {
             ArtistResponse artistResponse = new ArtistResponse();
             artistResponse.setId(0L);
             artistResponse.setName("Test 2");
-            artistResponse.setDateOfBirth(dateOfBirth);
-            artistResponse.setDateOfDeath(null);
-            artistResponse.setInformation("Test Information 2");
-            artistResponse.setStatus("Test 2");
-            artistResponse.setSurname("Test 2");
-            artistResponse.setType("Test 2");
 
             ArtistUpdateRequest updateArtistRequest = new ArtistUpdateRequest();
             updateArtistRequest.setId(0L);
             updateArtistRequest.setName("Test 2");
-            updateArtistRequest.setDateOfBirth(dateOfBirth);
-            updateArtistRequest.setDateOfDeath(null);
-            updateArtistRequest.setInformation("Test Information 2");
-            updateArtistRequest.setStatus("Test 2");
-            updateArtistRequest.setSurname("Test 2");
-            updateArtistRequest.setType("Test 2");
 
             request.setEntity(updateArtistRequest);
 
