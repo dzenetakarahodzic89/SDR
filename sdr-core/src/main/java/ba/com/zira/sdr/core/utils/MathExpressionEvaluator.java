@@ -1,14 +1,10 @@
 package ba.com.zira.sdr.core.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.springframework.stereotype.Component;
 
 @Component
 public class MathExpressionEvaluator {
@@ -50,14 +46,14 @@ public class MathExpressionEvaluator {
             throw new IllegalArgumentException("Invalid end of expression");
         }
 
-        Stack<String> stack = new Stack<>();
+        Deque<String> stack = new ArrayDeque<>();
         List<String> output = new ArrayList<>();
 
         for (String token : tokens) {
             if (operators.containsKey(token)) {
-                while (!stack.empty() && operators.containsKey(stack.peek())
-                        && ((operators.get(token) <= operators.get(stack.peek()) && !token.equals("^"))
-                                || (operators.get(token) < operators.get(stack.peek()) && token.equals("^")))) {
+                while (!stack.isEmpty() && operators.containsKey(stack.peek()) && ((operators.get(token) <= operators.get(
+                        stack.peek()) && !token.equals("^")) || (operators.get(token) < operators.get(stack.peek()) && token.equals(
+                        "^")))) {
                     output.add(stack.pop());
                 }
                 stack.push(token);
@@ -65,14 +61,14 @@ public class MathExpressionEvaluator {
             } else if (token.equals("(")) {
                 stack.push(token);
             } else if (token.equals(")")) {
-                while (!stack.empty()) {
+                while (!stack.isEmpty()) {
                     if (!stack.peek().equals("(")) {
                         output.add(stack.pop());
                     } else {
                         break;
                     }
                 }
-                if (!stack.empty()) {
+                if (!stack.isEmpty()) {
                     stack.pop();
                 }
             } else {
@@ -80,11 +76,11 @@ public class MathExpressionEvaluator {
             }
         }
 
-        while (!stack.empty()) {
+        while (!stack.isEmpty()) {
             output.add(stack.pop());
         }
 
-        Stack<Double> doubles = new Stack<>();
+        Deque<Double> doubles = new ArrayDeque<>();
         for (String token : output) {
             if (!operators.containsKey(token) && token.matches("([0-9]*[.])?[0-9]+")) {
                 try {
@@ -121,7 +117,7 @@ public class MathExpressionEvaluator {
                 }
             }
         }
-        if (doubles.empty() || doubles.size() > 1) {
+        if (doubles.isEmpty() || doubles.size() > 1) {
             throw new IllegalArgumentException("Invalid expression, could not find a result. An operator seems to be absent");
         }
         return doubles.peek();

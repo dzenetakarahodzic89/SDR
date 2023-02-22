@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,6 +16,10 @@ import ba.com.zira.sdr.core.validation.SpotifyIntegrationRequestValidation;
 import ba.com.zira.sdr.dao.SpotifyIntegrationDAO;
 import ba.com.zira.sdr.dao.model.SpotifyIntegrationEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -32,15 +30,14 @@ public class SpotifyIntegrationServiceImpl implements SpotifyIntegrationService 
     SpotifyIntegrationRequestValidation spotifyIntegrationRequestValidation;
 
     @Override
-    public PagedPayloadResponse<SpotifyIntegrationResponse> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<SpotifyIntegrationResponse> find(final FilterRequest request) {
         PagedData<SpotifyIntegrationEntity> spotifyIntegrationEntities = spotifyIntegrationDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, spotifyIntegrationEntities, spotifyIntegrationMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SpotifyIntegrationResponse> create(final EntityRequest<SpotifyIntegrationCreateRequest> request)
-            throws ApiException {
+    public PayloadResponse<SpotifyIntegrationResponse> create(final EntityRequest<SpotifyIntegrationCreateRequest> request) {
         var spotifyIntegrationEntity = spotifyIntegrationMapper.dtoToEntity(request.getEntity());
         spotifyIntegrationEntity.setCreated(LocalDateTime.now());
         spotifyIntegrationEntity.setCreatedBy(request.getUserId());
@@ -52,8 +49,7 @@ public class SpotifyIntegrationServiceImpl implements SpotifyIntegrationService 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SpotifyIntegrationResponse> update(final EntityRequest<SpotifyIntegrationUpdateRequest> request)
-            throws ApiException {
+    public PayloadResponse<SpotifyIntegrationResponse> update(final EntityRequest<SpotifyIntegrationUpdateRequest> request) {
         spotifyIntegrationRequestValidation.validateUpdateSpotifyIntegrationRequest(request);
 
         var spotifyIntegrationEntity = spotifyIntegrationDAO.findByPK(request.getEntity().getId());
@@ -67,7 +63,7 @@ public class SpotifyIntegrationServiceImpl implements SpotifyIntegrationService 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         spotifyIntegrationRequestValidation.validateExistsSpotifyIntegrationRequest(request);
 
         var spotifyIntegrationEntity = spotifyIntegrationDAO.findByPK(request.getEntity());

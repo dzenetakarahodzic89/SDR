@@ -1,17 +1,5 @@
 package ba.com.zira.sdr.instrument.rest;
 
-import java.util.Map;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -26,6 +14,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Tag(name = "Instrument", description = "Instrument rest service")
 @RestController
@@ -47,11 +38,10 @@ public class InstrumentRestService {
         return instrumentService.create(new EntityRequest<>(instrument));
     }
 
-
     @Operation(summary = "Delete instrument")
     @DeleteMapping(value = "{id}")
     public PayloadResponse<InstrumentResponse> delete(
-            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) throws ApiException {
+            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) {
         EntityRequest<Long> entityRequest = new EntityRequest<>();
         entityRequest.setEntity(id);
         return instrumentService.delete(entityRequest);
@@ -68,5 +58,4 @@ public class InstrumentRestService {
         return instrumentService.update(new EntityRequest<>(instrumentUpdateRequest));
     }
 
- 
 }

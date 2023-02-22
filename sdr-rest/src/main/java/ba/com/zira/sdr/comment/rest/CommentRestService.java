@@ -1,9 +1,7 @@
 package ba.com.zira.sdr.comment.rest;
 
-import java.util.Map;
-
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -11,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -48,8 +48,6 @@ public class CommentRestService {
         return commentService.create(new EntityRequest<>(comment));
     }
 
-
-    
     @Operation(summary = "Update Comment")
     @PutMapping(value = "{id}")
     public PayloadResponse<Comment> edit(@Parameter(required = true, description = "ID of the comment") @PathVariable final Long id,
@@ -60,14 +58,11 @@ public class CommentRestService {
         return commentService.update(new EntityRequest<>(comment));
     }
 
-    
-    
     @Operation(summary = "Delete comment")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<Comment> delete(@Parameter(required = true, description = "ID of the sample") @PathVariable final Long id) throws ApiException {
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the sample") @PathVariable final Long id)
+            throws ApiException {
         return commentService.delete(new EntityRequest<>(id));
     }
 
-  
- 
 }
