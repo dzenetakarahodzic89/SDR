@@ -13,16 +13,17 @@ import ba.com.zira.sdr.dao.model.SampleModelEntity;
 
 /**
  * Defined mapper interface for mapping a DTO to Entity model class
- * 
+ *
  * @author zira
  *
  */
+
 @Mapper(componentModel = "spring")
 public interface SampleModelMapper {
 
     @Mapping(source = "documentName", target = "docname")
     SampleModelEntity dtoToEntity(SampleModelCreateRequest sampleModel);
-    
+
     @Mapping(source = "docname", target = "documentName")
     SampleModel entityToDto(SampleModelEntity sampleModelEntity);
 
