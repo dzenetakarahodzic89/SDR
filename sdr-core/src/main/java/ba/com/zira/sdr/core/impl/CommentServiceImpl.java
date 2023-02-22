@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,6 +16,10 @@ import ba.com.zira.sdr.core.validation.CommentRequestValidation;
 import ba.com.zira.sdr.dao.CommentDAO;
 import ba.com.zira.sdr.dao.model.CommentEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -32,14 +30,14 @@ public class CommentServiceImpl implements CommentService {
     CommentRequestValidation commentRequestValidation;
 
     @Override
-    public PagedPayloadResponse<Comment> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<Comment> find(final FilterRequest request) {
         PagedData<CommentEntity> commentEntities = commentDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, commentEntities, commentModelMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Comment> create(final EntityRequest<CommentCreateRequest> request) throws ApiException {
+    public PayloadResponse<Comment> create(final EntityRequest<CommentCreateRequest> request) {
         var commentEntity = commentModelMapper.dtoToEntity(request.getEntity());
         commentEntity.setStatus(Status.ACTIVE.value());
         commentEntity.setCreated(LocalDateTime.now());
@@ -52,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
 
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Comment> update(final EntityRequest<CommentUpdateRequest> request) throws ApiException {
+    public PayloadResponse<Comment> update(final EntityRequest<CommentUpdateRequest> request) {
         commentRequestValidation.validateUpdateCommentModelRequest(request);
 
         var commentEntity = commentDAO.findByPK(request.getEntity().getId());

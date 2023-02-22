@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -23,6 +17,10 @@ import ba.com.zira.sdr.dao.PersonArtistDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -36,14 +34,14 @@ public class PersonArtistServiceImpl implements PersonArtistService {
     PersonArtistRequestValidation personArtistRequestValidation;
 
     @Override
-    public PagedPayloadResponse<PersonArtistResponse> get(final FilterRequest filterRequest) throws ApiException {
+    public PagedPayloadResponse<PersonArtistResponse> get(final FilterRequest filterRequest) {
         PagedData<PersonArtistEntity> personArtistEntities = personArtistDAO.findAll(filterRequest.getFilter());
         return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, personArtistEntities, personArtistMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<PersonArtistResponse> create(final EntityRequest<PersonArtistCreateRequest> entityRequest) throws ApiException {
+    public PayloadResponse<PersonArtistResponse> create(final EntityRequest<PersonArtistCreateRequest> entityRequest) {
         personArtistRequestValidation.validateCreatePersonArtistRequest(entityRequest);
 
         PersonArtistEntity personArtistEntity = personArtistMapper.dtoToEntity(entityRequest.getEntity());

@@ -1,12 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,14 +15,19 @@ import ba.com.zira.sdr.core.mapper.LabelMapper;
 import ba.com.zira.sdr.core.validation.LabelRequestValidation;
 import ba.com.zira.sdr.dao.LabelDAO;
 import ba.com.zira.sdr.dao.model.LabelEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 
 public class LabelServiceImpl implements LabelService {
 
-    LabelDAO labelDAO;
-    LabelMapper labelMapper;
-    LabelRequestValidation labelReqVal;
+    final LabelDAO labelDAO;
+    final LabelMapper labelMapper;
+    final LabelRequestValidation labelReqVal;
 
     @Autowired
     public LabelServiceImpl(LabelDAO labelDAO, LabelMapper labelMapper, LabelRequestValidation labelReqVal) {
@@ -40,13 +38,13 @@ public class LabelServiceImpl implements LabelService {
     }
 
     @Override
-    public PagedPayloadResponse<LabelResponse> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<LabelResponse> find(final FilterRequest request) {
         PagedData<LabelEntity> labelEntities = labelDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, labelEntities, labelMapper::entitiesToDtos);
     }
 
     @Override
-    public PayloadResponse<LabelResponse> findById(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<LabelResponse> findById(final EntityRequest<Long> request) {
         labelReqVal.validateExistsLabelRequest(request);
 
         var labelEntity = labelDAO.findByPK(request.getEntity());
@@ -56,7 +54,7 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<LabelResponse> create(final EntityRequest<LabelCreateRequest> request) throws ApiException {
+    public PayloadResponse<LabelResponse> create(final EntityRequest<LabelCreateRequest> request) {
         var labelEntity = labelMapper.dtoToEntity(request.getEntity());
         labelEntity.setStatus(Status.ACTIVE.value());
         labelEntity.setCreated(LocalDateTime.now());
@@ -67,7 +65,7 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<LabelResponse> update(final EntityRequest<LabelUpdateRequest> request) throws ApiException {
+    public PayloadResponse<LabelResponse> update(final EntityRequest<LabelUpdateRequest> request) {
         labelReqVal.validateUpdateLabelRequest(request);
 
         var labelEntity = labelDAO.findByPK(request.getEntity().getId());
@@ -81,12 +79,12 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<LabelResponse> changeStatus(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<LabelResponse> changeStatus(final EntityRequest<Long> request) {
         labelReqVal.validateExistsLabelRequest(request);
 
         var labelEntity = labelDAO.findByPK(request.getEntity());
 
-        if ((labelEntity.getStatus()).toLowerCase().equals((Status.ACTIVE.value()).toLowerCase())) {
+        if ((labelEntity.getStatus()).equalsIgnoreCase(Status.ACTIVE.value())) {
             labelEntity.setStatus(Status.INACTIVE.value());
         } else {
             labelEntity.setStatus(Status.ACTIVE.value());
@@ -100,7 +98,7 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         labelReqVal.validateExistsLabelRequest(request);
 
         var labelEntity = labelDAO.findByPK(request.getEntity());

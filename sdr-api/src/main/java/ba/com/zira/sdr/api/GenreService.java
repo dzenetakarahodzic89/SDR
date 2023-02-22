@@ -9,14 +9,53 @@ import ba.com.zira.sdr.api.model.genre.Genre;
 import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
 import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
 
+/**
+ * The interface Genre service.
+ */
 public interface GenreService {
 
-    public PagedPayloadResponse<Genre> find(final FilterRequest request) throws ApiException;
+    /**
+     * Find paged payload response.
+     *
+     * @param request
+     *         the request
+     * @return the paged payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PagedPayloadResponse<Genre> find(final FilterRequest request) throws ApiException;
 
-    public PayloadResponse<Genre> create(EntityRequest<GenreCreateRequest> request) throws ApiException;
+    /**
+     * Create payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<Genre> create(EntityRequest<GenreCreateRequest> request) throws ApiException;
 
-    public PayloadResponse<Genre> update(EntityRequest<GenreUpdateRequest> request) throws ApiException;
+    /**
+     * Update payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<Genre> update(EntityRequest<GenreUpdateRequest> request) throws ApiException;
 
-    public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
+    /**
+     * Delete payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
 }
