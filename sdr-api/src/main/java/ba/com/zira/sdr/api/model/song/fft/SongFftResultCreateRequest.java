@@ -1,13 +1,11 @@
-package ba.com.zira.sdr.api.model.SongFFt;
+package ba.com.zira.sdr.api.model.song.fft;
 
-import java.io.Serializable;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-//import ba.com.zira.sdr.dao.model.SongEntity;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import java.io.Serializable;
 
 @Data
 @Schema(description = "Properties for creation of a sample")
@@ -19,7 +17,6 @@ public class SongFftResultCreateRequest implements Serializable {
     private String fftResults;
     @NotNull
     @Schema(description = "SongID")
-    private Long songID;
-
+    private Long songId;
 
 }

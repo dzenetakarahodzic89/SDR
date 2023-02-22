@@ -9,8 +9,7 @@ import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequ
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
 
 /**
- * * Methods used to manipulate {@link UserRecommendationResponse} data. <br>
- * List of APIs implemented in this class with links:
+ * * Methods used to manipulate {@link UserRecommendationResponse} data. <br> List of APIs implemented in this class with links:
  * <ul>
  * <li>{@link #find}</li>
  * <li>{@link #findById}</li>
@@ -19,16 +18,50 @@ import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
  * </ul>
  *
  * @author zira
- *
  */
-
 public interface UserRecommendationService {
 
-    public PagedPayloadResponse<UserRecommendationResponse> find(final FilterRequest request) throws ApiException;
+    /**
+     * Find paged payload response.
+     *
+     * @param request
+     *         the request
+     * @return the paged payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PagedPayloadResponse<UserRecommendationResponse> find(final FilterRequest request) throws ApiException;
 
-    public PayloadResponse<UserRecommendationResponse> findById(final EntityRequest<Long> request) throws ApiException;
+    /**
+     * Find by id payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<UserRecommendationResponse> findById(final EntityRequest<Long> request) throws ApiException;
 
-    public PayloadResponse<UserRecommendationResponse> create(EntityRequest<UserRecommendationCreateRequest> request) throws ApiException;
+    /**
+     * Create payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<UserRecommendationResponse> create(EntityRequest<UserRecommendationCreateRequest> request) throws ApiException;
 
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException;
+    /**
+     * Delete payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException;
 }

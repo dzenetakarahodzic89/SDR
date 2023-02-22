@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,6 +16,10 @@ import ba.com.zira.sdr.core.validation.MoritsIntegrationRequestValidation;
 import ba.com.zira.sdr.dao.MoritsIntegrationDAO;
 import ba.com.zira.sdr.dao.model.MoritsIntegrationEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -32,14 +30,14 @@ public class MoritsIntegrationServiceImpl implements MoritsIntegrationService {
     MoritsIntegrationRequestValidation moritsIntegrationRequestValidation;
 
     @Override
-    public PagedPayloadResponse<MoritsIntegration> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<MoritsIntegration> find(final FilterRequest request) {
         PagedData<MoritsIntegrationEntity> moritsIntegrationEntities = moritsIntegrationDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, moritsIntegrationEntities, moritsIntegrationMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<MoritsIntegration> create(final EntityRequest<MoritsIntegrationCreateRequest> request) throws ApiException {
+    public PayloadResponse<MoritsIntegration> create(final EntityRequest<MoritsIntegrationCreateRequest> request) {
         var moritsIntegrationEntity = moritsIntegrationMapper.dtoToEntity(request.getEntity());
         moritsIntegrationEntity.setCreated(LocalDateTime.now());
         moritsIntegrationEntity.setCreatedBy(request.getUserId());
@@ -51,7 +49,7 @@ public class MoritsIntegrationServiceImpl implements MoritsIntegrationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<MoritsIntegration> update(final EntityRequest<MoritsIntegrationUpdateRequest> request) throws ApiException {
+    public PayloadResponse<MoritsIntegration> update(final EntityRequest<MoritsIntegrationUpdateRequest> request) {
         moritsIntegrationRequestValidation.validateUpdateMoritsIntegrationRequest(request);
 
         var moritsIntegrationEntity = moritsIntegrationDAO.findByPK(request.getEntity().getId());
@@ -65,7 +63,7 @@ public class MoritsIntegrationServiceImpl implements MoritsIntegrationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<MoritsIntegration> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<MoritsIntegration> delete(final EntityRequest<Long> request) {
         moritsIntegrationRequestValidation.validateExistsMoritsIntegrationRequest(request);
 
         var moritsIntegrationEntity = moritsIntegrationDAO.findByPK(request.getEntity());

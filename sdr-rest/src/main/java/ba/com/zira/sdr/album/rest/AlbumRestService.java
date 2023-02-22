@@ -56,9 +56,9 @@ public class AlbumRestService {
 
     @Operation(summary = "Delete album")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<AlbumResponse> delete(@Parameter(required = true, description = "ID of the album") @PathVariable final Long id)
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the album") @PathVariable final Long id)
             throws ApiException {
-        return albumService.delete(new EntityRequest(id));
+        return albumService.delete(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Search albums")

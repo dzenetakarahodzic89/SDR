@@ -1,12 +1,11 @@
-package ba.com.zira.sdr.api.model.SongFFt;
-
-import java.io.Serializable;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
+package ba.com.zira.sdr.api.model.song.fft;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 @Data
 @Schema(description = "Properties for update a sample")

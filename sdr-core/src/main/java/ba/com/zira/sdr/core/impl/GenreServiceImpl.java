@@ -1,12 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -25,6 +18,11 @@ import ba.com.zira.sdr.dao.GenreDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.GenreEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -36,9 +34,9 @@ public class GenreServiceImpl implements GenreService {
     SongDAO songDAO;
 
     @Override
-    public PagedPayloadResponse<Genre> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<Genre> find(final FilterRequest request) {
         PagedData<GenreEntity> genreEntities = genreDAO.findAll(request.getFilter());
-        PagedData<Genre> genres = new PagedData<Genre>();
+        PagedData<Genre> genres = new PagedData<>();
         genres.setRecords(genreMapper.entitiesToDtos(genreEntities.getRecords()));
         PagedDataMetadataMapper.remapMetadata(genreEntities, genres);
         genres.getRecords().forEach(genre -> {
@@ -50,7 +48,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Genre> create(final EntityRequest<GenreCreateRequest> request) throws ApiException {
+    public PayloadResponse<Genre> create(final EntityRequest<GenreCreateRequest> request) {
         genreRequestValidation.validateGenreCreateRequest(request);
 
         var genreEntity = genreMapper.dtoToEntity(request.getEntity());
@@ -70,7 +68,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Genre> update(final EntityRequest<GenreUpdateRequest> request) throws ApiException {
+    public PayloadResponse<Genre> update(final EntityRequest<GenreUpdateRequest> request) {
         genreRequestValidation.validateGenreUpdateRequest(request);
 
         var genreEntity = genreDAO.findByPK(request.getEntity().getId());
@@ -89,7 +87,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         genreRequestValidation.validateGenreDeleteRequest(request);
 
         genreDAO.removeByPK(request.getEntity());
