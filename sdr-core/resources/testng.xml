@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite">
-	<test thread-count="5" name="Country">
+	<test thread-count="5" name="Lyric">
 		<classes>
 			<class
-				name="ba.com.zira.sdr.test.suites.CountryRequestValidationTest" />
+				name="ba.com.zira.sdr.test.suites.LyricRequestValidationTest" />
 			<class
+				name="ba.com.zira.sdr.test.suites.LyricServiceTest" />
 				name="ba.com.zira.sdr.test.suites.CountryServiceTest" />
 			<class
 				name="ba.com.zira.sdr.test.suites.AlbumRequestValidationTest" />
