@@ -4,9 +4,9 @@
 	<test thread-count="5" name="Country">
 		<classes>
 			<class
-				name="ba.com.zira.sdr.test.suites.CountryRequestValidationTest" />
+				name="ba.com.zira.sdr.test.suites.LyricRequestValidationTest" />
 			<class
-				name="ba.com.zira.sdr.test.suites.CountryServiceTest" />
+				name="ba.com.zira.sdr.test.suites.LyricServiceTest" />
 		</classes>
 	</test>
 	
