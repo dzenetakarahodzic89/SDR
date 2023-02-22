@@ -1,9 +1,9 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -67,12 +67,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Comment> delete(final EntityRequest<Long> request) {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         commentRequestValidation.validateExistsCommentModelRequest(request);
-
-        CommentEntity commentEntity = commentDAO.findByPK(request.getEntity());
-
         commentDAO.removeByPK(request.getEntity());
-        return new PayloadResponse<>(request, ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK,
+                String.format("Comment with id %s is successfully deleted!", request.getEntity()));
     }
 }

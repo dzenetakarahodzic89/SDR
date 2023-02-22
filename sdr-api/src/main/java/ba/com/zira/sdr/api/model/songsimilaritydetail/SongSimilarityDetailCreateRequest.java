@@ -1,8 +1,8 @@
 package ba.com.zira.sdr.api.model.songsimilaritydetail;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotBlank;
+
+import java.io.Serializable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 @Schema(description = "Properties for creating details of a song")
 
-public class SongSimilarityDetailModelCreateRequest implements Serializable {
+public class SongSimilarityDetailCreateRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -19,15 +19,7 @@ public class SongSimilarityDetailModelCreateRequest implements Serializable {
     private String grade;
 
     @NotBlank
-    @Schema(description = "User code")
-    private String userCode;
-
-    @Schema(description = "ID of the song sample")
-    private Long songSampleId;
-
-    public Long getId() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    @Schema(description = "Grade of the song")
+    private Long songSimilarityId;
 
 }
