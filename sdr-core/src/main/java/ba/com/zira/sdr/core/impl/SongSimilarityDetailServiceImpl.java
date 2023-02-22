@@ -67,13 +67,6 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SongSimilarityDetailModel> activate(EntityRequest<Long> request) throws ApiException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<SongSimilarityDetailModel> update(final EntityRequest<SongSimilarityDetailModelUpdateRequest> request)
             throws ApiException {
         songsimilaritydetailRequestValidation.validateUpdateSongSimilartyDetailRequest(request);

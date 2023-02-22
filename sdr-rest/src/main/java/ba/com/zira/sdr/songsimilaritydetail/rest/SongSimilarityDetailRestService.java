@@ -1,4 +1,4 @@
-package ba.com.zira.sdr.rest;
+package ba.com.zira.sdr.songsimilaritydetail.rest;
 
 import java.util.Map;
 

@@ -16,8 +16,6 @@ public interface SongSimilarityDetailService {
     public PayloadResponse<SongSimilarityDetailModel> create(EntityRequest<SongSimilarityDetailModelCreateRequest> request)
             throws ApiException;
 
-    public PayloadResponse<SongSimilarityDetailModel> activate(EntityRequest<Long> request) throws ApiException;
-
     public PayloadResponse<SongSimilarityDetailModel> delete(EntityRequest<Long> request) throws ApiException;
 
     public PayloadResponse<SongSimilarityDetailModel> update(EntityRequest<SongSimilarityDetailModelUpdateRequest> request)
