@@ -9,5 +9,12 @@
 				name="ba.com.zira.sdr.test.suites.CountryServiceTest" />
 		</classes>
 	</test>
-	
+	<test thread-count="5" name="SongArtist">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.SongArtistRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.SongArtistServiceTest" />
+		</classes>
+	</test>
 </suite> 
