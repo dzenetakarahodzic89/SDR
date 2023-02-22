@@ -128,7 +128,13 @@ public class SwaggerConfiguration {
     
     @Bean
     public GroupedOpenApi artistApi() {
-        return GroupedOpenApi.builder().group("artist-api").packagesToScan("ba.com.zira.sdr.artist.rest")
+        return GroupedOpenApi.builder().group("artist-api").packagesToScan("ba.com.zira.sdr.artist.rest") 
+        		.addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+    
+    @Bean
+    public GroupedOpenApi artistPersonApi() {
+        return GroupedOpenApi.builder().group("personartist-api").packagesToScan("ba.com.zira.sdr.personartist.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
