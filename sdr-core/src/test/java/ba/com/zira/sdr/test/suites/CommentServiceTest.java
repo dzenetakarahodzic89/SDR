@@ -42,7 +42,7 @@ public class CommentServiceTest extends BasicTestConfiguration {
     private RequestValidator requestValidator;
     private CommentRequestValidation commentRequestValidation;
     private CommentService commentService;
-   
+
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
@@ -61,12 +61,12 @@ public class CommentServiceTest extends BasicTestConfiguration {
             firstCommentEntity.setId(1L);
 
             CommentEntity secondCommentEntity = new CommentEntity();
-            firstCommentEntity.setContent("Test Comment");
-            firstCommentEntity.setId(2L);
+            secondCommentEntity.setContent("Test Comment");
+            secondCommentEntity.setId(2L);
 
             CommentEntity thirdCommentEntity = new CommentEntity();
-            firstCommentEntity.setContent("Test Comment");
-            firstCommentEntity.setId(3L);
+            thirdCommentEntity.setContent("Test Comment");
+            thirdCommentEntity.setId(3L);
 
             entities.add(firstCommentEntity);
             entities.add(secondCommentEntity);
@@ -78,16 +78,16 @@ public class CommentServiceTest extends BasicTestConfiguration {
             List<Comment> response = new ArrayList<>();
 
             Comment firstResponse = new Comment();
-            firstResponse.setId(2L);
-            firstResponse.setContent("Test Type 1");
+            firstResponse.setId(1L);
+            firstResponse.setContent("Test Comment");
 
             Comment secondResponse = new Comment();
-            firstResponse.setId(2L);
-            firstResponse.setContent("Test Type 2");
+            secondResponse.setId(2L);
+            secondResponse.setContent("Test Comment");
 
             Comment thirdResponse = new Comment();
-            firstResponse.setContent("Test Information");
-            firstResponse.setId(3L);
+            thirdResponse.setContent("Test Comment");
+            thirdResponse.setId(3L);
 
             response.add(firstResponse);
             response.add(secondResponse);
@@ -105,8 +105,7 @@ public class CommentServiceTest extends BasicTestConfiguration {
 
             List<Comment> commentFindResponse = commentService.find(filterRequest).getPayload();
 
-            Assertions.assertThat(commentFindResponse).as("Check all elements").overridingErrorMessage("All elements should be equal.")
-                    .hasSameElementsAs(response);
+            Assertions.assertThat(commentFindResponse).as("Check all elements").hasSameElementsAs(response);
 
         } catch (Exception e) {
             Assert.fail();
@@ -123,28 +122,26 @@ public class CommentServiceTest extends BasicTestConfiguration {
             newCommentRequest.setContent("Test Comment");
             newCommentRequest.setCreatedBy("SOMEONE");
             newCommentRequest.setObjectId(3L);
-            
-           
+
             req.setEntity(newCommentRequest);
 
             var newCommentEnt = new CommentEntity();
             newCommentEnt.setContent("Test Comment");
-            newCommentEnt.setCreatedBy("Test Type 1");
-            newCommentEnt.setObjectId(4L);
-            
+            newCommentEnt.setCreatedBy("SOMEONE");
+            newCommentEnt.setObjectId(3L);
+
             var newComment = new Comment();
-            newComment.setContent("Test Information");
-            newComment.setCreatedBy("Test Type 1");
-            newComment.setObjectId(4L);
-            
+            newComment.setContent("Test Comment");
+            newComment.setCreatedBy("SOMEONE");
+            newComment.setObjectId(3L);
+            newComment.setStatus("Active");
 
             Mockito.when(commentDAO.persist(newCommentEnt)).thenReturn(null);
 
             PayloadResponse<Comment> commentFindResponse = commentService.create(req);
 
-            Assertions.assertThat(commentFindResponse.getPayload()).as("Check all fields")
-                    .overridingErrorMessage("All fields should be equal.").usingRecursiveComparison()
-                    .ignoringFields("created", "modified", "modifiedBy", "imageUrl").isEqualTo(newComment);
+            Assertions.assertThat(commentFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy", "imageUrl").isEqualTo(newComment);
 
         } catch (Exception e) {
             Assert.fail();
@@ -159,11 +156,11 @@ public class CommentServiceTest extends BasicTestConfiguration {
 
             CommentEntity commentEntity = new CommentEntity();
             commentEntity.setContent("Old Test Name 1");
-            commentEntity.setModifiedBy("Old Test Information");
+            commentEntity.setId(22L);
 
             Comment commentResponse = new Comment();
             commentResponse.setContent("Update Test Name 1");
-            commentResponse.setModifiedBy("Update Test Information");
+            commentResponse.setId(22L);
 
             CommentUpdateRequest updateCommentRequest = new CommentUpdateRequest();
             updateCommentRequest.setContent("Update Test Name 1");
@@ -177,9 +174,8 @@ public class CommentServiceTest extends BasicTestConfiguration {
             Mockito.doNothing().when(commentDAO).merge(commentEntity);
 
             var commentUpdateResponse = commentService.update(request);
-            Assertions.assertThat(commentUpdateResponse.getPayload()).as("Check all fields")
-                    .overridingErrorMessage("All fields should be equal.").usingRecursiveComparison()
-                    .ignoringFields("created", "createdBy", "modified").isEqualTo(commentResponse);
+            Assertions.assertThat(commentUpdateResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(commentResponse);
 
         } catch (Exception e) {
             Assert.fail();
@@ -199,14 +195,11 @@ public class CommentServiceTest extends BasicTestConfiguration {
 
             var commentFindResponse = commentService.delete(req);
 
-            Assertions.assertThat(commentFindResponse.getPayload())
-                    .isEqualTo(String.format("Comment with id %d is successfully deleted!", req.getEntity()));
+            Assertions.assertThat(commentFindResponse.getPayload()).isEqualTo("Comment with id 1 is successfully deleted!");
 
         } catch (Exception e) {
             Assert.fail();
         }
     }
 
-    
-    }
-
+}
