@@ -1,4 +1,4 @@
-package userrecommendationdetail.rest;
+package ba.com.zira.sdr.userrecommendationdetail.rest;
 
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public class UserRecommendationDetailRestService {
 	@Operation(summary = "Create user recommendation detail")
 	@PostMapping
 	public PayloadResponse<UserRecommendationDetailResponse> create(
-			@RequestBody final UserRecommendationDetailCreateRequest person) throws ApiException {
+			@RequestBody final UserRecommendationDetailCreateRequest userRecommendationDetail) throws ApiException {
 
 		return userRecommendationDetailService.create(new EntityRequest<>(userRecommendationDetail));
 	}

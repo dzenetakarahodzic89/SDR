@@ -13,7 +13,7 @@ import lombok.Data;
 public class UserRecommendationDetailCreateRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@NotNull
+	
 	@Schema(description = "Id of a song that the artist wrote")
 	private Long songId;
 

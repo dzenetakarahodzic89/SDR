@@ -19,6 +19,7 @@ import ba.com.zira.sdr.api.model.userrecommendationdetail.UserRecommendationDeta
 import ba.com.zira.sdr.core.mapper.UserRecommendationDetailMapper;
 import ba.com.zira.sdr.core.validation.UserRecommendationDetailRequestValidation;
 import ba.com.zira.sdr.dao.SongDAO;
+import ba.com.zira.sdr.dao.UserRecommendationDAO;
 import ba.com.zira.sdr.dao.UserRecommendationDetailDAO;
 import ba.com.zira.sdr.dao.model.UserRecommendationDetailEntity;
 import lombok.AllArgsConstructor;
@@ -68,11 +69,11 @@ public class UserRecommendationDetailServiceImpl implements UserRecommendationDe
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public PayloadResponse<String> delete(final EntityRequest<Long> entityRequest) {
+	public PayloadResponse<UserRecommendationDetailResponse> delete(final EntityRequest<Long> entityRequest) {
 		userRecommendationDetailRequestValidation.validateDeleteUserRecommendationDetailRequest(entityRequest);
 		userRecommendationDetailDAO.removeByPK(entityRequest.getEntity());
 
-		return new PayloadResponse<>(entityRequest, ResponseCode.OK, "Deleted record successfully!");
+		return new PayloadResponse<UserRecommendationDetailResponse>();
 	}
 
 }

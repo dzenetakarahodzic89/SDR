@@ -16,6 +16,6 @@ public interface UserRecommendationDetailService {
 	public PayloadResponse<UserRecommendationDetailResponse> create(
 			final EntityRequest<UserRecommendationDetailCreateRequest> entityRequest) throws ApiException;
 
-	public PayloadResponse<String> delete(final EntityRequest<Long> entityRequest);
+	public PayloadResponse<UserRecommendationDetailResponse> delete(final EntityRequest<Long> entityRequest);
 
 }

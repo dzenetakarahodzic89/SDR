@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -18,13 +12,13 @@ import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.api.model.songartist.SongArtistResponse;
 import ba.com.zira.sdr.core.mapper.SongArtistMapper;
 import ba.com.zira.sdr.core.validation.SongArtistRequestValidation;
-import ba.com.zira.sdr.dao.AlbumDAO;
-import ba.com.zira.sdr.dao.ArtistDAO;
-import ba.com.zira.sdr.dao.LabelDAO;
-import ba.com.zira.sdr.dao.SongArtistDAO;
-import ba.com.zira.sdr.dao.SongDAO;
+import ba.com.zira.sdr.dao.*;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -38,14 +32,14 @@ public class SongArtistServiceImpl implements SongArtistService {
     SongArtistRequestValidation songArtistRequestValidation;
 
     @Override
-    public PagedPayloadResponse<SongArtistResponse> get(final FilterRequest filterRequest) throws ApiException {
+    public PagedPayloadResponse<SongArtistResponse> get(final FilterRequest filterRequest) {
         PagedData<SongArtistEntity> songArtistEntities = songArtistDAO.findAll(filterRequest.getFilter());
         return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, songArtistEntities, songArtistMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SongArtistResponse> create(final EntityRequest<SongArtistCreateRequest> entityRequest) throws ApiException {
+    public PayloadResponse<SongArtistResponse> create(final EntityRequest<SongArtistCreateRequest> entityRequest) {
         songArtistRequestValidation.validateCreateSongArtistRequest(entityRequest);
 
         SongArtistEntity songArtistEntity = songArtistMapper.dtoToEntity(entityRequest.getEntity());

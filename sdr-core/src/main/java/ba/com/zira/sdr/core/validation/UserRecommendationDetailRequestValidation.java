@@ -9,6 +9,7 @@ import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
 import ba.com.zira.sdr.api.model.userrecommendationdetail.UserRecommendationDetailCreateRequest;
 import ba.com.zira.sdr.dao.SongDAO;
+import ba.com.zira.sdr.dao.UserRecommendationDAO;
 import ba.com.zira.sdr.dao.UserRecommendationDetailDAO;
 import lombok.AllArgsConstructor;
 
