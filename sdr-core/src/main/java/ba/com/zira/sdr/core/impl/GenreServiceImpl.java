@@ -1,14 +1,14 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -34,7 +34,6 @@ import ba.com.zira.sdr.dao.EraDAO;
 import ba.com.zira.sdr.dao.GenreDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.GenreEntity;
-import ba.com.zira.sdr.dao.model.SongEntity;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -114,37 +113,69 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public ListPayloadResponse<GenreEraOverview> getGenresOverEras(EmptyRequest request) throws ApiException {
         List<SongGenreEraLink> links = songDAO.findSongGenreEraLinks();
+
+        System.out.println(links);
+
+        Map<LoV, List<SongGenreEraLink>> songsByEras = new HashMap<>();
+
+        links.stream().forEach(link -> {
+            var eraLoV = new LoV(link.getEraId(), link.getEraName());
+            var songLinks = songsByEras.get(eraLoV);
+
+            if (songLinks == null) {
+                songLinks = new LinkedList<>();
+                songLinks.add(link);
+            } else {
+                songLinks.add(link);
+            }
+
+            songsByEras.put(eraLoV, songLinks);
+        });
+
         List<GenreEraOverview> genresOverEras = new LinkedList<>();
-        var eraEntities = eraDAO.findAll();
-        eraEntities.forEach(era -> {
-            Map<LoV, Double> genrePercentageInEra = new HashMap<>();
-            List<SongEntity> songsInEra = new LinkedList<>();
-            var albums = era.getAlbums();
-            albums.forEach(album -> {
-                var songArtists = album.getSongArtists();
-                songArtists.forEach(songArtist -> {
-                    var song = songArtist.getSong();
-                    songsInEra.add(song);
-                    var genre = song.getGenre();
-                    while (genre.getMainGenre() != null) {
-                        genre = genre.getMainGenre();
-                    }
-                    var genreLoV = new LoV(genre.getId(), genre.getName());
-                    Double numberOfSongs = 1.0;
-                    if (genrePercentageInEra.containsKey(genreLoV)) {
-                        numberOfSongs += genrePercentageInEra.get(genreLoV);
-                    }
 
-                    genrePercentageInEra.put(genreLoV, numberOfSongs);
-
-                });
-            });
-            genrePercentageInEra.replaceAll((key, value) -> (value / songsInEra.size()) * 100);
+        songsByEras.forEach((era, songLinks) -> {
+            Map<LoV, Double> genrePercentageInEra = calculateGenrePercentageInEra(songLinks);
             var genreEraOverview = new GenreEraOverview(era.getId(), era.getName(), genrePercentageInEra);
             genresOverEras.add(genreEraOverview);
         });
 
+        /*
+         * List<GenreEraOverview> genresOverEras = new LinkedList<>(); var
+         * eraEntities = eraDAO.findAll(); eraEntities.forEach(era -> { Map<LoV,
+         * Double> genrePercentageInEra = new HashMap<>(); List<SongEntity>
+         * songsInEra = new LinkedList<>(); var albums = era.getAlbums();
+         * albums.forEach(album -> { var songArtists = album.getSongArtists();
+         * songArtists.forEach(songArtist -> { var song = songArtist.getSong();
+         * songsInEra.add(song); var genre = song.getGenre(); while
+         * (genre.getMainGenre() != null) { genre = genre.getMainGenre(); } var
+         * genreLoV = new LoV(genre.getId(), genre.getName()); Double
+         * numberOfSongs = 1.0; if (genrePercentageInEra.containsKey(genreLoV))
+         * { numberOfSongs += genrePercentageInEra.get(genreLoV); }
+         *
+         * genrePercentageInEra.put(genreLoV, numberOfSongs);
+         *
+         * }); }); genrePercentageInEra.replaceAll((key, value) -> (value /
+         * songsInEra.size()) * 100); var genreEraOverview = new
+         * GenreEraOverview(era.getId(), era.getName(), genrePercentageInEra);
+         * genresOverEras.add(genreEraOverview); });
+         */
+
         return new ListPayloadResponse<>(request, ResponseCode.OK, genresOverEras);
+    }
+
+    private Map<LoV, Double> calculateGenrePercentageInEra(List<SongGenreEraLink> songLinks) {
+        Map<LoV, Double> genrePercentageInEra = new HashMap<>();
+        songLinks.forEach(link -> {
+            var genreLoV = new LoV(link.getGenreId(), link.getGenreName());
+            Integer numberOfSongs = 1;
+            if (genrePercentageInEra.containsKey(genreLoV)) {
+                numberOfSongs += genrePercentageInEra.get(genreLoV).intValue();
+            }
+            genrePercentageInEra.put(genreLoV, numberOfSongs.doubleValue());
+        });
+        genrePercentageInEra.replaceAll((key, value) -> (value / songLinks.size()) * 100);
+        return genrePercentageInEra;
     }
 
 }

@@ -10,5 +10,6 @@ public abstract class GenreEntity_ {
 
     public static volatile SingularAttribute<GenreEntity, Long> id;
     public static volatile SingularAttribute<GenreEntity, String> name;
+    public static volatile SingularAttribute<GenreEntity, GenreEntity> mainGenre;
 
 }
