@@ -75,7 +75,6 @@ public class AlbumServiceImpl implements AlbumService {
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
         albumRequestValidation.validateDeleteAlbumRequest(request);
-        // var albumEntity = albumDAO.findByPK(request.getEntity());
         albumDAO.removeByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, "Album deleted successfully!");
     }
