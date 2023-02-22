@@ -1,12 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -27,6 +20,11 @@ import ba.com.zira.sdr.dao.model.LyricEntity;
 import ba.com.zira.sdr.dao.model.NoteSheetEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -40,7 +38,7 @@ public class SongServiceImpl implements SongService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Song> create(final EntityRequest<SongCreateRequest> request) throws ApiException {
+    public PayloadResponse<Song> create(final EntityRequest<SongCreateRequest> request) {
         var songCreateRequest = request.getEntity();
         var songEntity = songMapper.dtoToEntity(songCreateRequest);
         songEntity.setStatus(Status.ACTIVE.value());
@@ -59,13 +57,13 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public PagedPayloadResponse<Song> retrieveAll(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<Song> retrieveAll(final FilterRequest request) {
         PagedData<SongEntity> songEntities = songDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, songEntities, songMapper::entitiesToDtos);
     }
 
     @Override
-    public PayloadResponse<Song> retrieveById(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<Song> retrieveById(final EntityRequest<Long> request) {
         songRequestValidation.validateExistsSongRequest(request);
 
         var songEntity = songDAO.findByPK(request.getEntity());
@@ -75,7 +73,7 @@ public class SongServiceImpl implements SongService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Song> update(final EntityRequest<SongUpdateRequest> request) throws ApiException {
+    public PayloadResponse<Song> update(final EntityRequest<SongUpdateRequest> request) {
         songRequestValidation.validateUpdateSongRequest(request);
         var songUpdateRequest = request.getEntity();
 
@@ -97,7 +95,7 @@ public class SongServiceImpl implements SongService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         songRequestValidation.validateExistsSongRequest(request);
 
         var songEntity = songDAO.findByPK(request.getEntity());

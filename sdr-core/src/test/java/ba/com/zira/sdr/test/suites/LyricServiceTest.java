@@ -1,18 +1,5 @@
 package ba.com.zira.sdr.test.suites;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.assertj.core.api.Assertions;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -34,6 +21,18 @@ import ba.com.zira.sdr.dao.model.LyricEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
+import org.assertj.core.api.Assertions;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @ContextConfiguration(classes = ApplicationTestConfiguration.class)
 public class LyricServiceTest extends BasicTestConfiguration {
@@ -215,7 +214,8 @@ public class LyricServiceTest extends BasicTestConfiguration {
 
             Mockito.when(lyricRequestValidation.validateUpdateLyricRequest(req)).thenReturn(null);
 
-            Mockito.when(lyricDAO.findByPK(req.getEntity().getId())).thenReturn(lyricEnt); // Mockito.when(songDAO.findByPK(1L)).thenReturn(songEnt);
+            Mockito.when(lyricDAO.findByPK(req.getEntity().getId()))
+                    .thenReturn(lyricEnt); // Mockito.when(songDAO.findByPK(1L)).thenReturn(songEnt);
 
             Mockito.doNothing().when(lyricDAO).merge(lyricEnt);
 
@@ -241,7 +241,7 @@ public class LyricServiceTest extends BasicTestConfiguration {
 
             var lyricDeleteResponse = lyricService.delete(req);
 
-            Assertions.assertThat(lyricDeleteResponse.getPayload()).isEqualTo(null);
+            Assertions.assertThat(lyricDeleteResponse.getPayload()).isNull();
 
         } catch (Exception e) {
             Assert.fail();

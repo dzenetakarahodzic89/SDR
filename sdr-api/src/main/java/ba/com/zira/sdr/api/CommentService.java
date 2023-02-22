@@ -9,10 +9,8 @@ import ba.com.zira.sdr.api.model.comment.Comment;
 import ba.com.zira.sdr.api.model.comment.CommentCreateRequest;
 import ba.com.zira.sdr.api.model.comment.CommentUpdateRequest;
 
-// TODO: Auto-generated Javadoc
 /**
- * * Methods used to manipulate {@link Comment} data. <br>
- * List of APIs implemented in this class with links:
+ * * Methods used to manipulate {@link Comment} data. <br> List of APIs implemented in this class with links:
  * <ul>
  * <li>{@link #find}</li>
  * <li>{@link #create}</li>
@@ -20,7 +18,6 @@ import ba.com.zira.sdr.api.model.comment.CommentUpdateRequest;
  * </ul>
  *
  * @author zira
- *
  */
 public interface CommentService {
 
@@ -28,21 +25,21 @@ public interface CommentService {
      * Find.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the paged payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
-    public PagedPayloadResponse<Comment> find(final FilterRequest request) throws ApiException;
+    PagedPayloadResponse<Comment> find(final FilterRequest request) throws ApiException;
 
     /**
      * Creates the.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
     PayloadResponse<Comment> create(EntityRequest<CommentCreateRequest> request) throws ApiException;
 
@@ -50,10 +47,10 @@ public interface CommentService {
      * Delete.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
     PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
@@ -61,10 +58,10 @@ public interface CommentService {
      * Update.
      *
      * @param entityRequest
-     *            the entity request
+     *         the entity request
      * @return the payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
-    public PayloadResponse<Comment> update(EntityRequest<CommentUpdateRequest> entityRequest) throws ApiException;
+    PayloadResponse<Comment> update(EntityRequest<CommentUpdateRequest> entityRequest) throws ApiException;
 }

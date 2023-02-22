@@ -9,7 +9,6 @@ import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetail;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdateRequest;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface SongSimilarityDetailService.
  */
@@ -19,44 +18,44 @@ public interface SongSimilarityDetailService {
      * Find.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the paged payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
-    public PagedPayloadResponse<SongSimilarityDetail> find(final FilterRequest request) throws ApiException;
+    PagedPayloadResponse<SongSimilarityDetail> find(final FilterRequest request) throws ApiException;
 
     /**
      * Creates the.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
-    public PayloadResponse<SongSimilarityDetail> create(EntityRequest<SongSimilarityDetailCreateRequest> request) throws ApiException;
+    PayloadResponse<SongSimilarityDetail> create(EntityRequest<SongSimilarityDetailCreateRequest> request) throws ApiException;
 
     /**
      * Delete.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
-    public PayloadResponse<SongSimilarityDetail> delete(EntityRequest<Long> request) throws ApiException;
+    PayloadResponse<SongSimilarityDetail> delete(EntityRequest<Long> request) throws ApiException;
 
     /**
      * Update.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
-    public PayloadResponse<SongSimilarityDetail> update(EntityRequest<SongSimilarityDetailUpdateRequest> request) throws ApiException;
+    PayloadResponse<SongSimilarityDetail> update(EntityRequest<SongSimilarityDetailUpdateRequest> request) throws ApiException;
 
 }

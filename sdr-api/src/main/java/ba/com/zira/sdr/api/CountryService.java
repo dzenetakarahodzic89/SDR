@@ -9,12 +9,51 @@ import ba.com.zira.sdr.api.model.country.CountryCreateRequest;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.country.CountryUpdateRequest;
 
+/**
+ * The interface Country service.
+ */
 public interface CountryService {
-    public PagedPayloadResponse<CountryResponse> get(final FilterRequest filterRequest) throws ApiException;
+    /**
+     * Get paged payload response.
+     *
+     * @param filterRequest
+     *         the filter request
+     * @return the paged payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PagedPayloadResponse<CountryResponse> get(final FilterRequest filterRequest) throws ApiException;
 
-    public PayloadResponse<CountryResponse> create(final EntityRequest<CountryCreateRequest> request) throws ApiException;
+    /**
+     * Create payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<CountryResponse> create(final EntityRequest<CountryCreateRequest> request) throws ApiException;
 
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException;
+    /**
+     * Delete payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException;
 
-    public PayloadResponse<CountryResponse> update(final EntityRequest<CountryUpdateRequest> request) throws ApiException;
+    /**
+     * Update payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<CountryResponse> update(final EntityRequest<CountryUpdateRequest> request) throws ApiException;
 }
