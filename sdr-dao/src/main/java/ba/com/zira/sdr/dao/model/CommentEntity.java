@@ -53,7 +53,7 @@ public class CommentEntity implements Serializable {
     private String modifiedBy;
 
     @Column(name = "object_id")
-    private long objectId;
+    private Long objectId;
 
     @Column(name = "object_type")
     private String objectType;

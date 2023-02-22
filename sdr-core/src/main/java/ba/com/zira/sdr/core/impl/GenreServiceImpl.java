@@ -103,8 +103,7 @@ public class GenreServiceImpl implements GenreService {
     public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
         genreRequestValidation.validateGenreDeleteRequest(request);
 
-        var genreEntity = genreDAO.findByPK(request.getEntity());
-        genreDAO.remove(genreEntity);
+        genreDAO.removeByPK(request.getEntity());
 
         return new PayloadResponse<>(request, ResponseCode.OK, "Genre successfully deleted!");
 

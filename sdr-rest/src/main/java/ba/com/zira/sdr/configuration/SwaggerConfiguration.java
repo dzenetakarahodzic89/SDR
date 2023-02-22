@@ -45,6 +45,12 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi albumApi() {
+        return GroupedOpenApi.builder().group("album-api").packagesToScan("ba.com.zira.sdr.album.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi genreApi() {
         return GroupedOpenApi.builder().group("genre-api").packagesToScan("ba.com.zira.sdr.genre.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -65,6 +71,12 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi moritsIntegrationApi() {
         return GroupedOpenApi.builder().group("moritsintegration-api").packagesToScan("ba.com.zira.sdr.moritsintegration.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi playlistApi() {
+        return GroupedOpenApi.builder().group("playlist-api").packagesToScan("ba.com.zira.sdr.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
@@ -116,8 +128,20 @@ public class SwaggerConfiguration {
     
     @Bean
     public GroupedOpenApi artistApi() {
-        return GroupedOpenApi.builder().group("artist-api").packagesToScan("ba.com.zira.sdr.artist.rest")
+        return GroupedOpenApi.builder().group("artist-api").packagesToScan("ba.com.zira.sdr.artist.rest") 
+        		.addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+    
+    @Bean
+    public GroupedOpenApi artistPersonApi() {
+        return GroupedOpenApi.builder().group("personartist-api").packagesToScan("ba.com.zira.sdr.personartist.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+    
+    @Bean
+    public GroupedOpenApi songApi() {
+        return GroupedOpenApi.builder().group("song-api").packagesToScan("ba.com.zira.sdr.song.rest")
+         	    .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
     @Bean
