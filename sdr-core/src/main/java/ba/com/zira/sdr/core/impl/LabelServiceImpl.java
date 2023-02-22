@@ -40,7 +40,7 @@ public class LabelServiceImpl implements LabelService {
     }
 
     @Override
-    public PagedPayloadResponse<LabelResponse> findAll(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<LabelResponse> find(final FilterRequest request) throws ApiException {
         PagedData<LabelEntity> labelEntities = labelDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, labelEntities, labelMapper::entitiesToDtos);
     }

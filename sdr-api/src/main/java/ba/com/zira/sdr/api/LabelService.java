@@ -14,7 +14,7 @@ import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
  * * Methods used to manipulate {@link LabelResponse} data. <br>
  * List of APIs implemented in this class with links:
  * <ul>
- * <li>{@link #findAll}</li>
+ * <li>{@link #find}</li>
  * <li>{@link #findById}</li>
  * <li>{@link #create}</li>
  * <li>{@link #update}</li>
@@ -28,7 +28,7 @@ import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
 
 public interface LabelService {
 
-    public PagedPayloadResponse<LabelResponse> findAll(final FilterRequest request) throws ApiException;
+    public PagedPayloadResponse<LabelResponse> find(final FilterRequest request) throws ApiException;
 
     public PayloadResponse<LabelResponse> findById(final EntityRequest<Long> request) throws ApiException;
 
