@@ -31,7 +31,7 @@ import lombok.AllArgsConstructor;
 @Service
 @Tag(name = "SongSimilarityDetail", description = "SongSimilarityDetail API")
 @RestController
-@RequestMapping(value = "SongSimilarityDetail")
+@RequestMapping(value = "song-similarity-detail")
 @AllArgsConstructor
 
 public class SongSimilarityDetailRestService {
