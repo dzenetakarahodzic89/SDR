@@ -21,20 +21,20 @@ public class AlbumRequestValidation {
 
     public ValidationResponse validateCreateAlbumRequest(final EntityRequest<AlbumCreateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
-        errors.put(exists(eraDAO, request.getEntity().getEraId(), "ERA_NOT_EXIST", "ERA"));
+        errors.put(exists(eraDAO, request.getEntity().getEraId(), "ERA_NOT_EXIST", "Era"));
         return ValidationResponse.of(request, errors);
     }
 
     public ValidationResponse validateUpdateAlbumRequest(final EntityRequest<AlbumUpdateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
-        errors.put(exists(albumDAO, request.getEntity().getId(), "ALBUM_NOT_FOUND", "ALBUM"));
-        errors.put(exists(eraDAO, request.getEntity().getEraId(), "ERA_NOT_FOUND", "ERA"));
+        errors.put(exists(albumDAO, request.getEntity().getId(), "ALBUM_NOT_FOUND", "Album"));
+        errors.put(exists(eraDAO, request.getEntity().getEraId(), "ERA_NOT_FOUND", "Era"));
         return ValidationResponse.of(request, errors);
     }
 
     public ValidationResponse validateDeleteAlbumRequest(final EntityRequest<Long> request) {
         ValidationErrors errors = new ValidationErrors();
-        errors.put(exists(albumDAO, request.getEntity(), "ALBUM_NOT_FOUND", "ALBUM"));
+        errors.put(exists(albumDAO, request.getEntity(), "ALBUM_NOT_FOUND", "Album"));
         return ValidationResponse.of(request, errors);
     }
 
