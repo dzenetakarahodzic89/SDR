@@ -37,5 +37,12 @@ public interface SongMapper {
     void updateEntity(SongUpdateRequest song, @MappingTarget SongEntity songEntity);
 
     List<Song> entitiesToDtos(List<SongEntity> songEntity);
+    
+    // Merge issue
+    SongEntity dtoToEntity(AlbumCreateRequest albumCreateRequest);
+
+    SongResponse entityToDto(SongEntity songEntity);
+
+    List<SongResponse> entitiesToDtos(List<SongEntity> songEntities);
 
 }
