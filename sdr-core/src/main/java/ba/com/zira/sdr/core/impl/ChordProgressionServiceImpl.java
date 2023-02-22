@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -23,6 +17,10 @@ import ba.com.zira.sdr.core.validation.ChordProgressionValidation;
 import ba.com.zira.sdr.dao.ChordProgressionDAO;
 import ba.com.zira.sdr.dao.model.ChordProgressionEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -34,7 +32,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ChordProgressionResponse> create(EntityRequest<ChordProgressionCreateRequest> request) throws ApiException {
+    public PayloadResponse<ChordProgressionResponse> create(EntityRequest<ChordProgressionCreateRequest> request) {
         var chordProgressEntity = chordProgressionMapper.dtoToEntity(request.getEntity());
         chordProgressEntity.setStatus(Status.ACTIVE.value());
         chordProgressEntity.setCreated(LocalDateTime.now());
@@ -45,7 +43,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
     }
 
     @Override
-    public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(EntityRequest<Long> request) {
         chordProgressionValidator.validateExistsChordProgressionRequest(request);
         chordProgressionDAO.removeByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, "successfully deleted record.");
@@ -53,7 +51,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ChordProgressionResponse> update(EntityRequest<ChordProgressionUpdateRequest> request) throws ApiException {
+    public PayloadResponse<ChordProgressionResponse> update(EntityRequest<ChordProgressionUpdateRequest> request) {
         chordProgressionValidator.validateUpdateChordProgressionRequest(request);
 
         var chordProgressionEntity = chordProgressionDAO.findByPK(request.getEntity().getId());
@@ -66,14 +64,12 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
     }
 
     @Override
-    public PagedPayloadResponse<ChordProgressionResponse> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<ChordProgressionResponse> find(final FilterRequest request) {
         PagedData<ChordProgressionEntity> chordProgressionEntities = chordProgressionDAO.findAll(request.getFilter());
-        PagedData<ChordProgressionResponse> chordProgressions = new PagedData<ChordProgressionResponse>();
+        PagedData<ChordProgressionResponse> chordProgressions = new PagedData<>();
         chordProgressions.setRecords(chordProgressionMapper.entitiesToDtos(chordProgressionEntities.getRecords()));
         PagedDataMetadataMapper.remapMetadata(chordProgressionEntities, chordProgressions);
-        chordProgressions.getRecords().forEach(chord -> {
-            chord.setSongNames(chordProgressionDAO.songsByChordProgression(chord.getId()));
-        });
+        chordProgressions.getRecords().forEach(chord -> chord.setSongNames(chordProgressionDAO.songsByChordProgression(chord.getId())));
         return new PagedPayloadResponse<>(request, ResponseCode.OK, chordProgressions);
     }
 

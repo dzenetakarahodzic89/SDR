@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,6 +16,10 @@ import ba.com.zira.sdr.core.validation.SongSimilarityDetailRequestValidation;
 import ba.com.zira.sdr.dao.SongSimilarityDetailDAO;
 import ba.com.zira.sdr.dao.model.SongSimilarityDetailEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -34,7 +32,7 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PagedPayloadResponse<SongSimilarityDetail> find(FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<SongSimilarityDetail> find(FilterRequest request) {
         PagedData<SongSimilarityDetailEntity> songsimilaritydetailEntities = songSimilarityDetailDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, songsimilaritydetailEntities,
                 songSimilarityDetailMapper::entitiesToDtos);
@@ -42,7 +40,7 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SongSimilarityDetail> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<SongSimilarityDetail> delete(final EntityRequest<Long> request) {
         songsimilaritydetailRequestValidation.validateExistsSongSimilartyDetailRequest(request);
 
         var songSimilarityDetailEntity = songSimilarityDetailDAO.findByPK(request.getEntity());
@@ -53,8 +51,7 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SongSimilarityDetail> create(final EntityRequest<SongSimilarityDetailCreateRequest> request)
-            throws ApiException {
+    public PayloadResponse<SongSimilarityDetail> create(final EntityRequest<SongSimilarityDetailCreateRequest> request) {
         var songSimilarityDetailEntity = songSimilarityDetailMapper.dtoToEntity(request.getEntity());
 
         songSimilarityDetailEntity.setStatus(Status.ACTIVE.value());
@@ -67,8 +64,7 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SongSimilarityDetail> update(final EntityRequest<SongSimilarityDetailUpdateRequest> request)
-            throws ApiException {
+    public PayloadResponse<SongSimilarityDetail> update(final EntityRequest<SongSimilarityDetailUpdateRequest> request) {
         songsimilaritydetailRequestValidation.validateUpdateSongSimilartyDetailRequest(request);
         var songSimilarityDetailEntity = songSimilarityDetailDAO.findByPK(request.getEntity().getId());
 

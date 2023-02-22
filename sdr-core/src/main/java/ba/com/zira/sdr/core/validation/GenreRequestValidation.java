@@ -1,7 +1,5 @@
 package ba.com.zira.sdr.core.validation;
 
-import org.springframework.stereotype.Component;
-
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
@@ -10,6 +8,7 @@ import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
 import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
 import ba.com.zira.sdr.dao.GenreDAO;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @Component("genreRequestValidation")
@@ -53,20 +52,16 @@ public class GenreRequestValidation {
     }
 
     private ValidationError nameExists(String name) {
-
-        if (genreDAO.existsByName(name)) {
+        if (genreDAO.existsByName(name).booleanValue()) {
             return ValidationError.of("GENRE_EXISTS", "Genre with name: " + name + " already exists!");
         }
-
         return null;
     }
 
     private ValidationError nameExists(String name, Long id) {
-
-        if (genreDAO.existsByName(name, id)) {
+        if (genreDAO.existsByName(name, id).booleanValue()) {
             return ValidationError.of("GENRE_EXISTS", "Genre with name: " + name + " already exists!");
         }
-
         return null;
     }
 
@@ -78,14 +73,14 @@ public class GenreRequestValidation {
     }
 
     private ValidationError subGenresExist(Long id) {
-        if (genreDAO.subGenresExist(id)) {
+        if (genreDAO.subGenresExist(id).booleanValue()) {
             return ValidationError.of("SUBGENRES_EXIST", "Genres with subgenres attached to them are not allowed to be deleted.");
         }
         return null;
     }
 
     private ValidationError songsExist(Long id) {
-        if (genreDAO.songsExist(id)) {
+        if (genreDAO.songsExist(id).booleanValue()) {
             return ValidationError.of("SONGS_EXIST", "Genres with songs attached to them are not allowed to be deleted.");
         }
 

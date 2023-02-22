@@ -28,6 +28,11 @@ import ba.com.zira.sdr.dao.model.SongArtistEntity_;
 import ba.com.zira.sdr.dao.model.SongEntity;
 import ba.com.zira.sdr.dao.model.SongEntity_;
 
+import javax.persistence.TypedQuery;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Repository
 public class SongDAO extends AbstractDAO<SongEntity, Long> {
 

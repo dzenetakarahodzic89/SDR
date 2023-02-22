@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,6 +16,10 @@ import ba.com.zira.sdr.core.validation.InstrumentRequestValidation;
 import ba.com.zira.sdr.dao.InstrumentDAO;
 import ba.com.zira.sdr.dao.model.InstrumentEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -32,14 +30,14 @@ public class InstrumentServiceImpl implements InstrumentService {
     InstrumentRequestValidation instrumentRequestValidation;
 
     @Override
-    public PagedPayloadResponse<InstrumentResponse> get(final FilterRequest filterRequest) throws ApiException {
+    public PagedPayloadResponse<InstrumentResponse> get(final FilterRequest filterRequest) {
         PagedData<InstrumentEntity> instrumentEntities = instrumentDAO.findAll(filterRequest.getFilter());
         return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, instrumentEntities, instrumentMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<InstrumentResponse> create(final EntityRequest<InstrumentCreateRequest> request) throws ApiException {
+    public PayloadResponse<InstrumentResponse> create(final EntityRequest<InstrumentCreateRequest> request) {
         var instrumentEntity = instrumentMapper.dtoToEntity(request.getEntity());
         instrumentEntity.setStatus(Status.INACTIVE.value());
         instrumentEntity.setCreated(LocalDateTime.now());
@@ -53,7 +51,7 @@ public class InstrumentServiceImpl implements InstrumentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> entityRequest) throws ApiException {
+    public PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> entityRequest) {
         instrumentRequestValidation.validateUpdateInstrumentRequest(entityRequest);
         InstrumentEntity instrumentEntity = instrumentDAO.findByPK(entityRequest.getEntity().getId());
         instrumentMapper.updateEntity(entityRequest.getEntity(), instrumentEntity);
@@ -64,7 +62,6 @@ public class InstrumentServiceImpl implements InstrumentService {
         instrumentDAO.merge(instrumentEntity);
         return new PayloadResponse<>(entityRequest, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
-
 
     @Override
     @Transactional(rollbackFor = Exception.class)

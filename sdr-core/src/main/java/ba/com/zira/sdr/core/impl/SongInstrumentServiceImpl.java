@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -21,6 +15,10 @@ import ba.com.zira.sdr.core.validation.SongInstrumentValidation;
 import ba.com.zira.sdr.dao.SongInstrumentDAO;
 import ba.com.zira.sdr.dao.model.SongInstrumentEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -31,29 +29,29 @@ public class SongInstrumentServiceImpl implements SongInstrumentService {
     SongInstrumentValidation songInstrumentValidation;
 
     @Override
-    public PagedPayloadResponse<SongInstrument> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<SongInstrument> find(final FilterRequest request) {
         PagedData<SongInstrumentEntity> songInstrumentEntities = songInstrumentDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, songInstrumentEntities, songInstrumentMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SongInstrument> create(final EntityRequest<SongInstrumentCreateRequest> request) throws ApiException {
+    public PayloadResponse<SongInstrument> create(final EntityRequest<SongInstrumentCreateRequest> request) {
         var songInstrumentEntity = songInstrumentMapper.dtoToEntity(request.getEntity());
         songInstrumentEntity.setCreated(LocalDateTime.now());
         songInstrumentEntity.setCreatedBy(request.getUserId());
         songInstrumentDAO.persist(songInstrumentEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK,songInstrumentMapper.entityToDto(songInstrumentEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, songInstrumentMapper.entityToDto(songInstrumentEntity));
     }
 
     @Override
 
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SongInstrument> update(final EntityRequest<SongInstrumentUpdateRequest> request) throws ApiException {
+    public PayloadResponse<SongInstrument> update(final EntityRequest<SongInstrumentUpdateRequest> request) {
         songInstrumentValidation.validateUpdateSongInstrumentRequest(request);
 
         var songInstrumentEntity = songInstrumentDAO.findByPK(request.getEntity().getId());
-        songInstrumentMapper.updateEntity(request.getEntity(),songInstrumentEntity);
+        songInstrumentMapper.updateEntity(request.getEntity(), songInstrumentEntity);
 
         songInstrumentEntity.setModified(LocalDateTime.now());
         songInstrumentEntity.setModifiedBy(request.getUserId());
