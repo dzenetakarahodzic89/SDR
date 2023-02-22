@@ -29,7 +29,7 @@ import lombok.AllArgsConstructor;
 
 @Tag(name = "shazamIntegration", description = "Shazam Integration API")
 @RestController
-@RequestMapping(value = "shazamIntegration")
+@RequestMapping(value = "shazam-integration")
 @AllArgsConstructor
 public class ShazamIntegrationRestService {
 
