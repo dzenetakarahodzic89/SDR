@@ -18,7 +18,6 @@ import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
  * <li>{@link #findById}</li>
  * <li>{@link #create}</li>
  * <li>{@link #update}</li>
- * <li>{@link #changeStatus}</li>
  * <li>{@link #delete}</li>
  * </ul>
  *
@@ -73,7 +72,6 @@ public interface LabelService {
      *             corresponding error message and {@link ResponseCode}.
      *
      */
-    public PayloadResponse<LabelResponse> changeStatus(EntityRequest<Long> request) throws ApiException;
 
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 }

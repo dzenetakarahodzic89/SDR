@@ -26,17 +26,17 @@ public class SwaggerConfiguration {
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
-	@Bean
+    @Bean
     public GroupedOpenApi audioDBIntegrationApi() {
         return GroupedOpenApi.builder().group("audioDBIntegration-api").packagesToScan("ba.com.zira.sdr.audiodbintegration.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
-	@Bean
+
+    @Bean
     public GroupedOpenApi personApi() {
         return GroupedOpenApi.builder().group("person-api").packagesToScan("ba.com.zira.sdr.person.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
-	
 
     @Bean
     public GroupedOpenApi commentApi() {
@@ -80,12 +80,13 @@ public class SwaggerConfiguration {
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
-	@Bean
+    @Bean
     public GroupedOpenApi sampleApi() {
         return GroupedOpenApi.builder().group("sample-api").packagesToScan("ba.com.zira.sdr.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
-  	@Bean
+
+    @Bean
     public GroupedOpenApi userRecommendationApi() {
         return GroupedOpenApi.builder().group("userrecommendation-api").packagesToScan("ba.com.zira.sdr.userrecommendation.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -104,6 +105,12 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi labelApi() {
+        return GroupedOpenApi.builder().group("label-api").packagesToScan("ba.com.zira.sdr.label.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi spotifyIntegrationApi() {
         return GroupedOpenApi.builder().group("spotify-integration-api").packagesToScan("ba.com.zira.sdr.spotifyintegration.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -111,9 +118,9 @@ public class SwaggerConfiguration {
 
     public GroupedOpenApi connectedMediaApi() {
         return GroupedOpenApi.builder().group("connectedmedia-api").packagesToScan("ba.com.zira.sdr.connectedmedia.rest")
-         .addOperationCustomizer(ziraOperationCustomizer).build();
+                .addOperationCustomizer(ziraOperationCustomizer).build();
     }
-    
+
     @Bean
     public GroupedOpenApi artistApi() {
         return GroupedOpenApi.builder().group("artist-api").packagesToScan("ba.com.zira.sdr.artist.rest")
