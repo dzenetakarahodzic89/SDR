@@ -1,14 +1,14 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -25,6 +25,7 @@ import ba.com.zira.sdr.api.model.genre.Genre;
 import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
 import ba.com.zira.sdr.api.model.genre.GenreEraOverview;
 import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
+import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.GenreMapper;
@@ -112,11 +113,12 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public ListPayloadResponse<GenreEraOverview> getGenresOverEras(EmptyRequest request) throws ApiException {
-        List<GenreEraOverview> genresOverEras = new LinkedList<GenreEraOverview>();
+        List<SongGenreEraLink> links = songDAO.findSongGenreEraLinks();
+        List<GenreEraOverview> genresOverEras = new LinkedList<>();
         var eraEntities = eraDAO.findAll();
         eraEntities.forEach(era -> {
-            Map<LoV, Double> genrePercentageInEra = new HashMap<LoV, Double>();
-            List<SongEntity> songsInEra = new LinkedList<SongEntity>();
+            Map<LoV, Double> genrePercentageInEra = new HashMap<>();
+            List<SongEntity> songsInEra = new LinkedList<>();
             var albums = era.getAlbums();
             albums.forEach(album -> {
                 var songArtists = album.getSongArtists();
@@ -138,7 +140,7 @@ public class GenreServiceImpl implements GenreService {
                 });
             });
             genrePercentageInEra.replaceAll((key, value) -> (value / songsInEra.size()) * 100);
-            GenreEraOverview genreEraOverview = new GenreEraOverview(era.getId(), era.getName(), genrePercentageInEra);
+            var genreEraOverview = new GenreEraOverview(era.getId(), era.getName(), genrePercentageInEra);
             genresOverEras.add(genreEraOverview);
         });
 
