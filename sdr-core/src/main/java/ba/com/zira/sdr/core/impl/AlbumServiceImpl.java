@@ -1,5 +1,14 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -14,28 +23,22 @@ import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.core.mapper.AlbumMapper;
+import ba.com.zira.sdr.core.mapper.SongArtistMapper;
+import ba.com.zira.sdr.core.mapper.SongMapper;
 import ba.com.zira.sdr.core.utils.PlayTimeHelper;
 import ba.com.zira.sdr.core.validation.AlbumRequestValidation;
 import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
 public class AlbumServiceImpl implements AlbumService {
 
     AlbumDAO albumDAO;
-    // SongArtistMapper songArtistMapper;
+    SongArtistMapper songArtistMapper;
     AlbumMapper albumMapper;
-    // SongMapper songMapper;
+    SongMapper songMapper;
     AlbumRequestValidation albumRequestValidation;
 
     @Override
