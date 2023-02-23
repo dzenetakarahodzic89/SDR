@@ -44,6 +44,19 @@ public class SwaggerConfiguration {
 		return GroupedOpenApi.builder().group("comment-api").packagesToScan("ba.com.zira.sdr.comment.rest")
 				.addOperationCustomizer(ziraOperationCustomizer).build();
 	}
+	@Bean
+    public GroupedOpenApi songInstrumentApi() {
+            return GroupedOpenApi.builder().group("songInstrument-api").packagesToScan("ba.com.zira.sdr.songinstrument.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+	
+	@Bean
+	public GroupedOpenApi noteSheetApi() {
+	        return GroupedOpenApi.builder().group("noteSheet-api").packagesToScan("ba.com.zira.sdr.notesheet.rest")
+	            .addOperationCustomizer(ziraOperationCustomizer).build();
+	}
+	
+	
 	
 	@Bean
     public GroupedOpenApi labelApi() {
