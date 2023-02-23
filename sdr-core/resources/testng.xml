@@ -34,6 +34,16 @@
 	    </classes>
 
 	</test>
+
+	<test thread-count="5" name="Label">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.LabelRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.LabelServiceTest" />
+		</classes>
+	</test>
+	
 	<test thread-count="5" name="Country">
 		<classes>
 			<class
