@@ -63,7 +63,7 @@ public class SongInstrumentRestService {
 
     
     
-    @Operation(summary = "Delete comment")
+    @Operation(summary = "Delete songInstrument")
     @DeleteMapping(value = "{id}")
     public PayloadResponse<SongInstrument> delete(@Parameter(required = true, description = "ID of the sample") @PathVariable final Long id) throws ApiException {
         return songInstrumentService.delete(new EntityRequest<>(id));
