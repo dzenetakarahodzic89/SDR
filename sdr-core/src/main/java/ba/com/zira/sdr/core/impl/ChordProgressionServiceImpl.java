@@ -97,7 +97,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
         List<ChordProgressionByEraResponse> returnListOfValues = new ArrayList<>();
         Map<Long,Integer> EraMap= new HashMap<>(); 
         List<LoV> eras = eraDAO.getAllErasLoV();
-        IntStream.range(0, eras.size()-1).forEach(index ->{
+        IntStream.range(0, eras.size()).forEach(index ->{
         	returnListOfValues.add(new ChordProgressionByEraResponse(eras.get(index).getId(),eras.get(index).getName(),new HashMap<>()));
         	EraMap.put(eras.get(index).getId(),index);
         });
