@@ -16,14 +16,14 @@ public class InstrumentUpdateRequest implements Serializable {
     private Long id;
 
     @Schema(description = "Instrument name")
-    private String instrumentName;
+    private String name;
 
     @Schema(description = "Instrument information")
-    private String instrumentInformation;
+    private String information;
 
     @Schema(description = "Instrument type")
-    private String instrumentType;
+    private String type;
 
     @Schema(description = "Outline text")
-    private String instrumentOutlineText;
+    private String outlineText;
 }

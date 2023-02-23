@@ -22,9 +22,9 @@ public class InstrumentResponse implements Serializable {
     private String createdBy;
 
     @Schema(description = "Instrument name")
-    private String instrumentName;
+    private String name;
     @Schema(description = "Instrument information")
-    private String instrumentInformation;
+    private String information;
 
     @Schema(description = "Last modification date")
     private LocalDateTime modified;
@@ -33,12 +33,12 @@ public class InstrumentResponse implements Serializable {
     private String modifiedBy;
 
     @Schema(description = "Instrument status", allowableValues = { "Inactive", "Active" })
-    private String instrumentStatus;
+    private String status;
 
     @Schema(description = "Instrument type")
-    private String instrumentType;
+    private String type;
 
     @Schema(description = "Instrument outline text")
-    private String instrumentOutlineText;
+    private String outlineText;
 
 }
