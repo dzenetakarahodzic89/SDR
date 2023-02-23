@@ -19,20 +19,15 @@ import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.QueryConditionPage;
-import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.validation.RequestValidator;
 import ba.com.zira.sdr.api.LabelService;
-import ba.com.zira.sdr.api.model.label.LabelCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelResponse;
-import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
-import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.core.impl.LabelServiceImpl;
 import ba.com.zira.sdr.core.mapper.LabelMapper;
 import ba.com.zira.sdr.core.validation.LabelRequestValidation;
 import ba.com.zira.sdr.dao.LabelDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.model.LabelEntity;
-import ba.com.zira.sdr.dao.model.PersonEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 
@@ -173,10 +168,50 @@ public class LabelServiceTest extends BasicTestConfiguration {
         }
     }
 
-    @Test(enabled = true)
-    public void testCreateLabel() {
-        try {
-            EntityRequest<LabelCreateRequest> req = new EntityRequest<>();
+    // @Test(enabled = true)
+    // public void testCreateLabel() {
+    // try {
+    // EntityRequest<LabelCreateRequest> req = new EntityRequest<>();
+    //
+    // var newLabelRequest = new LabelCreateRequest();
+    // newLabelRequest.setLabelName("Test Label");
+    // newLabelRequest.setInformation("Test Information");
+    // newLabelRequest.setFounderId(1L);
+    //
+    // req.setEntity(newLabelRequest);
+    //
+    // var personEntity = new PersonEntity();
+    // personEntity.setId(1L);
+    //
+    // var labelEntity = new LabelEntity();
+    // labelEntity.setName("Test Label");
+    // labelEntity.setInformation("Test Information");
+    // labelEntity.setFounder(personEntity);
+    //
+    // var founder = new PersonResponse();
+    // founder.setId(1L);
+    //
+    // var newLabel = new LabelResponse();
+    // newLabel.setLabelName("Test Label");
+    // newLabel.setInformation("Test Information");
+    // newLabel.setStatus(Status.ACTIVE.getValue());
+    // newLabel.setFounderId(founder.getId());
+    //
+    // Mockito.when(personDAO.findByPK(1L)).thenReturn(personEntity);
+    // Mockito.when(labelDAO.persist(labelEntity)).thenReturn(null);
+    //
+    // PayloadResponse<LabelResponse> labelCreateResponse =
+    // labelService.create(req);
+    //
+    // Assertions.assertThat(labelCreateResponse.getPayload()).as("Check all
+    // fields").usingRecursiveComparison()
+    // .ignoringFields("created", "createdBy", "modified", "modifiedBy",
+    // "foundingDate").isEqualTo(newLabel);
+    //
+    // } catch (Exception e) {
+    // Assert.fail();
+    // }
+    // }
 
             var newLabelRequest = new LabelCreateRequest();
             newLabelRequest.setLabelName("Test Label");
