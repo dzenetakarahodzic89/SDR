@@ -29,16 +29,13 @@ public class SongInstrument implements Serializable {
     @Schema(description = "Name of instrument")
     private String name;
 
-    @Schema(description = "Id of the object")
-    private Long objectId;
+    @Schema(description = "Id of the instrument")
+    private Long instrumentId;
 
-    @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
-    private String status;
+    @Schema(description = "Id of the person")
+    private Long personId;
 
-    @Schema(description = "user code")
-    private String userCode;
-
-    @Schema(description = "Name song_id")
+    @Schema(description = "Id of the song")
     private Long songId;
 
 }
