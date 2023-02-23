@@ -30,10 +30,6 @@ import ba.com.zira.sdr.core.validation.LyricRequestValidation;
 import ba.com.zira.sdr.dao.LyricDAO;
 import ba.com.zira.sdr.dao.model.LyricEntity;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -111,11 +107,6 @@ public class LyricServiceImpl implements LyricService {
         lyricAlbumResponse.setTotalLyricLength(totalLyricLength);
         lyricAlbumResponse.setMap(mapa);
         return new PayloadResponse<>(request, ResponseCode.OK, lyricAlbumResponse);
-    }
-
-    private List<LyricsSongResponse> getLanguage() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

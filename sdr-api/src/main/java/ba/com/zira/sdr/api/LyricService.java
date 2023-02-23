@@ -19,10 +19,10 @@ public interface LyricService {
      * Find paged payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the paged payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PagedPayloadResponse<Lyric> find(final FilterRequest request) throws ApiException;
 
@@ -30,10 +30,10 @@ public interface LyricService {
      * Create payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<Lyric> create(EntityRequest<LyricCreateRequest> request) throws ApiException;
 
@@ -41,10 +41,10 @@ public interface LyricService {
      * Update payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<Lyric> update(EntityRequest<LyricUpdateRequest> request) throws ApiException;
 
@@ -52,14 +52,12 @@ public interface LyricService {
      * Delete payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<Lyric> delete(EntityRequest<Long> request) throws ApiException;
-
-    PayloadResponse<LyricAlbumResponse> findAllLyricsForAlbum(EntityRequest<Long> request) throws ApiException;
 
     PayloadResponse<LyricAlbumResponse> findAllLyricsForAlbum(EntityRequest<Long> request) throws ApiException;
 
