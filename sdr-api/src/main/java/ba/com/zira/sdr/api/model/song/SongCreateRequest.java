@@ -35,6 +35,10 @@ public class SongCreateRequest implements Serializable {
 
     @Schema(description = "Playtime of the song")
     private String playtime;
+    
+    @Schema(description = "Outline text")
+    private String outlineText;
+
 
     @Schema(description = "Ids of song lyrics")
     private List<Long> lyricIds;

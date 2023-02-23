@@ -34,6 +34,16 @@
 	    </classes>
 
 	</test>
+
+	<test thread-count="5" name="Label">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.LabelRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.LabelServiceTest" />
+		</classes>
+	</test>
+	
 	<test thread-count="5" name="Country">
 		<classes>
 			<class
@@ -52,6 +62,7 @@
 		</classes>
 
 	</test>
+
 	<test thread-count="5" name="SongFftResult">
 		<classes>
 			<class
@@ -62,3 +73,33 @@
 
 	</test>
 </suite>
+
+		<test thread-count="5" name="Chord Progression">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.ChordProgressionRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.ChordProgressionServiceTest"/>
+		</classes>
+
+	</test>
+    <test thread-count="6" name="Artist">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ArtistRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ArtistServiceTest"/>
+	    </classes>
+    </test>
+	<test thread-count="5" name="Person">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.PersonRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.PersonServiceTest"/>
+		</classes>
+
+	</test>
+</suite>
+    
+

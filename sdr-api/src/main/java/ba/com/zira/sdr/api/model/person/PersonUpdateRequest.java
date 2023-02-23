@@ -7,29 +7,29 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Properties for update of person request")
+@Schema(description = "Properties for update of  request")
 public class PersonUpdateRequest implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Schema(description = "ID of record for update")
-	private Long id;
+    @Schema(description = "ID of record for update")
+    private Long id;
 
-	@Schema(description = "Information about user")
-	private String personInformation;
+    @Schema(description = "Information about user")
+    private String information;
 
-	@Schema(description = "User name")
-	private String personName;
+    @Schema(description = "User name")
+    private String name;
 
-	@Schema(description = "User surname")
-	private String personSurname;
+    @Schema(description = "User surname")
+    private String surname;
 
-	@Schema(description = "User's gender")
-	private String personGender;
+    @Schema(description = "User's gender")
+    private String gender;
 
-	@Schema(description = "Date of birth")
-	private LocalDateTime personDateOfBirth;
+    @Schema(description = "Date of birth")
+    private LocalDateTime dateOfBirth;
 
-	@Schema(description = "Date of death")
-	private LocalDateTime personDateOfDeath;
+    @Schema(description = "Date of death")
+    private LocalDateTime dateOfDeath;
 
 }
