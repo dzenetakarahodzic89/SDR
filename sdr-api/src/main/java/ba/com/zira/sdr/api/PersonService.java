@@ -9,6 +9,7 @@ import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
 
+// TODO: Auto-generated Javadoc
 /**
  * The interface Person service.
  */
@@ -18,10 +19,10 @@ public interface PersonService {
      * Find paged payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the paged payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PagedPayloadResponse<PersonResponse> find(final FilterRequest request) throws ApiException;
 
@@ -29,10 +30,10 @@ public interface PersonService {
      * Create payload response.
      *
      * @param entityRequest
-     *         the entity request
+     *            the entity request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<PersonResponse> create(final EntityRequest<PersonCreateRequest> entityRequest) throws ApiException;
 
@@ -40,10 +41,10 @@ public interface PersonService {
      * Update payload response.
      *
      * @param entityRequest
-     *         the entity request
+     *            the entity request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<PersonResponse> update(final EntityRequest<PersonUpdateRequest> entityRequest) throws ApiException;
 
@@ -51,9 +52,18 @@ public interface PersonService {
      * Delete payload response.
      *
      * @param entityRequest
-     *         the entity request
+     *            the entity request
      * @return the payload response
      */
     PayloadResponse<PersonResponse> delete(final EntityRequest<Long> entityRequest);
+
+    /**
+     * Find by id.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     */
+    PayloadResponse<PersonResponse> findById(EntityRequest<Long> request);
 
 }

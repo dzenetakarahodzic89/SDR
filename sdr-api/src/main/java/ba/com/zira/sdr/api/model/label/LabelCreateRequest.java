@@ -23,4 +23,7 @@ public class LabelCreateRequest implements Serializable {
     @Schema(description = "Label founder")
     private Long founderId;
 
+    @Schema(description = "Label outline text")
+    private String outlineText;
+
 }

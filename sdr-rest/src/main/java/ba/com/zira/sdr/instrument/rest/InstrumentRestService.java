@@ -1,22 +1,35 @@
 package ba.com.zira.sdr.instrument.rest;
 
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.request.ListRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.InstrumentService;
+import ba.com.zira.sdr.api.instrument.InsertSongInstrumentRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
+import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @Tag(name = "Instrument", description = "Instrument rest service")
 @RestController
@@ -56,6 +69,13 @@ public class InstrumentRestService {
             instrumentUpdateRequest.setId(id);
         }
         return instrumentService.update(new EntityRequest<>(instrumentUpdateRequest));
+    }
+
+    @Operation(summary = "Insert instruments for song")
+    @PostMapping(value = "instrument-to-song")
+    public ListPayloadResponse<ResponseSongInstrument> insertInstrumentToSong(
+            @RequestBody final ListRequest<InsertSongInstrumentRequest> request) throws ApiException {
+        return instrumentService.insertInstrumentsToSong(request);
     }
 
 }
