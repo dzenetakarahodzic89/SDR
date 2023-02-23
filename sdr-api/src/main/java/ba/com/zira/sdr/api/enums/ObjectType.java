@@ -6,7 +6,9 @@ public enum ObjectType {
     /** ALBUM */
     ALBUM("ALBUM"),
     /** ARTIST */
-    ARTIST("ARTIST");
+    ARTIST("ARTIST"),
+    /** PERSON */
+    PERSON("PERSON");
 
     private final String value;
 
