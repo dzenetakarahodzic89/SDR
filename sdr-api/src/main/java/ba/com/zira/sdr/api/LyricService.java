@@ -6,6 +6,7 @@ import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.lyric.Lyric;
+import ba.com.zira.sdr.api.model.lyric.LyricAlbumResponse;
 import ba.com.zira.sdr.api.model.lyric.LyricCreateRequest;
 import ba.com.zira.sdr.api.model.lyric.LyricUpdateRequest;
 
@@ -18,5 +19,7 @@ public interface LyricService {
     public PayloadResponse<Lyric> update(EntityRequest<LyricUpdateRequest> request) throws ApiException;
 
     public PayloadResponse<Lyric> delete(EntityRequest<Long> request) throws ApiException;
+
+    PayloadResponse<LyricAlbumResponse> findAllLyricsForAlbum(EntityRequest<Long> request) throws ApiException;
 
 }
