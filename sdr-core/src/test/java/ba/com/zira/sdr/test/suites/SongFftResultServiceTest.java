@@ -206,7 +206,7 @@ public class SongFftResultServiceTest extends BasicTestConfiguration {
             Mockito.when(songFftResultValidation.validateUpdateSongFftResultRequest(req)).thenReturn(null);
 
             Mockito.when(songFftResultDAO.findByPK(req.getEntity().getId()))
-            .thenReturn(songFftResultEnt); // Mockito.when(songDAO.findByPK(1L)).thenReturn(songEnt);
+            .thenReturn(songFftResultEnt);
 
             Mockito.doNothing().when(songFftResultDAO).merge(songFftResultEnt);
 

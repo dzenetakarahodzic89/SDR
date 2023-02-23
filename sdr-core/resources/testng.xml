@@ -52,4 +52,13 @@
 		</classes>
 
 	</test>
+	<test thread-count="5" name="SongFftResult">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.SongFftResultRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.SongFftResultServiceTest"/>
+		</classes>
+
+	</test>
 </suite>

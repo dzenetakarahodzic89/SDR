@@ -32,7 +32,7 @@ public class SongFftResultRequestValidationTest extends BasicTestConfiguration {
         this.songDAO = Mockito.mock(SongDAO.class);
         this.validation = new SongFftResultValidation(songFftResultDAO,songDAO);
     }
-    //create
+
     @Test
     public void validateCreateRequestNotValid() {
 
@@ -90,7 +90,7 @@ public class SongFftResultRequestValidationTest extends BasicTestConfiguration {
         Mockito.verify(songFftResultDAO).existsByPK(1L);
 
     }
-    //update
+
     @Test
     public void validateSongFftResultRequestNotFound() {
 
