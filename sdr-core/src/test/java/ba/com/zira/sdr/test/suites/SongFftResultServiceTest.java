@@ -194,7 +194,6 @@ public class SongFftResultServiceTest extends BasicTestConfiguration {
 
             var songFftResultEnt = new SongFttResultEntity();
             songFftResultEnt.setFftResults("Test 1");
-            // songFftResultEnt.setSongId(1L);
             songFftResultEnt.setStatus(Status.ACTIVE.getValue());
 
             var songFftResult = new SongFftResult();
