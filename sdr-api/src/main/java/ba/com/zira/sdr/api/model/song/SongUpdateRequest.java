@@ -37,6 +37,9 @@ public class SongUpdateRequest implements Serializable {
 
     @Schema(description = "Information about the song")
     private String information;
+    
+    @Schema(description = "Outline text")
+    private String outlineText;
 
     @Schema(description = "Playtime of the song")
     private String playtime;

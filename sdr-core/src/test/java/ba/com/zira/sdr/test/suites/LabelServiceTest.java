@@ -58,19 +58,22 @@ public class LabelServiceTest extends BasicTestConfiguration {
         try {
 
             List<LabelEntity> entities = new ArrayList<>();
-            LabelEntity firtLabelEntity = new LabelEntity();
-            firtLabelEntity.setInformation("Test Information");
-            firtLabelEntity.setName("Test Type 1");
+            LabelEntity firstLabelEntity = new LabelEntity();
+            firstLabelEntity.setInformation("Test Information");
+            firstLabelEntity.setName("Test Type 1");
+            firstLabelEntity.setOutlineText("Outline text 1");
 
             LabelEntity secondLabelEntity = new LabelEntity();
             secondLabelEntity.setInformation("Test Information");
             secondLabelEntity.setName("Test Type 2");
+            secondLabelEntity.setOutlineText("Outline text 2");
 
             LabelEntity thirdLabelEntity = new LabelEntity();
             thirdLabelEntity.setInformation("Test Information");
             thirdLabelEntity.setName("Test Type 3");
+            thirdLabelEntity.setOutlineText("Outline text 3");
 
-            entities.add(firtLabelEntity);
+            entities.add(firstLabelEntity);
             entities.add(secondLabelEntity);
             entities.add(thirdLabelEntity);
 
@@ -82,14 +85,17 @@ public class LabelServiceTest extends BasicTestConfiguration {
             LabelResponse firstResponse = new LabelResponse();
             firstResponse.setInformation("Test Information");
             firstResponse.setLabelName("Test Type 1");
+            firstResponse.setOutlineText("Outline text 1");
 
             LabelResponse secondResponse = new LabelResponse();
             secondResponse.setInformation("Test Information");
             secondResponse.setLabelName("Test Type 2");
+            secondResponse.setOutlineText("Outline text 2");
 
             LabelResponse thirdResponse = new LabelResponse();
             thirdResponse.setInformation("Test Information");
             thirdResponse.setLabelName("Test Type 3");
+            thirdResponse.setOutlineText("Outline text 3");
 
             response.add(firstResponse);
             response.add(secondResponse);
@@ -133,8 +139,9 @@ public class LabelServiceTest extends BasicTestConfiguration {
             PayloadResponse<LabelResponse> labelFindByIdResponse = labelService.findById(req);
 
             Assertions.assertThat(labelFindByIdResponse.getPayload()).as("Check all elements")
-                    .overridingErrorMessage("All elements should be equal").usingRecursiveComparison().ignoringFields("createdBy",
-                            "created", "foundingDate", "information", "modified", "modifiedBy", "labelName", "status", "founderId")
+                    .overridingErrorMessage("All elements should be equal").usingRecursiveComparison()
+                    .ignoringFields("createdBy", "created", "foundingDate", "information", "modified", "modifiedBy", "labelName", "status",
+                            "founderId", "outlineText")
                     .isEqualTo(resp);
 
         } catch (Exception e) {
@@ -206,52 +213,92 @@ public class LabelServiceTest extends BasicTestConfiguration {
     // }
     // }
 
-    // @Test(enabled = true)
-    // public void testUpdateLabel() {
-    // try {
-    // EntityRequest<LabelUpdateRequest> req = new EntityRequest<>();
-    //
-    // var newLabelUpdateRequest = new LabelUpdateRequest();
-    // newLabelUpdateRequest.setId(1L);
-    // newLabelUpdateRequest.setInformation("Changed information");
-    // newLabelUpdateRequest.setLabelName("Changed label name");
-    // newLabelUpdateRequest.setFounderId(1L);
-    //
-    // req.setEntity(newLabelUpdateRequest);
-    //
-    // var personEntity = new PersonEntity();
-    // personEntity.setId(1L);
-    //
-    // var newLabelEnt = new LabelEntity();
-    // newLabelEnt.setId(1L);
-    // newLabelEnt.setInformation("Test Information");
-    // newLabelEnt.setName("Test label name");
-    // newLabelEnt.setFounder(personEntity);
-    //
-    // var founder = new PersonResponse();
-    // founder.setId(1L);
-    //
-    // var newLabelResponse = new LabelResponse();
-    // newLabelResponse.setId(1L);
-    // newLabelResponse.setInformation("Changed information");
-    // newLabelResponse.setLabelName("Changed label name");
-    // newLabelResponse.setFounderId(founder.getId());
-    //
-    // Mockito.when(labelRequestValidation.validateUpdateLabelRequest(req)).thenReturn(null);
-    // Mockito.when(labelDAO.findByPK(req.getEntity().getId())).thenReturn(newLabelEnt);
-    // Mockito.doNothing().when(labelDAO).merge(newLabelEnt);
-    // PayloadResponse<LabelResponse> labelUpdateResponse =
-    // labelService.update(req);
-    //
-    // Assertions.assertThat(labelUpdateResponse.getPayload()).as("Check
-    // Update").overridingErrorMessage("Elements should be updated")
-    // .usingRecursiveComparison().ignoringFields("createdAt", "created",
-    // "modifiedAt", "modified", "foundingDate", "status")
-    // .isEqualTo(newLabelResponse);
-    //
-    // } catch (Exception e) {
-    // Assert.fail();
-    // }
-    //
-    // }
+            var newLabelRequest = new LabelCreateRequest();
+            newLabelRequest.setLabelName("Test Label");
+            newLabelRequest.setInformation("Test Information");
+            newLabelRequest.setOutlineText("Test Outline text");
+            newLabelRequest.setFounderId(1L);
+
+            req.setEntity(newLabelRequest);
+
+            var personEntity = new PersonEntity();
+            personEntity.setId(1L);
+
+            var labelEntity = new LabelEntity();
+            labelEntity.setName("Test Label");
+            labelEntity.setInformation("Test Information");
+            labelEntity.setOutlineText("Test Outline text");
+            labelEntity.setFounder(personEntity);
+
+            var founder = new PersonResponse();
+            founder.setId(1L);
+
+            var newLabel = new LabelResponse();
+            newLabel.setLabelName("Test Label");
+            newLabel.setInformation("Test Information");
+            newLabel.setOutlineText("Test Outline text");
+            newLabel.setStatus(Status.ACTIVE.getValue());
+            newLabel.setFounderId(founder.getId());
+
+            Mockito.when(personDAO.findByPK(1L)).thenReturn(personEntity);
+            Mockito.when(labelDAO.persist(labelEntity)).thenReturn(null);
+
+            PayloadResponse<LabelResponse> labelCreateResponse = labelService.create(req);
+
+            Assertions.assertThat(labelCreateResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy", "foundingDate").isEqualTo(newLabel);
+
+        } catch (Exception e) {
+            Assert.fail();
+        }
+    }
+
+    @Test(enabled = true)
+    public void testUpdateLabel() {
+        try {
+            EntityRequest<LabelUpdateRequest> req = new EntityRequest<>();
+
+            var newLabelUpdateRequest = new LabelUpdateRequest();
+            newLabelUpdateRequest.setId(1L);
+            newLabelUpdateRequest.setInformation("Changed information");
+            newLabelUpdateRequest.setLabelName("Changed label name");
+            newLabelUpdateRequest.setOutlineText("Changed Outline text");
+            newLabelUpdateRequest.setFounderId(1L);
+
+            req.setEntity(newLabelUpdateRequest);
+
+            var personEntity = new PersonEntity();
+            personEntity.setId(1L);
+
+            var newLabelEnt = new LabelEntity();
+            newLabelEnt.setId(1L);
+            newLabelEnt.setInformation("Test Information");
+            newLabelEnt.setName("Test label name");
+            newLabelEnt.setOutlineText("Test Outline text");
+            newLabelEnt.setFounder(personEntity);
+
+            var founder = new PersonResponse();
+            founder.setId(1L);
+
+            var newLabelResponse = new LabelResponse();
+            newLabelResponse.setId(1L);
+            newLabelResponse.setInformation("Changed information");
+            newLabelResponse.setOutlineText("Changed Outline text");
+            newLabelResponse.setLabelName("Changed label name");
+            newLabelResponse.setFounderId(founder.getId());
+
+            Mockito.when(labelRequestValidation.validateUpdateLabelRequest(req)).thenReturn(null);
+            Mockito.when(labelDAO.findByPK(req.getEntity().getId())).thenReturn(newLabelEnt);
+            Mockito.doNothing().when(labelDAO).merge(newLabelEnt);
+            PayloadResponse<LabelResponse> labelUpdateResponse = labelService.update(req);
+
+            Assertions.assertThat(labelUpdateResponse.getPayload()).as("Check Update").overridingErrorMessage("Elements should be updated")
+                    .usingRecursiveComparison().ignoringFields("createdAt", "created", "modifiedAt", "modified", "foundingDate", "status")
+                    .isEqualTo(newLabelResponse);
+
+        } catch (Exception e) {
+            Assert.fail();
+        }
+
+    }
 }

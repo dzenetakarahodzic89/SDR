@@ -1,20 +1,23 @@
 package ba.com.zira.sdr.core.utils;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
+
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
-
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.media.CoverImageHelper;
 import ba.com.zira.sdr.dao.MediaStoreDAO;
+import ba.com.zira.sdr.dao.PersonDAO;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -26,6 +29,9 @@ public class LookupService {
 
     @NonNull
     MediaStoreDAO mediaStoreDAO;
+
+    @NonNull
+    PersonDAO personDAO;
 
     private static SecureRandom random = new SecureRandom();
 
@@ -96,6 +102,25 @@ public class LookupService {
     public <E> void handleDefaultImage(final E r, final BiConsumer<E, String> setter, final Function<E, String> getterForImage) {
         if (getterForImage.apply(r) == null) {
             setter.accept(r, defaultImageUrl);
+        }
+
+    }
+
+    public <E> void lookupObjectNamesByIdAndType(final String objectType, final List<E> values, final Function<E, Long> getter,
+            final BiConsumer<E, String> setter) {
+
+        if (ObjectType.PERSON.getValue().equalsIgnoreCase(objectType)) {
+            lookupPersonNames(values, getter, setter);
+        }
+
+    }
+
+    public <E> void lookupPersonNames(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {
+        List<Long> ids = values.parallelStream().map(getter).distinct().collect(Collectors.toList());
+
+        if (!(ids == null || ids.isEmpty())) {
+            Map<Long, String> lookup = new ConcurrentHashMap<>(personDAO.getPersonNames(ids));
+            values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
         }
 
     }

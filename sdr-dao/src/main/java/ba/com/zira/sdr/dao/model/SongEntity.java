@@ -69,6 +69,9 @@ public class SongEntity implements Serializable {
 
     @Column(name = "status")
     private String status;
+    
+    @Column(name = "outline_text")
+    private String outlineText;
 
     // bi-directional many-to-one association to LyricEntity
     @OneToMany(mappedBy = "song")

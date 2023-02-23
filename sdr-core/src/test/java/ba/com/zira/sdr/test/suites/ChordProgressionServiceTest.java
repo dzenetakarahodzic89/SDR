@@ -29,6 +29,7 @@ import ba.com.zira.sdr.core.impl.ChordProgressionServiceImpl;
 import ba.com.zira.sdr.core.mapper.ChordProgressionMapper;
 import ba.com.zira.sdr.core.validation.ChordProgressionValidation;
 import ba.com.zira.sdr.dao.ChordProgressionDAO;
+import ba.com.zira.sdr.dao.EraDAO;
 import ba.com.zira.sdr.dao.model.ChordProgressionEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
@@ -43,6 +44,7 @@ public class ChordProgressionServiceTest extends BasicTestConfiguration {
     @Autowired
     private ChordProgressionMapper chordProgressionMapper;
     private RequestValidator requestValidator;
+    private EraDAO eraDAO;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
@@ -50,7 +52,7 @@ public class ChordProgressionServiceTest extends BasicTestConfiguration {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.chordProgressionValidation = Mockito.mock(ChordProgressionValidation.class);
         this.chordProgressionService = new ChordProgressionServiceImpl(chordProgressionDAO, chordProgressionMapper,
-                chordProgressionValidation);
+                chordProgressionValidation,eraDAO);
 
     }
 
