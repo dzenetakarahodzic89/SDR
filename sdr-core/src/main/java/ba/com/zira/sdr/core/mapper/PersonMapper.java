@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.core.mapper;
 
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
@@ -20,5 +21,10 @@ public interface PersonMapper {
     PersonResponse entityToDto(PersonEntity personEntity);
 
     List<PersonResponse> entitiesToDtos(List<PersonEntity> personEntity);
+
+    @AfterMapping
+    default void setFullName(@MappingTarget PersonResponse personResponse, PersonEntity person) {
+        personResponse.setFullName(person.getName() + " " + person.getSurname());
+    }
 
 }

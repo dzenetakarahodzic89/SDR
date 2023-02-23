@@ -49,4 +49,6 @@ public class PersonResponse implements Serializable {
 
     private String imageUrl;
 
+    private String fullName;
+
 }
