@@ -151,13 +151,13 @@ public class PersonArtistServiceTest extends BasicTestConfiguration {
             personArtistEntity.setArtist(
                     new ArtistEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null));
             personArtistEntity.setPerson(
-                    new PersonEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                    new PersonEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
 
             var newPersonArtist = new PersonArtistResponse();
             newPersonArtist.setPersonId(1L);
             newPersonArtist.setArtistId(1L);
             Mockito.when(personDAO.findByPK(1L)).thenReturn(
-                    new PersonEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                    new PersonEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             Mockito.when(artistDAO.findByPK(1L))
                     .thenReturn(new ArtistEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null));
             Mockito.when(personArtistDAO.persist(personArtistEntity)).thenReturn(null);

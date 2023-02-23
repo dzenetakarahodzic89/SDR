@@ -41,6 +41,8 @@ public class SongInstrumentServiceImpl implements SongInstrumentService {
         var songInstrumentEntity = songInstrumentMapper.dtoToEntity(request.getEntity());
         songInstrumentEntity.setCreated(LocalDateTime.now());
         songInstrumentEntity.setCreatedBy(request.getUserId());
+        songInstrumentEntity.setModified(LocalDateTime.now());
+        songInstrumentEntity.setModifiedBy(request.getUserId());
         songInstrumentDAO.persist(songInstrumentEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, songInstrumentMapper.entityToDto(songInstrumentEntity));
     }

@@ -53,4 +53,8 @@ public class PersonResponse implements Serializable {
 
     private String outlineText;
 
+    private Long countryId;
+
+    private String flagAbbreviation;
+
 }

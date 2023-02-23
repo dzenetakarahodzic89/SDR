@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -28,6 +22,11 @@ import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.model.PersonEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Service
 @AllArgsConstructor
@@ -47,6 +46,7 @@ public class PersonServiceImpl implements PersonService {
         PagedDataMetadataMapper.remapMetadata(personEntities, response);
         lookupService.lookupCoverImage(response.getRecords(), PersonResponse::getId, ObjectType.PERSON.getValue(),
                 PersonResponse::setImageUrl, PersonResponse::getImageUrl);
+        lookupService.lookupCountryAbbriviation(response.getRecords(), PersonResponse::getCountryId, PersonResponse::setFlagAbbreviation);
         return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, response);
     }
 
@@ -56,6 +56,7 @@ public class PersonServiceImpl implements PersonService {
         var response = personMapper.entityToDto(personEntities);
         lookupService.lookupCoverImage(Arrays.asList(response), PersonResponse::getId, ObjectType.PERSON.getValue(),
                 PersonResponse::setImageUrl, PersonResponse::getImageUrl);
+        lookupService.lookupCountryAbbriviation(Arrays.asList(response), PersonResponse::getCountryId, PersonResponse::setFlagAbbreviation);
         return new PayloadResponse<>(request, ResponseCode.OK, response);
     }
 

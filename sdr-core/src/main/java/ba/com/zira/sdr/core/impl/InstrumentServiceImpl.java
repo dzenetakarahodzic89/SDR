@@ -1,12 +1,12 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -128,19 +128,18 @@ public class InstrumentServiceImpl implements InstrumentService {
     @Transactional(rollbackFor = Exception.class)
     public ListPayloadResponse<ResponseSongInstrument> insertInstrumentsToSong(ListRequest<InsertSongInstrumentRequest> entityRequest)
             throws ApiException {
-        Filter f = new Filter();
+        var f = new Filter();
 
         f.addFilterExpression(new FilterExpression(SongEntity_.id.getName(), FilterOperation.IN,
                 entityRequest.getList().stream().map(InsertSongInstrumentRequest::getSongId).collect(Collectors.toList())));
         List<SongEntity> songsFromRequest = songDAO.findAll(f).getRecords();
         f.setFilterExpressions(null);
-        //
 
         f.addFilterExpression(new FilterExpression(InstrumentEntity_.id.getName(), FilterOperation.IN,
                 entityRequest.getList().stream().map(InsertSongInstrumentRequest::getInstrumentId).collect(Collectors.toList())));
         List<InstrumentEntity> instrumentFromRequest = instrumentDAO.findAll(f).getRecords();
         f.setFilterExpressions(null);
-        //
+
         f.addFilterExpression(new FilterExpression(PersonEntity_.id.getName(), FilterOperation.IN,
                 entityRequest.getList().stream().map(InsertSongInstrumentRequest::getPersonId).collect(Collectors.toList())));
         List<PersonEntity> personFromRequest = personDAO.findAll(f).getRecords();

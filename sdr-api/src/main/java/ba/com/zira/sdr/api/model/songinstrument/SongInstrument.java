@@ -32,10 +32,7 @@ public class SongInstrument implements Serializable {
     @Schema(description = "Name of instrument")
     private String instrumentName;
 
-    @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
-    private String status;
-
-    @Schema(description = "Person id")
+    @Schema(description = "Id of the person")
     private Long personId;
 
     @Schema(description = "Person name")
@@ -44,7 +41,7 @@ public class SongInstrument implements Serializable {
     @Schema(description = "Person's date of birth")
     private String personDob;
 
-    @Schema(description = "Name song_id")
+    @Schema(description = "Id of the song")
     private Long songId;
 
     @Schema(description = "Song name")

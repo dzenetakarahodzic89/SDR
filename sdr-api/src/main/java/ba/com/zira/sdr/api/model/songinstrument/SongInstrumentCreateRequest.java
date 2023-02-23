@@ -31,5 +31,4 @@ public class SongInstrumentCreateRequest implements Serializable {
 
     @Schema(description = "Outline text")
     private String outlineText;
-
 }

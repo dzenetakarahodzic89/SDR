@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.media.CoverImageHelper;
+import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.MediaStoreDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,9 @@ public class LookupService {
 
     @NonNull
     PersonDAO personDAO;
+
+    @NonNull
+    CountryDAO countryDAO;
 
     private static SecureRandom random = new SecureRandom();
 
@@ -120,6 +124,16 @@ public class LookupService {
 
         if (!(ids == null || ids.isEmpty())) {
             Map<Long, String> lookup = new ConcurrentHashMap<>(personDAO.getPersonNames(ids));
+            values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
+        }
+
+    }
+
+    public <E> void lookupCountryAbbriviation(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {
+        List<Long> ids = values.parallelStream().map(getter).distinct().collect(Collectors.toList());
+
+        if (!(ids == null || ids.isEmpty())) {
+            Map<Long, String> lookup = new ConcurrentHashMap<>(countryDAO.getFlagAbbs(ids));
             values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
         }
 
