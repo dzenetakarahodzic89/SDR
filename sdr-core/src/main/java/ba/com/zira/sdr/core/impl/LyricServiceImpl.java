@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,27 +87,31 @@ public class LyricServiceImpl implements LyricService {
     public PayloadResponse<LyricAlbumResponse> findAllLyricsForAlbum(final EntityRequest<Long> request) throws ApiException {
         List<LyricsSongResponse> listLyrics = lyricDAO.getAllLyricsForAlbum(request.getEntity());
         List<String> texts = new ArrayList<>();
-        Map<String, List<LyricsSongResponse>> map = new HashMap<>();
+        Map<String, List<LyricsSongResponse>> mapa = new HashMap<>();
 
-        listLyrics.stream().forEach((final LyricsSongResponse s) -> {
-            texts.add(s.getText());
+        List<String> languages = listLyrics.stream().distinct().map(LyricsSongResponse::getLanguage).collect(Collectors.toList());
 
-            var language = s.getLanguage();
-
+        languages.stream().forEach((final String l) -> {
             List<LyricsSongResponse> listToPut = new ArrayList<>();
-            listLyrics.stream().forEach((final LyricsSongResponse a) -> {
-                if (language == s.getLanguage()) {
-                    listToPut.add(a);
+            listLyrics.stream().forEach((final LyricsSongResponse s) -> {
+                texts.add(s.getText());
+                if (l == s.getLanguage()) {
+                    listToPut.add(s);
                 }
             });
-            map.put(language, listToPut);
+            mapa.put(l, listToPut);
         });
 
         int totalLyricLength = LyricLengthHelper.totalLyricLength(texts);
         var lyricAlbumResponse = new LyricAlbumResponse();
         lyricAlbumResponse.setTotalLyricLength(totalLyricLength);
-        lyricAlbumResponse.setMap(map);
+        lyricAlbumResponse.setMap(mapa);
         return new PayloadResponse<>(request, ResponseCode.OK, lyricAlbumResponse);
+    }
+
+    private List<LyricsSongResponse> getLanguage() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
