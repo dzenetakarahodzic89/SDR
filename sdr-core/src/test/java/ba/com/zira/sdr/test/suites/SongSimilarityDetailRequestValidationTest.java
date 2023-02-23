@@ -41,7 +41,7 @@ public class SongSimilarityDetailRequestValidationTest extends BasicTestConfigur
         ValidationResponse validationResponse = validation.validateUpdateSongSimilartyDetailRequest(request);
 
         assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-        assertEquals(validationResponse.getDescription(), "Song similariy detail with id: 1 does not exist!");
+        assertEquals(validationResponse.getDescription(), "Song sample detail with id: 1 does not exist!");
         Mockito.verify(songSimilarityDetailDAO).existsByPK(1L);
     }
 
@@ -55,7 +55,7 @@ public class SongSimilarityDetailRequestValidationTest extends BasicTestConfigur
         ValidationResponse validationResponse = validation.validateExistsSongSimilartyDetailRequest(request);
 
         assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-        assertEquals(validationResponse.getDescription(), "Song similarity detail with id: 1 does not exist!");
+        assertEquals(validationResponse.getDescription(), "Song sample detail with id: 1 does not exist!");
         Mockito.verify(songSimilarityDetailDAO).existsByPK(1L);
 
     }
