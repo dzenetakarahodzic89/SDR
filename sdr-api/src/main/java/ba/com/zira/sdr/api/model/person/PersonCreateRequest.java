@@ -9,24 +9,27 @@ import lombok.Data;
 @Data
 @Schema(description = "Properties for person create request")
 public class PersonCreateRequest implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Schema(description = "Information about user")
-	private String personInformation;
+    @Schema(description = "Information about user")
+    private String personInformation;
 
-	@Schema(description = "User name")
-	private String personName;
+    @Schema(description = "User name")
+    private String personName;
 
-	@Schema(description = "User surname")
-	private String personSurname;
+    @Schema(description = "User surname")
+    private String personSurname;
 
-	@Schema(description = "User's gender")
-	private String personGender;
+    @Schema(description = "User's gender")
+    private String personGender;
 
-	@Schema(description = "Date of birth")
-	private LocalDateTime personDateOfBirth;
+    @Schema(description = "Date of birth")
+    private LocalDateTime personDateOfBirth;
 
-	@Schema(description = "Date of death")
-	private LocalDateTime personDateOfDeath;
+    @Schema(description = "Date of death")
+    private LocalDateTime personDateOfDeath;
+
+    private String coverImageData;
+    private String coverImage;
 
 }
