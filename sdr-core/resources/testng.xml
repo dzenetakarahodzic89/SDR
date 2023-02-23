@@ -72,7 +72,7 @@
 		</classes>
 
 	</test>
-</suite>
+
 
 		<test thread-count="5" name="Chord Progression">
 		<classes>
