@@ -1,14 +1,13 @@
 package ba.com.zira.sdr.core.mapper;
 
-import java.util.List;
-
+import ba.com.zira.sdr.api.model.song.fft.SongFftResult;
+import ba.com.zira.sdr.api.model.song.fft.SongFftResultCreateRequest;
+import ba.com.zira.sdr.api.model.song.fft.SongFftResultUpdateRequest;
+import ba.com.zira.sdr.dao.model.SongFttResultEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
-import ba.com.zira.sdr.api.model.SongFFt.SongFftResult;
-import ba.com.zira.sdr.api.model.SongFFt.SongFftResultCreateRequest;
-import ba.com.zira.sdr.api.model.SongFFt.SongFftResultUpdateRequest;
-import ba.com.zira.sdr.dao.model.SongFttResultEntity;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface SongFftMapper {
