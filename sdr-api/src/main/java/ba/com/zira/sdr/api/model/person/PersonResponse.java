@@ -21,16 +21,16 @@ public class PersonResponse implements Serializable {
     private String createdBy;
 
     @Schema(description = "Date of birth")
-    private LocalDateTime personDateOfBirth;
+    private LocalDateTime dateOfBirth;
 
     @Schema(description = "Date of death")
-    private LocalDateTime personDateOfDeath;
+    private LocalDateTime dateOfDeath;
 
     @Schema(description = "User's gender")
-    private String personGender;
+    private String gender;
 
     @Schema(description = "Information about user")
-    private String personInformation;
+    private String information;
 
     @Schema(description = "Last modification date")
     private LocalDateTime modified;
@@ -39,13 +39,13 @@ public class PersonResponse implements Serializable {
     private String modifiedBy;
 
     @Schema(description = "User name")
-    private String personName;
+    private String name;
 
     @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
-    private String personStatus;
+    private String status;
 
     @Schema(description = "User surname")
-    private String personSurname;
+    private String surname;
 
     private String imageUrl;
 

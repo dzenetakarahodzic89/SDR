@@ -7,27 +7,27 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Properties for person create request")
+@Schema(description = "Properties for  create request")
 public class PersonCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "Information about user")
-    private String personInformation;
+    private String information;
 
     @Schema(description = "User name")
-    private String personName;
+    private String name;
 
     @Schema(description = "User surname")
-    private String personSurname;
+    private String surname;
 
     @Schema(description = "User's gender")
-    private String personGender;
+    private String gender;
 
     @Schema(description = "Date of birth")
-    private LocalDateTime personDateOfBirth;
+    private LocalDateTime dateOfBirth;
 
     @Schema(description = "Date of death")
-    private LocalDateTime personDateOfDeath;
+    private LocalDateTime dateOfDeath;
 
     private String coverImageData;
     private String coverImage;
