@@ -1,10 +1,10 @@
 package ba.com.zira.sdr.api.model.person;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @Schema(description = "Properties of an Sample response")
@@ -50,5 +50,7 @@ public class PersonResponse implements Serializable {
     private String imageUrl;
 
     private String fullName;
+
+    private String outlineText;
 
 }

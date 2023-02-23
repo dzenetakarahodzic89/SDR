@@ -29,6 +29,8 @@ public class PersonCreateRequest implements Serializable {
     @Schema(description = "Date of death")
     private LocalDateTime dateOfDeath;
 
+    private String outlineText;
+
     private String coverImageData;
     private String coverImage;
 

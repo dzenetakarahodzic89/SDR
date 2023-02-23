@@ -74,6 +74,9 @@ public class PersonEntity implements Serializable {
     @Column(name = "surname")
     private String surname;
 
+    @Column(name = "outline_text")
+    private String outlineText;
+
     // bi-directional many-to-one association to LabelEntity
     @OneToMany(mappedBy = "founder")
     private List<LabelEntity> labels;
