@@ -72,11 +72,11 @@ public class SongArtistServiceTest extends BasicTestConfiguration {
         artist.add(new ArtistEntity(3L, null, null, null, null, null, null, null, "artist test 3", null, null, null, null, null));
 
         song.add(new SongEntity(1L, null, null, null, null, null, null, "song test 1", null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null));
+                null, null, null, null, null, null, null, null,null));
         song.add(new SongEntity(2L, null, null, null, null, null, null, "song test 2", null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null));
+                null, null, null, null, null, null, null, null,null));
         song.add(new SongEntity(3L, null, null, null, null, null, null, "song test 3", null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null));
+                null, null, null, null, null, null, null, null,null));
     }
 
     @BeforeMethod
