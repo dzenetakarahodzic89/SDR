@@ -63,20 +63,20 @@ public class SongArtistServiceTest extends BasicTestConfiguration {
         album.add(new AlbumEntity(2L, null, null, null, null, null, null, "album test 2", null, null, null));
         album.add(new AlbumEntity(3L, null, null, null, null, null, null, "album test 3", null, null, null));
 
-        label.add(new LabelEntity(1L, null, null, null, null, null, null, "label test 1", null, null, null));
-        label.add(new LabelEntity(2L, null, null, null, null, null, null, "label test 2", null, null, null));
-        label.add(new LabelEntity(3L, null, null, null, null, null, null, "label test 3", null, null, null));
+        label.add(new LabelEntity(1L, null, null, null, null, null, null, "label test 1", null, null, null, null));
+        label.add(new LabelEntity(2L, null, null, null, null, null, null, "label test 2", null, null, null, null));
+        label.add(new LabelEntity(3L, null, null, null, null, null, null, "label test 3", null, null, null, null));
 
         artist.add(new ArtistEntity(1L, null, null, null, null, null, null, null, "artist test 1", null, null, null, null, null));
         artist.add(new ArtistEntity(2L, null, null, null, null, null, null, null, "artist test 2", null, null, null, null, null));
         artist.add(new ArtistEntity(3L, null, null, null, null, null, null, null, "artist test 3", null, null, null, null, null));
 
         song.add(new SongEntity(1L, null, null, null, null, null, null, "song test 1", null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null));
+                null, null, null, null, null, null, null, null,null));
         song.add(new SongEntity(2L, null, null, null, null, null, null, "song test 2", null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null));
+                null, null, null, null, null, null, null, null,null));
         song.add(new SongEntity(3L, null, null, null, null, null, null, "song test 3", null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null));
+                null, null, null, null, null, null, null, null,null));
     }
 
     @BeforeMethod

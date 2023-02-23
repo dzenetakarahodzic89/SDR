@@ -1,10 +1,10 @@
 package ba.com.zira.sdr.test.suites;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.Test;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -28,10 +28,6 @@ public class CommentRequestValidationTest extends BasicTestConfiguration {
         this.commentDAO = Mockito.mock(CommentDAO.class);
         this.validation = new CommentRequestValidation(commentDAO);
     }
-
-    /**
-     * Update
-     */
 
     @Test
     public void validateUpdateRequestCommentNotFound() {

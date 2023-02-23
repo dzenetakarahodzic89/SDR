@@ -63,6 +63,7 @@ public class ArtistRestService {
             request.setId(id);
         }
         return artistService.update(new EntityRequest<>(request));
+
     }
 
 }
