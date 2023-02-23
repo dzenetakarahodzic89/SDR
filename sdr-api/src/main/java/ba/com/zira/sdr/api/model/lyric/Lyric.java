@@ -38,5 +38,7 @@ public class Lyric implements Serializable {
 
     @Schema(description = "The ID of the song")
     private Long songId;
+    @Schema(description = "The NAME of the song")
+    private Long songName;
 
 }

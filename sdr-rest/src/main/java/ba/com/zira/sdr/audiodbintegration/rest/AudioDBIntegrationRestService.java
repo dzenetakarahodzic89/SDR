@@ -37,8 +37,8 @@ public class AudioDBIntegrationRestService {
 
     @Operation(summary = "Find AudioDB Integration base on filter criteria")
     @GetMapping
-    public PagedPayloadResponse<AudioDBIntegration> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
-            throws ApiException {
+    public PagedPayloadResponse<AudioDBIntegration> find(@RequestParam Map<String, Object> filterCriteria,
+            final QueryConditionPage queryCriteria) throws ApiException {
         return audioDBIntegrationService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
@@ -47,9 +47,11 @@ public class AudioDBIntegrationRestService {
     public PayloadResponse<AudioDBIntegration> create(@RequestBody final AudioDBIntegrationCreateRequest sample) throws ApiException {
         return audioDBIntegrationService.create(new EntityRequest<>(sample));
     }
+
     @Operation(summary = "Update AudioDB Integration")
     @PutMapping(value = "{id}")
-    public PayloadResponse<AudioDBIntegration> edit(@Parameter(required = true, description = "ID of the AudioDB Integration") @PathVariable final Long id,
+    public PayloadResponse<AudioDBIntegration> edit(
+            @Parameter(required = true, description = "ID of the AudioDB Integration") @PathVariable final Long id,
             @RequestBody final AudioDBIntegrationUpdateRequest sample) throws ApiException {
         if (sample != null) {
             sample.setId(id);
@@ -59,16 +61,15 @@ public class AudioDBIntegrationRestService {
 
     @Operation(summary = "Activate AudioDB Integration")
     @PutMapping(value = "{id}/activate")
-    public PayloadResponse<AudioDBIntegration> activate(@Parameter(required = true, description = "ID of the AudioDB Integration") @PathVariable final Long id)
-            throws ApiException {
+    public PayloadResponse<AudioDBIntegration> activate(
+            @Parameter(required = true, description = "ID of the AudioDB Integration") @PathVariable final Long id) throws ApiException {
         return audioDBIntegrationService.activate(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Delete sample")
     @DeleteMapping(value = "{id}/delete")
-    public PayloadResponse<AudioDBIntegration> delete(@Parameter(required = true, description = "ID of the AudioDB Integration") @PathVariable final Long id)
-            throws ApiException {
+    public PayloadResponse<AudioDBIntegration> delete(
+            @Parameter(required = true, description = "ID of the AudioDB Integration") @PathVariable final Long id) throws ApiException {
         return audioDBIntegrationService.delete(new EntityRequest<>(id));
     }
 }
-

@@ -20,6 +20,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.LyricService;
 import ba.com.zira.sdr.api.model.lyric.Lyric;
+import ba.com.zira.sdr.api.model.lyric.LyricAlbumResponse;
 import ba.com.zira.sdr.api.model.lyric.LyricCreateRequest;
 import ba.com.zira.sdr.api.model.lyric.LyricUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,6 +64,13 @@ public class LyricRestService {
     public PayloadResponse<Lyric> delete(@Parameter(required = true, description = "ID of the lyric") @PathVariable final Long id)
             throws ApiException {
         return lyricService.delete(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Get all songs from album")
+    @GetMapping(value = "{id}/lyrics")
+    public PayloadResponse<LyricAlbumResponse> findAllLyricsForAlbum(
+            @Parameter(required = true, description = "ID of the album") @PathVariable final Long id) throws ApiException {
+        return lyricService.findAllLyricsForAlbum(new EntityRequest<>(id));
     }
 
 }
