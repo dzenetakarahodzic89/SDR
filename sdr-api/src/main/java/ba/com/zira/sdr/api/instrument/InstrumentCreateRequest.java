@@ -1,9 +1,9 @@
 package ba.com.zira.sdr.api.instrument;
 
+import java.io.Serializable;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
-import java.io.Serializable;
 
 @Data
 
@@ -19,5 +19,8 @@ public class InstrumentCreateRequest implements Serializable {
 
     @Schema(description = "Instrument type")
     private String instrumentType;
+
+    @Schema(description = "Outline text")
+    private String instrumentOutlineText;
 
 }

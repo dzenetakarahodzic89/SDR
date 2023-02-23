@@ -19,6 +19,8 @@ public interface InstrumentMapper {
 
     @Mapping(source = "instrumentType", target = "type")
 
+    @Mapping(source = "instrumentOutlineText", target = "outlineText")
+
     InstrumentEntity dtoToEntity(InstrumentCreateRequest instrumentCreateRequest);
 
     @Mapping(source = "instrumentName", target = "name")
@@ -26,6 +28,8 @@ public interface InstrumentMapper {
     @Mapping(source = "instrumentInformation", target = "information")
 
     @Mapping(source = "instrumentType", target = "type")
+
+    @Mapping(source = "instrumentOutlineText", target = "outlineText")
     void updateEntity(InstrumentUpdateRequest instrumentUpdateRequest, @MappingTarget InstrumentEntity instrumentEntity);
 
     @Mapping(target = "instrumentName", source = "name")
@@ -36,6 +40,7 @@ public interface InstrumentMapper {
 
     @Mapping(target = "instrumentType", source = "type")
 
+    @Mapping(target = "instrumentOutlineText", source = "outlineText")
     InstrumentResponse entityToDto(InstrumentEntity instrumentEntity);
 
     List<InstrumentResponse> entitiesToDtos(List<InstrumentEntity> instrumentEntity);
