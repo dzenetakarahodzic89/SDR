@@ -2,10 +2,10 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,11 +22,6 @@ import ba.com.zira.sdr.core.validation.LabelRequestValidation;
 import ba.com.zira.sdr.dao.LabelDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.model.LabelEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 
@@ -37,6 +32,7 @@ public class LabelServiceImpl implements LabelService {
     private PersonDAO personDAO;
     private LabelRequestValidation labelReqVal;
 
+    @Autowired
     public LabelServiceImpl(LabelDAO labelDAO, LabelMapper labelMapper, PersonDAO personDAO, LabelRequestValidation labelReqVal) {
         super();
         this.labelDAO = labelDAO;

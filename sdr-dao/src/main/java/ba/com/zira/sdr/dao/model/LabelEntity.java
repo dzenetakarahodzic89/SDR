@@ -65,6 +65,9 @@ public class LabelEntity implements Serializable {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "outline_text")
+    private String outlineText;
+
     // bi-directional many-to-one association to PersonEntity
     @ManyToOne
     @JoinColumn(name = "founder_id")

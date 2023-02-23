@@ -18,10 +18,10 @@ public interface ArtistService {
      * Find paged payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the paged payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PagedPayloadResponse<ArtistResponse> find(final FilterRequest request) throws ApiException;
 
@@ -29,10 +29,10 @@ public interface ArtistService {
      * Create payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<ArtistResponse> create(EntityRequest<ArtistCreateRequest> request) throws ApiException;
 
@@ -40,10 +40,10 @@ public interface ArtistService {
      * Delete payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
@@ -51,10 +51,10 @@ public interface ArtistService {
      * Update payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<ArtistResponse> update(EntityRequest<ArtistUpdateRequest> request) throws ApiException;
 

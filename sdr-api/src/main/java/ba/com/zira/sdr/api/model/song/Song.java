@@ -45,6 +45,9 @@ public class Song implements Serializable {
 
     @Schema(description = "Playtime of the song")
     private String playtime;
+    
+    @Schema(description = "Outline text")
+    private String outlineText;
 
     @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
     private String status;

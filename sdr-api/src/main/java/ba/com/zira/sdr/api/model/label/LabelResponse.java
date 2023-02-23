@@ -32,5 +32,7 @@ public class LabelResponse implements Serializable {
     private String status;
     @Schema(description = "Founder of the label")
     private Long founderId;
+    @Schema(description = "Label outline text")
+    private String outlineText;
 
 }
