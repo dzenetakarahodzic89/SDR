@@ -27,7 +27,7 @@ public class LabelRequestValidation {
     private LabelDAO labelDAO;
 
     /**
-     * Validates update SampleModel plan from {@link LabelService}.
+     * Validates update Label plan from {@link LabelService}.
      *
      * @param request
      *            the {@link EntityRequest} to validate.
@@ -42,7 +42,7 @@ public class LabelRequestValidation {
     }
 
     /**
-     * Validates exists SampleModel plan from {@link LabelService}.
+     * Validates exists Label plan from {@link LabelService}.
      *
      * @param request
      *            the {@link EntityRequest} to validate.

@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,25 +16,28 @@ import ba.com.zira.sdr.core.validation.AudioDBIntegrationRequestValidation;
 import ba.com.zira.sdr.dao.AudioDBIntegrationDAO;
 import ba.com.zira.sdr.dao.model.AudioDBIntegrationEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
 public class AudioDBIntegrationImpl implements AudioDBIntegrationService {
 
     AudioDBIntegrationDAO audioDBIntegrationDAO;
-    AudioDBIntegrationMapper audioDBIntegrationMapper ;
+    AudioDBIntegrationMapper audioDBIntegrationMapper;
     AudioDBIntegrationRequestValidation audioDBIntegrationRequestValidation;
 
-
     @Override
-    public PagedPayloadResponse<AudioDBIntegration> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<AudioDBIntegration> find(final FilterRequest request) {
         PagedData<AudioDBIntegrationEntity> audioDBIntegrationEntities = audioDBIntegrationDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, audioDBIntegrationEntities, audioDBIntegrationMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<AudioDBIntegration> create(final EntityRequest<AudioDBIntegrationCreateRequest> request) throws ApiException {
+    public PayloadResponse<AudioDBIntegration> create(final EntityRequest<AudioDBIntegrationCreateRequest> request) {
         var audioDBIntegrationEntity = audioDBIntegrationMapper.dtoToEntity(request.getEntity());
 
         audioDBIntegrationEntity.setStatus(Status.ACTIVE.value());
@@ -49,12 +46,11 @@ public class AudioDBIntegrationImpl implements AudioDBIntegrationService {
 
         audioDBIntegrationDAO.persist(audioDBIntegrationEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, audioDBIntegrationMapper.entityToDto(audioDBIntegrationEntity));
-        //return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, audioDBIntegrationEntity,  audioDBIntegrationMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<AudioDBIntegration> update(final EntityRequest<AudioDBIntegrationUpdateRequest> request) throws ApiException {
+    public PayloadResponse<AudioDBIntegration> update(final EntityRequest<AudioDBIntegrationUpdateRequest> request) {
         audioDBIntegrationRequestValidation.validateUpdateAudioDBIntegrationRequest(request);
 
         var audioDBIntegrationEntity = audioDBIntegrationDAO.findByPK(request.getEntity().getId());
@@ -66,10 +62,9 @@ public class AudioDBIntegrationImpl implements AudioDBIntegrationService {
         return new PayloadResponse<>(request, ResponseCode.OK, audioDBIntegrationMapper.entityToDto(audioDBIntegrationEntity));
     }
 
-
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<AudioDBIntegration> activate(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<AudioDBIntegration> activate(final EntityRequest<Long> request) {
         audioDBIntegrationRequestValidation.validateExistsAudioDBIntegrationRequest(request);
 
         var audioDBIntegrationEntity = audioDBIntegrationDAO.findByPK(request.getEntity());
@@ -79,9 +74,10 @@ public class AudioDBIntegrationImpl implements AudioDBIntegrationService {
         audioDBIntegrationDAO.merge(audioDBIntegrationEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, audioDBIntegrationMapper.entityToDto(audioDBIntegrationEntity));
     }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<AudioDBIntegration> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<AudioDBIntegration> delete(final EntityRequest<Long> request) {
         audioDBIntegrationRequestValidation.validateExistsAudioDBIntegrationRequest(request);
 
         var audioDBIntegrationEntity = audioDBIntegrationDAO.findByPK(request.getEntity());

@@ -1,12 +1,11 @@
 package ba.com.zira.sdr.api.model.playlist;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
-import javax.validation.constraints.NotBlank;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @Schema(description = "Properties of a Playlist response")
@@ -21,7 +20,7 @@ public class Playlist implements Serializable {
     private String name;
 
     @Schema(description = "User code of the playlist")
-    private String user_code;
+    private String userCode;
 
     @Schema(description = "Information about the playlist")
     private String information;
@@ -44,12 +43,12 @@ public class Playlist implements Serializable {
     private String status;
 
     @Schema(description = "Number of plays")
-    private Long number_of_plays;
+    private Long numberOfPlays;
 
     @Schema(description = "Number of shares")
-    private Long number_of_shares;
+    private Long numberOfShares;
 
     @Schema(description = "Total playtime")
-    private Long total_playtime;
+    private Long totalPlaytime;
 
 }

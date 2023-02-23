@@ -1,13 +1,15 @@
 package ba.com.zira.sdr.core.mapper;
 
-import java.util.List;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
+
+import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
+import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import ba.com.zira.sdr.dao.model.SongEntity;
 
@@ -37,12 +39,11 @@ public interface SongMapper {
     void updateEntity(SongUpdateRequest song, @MappingTarget SongEntity songEntity);
 
     List<Song> entitiesToDtos(List<SongEntity> songEntity);
-    
-    // Merge issue
+
     SongEntity dtoToEntity(AlbumCreateRequest albumCreateRequest);
 
-    SongResponse entityToDto(SongEntity songEntity);
+    SongResponse entityToSongResponse(SongEntity songEntity);
 
-    List<SongResponse> entitiesToDtos(List<SongEntity> songEntities);
+    List<SongResponse> entitiesToSongResponses(List<SongEntity> songEntities);
 
 }

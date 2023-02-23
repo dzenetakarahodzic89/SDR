@@ -13,52 +13,55 @@ import ba.com.zira.sdr.api.model.playlist.Playlist;
 import ba.com.zira.sdr.api.model.playlist.PlaylistCreateRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistUpdateRequest;
 
+/**
+ * The interface Playlist service.
+ */
 public interface PlaylistService {
 
     /**
      * Retrieve All {@link SampleModel}s from database.
      *
      * @param request
-     *            {@link FilterRequest} containing pagination and sorting
-     *            information.
+     *         {@link FilterRequest} containing pagination and sorting            information.
      * @return {@link PagedPayloadResponse} for {@link SampleModel}.
      * @throws ApiException
-     *             If there was a problem during API invocation then.
-     *             {@link ApiException} will be generated/returned with
-     *             corresponding error message and {@link ResponseCode}.
+     *         If there was a problem during API invocation then.             {@link ApiException} will be generated/returned with
+     *         corresponding error message and {@link ResponseCode}.
      */
-
-    public PagedPayloadResponse<Playlist> find(final FilterRequest request) throws ApiException;
+    PagedPayloadResponse<Playlist> find(final FilterRequest request) throws ApiException;
 
     /**
      * Validate received sample data and create new sample.
      *
      * @param request
-     *            EntityRequest containing the {@link SampleModelCreateRequest}
-     *            to create an engine.
+     *         EntityRequest containing the {@link SampleModelCreateRequest}            to create an engine.
      * @return created {@link SampleModel}.
      * @throws ApiException
-     *             If there was a problem during API invocation then.
-     *             {@link ApiException} will be generated/returned with
-     *             corresponding error message and {@link ResponseCode}.
+     *         If there was a problem during API invocation then.             {@link ApiException} will be generated/returned with
+     *         corresponding error message and {@link ResponseCode}.
      */
-
     PayloadResponse<Playlist> create(EntityRequest<PlaylistCreateRequest> request) throws ApiException;
 
     /**
      * Validate received sample data and update sample.
      *
      * @param request
-     *            EntityRequest containing the {@link SampleModelUpdateRequest}
-     *            to update.
+     *         EntityRequest containing the {@link SampleModelUpdateRequest}            to update.
      * @return created {@link SampleModel}.
      * @throws ApiException
-     *             If there was a problem during API invocation then.
-     *             {@link ApiException} will be generated/returned with
-     *             corresponding error message and {@link ResponseCode}.
+     *         If there was a problem during API invocation then.             {@link ApiException} will be generated/returned with
+     *         corresponding error message and {@link ResponseCode}.
      */
-
     PayloadResponse<Playlist> update(EntityRequest<PlaylistUpdateRequest> request) throws ApiException;
 
+    /**
+     * Delete payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
     PayloadResponse<Playlist> delete(EntityRequest<Long> request) throws ApiException;
 }

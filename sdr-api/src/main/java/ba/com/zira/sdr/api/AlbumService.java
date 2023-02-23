@@ -19,21 +19,21 @@ public interface AlbumService {
      * Find.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the paged payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
-    public PagedPayloadResponse<AlbumResponse> find(final FilterRequest request) throws ApiException;
+    PagedPayloadResponse<AlbumResponse> find(final FilterRequest request) throws ApiException;
 
     /**
      * Creates the.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
     PayloadResponse<AlbumResponse> create(EntityRequest<AlbumCreateRequest> request) throws ApiException;
 
@@ -41,10 +41,10 @@ public interface AlbumService {
      * Update.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
     PayloadResponse<AlbumResponse> update(EntityRequest<AlbumUpdateRequest> request) throws ApiException;
 
@@ -52,10 +52,10 @@ public interface AlbumService {
      * Delete.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
     PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
@@ -63,10 +63,10 @@ public interface AlbumService {
      * Find all songs for album.
      *
      * @param request
-     *            the request
+     *         the request
      * @return the payload response
      * @throws ApiException
-     *             the api exception
+     *         the api exception
      */
     PayloadResponse<AlbumSongResponse> findAllSongsForAlbum(EntityRequest<Long> request) throws ApiException;
 }

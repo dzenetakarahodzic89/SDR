@@ -35,14 +35,6 @@ public class ArtistRestService {
     @Autowired
     private ArtistService artistService;
 
-    /*
-     * @Operation(summary = "Get all")
-     *
-     * @GetMapping(value = "all") public ListPayloadResponse<ArtistResponse>
-     * getAll() throws ApiException { var request = new EmptyRequest(); return
-     * artistService.getAll(request); }
-     */
-
     @Operation(summary = "Find artist")
     @GetMapping
     public PagedPayloadResponse<ArtistResponse> find(@RequestParam Map<String, Object> filterCriteria,

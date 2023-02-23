@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,6 +16,10 @@ import ba.com.zira.sdr.core.validation.PlaylistRequestValidation;
 import ba.com.zira.sdr.dao.PlaylistDAO;
 import ba.com.zira.sdr.dao.model.PlaylistEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -32,14 +30,14 @@ public class PlaylistServiceImpl implements PlaylistService {
     PlaylistRequestValidation playlistRequestValidation;
 
     @Override
-    public PagedPayloadResponse<Playlist> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<Playlist> find(final FilterRequest request) {
         PagedData<PlaylistEntity> playlistEntities = playlistDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, playlistEntities, playlistMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Playlist> create(final EntityRequest<PlaylistCreateRequest> request) throws ApiException {
+    public PayloadResponse<Playlist> create(final EntityRequest<PlaylistCreateRequest> request) {
         var playlistEntity = playlistMapper.dtoToEntity(request.getEntity());
         playlistEntity.setStatus(Status.ACTIVE.value());
         playlistEntity.setCreated(LocalDateTime.now());
@@ -51,7 +49,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Playlist> update(final EntityRequest<PlaylistUpdateRequest> request) throws ApiException {
+    public PayloadResponse<Playlist> update(final EntityRequest<PlaylistUpdateRequest> request) {
         playlistRequestValidation.validateUpdatePlaylistRequest(request);
 
         var playlistEntity = playlistDAO.findByPK(request.getEntity().getId());
@@ -65,7 +63,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Playlist> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<Playlist> delete(final EntityRequest<Long> request) {
         playlistRequestValidation.validateExistsPlaylistRequest(request);
 
         var playlistEntity = playlistDAO.findByPK(request.getEntity());

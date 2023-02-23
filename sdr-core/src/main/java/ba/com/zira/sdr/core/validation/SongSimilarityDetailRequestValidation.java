@@ -6,7 +6,7 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
-import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailModelUpdateRequest;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdateRequest;
 import ba.com.zira.sdr.dao.SongSimilarityDetailDAO;
 import lombok.AllArgsConstructor;
 
@@ -16,8 +16,7 @@ public class SongSimilarityDetailRequestValidation {
 
     private SongSimilarityDetailDAO songsimilaritydetailDAO;
 
-    public ValidationResponse validateUpdateSongSimilartyDetailRequest(
-            final EntityRequest<SongSimilarityDetailModelUpdateRequest> request) {
+    public ValidationResponse validateUpdateSongSimilartyDetailRequest(final EntityRequest<SongSimilarityDetailUpdateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(exists(request.getEntity().getId()));
 

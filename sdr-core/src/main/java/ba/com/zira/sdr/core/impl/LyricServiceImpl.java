@@ -30,6 +30,10 @@ import ba.com.zira.sdr.core.validation.LyricRequestValidation;
 import ba.com.zira.sdr.dao.LyricDAO;
 import ba.com.zira.sdr.dao.model.LyricEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -40,14 +44,14 @@ public class LyricServiceImpl implements LyricService {
     LyricRequestValidation lyricRequestValidation;
 
     @Override
-    public PagedPayloadResponse<Lyric> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<Lyric> find(final FilterRequest request) {
         PagedData<LyricEntity> lyricEntities = lyricDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, lyricEntities, lyricMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Lyric> create(final EntityRequest<LyricCreateRequest> request) throws ApiException {
+    public PayloadResponse<Lyric> create(final EntityRequest<LyricCreateRequest> request) {
 
         var lyricEntity = lyricMapper.dtoToEntity(request.getEntity());
         lyricEntity.setStatus(Status.ACTIVE.value());
@@ -60,7 +64,7 @@ public class LyricServiceImpl implements LyricService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Lyric> update(final EntityRequest<LyricUpdateRequest> request) throws ApiException {
+    public PayloadResponse<Lyric> update(final EntityRequest<LyricUpdateRequest> request) {
         lyricRequestValidation.validateUpdateLyricRequest(request);
 
         var lyricEntity = lyricDAO.findByPK(request.getEntity().getId());
@@ -74,7 +78,7 @@ public class LyricServiceImpl implements LyricService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Lyric> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<Lyric> delete(final EntityRequest<Long> request) {
         lyricRequestValidation.validateExistsLyricRequest(request);
 
         var lyricEntity = lyricDAO.findByPK(request.getEntity());

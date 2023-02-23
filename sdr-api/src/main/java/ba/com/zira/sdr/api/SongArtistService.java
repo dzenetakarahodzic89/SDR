@@ -8,12 +8,40 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.api.model.songartist.SongArtistResponse;
 
+/**
+ * The interface Song artist service.
+ */
 public interface SongArtistService {
 
-    public PagedPayloadResponse<SongArtistResponse> get(final FilterRequest filterRequest) throws ApiException;
+    /**
+     * Get paged payload response.
+     *
+     * @param filterRequest
+     *         the filter request
+     * @return the paged payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PagedPayloadResponse<SongArtistResponse> get(final FilterRequest filterRequest) throws ApiException;
 
-    public PayloadResponse<SongArtistResponse> create(final EntityRequest<SongArtistCreateRequest> entityRequest) throws ApiException;
+    /**
+     * Create payload response.
+     *
+     * @param entityRequest
+     *         the entity request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<SongArtistResponse> create(final EntityRequest<SongArtistCreateRequest> entityRequest) throws ApiException;
 
-    public PayloadResponse<String> delete(final EntityRequest<Long> entityRequest);
+    /**
+     * Delete payload response.
+     *
+     * @param entityRequest
+     *         the entity request
+     * @return the payload response
+     */
+    PayloadResponse<String> delete(final EntityRequest<Long> entityRequest);
 
 }
