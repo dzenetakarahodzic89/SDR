@@ -26,4 +26,6 @@ public class LabelUpdateRequest implements Serializable {
     private LocalDateTime foundingDate;
     @Schema(description = "Label founder")
     private Long founderId;
+    @Schema(description = "Label outline text")
+    private String outlineText;
 }
