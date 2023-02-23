@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,22 +95,19 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
     public ListPayloadResponse<ChordProgressionByEraResponse> getChordByEras(EmptyRequest req) throws ApiException {
         List<ChordSongAlbumEraResponse> listOfEraSongs = chordProgressionDAO.getAllChordProgressionSongNumberByEras();
         List<ChordProgressionByEraResponse> returnListOfValues = new ArrayList<>();
+        Map<Long,Integer> EraMap= new HashMap<>(); 
         List<LoV> eras = eraDAO.getAllErasLoV();
-        eras.stream().forEach(era -> {
-            returnListOfValues.add(new ChordProgressionByEraResponse(era.getId(), era.getName(), new HashMap<>()));
+        IntStream.range(0, eras.size()-1).forEach(index ->{
+        	returnListOfValues.add(new ChordProgressionByEraResponse(eras.get(index).getId(),eras.get(index).getName(),new HashMap<>()));
+        	EraMap.put(eras.get(index).getId(),index);
         });
-        listOfEraSongs.stream().forEach(era -> {
-            returnListOfValues.stream().forEach(response -> {
-                if (era.getEraId() == response.getEraId()) {
-                    if (response.getChordProgressions().containsKey(era.getChordId())) {
-                        response.getChordProgressions().put(era.getChordId(), response.getChordProgressions().get(era.getChordId()) + 1);
-                        return;
-                    } else {
-                        response.getChordProgressions().put(era.getChordId(), 1);
-                        return;
-                    }
-                }
-            });
+        IntStream.range(0, listOfEraSongs.size()).forEach(index ->{
+        	var eraRow = returnListOfValues.get(EraMap.get(listOfEraSongs.get(index).getEraId()));
+        	if (eraRow.getChordProgressions().containsKey(listOfEraSongs.get(index).getChordId())) {
+        		eraRow.getChordProgressions().put(listOfEraSongs.get(index).getChordId(), eraRow.getChordProgressions().get(listOfEraSongs.get(index).getChordId()) + 1);  
+            } else {
+            	eraRow.getChordProgressions().put(listOfEraSongs.get(index).getChordId(), 1);  
+            }
         });
         return new ListPayloadResponse<>(req, ResponseCode.OK, returnListOfValues);
     }

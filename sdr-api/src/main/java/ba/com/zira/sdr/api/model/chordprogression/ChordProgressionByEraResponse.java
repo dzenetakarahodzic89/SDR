@@ -13,6 +13,7 @@ import lombok.Data;
 public class ChordProgressionByEraResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @Schema(description = "Eras - format 1 - era1 ")
     private Long eraId;
     private String eraName;
     @Schema(description = "Chord progressions - format ID - number of songs (1:13)")
