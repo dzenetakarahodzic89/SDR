@@ -68,13 +68,6 @@ public class LabelRestService {
         return labelService.update(new EntityRequest<>(label));
     }
 
-    @Operation(summary = "Change label status")
-    @PutMapping(value = "{id}/change-status")
-    public PayloadResponse<LabelResponse> changeStatus(
-            @Parameter(required = true, description = "ID of the label") @PathVariable final Long id) throws ApiException {
-        return labelService.changeStatus(new EntityRequest<>(id));
-    }
-
     @Operation(summary = "Delete label")
     @DeleteMapping(value = "{id}")
     public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the label") @PathVariable final Long id)
