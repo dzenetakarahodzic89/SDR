@@ -10,7 +10,8 @@ import ba.com.zira.sdr.api.model.songinstrument.SongInstrumentCreateRequest;
 import ba.com.zira.sdr.api.model.songinstrument.SongInstrumentUpdateRequest;
 
 /**
- * * Methods used to manipulate {@link SongInstrument} data. <br> List of APIs implemented in this class with links:
+ * * Methods used to manipulate {@link SongInstrument} data. <br>
+ * List of APIs implemented in this class with links:
  * <ul>
  * <li>{@link #find}</li>
  * <li>{@link #create}</li>
@@ -25,10 +26,10 @@ public interface SongInstrumentService {
      * Find paged payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the paged payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PagedPayloadResponse<SongInstrument> find(final FilterRequest request) throws ApiException;
 
@@ -36,10 +37,10 @@ public interface SongInstrumentService {
      * Create payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<SongInstrument> create(EntityRequest<SongInstrumentCreateRequest> request) throws ApiException;
 
@@ -47,21 +48,21 @@ public interface SongInstrumentService {
      * Delete payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
-    PayloadResponse<SongInstrument> delete(EntityRequest<Long> request) throws ApiException;
+    PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
     /**
      * Update payload response.
      *
      * @param entityRequest
-     *         the entity request
+     *            the entity request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<SongInstrument> update(EntityRequest<SongInstrumentUpdateRequest> entityRequest) throws ApiException;
 }
