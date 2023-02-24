@@ -56,6 +56,8 @@ public class PersonServiceTest extends BasicTestConfiguration {
         this.lookupService = Mockito.mock(LookupService.class);
         this.mediaService = Mockito.mock(MediaService.class);
         this.personRequestValidation = Mockito.mock(PersonRequestValidation.class);
+        this.lookupService = Mockito.mock(LookupService.class);
+        this.mediaService = Mockito.mock(MediaService.class);
         this.personService = new PersonServiceImpl(personDAO, personMapper, personRequestValidation, lookupService, mediaService);
     }
 
@@ -74,18 +76,6 @@ public class PersonServiceTest extends BasicTestConfiguration {
             firstPersonEntity.setInformation("test male gendered person 1");
             firstPersonEntity.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
             firstPersonEntity.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
-
-            /*
-             * firstPersonEntity.setInformation("test male gendered person 1");
-             * firstPersonEntity.setDateOfBirth(LocalDateTime.parse(
-             * "2007-12-03T10:15:30"));
-             * firstPersonEntity.setDateOfDeath(LocalDateTime.parse(
-             * "2017-12-03T10:15:30"));
-             * secondPersonEntity.setInformation("test male gendered person 2");
-             * thirdPersonEntity.setInformation("test male gendered person 3");
-             * firstSongFttResultEntity.setStatus(Status.ACTIVE.getValue());
-             *
-             */
 
             PersonEntity secondPersonEntity = new PersonEntity();
             secondPersonEntity.setId(2L);
