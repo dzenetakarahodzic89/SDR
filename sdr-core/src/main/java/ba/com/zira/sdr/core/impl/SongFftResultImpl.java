@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -17,10 +22,6 @@ import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.SongFftResultDAO;
 import ba.com.zira.sdr.dao.model.SongFttResultEntity;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -43,7 +44,7 @@ public class SongFftResultImpl implements SongFftResultService {
         songFftResultValidation.validateCreateSongFftResultRequest(request);
 
         var songFttResultEntity = songFftMapper.dtoToEntity(request.getEntity());
-        var songEntity = songDAO.findByPK(request.getEntity().getSongId());
+        var songEntity = songDAO.findByPK(request.getEntity().getSongID());
         songFttResultEntity.setSong(songEntity);
         songFttResultEntity.setStatus(Status.ACTIVE.value());
         songFttResultEntity.setCreated(LocalDateTime.now());

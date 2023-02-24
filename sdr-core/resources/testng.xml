@@ -92,7 +92,27 @@
 			<class name="ba.com.zira.sdr.test.suites.GenreServiceTest" />
 		</classes>
 	</test>
-	
+
+    <test thread-count="6" name="Artist">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ArtistRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ArtistServiceTest"/>
+	    </classes>
+    </test>
+    
+    
+    
+    <test thread-count="6" name="NoteSheet">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.NoteSheetRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.NoteSheetServiceTest"/>
+	    </classes>
+    </test>
+    
 </suite>
     
 

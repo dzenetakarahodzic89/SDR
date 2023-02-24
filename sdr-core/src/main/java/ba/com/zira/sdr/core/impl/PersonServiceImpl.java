@@ -101,12 +101,12 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<PersonResponse> delete(final EntityRequest<Long> entityRequest) {
-        personRequestValidation.validateExistsPersonRequest(entityRequest);
-        PersonEntity deletedEntity = personDAO.findByPK(entityRequest.getEntity());
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
+        personRequestValidation.validateExistsPersonRequest(request);
 
-        personDAO.removeByPK(entityRequest.getEntity());
-        return new PayloadResponse<>(entityRequest, ResponseCode.OK, personMapper.entityToDto(deletedEntity));
+        personDAO.removeByPK(request.getEntity());
+        return new PayloadResponse<>(request, ResponseCode.OK,
+                String.format("Person with id %s is successfully deleted!", request.getEntity()));
     }
 
 }
