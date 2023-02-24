@@ -77,13 +77,13 @@ public class SongServiceImpl implements SongService {
     public PayloadResponse<SongSingleResponse> retrieveById(final EntityRequest<Long> request) {
         songRequestValidation.validateExistsSongRequest(request);
 
-        SongSingleResponse songEntity = songDAO.getById(request.getEntity());
-        lookupService.lookupCoverImage(Arrays.asList(songEntity), SongSingleResponse::getId, ObjectType.SONG.getValue(),
+        SongSingleResponse song = songDAO.getById(request.getEntity());
+        lookupService.lookupCoverImage(Arrays.asList(song), SongSingleResponse::getId, ObjectType.SONG.getValue(),
         		SongSingleResponse::setImageUrl, SongSingleResponse::getImageUrl);
-        songEntity.setPlaylistCount(songDAO.countAllPlaylistsWhereSongExists(request.getEntity()).intValue());
-        songEntity.setArtists(artistDAO.getById(request.getEntity()));
-        songEntity.setSubgenres(genreDAO.subGenresByMainGenre(songEntity.getGenreId()));
-        return new PayloadResponse<>(request, ResponseCode.OK, songEntity);
+        song.setPlaylistCount(songDAO.countAllPlaylistsWhereSongExists(request.getEntity()).intValue());
+        song.setArtists(artistDAO.getById(request.getEntity()));
+        song.setSubgenres(genreDAO.subGenresByMainGenre(song.getGenreId()));
+        return new PayloadResponse<>(request, ResponseCode.OK, song);
     }
 
     @Override
