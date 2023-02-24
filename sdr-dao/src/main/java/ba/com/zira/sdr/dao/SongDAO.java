@@ -15,8 +15,10 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
 import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.dao.model.AlbumEntity_;
 import ba.com.zira.sdr.dao.model.EraEntity;
@@ -39,7 +41,11 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         } catch (Exception e) {
             return new HashMap<>();
         }
-
+    }
+    public SongSingleResponse getById(Long songId){
+    	var hql = "select new ba.com.zira.sdr.api.model.song.SongSingleResponse(ss.id, ss.name, ss.outlineText,ss.information,ss.dateOfRelease,scp.name,sg.name) from SongEntity ss left join ChordProgressionEntity scp on ss.chordProgression.id =scp.id left join GenreEntity sg on ss.genre.id = sg.id where ss.id =:id";
+    	TypedQuery<SongSingleResponse> q = entityManager.createQuery(hql, SongSingleResponse.class).setParameter("id", songId);
+        return q.getSingleResult();
     }
 
     public List<SongGenreEraLink> findSongGenreEraLinks() {

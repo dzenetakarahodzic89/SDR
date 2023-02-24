@@ -10,6 +10,7 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.SongService;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
+import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import ba.com.zira.sdr.core.mapper.SongMapper;
 import ba.com.zira.sdr.core.validation.SongRequestValidation;
@@ -63,12 +64,13 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public PayloadResponse<Song> retrieveById(final EntityRequest<Long> request) {
+    public PayloadResponse<SongSingleResponse> retrieveById(final EntityRequest<Long> request) {
         songRequestValidation.validateExistsSongRequest(request);
 
-        var songEntity = songDAO.findByPK(request.getEntity());
+//        var songEntity = songDAO.findByPK(request.getEntity());
+        var songEntity = songDAO.getById(request.getEntity());
 
-        return new PayloadResponse<>(request, ResponseCode.OK, songMapper.entityToDto(songEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, songEntity);
     }
 
     @Override
