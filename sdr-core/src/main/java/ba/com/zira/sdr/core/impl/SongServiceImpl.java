@@ -8,11 +8,14 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.SongService;
+import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import ba.com.zira.sdr.core.mapper.SongMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.SongRequestValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.GenreDAO;
@@ -27,6 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -40,6 +45,7 @@ public class SongServiceImpl implements SongService {
     SongRequestValidation songRequestValidation;
     ArtistDAO artistDAO;
     GenreDAO genreDAO;
+    LookupService lookupService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -72,10 +78,11 @@ public class SongServiceImpl implements SongService {
         songRequestValidation.validateExistsSongRequest(request);
 
         SongSingleResponse songEntity = songDAO.getById(request.getEntity());
-        var artists = artistDAO.getById(request.getEntity());
-        var subGenres = genreDAO.subGenresByMainGenre(songEntity.getGenreId());
-        songEntity.setArtists(artists);
-        songEntity.setSubgenres(subGenres);
+        lookupService.lookupCoverImage(Arrays.asList(songEntity), SongSingleResponse::getId, ObjectType.SONG.getValue(),
+        		SongSingleResponse::setImageUrl, SongSingleResponse::getImageUrl);
+        songEntity.setPlaylistCount(songDAO.countAllPlaylistsWhereSongExists(request.getEntity()).intValue());
+        songEntity.setArtists(artistDAO.getById(request.getEntity()));
+        songEntity.setSubgenres(genreDAO.subGenresByMainGenre(songEntity.getGenreId()));
         return new PayloadResponse<>(request, ResponseCode.OK, songEntity);
     }
 
