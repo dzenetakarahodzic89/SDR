@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.core.validation;
 
+import org.springframework.stereotype.Component;
+
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
@@ -9,7 +11,6 @@ import ba.com.zira.sdr.api.model.song.fft.SongFftResultUpdateRequest;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.SongFftResultDAO;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @Component("songFftResultValidation")
@@ -27,7 +28,7 @@ public class SongFftResultValidation {
 
     public ValidationResponse validateCreateSongFftResultRequest(final EntityRequest<SongFftResultCreateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
-        errors.put(songExists(request.getEntity().getSongId()));
+        errors.put(songExists(request.getEntity().getSongID()));
         return ValidationResponse.of(request, errors);
     }
 
