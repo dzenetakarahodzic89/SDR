@@ -130,7 +130,15 @@
 					name="ba.com.zira.sdr.test.suites.InstrumentServiceTest"/>
 		</classes>
 	</test>
-
+	
+    <test thread-count="5" name="SongInstrument">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.SongInstrumentRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.SongInstrumentServiceTest"/>
+	    </classes>
+    </test>
 
 </suite>
     
