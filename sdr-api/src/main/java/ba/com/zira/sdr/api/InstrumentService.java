@@ -58,7 +58,7 @@ public interface InstrumentService {
      *            the entity request
      * @return the payload response
      */
-    PayloadResponse<InstrumentResponse> delete(final EntityRequest<Long> entityRequest);
+    PayloadResponse<String> delete(final EntityRequest<Long> entityRequest);
 
     ListPayloadResponse<ResponseSongInstrument> insertInstrumentsToSong(ListRequest<InsertSongInstrumentRequest> entityRequest)
             throws ApiException;
