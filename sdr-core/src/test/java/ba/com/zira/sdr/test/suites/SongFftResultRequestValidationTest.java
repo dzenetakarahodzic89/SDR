@@ -39,7 +39,7 @@ public class SongFftResultRequestValidationTest extends BasicTestConfiguration {
         Mockito.when(songDAO.existsByPK(1L)).thenReturn(false);
 
         var response = new SongFftResultCreateRequest();
-        response.setSongId(1L);
+        response.setSongID(1L);
 
         EntityRequest<SongFftResultCreateRequest> request = new EntityRequest<>();
         request.setUser(new User("test"));

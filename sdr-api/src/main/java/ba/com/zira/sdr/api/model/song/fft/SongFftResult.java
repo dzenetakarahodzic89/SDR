@@ -1,10 +1,10 @@
 package ba.com.zira.sdr.api.model.song.fft;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 @Data
 @Schema(description = "Properties of an SongFft response")
@@ -26,6 +26,6 @@ public class SongFftResult implements Serializable {
     private String modifiedBy;
     @Schema(description = "The status of the SongFft", allowableValues = { "Inactive", "Active" })
     private String status;
-    @Schema(description = "SongID")
+    @Schema(description = "SongId")
     private Long songID;
 }
