@@ -53,6 +53,8 @@ public class PersonServiceTest extends BasicTestConfiguration {
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.personDAO = Mockito.mock(PersonDAO.class);
+        this.lookupService = Mockito.mock(LookupService.class);
+        this.mediaService = Mockito.mock(MediaService.class);
         this.personRequestValidation = Mockito.mock(PersonRequestValidation.class);
         this.lookupService = Mockito.mock(LookupService.class);
         this.mediaService = Mockito.mock(MediaService.class);
