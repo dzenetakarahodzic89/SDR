@@ -1,12 +1,12 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -27,6 +27,7 @@ import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
+import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.core.mapper.InstrumentMapper;
 import ba.com.zira.sdr.core.mapper.SongInstrumentMapper;
 import ba.com.zira.sdr.core.validation.InstrumentRequestValidation;
@@ -45,7 +46,6 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-
 public class InstrumentServiceImpl implements InstrumentService {
     InstrumentDAO instrumentDAO;
     SongInstrumentDAO songInstrumentDAO;
