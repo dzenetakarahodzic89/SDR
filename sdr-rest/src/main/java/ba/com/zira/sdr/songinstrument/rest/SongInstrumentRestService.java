@@ -1,10 +1,9 @@
 package ba.com.zira.sdr.songinstrument.rest;
 
-
 import java.util.Map;
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,8 +37,8 @@ public class SongInstrumentRestService {
 
     @Operation(summary = "Find SongInstrument base on filter criteria")
     @GetMapping
-    public PagedPayloadResponse<SongInstrument> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
-            throws ApiException {
+    public PagedPayloadResponse<SongInstrument> find(@RequestParam Map<String, Object> filterCriteria,
+            final QueryConditionPage queryCriteria) throws ApiException {
         return songInstrumentService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
@@ -49,11 +48,10 @@ public class SongInstrumentRestService {
         return songInstrumentService.create(new EntityRequest<>(songInstrument));
     }
 
-
-    
     @Operation(summary = "Update SongInstrument")
     @PutMapping(value = "{id}")
-    public PayloadResponse<SongInstrument> edit(@Parameter(required = true, description = "ID of the SongInstrument") @PathVariable final Long id,
+    public PayloadResponse<SongInstrument> edit(
+            @Parameter(required = true, description = "ID of the SongInstrument") @PathVariable final Long id,
             @RequestBody final SongInstrumentUpdateRequest songInstrument) throws ApiException {
         if (songInstrument != null) {
             songInstrument.setId(id);
@@ -61,14 +59,11 @@ public class SongInstrumentRestService {
         return songInstrumentService.update(new EntityRequest<>(songInstrument));
     }
 
-    
-    
-    @Operation(summary = "Delete comment")
+    @Operation(summary = "Delete songInstrument")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<SongInstrument> delete(@Parameter(required = true, description = "ID of the sample") @PathVariable final Long id) throws ApiException {
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the sample") @PathVariable final Long id)
+            throws ApiException {
         return songInstrumentService.delete(new EntityRequest<>(id));
     }
 
-  
- 
 }

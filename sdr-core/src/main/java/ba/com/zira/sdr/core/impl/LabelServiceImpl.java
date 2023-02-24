@@ -1,11 +1,12 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
+import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -27,10 +28,10 @@ import ba.com.zira.sdr.dao.model.LabelEntity;
 
 public class LabelServiceImpl implements LabelService {
 
-    final LabelDAO labelDAO;
-    final LabelMapper labelMapper;
-    final PersonDAO personDAO;
-    final LabelRequestValidation labelReqVal;
+    private LabelDAO labelDAO;
+    private LabelMapper labelMapper;
+    private PersonDAO personDAO;
+    private LabelRequestValidation labelReqVal;
 
     @Autowired
     public LabelServiceImpl(LabelDAO labelDAO, LabelMapper labelMapper, PersonDAO personDAO, LabelRequestValidation labelReqVal) {
@@ -58,7 +59,8 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<LabelResponse> create(final EntityRequest<LabelCreateRequest> request) {
+    public PayloadResponse<LabelResponse> create(final EntityRequest<LabelCreateRequest> request) throws ApiException {
+
         var labelEntity = labelMapper.dtoToEntity(request.getEntity());
         var personEntity = personDAO.findByPK(request.getEntity().getFounderId());
         labelEntity.setStatus(Status.ACTIVE.value());
@@ -76,7 +78,6 @@ public class LabelServiceImpl implements LabelService {
 
         var labelEntity = labelDAO.findByPK(request.getEntity().getId());
         var personEntity = personDAO.findByPK(request.getEntity().getFounderId());
-
         labelEntity.setModified(LocalDateTime.now());
         labelEntity.setModifiedBy(request.getUserId());
         labelEntity.setFounder(personEntity);
