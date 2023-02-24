@@ -20,4 +20,8 @@ public class ArtistSongResponse implements Serializable{
 	private LocalDateTime dateOfBirth;
 	 @Schema(description = "Instrument name")
 	private String instrument;
+	 @Schema(description = "Album Name")
+	private String album;
+	 @Schema(description = "Label Name")
+	private String label;
 }

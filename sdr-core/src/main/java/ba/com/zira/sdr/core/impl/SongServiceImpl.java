@@ -14,6 +14,8 @@ import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import ba.com.zira.sdr.core.mapper.SongMapper;
 import ba.com.zira.sdr.core.validation.SongRequestValidation;
+import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.GenreDAO;
 import ba.com.zira.sdr.dao.LyricDAO;
 import ba.com.zira.sdr.dao.NoteSheetDAO;
 import ba.com.zira.sdr.dao.SongDAO;
@@ -36,6 +38,8 @@ public class SongServiceImpl implements SongService {
     NoteSheetDAO noteSheetDAO;
     SongMapper songMapper;
     SongRequestValidation songRequestValidation;
+    ArtistDAO artistDAO;
+    GenreDAO genreDAO;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -67,9 +71,12 @@ public class SongServiceImpl implements SongService {
     public PayloadResponse<SongSingleResponse> retrieveById(final EntityRequest<Long> request) {
         songRequestValidation.validateExistsSongRequest(request);
 
-//        var songEntity = songDAO.findByPK(request.getEntity());
-        var songEntity = songDAO.getById(request.getEntity());
-
+        SongSingleResponse songEntity = songDAO.getById(request.getEntity());
+        var artists = artistDAO.getById(request.getEntity());
+        System.out.println("GENRE ID : " +songEntity.getGenreId());
+        var subGenres = genreDAO.subGenresByMainGenre(songEntity.getGenreId());
+        songEntity.setArtists(artists);
+        songEntity.setSubgenres(subGenres);
         return new PayloadResponse<>(request, ResponseCode.OK, songEntity);
     }
 

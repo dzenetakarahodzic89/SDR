@@ -3,6 +3,7 @@ package ba.com.zira.sdr.api.model.song;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import ba.com.zira.sdr.api.artist.ArtistSongResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -28,13 +29,15 @@ public class SongSingleResponse implements Serializable{
     private String label;
     @Schema(description = "Chord progression name")
     private String chordProgression;
+    @Schema(description = "Genre Id")
+    private Long genreId;
     @Schema(description = "Genre name")
     private String genre;
     @Schema(description = "Subgenres - format 1-rock")
-    private List<LoV> subgenres;
+    private Map<Long,String> subgenres;
     @Schema(description = "List of artists")
     private List<ArtistSongResponse> artists;
-    public SongSingleResponse(Long id,String songName,String outlineText,String information,LocalDateTime dateOfRelease,String chordName,String genreName) {
+    public SongSingleResponse(Long id,String songName,String outlineText,String information,LocalDateTime dateOfRelease,String chordName,String genreName,Long genreId) {
     	this.id=id;
     	this.name=songName;
     	this.outlineText=outlineText;
@@ -42,5 +45,6 @@ public class SongSingleResponse implements Serializable{
     	this.dateOfRelease=dateOfRelease;
     	this.chordProgression=chordName;
     	this.genre=genreName;
+    	this.genreId=genreId;
     }
 }
