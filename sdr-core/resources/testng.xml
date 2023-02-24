@@ -6,67 +6,93 @@
 		<classes>
 			<class
 				name="ba.com.zira.sdr.test.suites.LabelRequestValidationTest" />
-			<class
-				name="ba.com.zira.sdr.test.suites.LabelServiceTest" />
+			<class name="ba.com.zira.sdr.test.suites.LabelServiceTest" />
 		</classes>
 	</test>
-	
+
 	<test thread-count="5" name="Country">
 		<classes>
 			<class
-					name="ba.com.zira.sdr.test.suites.CountryRequestValidationTest"/>
-			<class
-					name="ba.com.zira.sdr.test.suites.CountryServiceTest"/>
+				name="ba.com.zira.sdr.test.suites.CountryRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.CountryServiceTest" />
 		</classes>
 
 	</test>
 	<test thread-count="5" name="Album">
 		<classes>
 			<class
-					name="ba.com.zira.sdr.test.suites.AlbumRequestValidationTest"/>
-			<class
-					name="ba.com.zira.sdr.test.suites.AlbumServiceTest"/>
+				name="ba.com.zira.sdr.test.suites.AlbumRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.AlbumServiceTest" />
 		</classes>
-
 	</test>
 
 	<test thread-count="5" name="SongFftResult">
 		<classes>
 			<class
-					name="ba.com.zira.sdr.test.suites.SongFftResultRequestValidationTest"/>
+				name="ba.com.zira.sdr.test.suites.SongFftResultRequestValidationTest" />
 			<class
-					name="ba.com.zira.sdr.test.suites.SongFftResultServiceTest"/>
+				name="ba.com.zira.sdr.test.suites.SongFftResultServiceTest" />
 		</classes>
-
 	</test>
 
-
-		<test thread-count="5" name="Chord Progression">
+	<test thread-count="5" name="Chord Progression">
 		<classes>
 			<class
-					name="ba.com.zira.sdr.test.suites.ChordProgressionRequestValidationTest"/>
+				name="ba.com.zira.sdr.test.suites.ChordProgressionRequestValidationTest" />
 			<class
-					name="ba.com.zira.sdr.test.suites.ChordProgressionServiceTest"/>
+				name="ba.com.zira.sdr.test.suites.ChordProgressionServiceTest" />
 		</classes>
 
 	</test>
-    <test thread-count="6" name="Artist">
-	    <classes>
-	      	<class 
-	      		name="ba.com.zira.sdr.test.suites.ArtistRequestValidationTest"/>
-	      	<class 
-	      		name="ba.com.zira.sdr.test.suites.ArtistServiceTest"/>
-	    </classes>
-    </test>
+	<test thread-count="6" name="Artist">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.ArtistRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.ArtistServiceTest" />
+		</classes>
+	</test>
+	
 	<test thread-count="5" name="Person">
 		<classes>
 			<class
-					name="ba.com.zira.sdr.test.suites.PersonRequestValidationTest"/>
-			<class
-					name="ba.com.zira.sdr.test.suites.PersonServiceTest"/>
+				name="ba.com.zira.sdr.test.suites.PersonRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.PersonServiceTest" />
 		</classes>
 
 	</test>
+	
+	<test thread-count="5" name="Lyric">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.LyricRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.LyricServiceTest" />
+		</classes>
+	</test>
+	
+	<test thread-count="5" name="SongArtist">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.SongArtistRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.SongArtistServiceTest" />
+		</classes>
+	</test>
+	
+	<test thread-count="5" name="Comment">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.CommentRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.CommentServiceTest" />
+		</classes>
+	</test>
+	
+	<test thread-count="5" name="Genre">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.GenreRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.GenreServiceTest" />
+		</classes>
+	</test>
+	
 </suite>
     
 
