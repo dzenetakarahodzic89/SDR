@@ -22,11 +22,23 @@ public class Song implements Serializable {
     @Schema(description = "Unique identifier of the song")
     private Long id;
 
+    @Schema(description = "Creation date")
+    private LocalDateTime created;
+
+    @Schema(description = "User that created the song")
+    private String createdBy;
+
     @Schema(description = "Release date of the song")
-    private LocalDateTime dateOfRelease; 
-    
+    private LocalDateTime dateOfRelease;
+
     @Schema(description = "Information about the song")
     private String information;
+
+    @Schema(description = "Last modification date")
+    private LocalDateTime modified;
+
+    @Schema(description = "User that modified the song")
+    private String modifiedBy;
 
     @Schema(description = "Name of the song")
     private String name;
