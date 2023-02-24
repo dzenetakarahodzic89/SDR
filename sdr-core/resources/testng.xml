@@ -112,7 +112,17 @@
 	      		name="ba.com.zira.sdr.test.suites.NoteSheetServiceTest"/>
 	    </classes>
     </test>
-    
+
+	<test thread-count="5" name="SpotifyIntegration">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.SpotifyIntegrationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.SpotifyIntegrationServiceTest"/>
+		</classes>
+	</test>
+
+
 </suite>
     
 
