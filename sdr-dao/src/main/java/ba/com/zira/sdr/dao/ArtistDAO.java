@@ -1,6 +1,9 @@
 package ba.com.zira.sdr.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
@@ -56,6 +60,18 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         } catch (NoResultException e) {
             return false;
         }
+    }
+
+    public Map<Long, String> artistByEra(Long eraId) {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.name) from EraEntity e join AlbumEntity al on e.id=al.era.id "
+                + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id";
+        TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setParameter("id", eraId);
+        try {
+            return q.getResultStream().collect(Collectors.toMap(LoV::getId, LoV::getName));
+        } catch (Exception e) {
+            return new HashMap<>();
+        }
+
     }
 
 }
