@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -21,6 +15,10 @@ import ba.com.zira.sdr.core.validation.UserRecommendationRequestValidation;
 import ba.com.zira.sdr.dao.UserRecommendationDAO;
 import ba.com.zira.sdr.dao.model.UserRecommendationEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -31,13 +29,13 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
     UserRecommendationRequestValidation userRecommendationRequestValidation;
 
     @Override
-    public PagedPayloadResponse<UserRecommendationResponse> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<UserRecommendationResponse> find(final FilterRequest request) {
         PagedData<UserRecommendationEntity> userRecommendationEntities = userRecommendationDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, userRecommendationEntities, userRecommendationMapper::entitiesToDtos);
     }
 
     @Override
-    public PayloadResponse<UserRecommendationResponse> findById(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<UserRecommendationResponse> findById(final EntityRequest<Long> request) {
         userRecommendationRequestValidation.validateExistsUserRecommendationRequest(request);
 
         var userRecommendationEntity = userRecommendationDAO.findByPK(request.getEntity());
@@ -47,8 +45,7 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<UserRecommendationResponse> create(final EntityRequest<UserRecommendationCreateRequest> request)
-            throws ApiException {
+    public PayloadResponse<UserRecommendationResponse> create(final EntityRequest<UserRecommendationCreateRequest> request) {
         var userRecommendationEntity = userRecommendationMapper.dtoToEntity(request.getEntity());
         userRecommendationEntity.setStatus(Status.ACTIVE.value());
         userRecommendationEntity.setCreated(LocalDateTime.now());
@@ -60,7 +57,7 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
 
         userRecommendationRequestValidation.validateExistsUserRecommendationRequest(request);
 

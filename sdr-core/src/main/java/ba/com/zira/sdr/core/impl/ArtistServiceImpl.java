@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -31,22 +30,14 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ArtistServiceImpl implements ArtistService {
     ArtistDAO artistDAO;
-    PersonArtistDAO personArtistDAO;
-    SongArtistDAO songArtistDAO;
     ArtistMapper artistMapper;
     ArtistValidation artistRequestValidation;
-
-    /*
-     * @Override public ListPayloadResponse<ArtistResponse> getAll(EmptyRequest
-     * req) throws ApiException {
-     *
-     * List<ArtistResponse> multiSearchList = artistDAO.getAllArtists(); return
-     * new ListPayloadResponse<>(req, ResponseCode.OK, multiSearchList); }
-     */
+    PersonArtistDAO personArtistDAO;
+    SongArtistDAO songArtistDAO;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ArtistResponse> create(final EntityRequest<ArtistCreateRequest> request) throws ApiException {
+    public PayloadResponse<ArtistResponse> create(final EntityRequest<ArtistCreateRequest> request) {
         var artistEntity = artistMapper.dtoToEntity(request.getEntity());
         artistEntity.setCreated(LocalDateTime.now());
         artistEntity.setCreatedBy(request.getUserId());
@@ -59,17 +50,17 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         artistRequestValidation.validateExistsArtistRequest(request);
         Long id = request.getEntity();
 
-        if (artistDAO.personArtistExist(id)) {
+        if (artistDAO.personArtistExist(id).booleanValue()) {
             ValidationErrors errors = new ValidationErrors();
             errors.put(ValidationError.of("PERSON_ARTIST_EXISTS", "Not allowed to be deleted."));
             return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, "Artist delete validation error");
         }
 
-        if (artistDAO.songArtistExist(id)) {
+        if (artistDAO.songArtistExist(id).booleanValue()) {
             ValidationErrors errors = new ValidationErrors();
             errors.put(ValidationError.of("SONG_ARTIST_EXISTS", "Not allowed to be deleted."));
             return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, "Artist delete validation error");
@@ -81,7 +72,7 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ArtistResponse> update(final EntityRequest<ArtistUpdateRequest> request) throws ApiException {
+    public PayloadResponse<ArtistResponse> update(final EntityRequest<ArtistUpdateRequest> request) {
         artistRequestValidation.validateUpdateArtistRequest(request);
 
         var artistEntity = artistDAO.findByPK(request.getEntity().getId());
@@ -96,9 +87,9 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
-    public PagedPayloadResponse<ArtistResponse> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<ArtistResponse> find(final FilterRequest request) {
         PagedData<ArtistEntity> artistEntity = artistDAO.findAll(request.getFilter());
-        PagedData<ArtistResponse> artists = new PagedData<ArtistResponse>();
+        PagedData<ArtistResponse> artists = new PagedData<>();
         artists.setRecords(artistMapper.entitiesToDtos(artistEntity.getRecords()));
         PagedDataMetadataMapper.remapMetadata(artistEntity, artists);
         artists.getRecords().forEach(artist -> {
@@ -108,4 +99,5 @@ public class ArtistServiceImpl implements ArtistService {
         });
         return new PagedPayloadResponse<>(request, ResponseCode.OK, artists);
     }
+
 }

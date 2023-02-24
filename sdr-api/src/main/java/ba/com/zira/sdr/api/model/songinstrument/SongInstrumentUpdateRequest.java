@@ -17,7 +17,15 @@ public class SongInstrumentUpdateRequest implements Serializable {
     @Min(1)
     @Schema(description = "Unique identifier of the songInstrument")
     private Long id;
-    @NotBlank
-    @Schema(description = "Content of songInstrument")
-    private String content;
+    @Schema(description = "Name of instrument")
+    private String name;
+
+    @Schema(description = "Id of the instrument")
+    private Long instrumentId;
+
+    @Schema(description = "Id of the person")
+    private Long personId;
+
+    @Schema(description = "Id of the song")
+    private Long songId;
 }

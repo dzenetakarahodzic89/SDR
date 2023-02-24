@@ -15,13 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.request.ListRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.InstrumentService;
+import ba.com.zira.sdr.api.instrument.InsertSongInstrumentRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
+import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,11 +51,10 @@ public class InstrumentRestService {
         return instrumentService.create(new EntityRequest<>(instrument));
     }
 
-
     @Operation(summary = "Delete instrument")
     @DeleteMapping(value = "{id}")
     public PayloadResponse<InstrumentResponse> delete(
-            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) throws ApiException {
+            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) {
         EntityRequest<Long> entityRequest = new EntityRequest<>();
         entityRequest.setEntity(id);
         return instrumentService.delete(entityRequest);
@@ -68,5 +71,11 @@ public class InstrumentRestService {
         return instrumentService.update(new EntityRequest<>(instrumentUpdateRequest));
     }
 
- 
+    @Operation(summary = "Insert instruments for song")
+    @PostMapping(value = "instrument-to-song")
+    public ListPayloadResponse<ResponseSongInstrument> insertInstrumentToSong(
+            @RequestBody final ListRequest<InsertSongInstrumentRequest> request) throws ApiException {
+        return instrumentService.insertInstrumentsToSong(request);
+    }
+
 }
