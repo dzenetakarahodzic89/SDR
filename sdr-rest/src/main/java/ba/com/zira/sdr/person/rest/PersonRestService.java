@@ -44,7 +44,7 @@ public class PersonRestService {
 
     @Operation(summary = "Find person base on filter criteria")
     @GetMapping(value = "{id}")
-    public PayloadResponse<PersonResponse> findById(@PathVariable Long id) throws ApiException {
+    public PayloadResponse<PersonResponse> findById(@PathVariable Long id) {
         return personService.findById(new EntityRequest<>(id));
     }
 
@@ -66,8 +66,7 @@ public class PersonRestService {
 
     @Operation(summary = "Delete person")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<PersonResponse> delete(
-            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) {
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the record") @PathVariable final Long id) {
         EntityRequest<Long> entityRequest = new EntityRequest<>();
         entityRequest.setEntity(id);
         return personService.delete(entityRequest);
