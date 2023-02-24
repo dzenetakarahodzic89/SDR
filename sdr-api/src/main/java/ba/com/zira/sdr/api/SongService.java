@@ -8,6 +8,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
+import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 
 /**
@@ -58,7 +59,7 @@ public interface SongService {
      *         If there was a problem during API invocation then.             {@link ApiException} will be generated/returned with
      *         corresponding error message and {@link ResponseCode}.
      */
-    PayloadResponse<Song> retrieveById(final EntityRequest<Long> request) throws ApiException;
+    PayloadResponse<SongSingleResponse> retrieveById(final EntityRequest<Long> request) throws ApiException;
 
     /**
      * Validate received song data and update song.

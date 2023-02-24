@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.artist.ArtistSongResponse;
+import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
@@ -33,6 +35,11 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return query.getResultList();
     }
 
+    public List<ArtistSongResponse> getById(Long songId){
+    	var hql = "select distinct new ba.com.zira.sdr.api.artist.ArtistSongResponse(sa.id,sa.name || ' ' || sa.surname,sp.name || ' ' || sp.surname,sp.dateOfBirth,ssi.name, sa2.name,sl.name) from SongArtistEntity ssa join ArtistEntity sa on ssa.artist.id = sa.id join PersonArtistEntity spa on sa.id =spa.artist.id join PersonEntity sp on spa.person.id = sp.id left join SongInstrumentEntity ssi on ssi.person.id =sp.id join AlbumEntity sa2 on ssa.album.id = sa2.id join LabelEntity sl on ssa.label.id = sl.id  where ssa.song.id = :id";
+    	TypedQuery<ArtistSongResponse> q = entityManager.createQuery(hql, ArtistSongResponse.class).setParameter("id", songId);
+        return q.getResultList();
+    }
     public Boolean songArtistExist(Long id) {
         var hql = "select s from SongArtistEntity s where s.artist.id = :id";
         TypedQuery<SongArtistEntity> q = entityManager.createQuery(hql, SongArtistEntity.class).setParameter("id", id);
