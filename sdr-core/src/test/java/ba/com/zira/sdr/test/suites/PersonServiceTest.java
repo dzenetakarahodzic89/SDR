@@ -115,6 +115,7 @@ public class PersonServiceTest extends BasicTestConfiguration {
             firstResponse.setInformation("test male gendered person 1");
             firstResponse.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
             firstResponse.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
+            firstResponse.setFullName(firstResponse.getName() + ' ' + firstResponse.getSurname());
 
             PersonResponse secondResponse = new PersonResponse();
             secondResponse.setId(2L);
@@ -125,6 +126,7 @@ public class PersonServiceTest extends BasicTestConfiguration {
             secondResponse.setInformation("test male gendered person 2");
             secondResponse.setDateOfBirth(LocalDateTime.parse("2008-12-03T10:15:30"));
             secondResponse.setDateOfDeath(LocalDateTime.parse("2018-12-03T10:15:30"));
+            secondResponse.setFullName(secondResponse.getName() + ' ' + secondResponse.getSurname());
 
             PersonResponse thirdResponse = new PersonResponse();
             thirdResponse.setId(3L);
@@ -135,6 +137,7 @@ public class PersonServiceTest extends BasicTestConfiguration {
             thirdResponse.setInformation("test male gendered person 3");
             thirdResponse.setDateOfBirth(LocalDateTime.parse("2009-12-03T10:15:30"));
             thirdResponse.setDateOfDeath(LocalDateTime.parse("2019-12-03T10:15:30"));
+            thirdResponse.setFullName(thirdResponse.getName() + ' ' + thirdResponse.getSurname());
 
             response.add(firstResponse);
             response.add(secondResponse);
@@ -152,8 +155,7 @@ public class PersonServiceTest extends BasicTestConfiguration {
 
             List<PersonResponse> personFindResponse = personService.find(filterRequest).getPayload();
 
-            Assertions.assertThat(personFindResponse).as("Check all elements").overridingErrorMessage("All elements should be equal.")
-                    .hasSameElementsAs(response);
+            Assertions.assertThat(personFindResponse).as("Check all elements").hasSameElementsAs(response);
 
         } catch (Exception e) {
             Assert.fail();
@@ -191,6 +193,8 @@ public class PersonServiceTest extends BasicTestConfiguration {
             newPerson.setInformation("Test information 1");
             newPerson.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
             newPerson.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
+            newPerson.setFullName(newPerson.getName() + " " + newPerson.getSurname());
+            newPerson.setStatus(Status.ACTIVE.getValue());
 
             Mockito.when(personDAO.persist(newPersonEnt)).thenReturn(null);
 
@@ -220,21 +224,24 @@ public class PersonServiceTest extends BasicTestConfiguration {
             personEntity.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
 
             PersonResponse personResponse = new PersonResponse();
+            personResponse.setId(11L);
             personResponse.setName("update test person name 1");
             personResponse.setSurname("update Test person surname 1");
             personResponse.setGender("male");
             personResponse.setInformation("update Test information 1");
             personResponse.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:31"));
             personResponse.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:31"));
-            // provjeriti
+            personResponse.setFullName(personResponse.getName() + ' ' + personResponse.getSurname());
+
             PersonUpdateRequest personUpdateRequest = new PersonUpdateRequest();
             personUpdateRequest.setId(11L);
             personUpdateRequest.setName("update test person name 1");
-            personEntity.setSurname("update Test person surname 1");
-            personEntity.setGender("male");
-            personEntity.setInformation("update Test information 1");
-            personEntity.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:31"));
-            personEntity.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:31"));
+
+            personUpdateRequest.setSurname("update Test person surname 1");
+            personUpdateRequest.setGender("male");
+            personUpdateRequest.setInformation("update Test information 1");
+            personUpdateRequest.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:31"));
+            personUpdateRequest.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:31"));
             request.setEntity(personUpdateRequest);
 
             Mockito.when(personRequestValidation.validateUpdatePersonRequest(request)).thenReturn(null);

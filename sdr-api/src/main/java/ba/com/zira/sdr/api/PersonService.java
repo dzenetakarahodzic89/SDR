@@ -55,7 +55,7 @@ public interface PersonService {
      *            the entity request
      * @return the payload response
      */
-    PayloadResponse<PersonResponse> delete(final EntityRequest<Long> entityRequest);
+    PayloadResponse<String> delete(final EntityRequest<Long> entityRequest);
 
     /**
      * Find by id.
