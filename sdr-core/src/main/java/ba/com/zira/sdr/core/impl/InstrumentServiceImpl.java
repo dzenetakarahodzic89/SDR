@@ -103,16 +103,29 @@ public class InstrumentServiceImpl implements InstrumentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> entityRequest) {
-        instrumentRequestValidation.validateUpdateInstrumentRequest(entityRequest);
-        InstrumentEntity instrumentEntity = instrumentDAO.findByPK(entityRequest.getEntity().getId());
-        instrumentMapper.updateEntity(entityRequest.getEntity(), instrumentEntity);
+    public PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> request) throws ApiException {
+        instrumentRequestValidation.validateUpdateInstrumentRequest(request);
+        InstrumentEntity instrumentEntity = instrumentDAO.findByPK(request.getEntity().getId());
+        instrumentMapper.updateEntity(request.getEntity(), instrumentEntity);
 
         instrumentEntity.setModified(LocalDateTime.now());
-        instrumentEntity.setModifiedBy(entityRequest.getUserId());
+        instrumentEntity.setModifiedBy(request.getUserId());
+
+        if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
+
+            var mediaRequest = new MediaCreateRequest();
+            mediaRequest.setObjectType(ObjectType.INSTRUMENT.getValue());
+            mediaRequest.setObjectId(instrumentEntity.getId());
+            mediaRequest.setMediaObjectData(request.getEntity().getCoverImageData());
+            mediaRequest.setMediaObjectName(request.getEntity().getCoverImage());
+            mediaRequest.setMediaStoreType("COVER_IMAGE");
+            mediaRequest.setMediaObjectType("IMAGE");
+            mediaService.save(new EntityRequest<>(mediaRequest, request));
+
+        }
 
         instrumentDAO.merge(instrumentEntity);
-        return new PayloadResponse<>(entityRequest, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
     @Override
