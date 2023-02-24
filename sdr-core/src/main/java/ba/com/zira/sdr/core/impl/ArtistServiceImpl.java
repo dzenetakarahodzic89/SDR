@@ -3,7 +3,6 @@ package ba.com.zira.sdr.core.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +23,7 @@ import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
-import ba.com.zira.sdr.api.model.person.Person;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
@@ -113,24 +112,25 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
-    public ListPayloadResponse<ArtistByEras> getArtistByEras(final EntityRequest<Long> request) throws ApiException {
+    public ListPayloadResponse<ArtistByEras> getArtistsByEras(final EntityRequest<Long> request) throws ApiException {
         Long eraId = request.getEntity();
         List<Artist> artistGroup = new ArrayList<>();
         List<Artist> artistSolo = new ArrayList<>();
-        List<Person> persons = new ArrayList<>();
-        Map<Long, String> artistMap = artistDAO.artistByEra(eraId);
+        List<LoV> persons = new ArrayList<>();
+        List<LoV> artistList = artistDAO.artistsByEras(eraId);
 
-        for (Map.Entry<Long, String> artistEntry : artistMap.entrySet()) {
-            Long artistId = artistEntry.getKey();
-            String artistName = artistEntry.getValue();
+        for (LoV artist : artistList) {
+            Long artistId = artist.getId();
+            String artistName = artist.getName();
 
-            Map<Long, String> personMap = personDAO.personByArtistId(artistId);
-            List<Person> artistPersons = new ArrayList<>();
+            List<LoV> personList = personDAO.personsByArtistId(artistId);
+            List<LoV> artistPersons = new ArrayList<>();
 
-            for (Map.Entry<Long, String> personEntry : personMap.entrySet()) {
-                Long personId = personEntry.getKey();
-                artistPersons.add(new Person(personId));
-                persons.add(new Person(personId));
+            for (LoV person : personList) {
+                Long personId = person.getId();
+                String personName = person.getName();
+                artistPersons.add(new LoV(personId, personName));
+                persons.add(new LoV(personId, personName));
             }
 
             if (artistPersons.size() == 1) {

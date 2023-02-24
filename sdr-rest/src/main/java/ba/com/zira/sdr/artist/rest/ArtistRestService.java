@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
-import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -69,11 +68,11 @@ public class ArtistRestService {
 
     }
 
-    @Operation(summary = "Artist by eras")
-    @GetMapping("/artistByEras")
-    public ListPayloadResponse<ArtistByEras> getArtistByEras(@RequestParam Long eraId) throws ApiException {
+    @Operation(summary = "Artists by eras")
+    @GetMapping("/group-solo-comparison")
+    public ListPayloadResponse<ArtistByEras> getArtistsByEras(@RequestParam Long eraId) throws ApiException {
         var req = new EntityRequest<>(eraId);
-        return artistService.getArtistByEras(req);
+        return artistService.getArtistsByEras(req);
     }
 
 }

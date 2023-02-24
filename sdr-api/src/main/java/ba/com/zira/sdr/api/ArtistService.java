@@ -60,6 +60,6 @@ public interface ArtistService {
      */
     PayloadResponse<ArtistResponse> update(EntityRequest<ArtistUpdateRequest> request) throws ApiException;
 
-    ListPayloadResponse<ArtistByEras> getArtistByEras(EntityRequest<Long> request) throws ApiException;
+    ListPayloadResponse<ArtistByEras> getArtistsByEras(EntityRequest<Long> request) throws ApiException;
 
 }

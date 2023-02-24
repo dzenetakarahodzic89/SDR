@@ -1,9 +1,7 @@
 package ba.com.zira.sdr.dao;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -62,16 +60,15 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         }
     }
 
-    public Map<Long, String> artistByEra(Long eraId) {
+    public List<LoV> artistsByEras(Long eraId) {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.name) from EraEntity e join AlbumEntity al on e.id=al.era.id "
                 + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id";
         TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setParameter("id", eraId);
         try {
-            return q.getResultStream().collect(Collectors.toMap(LoV::getId, LoV::getName));
+            return q.getResultList();
         } catch (Exception e) {
-            return new HashMap<>();
+            return new ArrayList<>();
         }
-
     }
 
 }

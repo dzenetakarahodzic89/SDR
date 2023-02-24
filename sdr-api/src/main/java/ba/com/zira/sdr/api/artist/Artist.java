@@ -3,7 +3,7 @@ package ba.com.zira.sdr.api.artist;
 import java.io.Serializable;
 import java.util.List;
 
-import ba.com.zira.sdr.api.model.person.Person;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,5 +18,6 @@ public class Artist implements Serializable {
     private Long id;
     @Schema(description = "Name of the artist")
     private String name;
-    private List<Person> persons;
+
+    private List<LoV> persons;
 }

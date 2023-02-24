@@ -1,6 +1,6 @@
 package ba.com.zira.sdr.dao;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,16 +22,15 @@ public class PersonDAO extends AbstractDAO<PersonEntity, Long> {
         return query.getResultList().stream().collect(Collectors.toMap(LoV::getId, LoV::getName));
     }
 
-    public Map<Long, String> personByArtistId(Long artistId) {
+    public List<LoV> personsByArtistId(Long artistId) {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(p.id,p.name) from PersonEntity p "
                 + "join PersonArtistEntity pa on p.id=pa.person.id join ArtistEntity a on pa.artist.id=a.id where a.id=:id";
         TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setParameter("id", artistId);
         try {
-            return q.getResultStream().collect(Collectors.toMap(LoV::getId, LoV::getName));
+            return q.getResultList();
         } catch (Exception e) {
-            return new HashMap<>();
+            return new ArrayList<>();
         }
-
     }
 
 }
