@@ -73,7 +73,6 @@ public class SongServiceImpl implements SongService {
 
         SongSingleResponse songEntity = songDAO.getById(request.getEntity());
         var artists = artistDAO.getById(request.getEntity());
-        System.out.println("GENRE ID : " +songEntity.getGenreId());
         var subGenres = genreDAO.subGenresByMainGenre(songEntity.getGenreId());
         songEntity.setArtists(artists);
         songEntity.setSubgenres(subGenres);
