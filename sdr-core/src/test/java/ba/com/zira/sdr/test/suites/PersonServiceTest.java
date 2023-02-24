@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.test.suites;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +7,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -22,12 +22,14 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.validation.RequestValidator;
+import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.PersonService;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
 import ba.com.zira.sdr.core.impl.PersonServiceImpl;
 import ba.com.zira.sdr.core.mapper.PersonMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.model.PersonEntity;
@@ -44,13 +46,19 @@ public class PersonServiceTest extends BasicTestConfiguration {
     private RequestValidator requestValidator;
     private PersonRequestValidation personRequestValidation;
     private PersonService personService;
+    private LookupService lookupService;
+    private MediaService mediaService;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.personDAO = Mockito.mock(PersonDAO.class);
+        this.lookupService = Mockito.mock(LookupService.class);
+        this.mediaService = Mockito.mock(MediaService.class);
         this.personRequestValidation = Mockito.mock(PersonRequestValidation.class);
-        this.personService = new PersonServiceImpl(personDAO, personMapper, personRequestValidation);
+        this.lookupService = Mockito.mock(LookupService.class);
+        this.mediaService = Mockito.mock(MediaService.class);
+        this.personService = new PersonServiceImpl(personDAO, personMapper, personRequestValidation, lookupService, mediaService);
     }
 
     @Test(enabled = true)
@@ -69,15 +77,6 @@ public class PersonServiceTest extends BasicTestConfiguration {
             firstPersonEntity.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
             firstPersonEntity.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
 
-            /*firstPersonEntity.setInformation("test male gendered person 1");
-            firstPersonEntity.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
-            firstPersonEntity.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
-            secondPersonEntity.setInformation("test male gendered person 2");
-            thirdPersonEntity.setInformation("test male gendered person 3");
-            firstSongFttResultEntity.setStatus(Status.ACTIVE.getValue());
-
-             */
-
             PersonEntity secondPersonEntity = new PersonEntity();
             secondPersonEntity.setId(2L);
             secondPersonEntity.setName("test person name 2");
@@ -88,8 +87,6 @@ public class PersonServiceTest extends BasicTestConfiguration {
             secondPersonEntity.setDateOfBirth(LocalDateTime.parse("2008-12-03T10:15:30"));
             secondPersonEntity.setDateOfDeath(LocalDateTime.parse("2018-12-03T10:15:30"));
 
-
-
             PersonEntity thirdPersonEntity = new PersonEntity();
             thirdPersonEntity.setId(3L);
             thirdPersonEntity.setName("test person name 3");
@@ -99,9 +96,6 @@ public class PersonServiceTest extends BasicTestConfiguration {
             thirdPersonEntity.setInformation("test male gendered person 3");
             thirdPersonEntity.setDateOfBirth(LocalDateTime.parse("2009-12-03T10:15:30"));
             thirdPersonEntity.setDateOfDeath(LocalDateTime.parse("2019-12-03T10:15:30"));
-
-
-
 
             entities.add(firstPersonEntity);
             entities.add(secondPersonEntity);
@@ -114,35 +108,36 @@ public class PersonServiceTest extends BasicTestConfiguration {
 
             PersonResponse firstResponse = new PersonResponse();
             firstResponse.setId(1L);
-            firstResponse.setPersonName("test person name 1");
-            firstResponse.setPersonSurname("test person surname 1");
-            firstResponse.setPersonGender("male");
-            firstResponse.setPersonStatus(Status.ACTIVE.getValue());
-            firstResponse.setPersonInformation("test male gendered person 1");
-            firstResponse.setPersonDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
-            firstResponse.setPersonDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
+            firstResponse.setName("test person name 1");
+            firstResponse.setSurname("test person surname 1");
+            firstResponse.setGender("male");
+            firstResponse.setStatus(Status.ACTIVE.getValue());
+            firstResponse.setInformation("test male gendered person 1");
+            firstResponse.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
+            firstResponse.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
+            firstResponse.setFullName(firstResponse.getName() + ' ' + firstResponse.getSurname());
 
             PersonResponse secondResponse = new PersonResponse();
             secondResponse.setId(2L);
-            secondResponse.setPersonName("test person name 2");
-            secondResponse.setPersonSurname("test person surname 2");
-            secondResponse.setPersonGender("male");
-            secondResponse.setPersonStatus(Status.ACTIVE.getValue());
-            secondResponse.setPersonInformation("test male gendered person 2");
-            secondResponse.setPersonDateOfBirth(LocalDateTime.parse("2008-12-03T10:15:30"));
-            secondResponse.setPersonDateOfDeath(LocalDateTime.parse("2018-12-03T10:15:30"));
-
+            secondResponse.setName("test person name 2");
+            secondResponse.setSurname("test person surname 2");
+            secondResponse.setGender("male");
+            secondResponse.setStatus(Status.ACTIVE.getValue());
+            secondResponse.setInformation("test male gendered person 2");
+            secondResponse.setDateOfBirth(LocalDateTime.parse("2008-12-03T10:15:30"));
+            secondResponse.setDateOfDeath(LocalDateTime.parse("2018-12-03T10:15:30"));
+            secondResponse.setFullName(secondResponse.getName() + ' ' + secondResponse.getSurname());
 
             PersonResponse thirdResponse = new PersonResponse();
             thirdResponse.setId(3L);
-            thirdResponse.setPersonName("test person name 3");
-            thirdResponse.setPersonSurname("test person surname 3");
-            thirdResponse.setPersonGender("male");
-            thirdResponse.setPersonStatus(Status.ACTIVE.getValue());
-            thirdResponse.setPersonInformation("test male gendered person 3");
-            thirdResponse.setPersonDateOfBirth(LocalDateTime.parse("2009-12-03T10:15:30"));
-            thirdResponse.setPersonDateOfDeath(LocalDateTime.parse("2019-12-03T10:15:30"));
-
+            thirdResponse.setName("test person name 3");
+            thirdResponse.setSurname("test person surname 3");
+            thirdResponse.setGender("male");
+            thirdResponse.setStatus(Status.ACTIVE.getValue());
+            thirdResponse.setInformation("test male gendered person 3");
+            thirdResponse.setDateOfBirth(LocalDateTime.parse("2009-12-03T10:15:30"));
+            thirdResponse.setDateOfDeath(LocalDateTime.parse("2019-12-03T10:15:30"));
+            thirdResponse.setFullName(thirdResponse.getName() + ' ' + thirdResponse.getSurname());
 
             response.add(firstResponse);
             response.add(secondResponse);
@@ -158,16 +153,15 @@ public class PersonServiceTest extends BasicTestConfiguration {
             Mockito.when(requestValidator.validate(filterRequest)).thenReturn(null);
             Mockito.when(personDAO.findAll(filterRequest.getFilter())).thenReturn(pagedEntites);
 
-
             List<PersonResponse> personFindResponse = personService.find(filterRequest).getPayload();
 
-            Assertions.assertThat(personFindResponse).as("Check all elements").overridingErrorMessage("All elements should be equal.")
-            .hasSameElementsAs(response);
+            Assertions.assertThat(personFindResponse).as("Check all elements").hasSameElementsAs(response);
 
         } catch (Exception e) {
             Assert.fail();
         }
     }
+
     @Test(enabled = true)
     public void testCreatePerson() {
         try {
@@ -175,13 +169,12 @@ public class PersonServiceTest extends BasicTestConfiguration {
             EntityRequest<PersonCreateRequest> req = new EntityRequest<>();
 
             var newPersonRequest = new PersonCreateRequest();
-            newPersonRequest.setPersonName("Test person name 1");
-            newPersonRequest.setPersonSurname("Test person surname 1");
-            newPersonRequest.setPersonGender("male");
-            newPersonRequest.setPersonInformation("Test information 1");
-            newPersonRequest.setPersonDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
-            newPersonRequest.setPersonDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
-
+            newPersonRequest.setName("Test person name 1");
+            newPersonRequest.setSurname("Test person surname 1");
+            newPersonRequest.setGender("male");
+            newPersonRequest.setInformation("Test information 1");
+            newPersonRequest.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
+            newPersonRequest.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
 
             req.setEntity(newPersonRequest);
 
@@ -193,27 +186,28 @@ public class PersonServiceTest extends BasicTestConfiguration {
             newPersonEnt.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
             newPersonEnt.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
 
-
             var newPerson = new PersonResponse();
-            newPerson.setPersonName("Test person name 1");
-            newPerson.setPersonSurname("Test person surname 1");
-            newPerson.setPersonGender("male");
-            newPerson.setPersonInformation("Test information 1");
-            newPerson.setPersonDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
-            newPerson.setPersonDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
+            newPerson.setName("Test person name 1");
+            newPerson.setSurname("Test person surname 1");
+            newPerson.setGender("male");
+            newPerson.setInformation("Test information 1");
+            newPerson.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:30"));
+            newPerson.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
+            newPerson.setFullName(newPerson.getName() + " " + newPerson.getSurname());
+            newPerson.setStatus(Status.ACTIVE.getValue());
 
             Mockito.when(personDAO.persist(newPersonEnt)).thenReturn(null);
 
             PayloadResponse<PersonResponse> personFindResponse = personService.create(req);
 
             Assertions.assertThat(personFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-            .ignoringFields("created", "createdBy", "modified", "modifiedBy", "imageUrl").isEqualTo(newPerson);
-
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy", "imageUrl").isEqualTo(newPerson);
 
         } catch (Exception e) {
             Assert.fail();
         }
     }
+
     @Test(enabled = true)
     public void testUpdatePerson() {
         try {
@@ -230,21 +224,24 @@ public class PersonServiceTest extends BasicTestConfiguration {
             personEntity.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:30"));
 
             PersonResponse personResponse = new PersonResponse();
-            personResponse.setPersonName("update test person name 1");
-            personResponse.setPersonSurname("update Test person surname 1");
-            personResponse.setPersonGender("male");
-            personResponse.setPersonInformation("update Test information 1");
-            personResponse.setPersonDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:31"));
-            personResponse.setPersonDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:31"));
-            //provjeriti
+            personResponse.setId(11L);
+            personResponse.setName("update test person name 1");
+            personResponse.setSurname("update Test person surname 1");
+            personResponse.setGender("male");
+            personResponse.setInformation("update Test information 1");
+            personResponse.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:31"));
+            personResponse.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:31"));
+            personResponse.setFullName(personResponse.getName() + ' ' + personResponse.getSurname());
+
             PersonUpdateRequest personUpdateRequest = new PersonUpdateRequest();
             personUpdateRequest.setId(11L);
-            personUpdateRequest.setPersonName("update test person name 1");
-            personEntity.setSurname("update Test person surname 1");
-            personEntity.setGender("male");
-            personEntity.setInformation("update Test information 1");
-            personEntity.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:31"));
-            personEntity.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:31"));
+            personUpdateRequest.setName("update test person name 1");
+
+            personUpdateRequest.setSurname("update Test person surname 1");
+            personUpdateRequest.setGender("male");
+            personUpdateRequest.setInformation("update Test information 1");
+            personUpdateRequest.setDateOfBirth(LocalDateTime.parse("2007-12-03T10:15:31"));
+            personUpdateRequest.setDateOfDeath(LocalDateTime.parse("2017-12-03T10:15:31"));
             request.setEntity(personUpdateRequest);
 
             Mockito.when(personRequestValidation.validateUpdatePersonRequest(request)).thenReturn(null);
@@ -255,12 +252,13 @@ public class PersonServiceTest extends BasicTestConfiguration {
 
             var personUpdateResponse = personService.update(request);
             Assertions.assertThat(personUpdateResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-            .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(personResponse);
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(personResponse);
 
         } catch (Exception e) {
             Assert.fail();
         }
     }
+
     @Test(enabled = true)
     public void testDeletePerson() {
         try {
@@ -280,6 +278,5 @@ public class PersonServiceTest extends BasicTestConfiguration {
             Assert.fail();
         }
     }
-
 
 }
