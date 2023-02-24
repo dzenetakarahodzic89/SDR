@@ -113,7 +113,16 @@
 	    </classes>
     </test>
 
-	<test thread-count="5" name="ShazamIntegration">
+	<test thread-count="5" name="SpotifyIntegration">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.SpotifyIntegrationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.SpotifyIntegrationServiceTest"/>
+		</classes>
+	</test>
+
+<test thread-count="5" name="ShazamIntegration">
 		<classes>
 			<class
 					name="ba.com.zira.sdr.test.suites.ShazamIntegrationRequestValidationTest"/>
@@ -121,7 +130,6 @@
 					name="ba.com.zira.sdr.test.suites.ShazamIntegrationServiceTest"/>
 		</classes>
 	</test>
-
 
 </suite>
     
