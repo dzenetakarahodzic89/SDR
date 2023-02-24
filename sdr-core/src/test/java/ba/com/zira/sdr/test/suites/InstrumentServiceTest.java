@@ -1,10 +1,5 @@
 package ba.com.zira.sdr.test.suites;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +7,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -55,7 +55,6 @@ public class InstrumentServiceTest extends BasicTestConfiguration {
     private SongInstrumentDAO songInstrumentDAO;
     private SongDAO songDAO;
     private PersonDAO personDAO;
-    // new
     private MediaService mediaService;
     private LookupService lookupService;
 
@@ -68,7 +67,7 @@ public class InstrumentServiceTest extends BasicTestConfiguration {
 
         this.instrumentRequestValidation = Mockito.mock(InstrumentRequestValidation.class);
         this.instrumentService = new InstrumentServiceImpl(instrumentDAO, songInstrumentDAO, personDAO, songDAO, instrumentMapper,
-                songInstrumentMapper, instrumentRequestValidation);
+                songInstrumentMapper, instrumentRequestValidation, mediaService);
     }
 
     @Test(enabled = true)

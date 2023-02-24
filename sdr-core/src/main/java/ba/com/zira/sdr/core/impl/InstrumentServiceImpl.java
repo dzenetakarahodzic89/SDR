@@ -22,6 +22,8 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.InstrumentService;
+import ba.com.zira.sdr.api.MediaService;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.instrument.InsertSongInstrumentRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
@@ -54,6 +56,7 @@ public class InstrumentServiceImpl implements InstrumentService {
     InstrumentMapper instrumentMapper;
     SongInstrumentMapper songInstrumentMapper;
     InstrumentRequestValidation instrumentRequestValidation;
+    MediaService mediaService;
 
     @Override
     public PagedPayloadResponse<InstrumentResponse> get(final FilterRequest filterRequest) {
