@@ -1,12 +1,12 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -83,6 +83,8 @@ public class InstrumentServiceImpl implements InstrumentService {
         instrumentEntity.setCreatedBy(request.getUserId());
         instrumentEntity.setModifiedBy(request.getUserId());
 
+        instrumentEntity = instrumentDAO.persist(instrumentEntity);
+
         if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
 
             var mediaRequest = new MediaCreateRequest();
@@ -96,7 +98,6 @@ public class InstrumentServiceImpl implements InstrumentService {
 
         }
 
-        instrumentDAO.persist(instrumentEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
