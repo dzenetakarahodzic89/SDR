@@ -121,7 +121,7 @@
 					name="ba.com.zira.sdr.test.suites.SpotifyIntegrationServiceTest"/>
 		</classes>
 	</test>
-	 
+
 	 	<test thread-count="5" name="Instrument">
 		<classes>
 			<class
@@ -151,6 +151,15 @@
 	      		name="ba.com.zira.sdr.test.suites.ConnectedMediaServiceTest"/>
 	    </classes>
     </test>
+
+<test thread-count="5" name="ShazamIntegration">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.ShazamIntegrationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.ShazamIntegrationServiceTest"/>
+		</classes>
+	</test>
 
 </suite>
     
