@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "Properties for update a sample")
-public class SongSimilarityDetailModelUpdateRequest implements Serializable {
+public class SongSimilarityDetailUpdateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Min(1)

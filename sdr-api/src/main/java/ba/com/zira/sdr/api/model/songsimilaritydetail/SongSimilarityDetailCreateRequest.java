@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 @Schema(description = "Properties for creating details of a song")
 
-public class SongSimilarityDetailModelCreateRequest implements Serializable {
+public class SongSimilarityDetailCreateRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,11 +23,7 @@ public class SongSimilarityDetailModelCreateRequest implements Serializable {
     private String userCode;
 
     @Schema(description = "ID of the song sample")
-    private Long songSampleId;
+    private Long songSimilarityId;
 
-    public Long getId() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
 }
