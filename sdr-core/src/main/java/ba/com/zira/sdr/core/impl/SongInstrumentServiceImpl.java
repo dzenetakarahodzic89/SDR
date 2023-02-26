@@ -48,7 +48,6 @@ public class SongInstrumentServiceImpl implements SongInstrumentService {
     }
 
     @Override
-
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<SongInstrument> update(final EntityRequest<SongInstrumentUpdateRequest> request) {
         songInstrumentValidation.validateUpdateSongInstrumentRequest(request);
@@ -65,12 +64,9 @@ public class SongInstrumentServiceImpl implements SongInstrumentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SongInstrument> delete(final EntityRequest<Long> request) {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         songInstrumentValidation.validateExistsSongInstrumentRequest(request);
-
-        SongInstrumentEntity songInstrumentEntity = songInstrumentDAO.findByPK(request.getEntity());
-
         songInstrumentDAO.removeByPK(request.getEntity());
-        return new PayloadResponse<>(request, ResponseCode.OK, songInstrumentMapper.entityToDto(songInstrumentEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, "Record removed successfully!");
     }
 }

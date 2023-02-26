@@ -8,11 +8,17 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.SongService;
+import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
+import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import ba.com.zira.sdr.core.mapper.SongMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.SongRequestValidation;
+import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.GenreDAO;
 import ba.com.zira.sdr.dao.LyricDAO;
 import ba.com.zira.sdr.dao.NoteSheetDAO;
 import ba.com.zira.sdr.dao.SongDAO;
@@ -24,6 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -35,6 +43,9 @@ public class SongServiceImpl implements SongService {
     NoteSheetDAO noteSheetDAO;
     SongMapper songMapper;
     SongRequestValidation songRequestValidation;
+    ArtistDAO artistDAO;
+    GenreDAO genreDAO;
+    LookupService lookupService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -63,12 +74,16 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public PayloadResponse<Song> retrieveById(final EntityRequest<Long> request) {
+    public PayloadResponse<SongSingleResponse> retrieveById(final EntityRequest<Long> request) {
         songRequestValidation.validateExistsSongRequest(request);
 
-        var songEntity = songDAO.findByPK(request.getEntity());
-
-        return new PayloadResponse<>(request, ResponseCode.OK, songMapper.entityToDto(songEntity));
+        SongSingleResponse song = songDAO.getById(request.getEntity());
+        lookupService.lookupCoverImage(Arrays.asList(song), SongSingleResponse::getId, ObjectType.SONG.getValue(),
+        		SongSingleResponse::setImageUrl, SongSingleResponse::getImageUrl);
+        song.setPlaylistCount(songDAO.countAllPlaylistsWhereSongExists(request.getEntity()).intValue());
+        song.setArtists(artistDAO.getById(request.getEntity()));
+        song.setSubgenres(genreDAO.subGenresByMainGenre(song.getGenreId()));
+        return new PayloadResponse<>(request, ResponseCode.OK, song);
     }
 
     @Override

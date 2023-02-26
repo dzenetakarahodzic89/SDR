@@ -26,4 +26,10 @@ public class InstrumentUpdateRequest implements Serializable {
 
     @Schema(description = "Outline text")
     private String outlineText;
+
+    @Schema(description = "Cover image")
+    private String coverImage;
+
+    @Schema(description = "Cover image data")
+    private String coverImageData;
 }

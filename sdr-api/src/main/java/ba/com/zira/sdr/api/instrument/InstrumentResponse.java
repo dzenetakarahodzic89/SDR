@@ -41,4 +41,6 @@ public class InstrumentResponse implements Serializable {
     @Schema(description = "Instrument outline text")
     private String outlineText;
 
+    @Schema(description = "Image url for this instrument")
+    private String imageUrl;
 }

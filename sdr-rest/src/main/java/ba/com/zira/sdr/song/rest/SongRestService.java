@@ -22,6 +22,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.SongService;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
+import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -52,7 +53,7 @@ public class SongRestService {
 
     @Operation(summary = "Find song by id")
     @GetMapping(value = "{id}")
-    public PayloadResponse<Song> retrieveById(@Parameter(required = true, description = "ID of the song") @PathVariable final Long id)
+    public PayloadResponse<SongSingleResponse> retrieveById(@Parameter(required = true, description = "ID of the song") @PathVariable final Long id)
             throws ApiException {
         return songService.retrieveById(new EntityRequest<>(id));
     }

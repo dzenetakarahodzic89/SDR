@@ -92,5 +92,5 @@ public interface LabelService {
      *         corresponding error message and {@link ResponseCode}.
      */
 
-    PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 }
