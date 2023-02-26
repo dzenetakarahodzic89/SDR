@@ -20,10 +20,12 @@ public class SongSingleResponse implements Serializable{
     private static final long serialVersionUID = 1L;
     private Long id;
     private String name;
+    private String imageUrl;
     private String outlineText;
     @Schema(description = "Album name")
     private String album;
     private String information;
+    private int playlistCount;
     private LocalDateTime dateOfRelease;
     @Schema(description = "Label name")
     private String label;
