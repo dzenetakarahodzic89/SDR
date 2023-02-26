@@ -160,6 +160,15 @@
 					name="ba.com.zira.sdr.test.suites.ShazamIntegrationServiceTest"/>
 		</classes>
 	</test>
+	
+	<test thread-count="5" name="DeezerIntegration">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.DeezerIntegrationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.DeezerIntegrationServiceTest"/>
+		</classes>
+	</test>
 
 </suite>
     
