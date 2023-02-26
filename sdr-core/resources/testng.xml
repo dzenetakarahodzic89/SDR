@@ -139,6 +139,18 @@
 	      		name="ba.com.zira.sdr.test.suites.SongInstrumentServiceTest"/>
 	    </classes>
     </test>
+    
+    
+    
+    
+    <test thread-count="5" name="ConnectedMedia">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ConnectedMediaRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ConnectedMediaServiceTest"/>
+	    </classes>
+    </test>
 
 </suite>
     
