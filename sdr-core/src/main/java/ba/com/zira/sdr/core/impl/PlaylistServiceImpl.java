@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -16,10 +21,6 @@ import ba.com.zira.sdr.core.validation.PlaylistRequestValidation;
 import ba.com.zira.sdr.dao.PlaylistDAO;
 import ba.com.zira.sdr.dao.model.PlaylistEntity;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -63,15 +64,11 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Playlist> delete(final EntityRequest<Long> request) {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         playlistRequestValidation.validateExistsPlaylistRequest(request);
 
-        var playlistEntity = playlistDAO.findByPK(request.getEntity());
-        playlistEntity.setStatus(Status.ACTIVE.value());
-        playlistEntity.setModified(LocalDateTime.now());
-        playlistEntity.setModifiedBy(request.getUser().getUserId());
-        playlistDAO.merge(playlistEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, playlistMapper.entityToDto(playlistEntity));
+        playlistDAO.removeByPK(request.getEntity());
+        return new PayloadResponse<>(request, ResponseCode.OK, "Playlist successfully deleted.");
     }
 
 }

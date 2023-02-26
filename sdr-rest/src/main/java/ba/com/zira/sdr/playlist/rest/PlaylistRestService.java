@@ -1,7 +1,8 @@
-package ba.com.zira.sdr.rest;
+package ba.com.zira.sdr.playlist.rest;
 
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,8 +59,8 @@ public class PlaylistRestService {
     }
 
     @Operation(summary = "Delete playlist")
-    @PutMapping(value = "{id}/delete")
-    public PayloadResponse<Playlist> delete(@Parameter(required = true, description = "ID of the playlist") @PathVariable final Long id)
+    @DeleteMapping(value = "{id}")
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the playlist") @PathVariable final Long id)
             throws ApiException {
         return playlistService.delete(new EntityRequest<>(id));
     }

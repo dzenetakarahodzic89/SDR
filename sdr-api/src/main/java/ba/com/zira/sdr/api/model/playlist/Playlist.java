@@ -1,14 +1,15 @@
 package ba.com.zira.sdr.api.model.playlist;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotBlank;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
 @Data
-@Schema(description = "Properties of a Playlist response")
+@Schema(description = "Properties of a playlist response")
 public class Playlist implements Serializable {
     private static final long serialVersionUID = 1L;
 
