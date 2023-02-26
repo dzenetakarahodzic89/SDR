@@ -67,5 +67,10 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
+    public Long countAllPlaylistsWhereSongExists(Long songId) {
+    	var hql = "select count(*) from SongPlaylistEntity ssp where ssp.song.id =:id";
+        TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", songId);
+        return q.getSingleResult();
+    }
 
 }
