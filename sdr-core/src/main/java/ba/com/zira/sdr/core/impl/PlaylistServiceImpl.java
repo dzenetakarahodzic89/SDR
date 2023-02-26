@@ -46,38 +46,11 @@ public class PlaylistServiceImpl implements PlaylistService {
     public PagedPayloadResponse<Playlist> searchByNameSongGenre(final EntityRequest<PlaylistSearchRequest> request) {
 
         PagedData<PlaylistEntity> playlistEntities = new PagedData<>();
-        var data = playlistDAO.findPlaylistsByNameAndGenre(request.getEntity().getName(), request.getEntity().getGenreId());
+        var data = playlistDAO.findPlaylistsByNameAndGenre(request.getEntity().getName(), request.getEntity().getGenreId(),
+                request.getEntity().getSortBy());
         if (request.getEntity().getSongId() != null) {
             data = data.stream().filter(p -> p.getSongPlaylists().stream().map(sp -> sp.getSong().getId()).collect(Collectors.toList())
                     .contains(request.getEntity().getSongId())).collect(Collectors.toList());
-        }
-
-        if (request.getEntity().getSortBy() != null) {
-            switch (request.getEntity().getSortBy()) {
-            case "LastEdit":
-                data.sort((y, x) -> {
-                    if (x.getModified() != null) {
-                        if (y.getModified() != null) {
-                            return x.getModified().compareTo(y.getModified());
-                        } else {
-                            return x.getModified().compareTo(y.getCreated());
-                        }
-                    } else {
-                        if (y.getModified() != null) {
-                            return x.getCreated().compareTo(y.getModified());
-                        } else {
-                            return x.getCreated().compareTo(y.getCreated());
-                        }
-                    }
-                });
-                break;
-            case "Alphabetical":
-                data.sort((x, y) -> x.getName().compareTo(y.getName()));
-                break;
-            case "NoOfSongs":
-                data.sort((y, x) -> ((Integer) x.getSongPlaylists().size()).compareTo(y.getSongPlaylists().size()));
-                break;
-            }
         }
 
         playlistEntities.setRecords(data);
