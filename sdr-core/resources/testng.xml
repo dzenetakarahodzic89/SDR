@@ -10,4 +10,14 @@
 		</classes>
 	</test>
 	
+	
+		<test thread-count="5" name="SongSimilarityDetail">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.SongSimilarityDetailRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.SongSimilarityDetailServiceTest" />
+		</classes>
+	</test>
+
+	
 </suite> 

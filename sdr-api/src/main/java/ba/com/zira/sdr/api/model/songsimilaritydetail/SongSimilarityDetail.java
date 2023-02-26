@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "Properties of an SongSimilarityDetail response")
-public class SongSimilarityDetailModel implements Serializable {
+public class SongSimilarityDetailResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

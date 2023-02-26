@@ -20,9 +20,9 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.SongSimilarityDetailService;
-import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailModel;
-import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailModelCreateRequest;
-import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailModelUpdateRequest;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetail;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,33 +40,33 @@ public class SongSimilarityDetailRestService {
 
     @Operation(summary = "Find song sample details based on filter criteria")
     @GetMapping
-    public PagedPayloadResponse<SongSimilarityDetailModel> find(@RequestParam Map<String, Object> filterCriteria,
-            final QueryConditionPage queryCriteria) throws ApiException {
+    public PagedPayloadResponse<SongSimilarityDetail> find(@RequestParam Map<String, Object> filterCriteria,
+                                                           final QueryConditionPage queryCriteria) throws ApiException {
         return songSimilarityDetailService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
     @Operation(summary = "Create song sample detail")
     @PostMapping
-    public PayloadResponse<SongSimilarityDetailModel> create(
-            @RequestBody final EntityRequest<SongSimilarityDetailModelCreateRequest> songSimilarityDetail) throws ApiException {
+    public PayloadResponse<SongSimilarityDetail> create(
+            @RequestBody final EntityRequest<SongSimilarityDetailCreateRequest> songSimilarityDetail) throws ApiException {
         return songSimilarityDetailService.create(new EntityRequest<>(songSimilarityDetail));
     }
 
     @Operation(summary = "Update song sample detail")
     @PutMapping(value = "{id}")
-    public PayloadResponse<SongSimilarityDetailModel> edit(
+    public PayloadResponse<SongSimilarityDetail> edit(
             @Parameter(required = true, description = "ID of the sample detail") @PathVariable final Long id,
-            @RequestBody final SongSimilarityDetailModelUpdateRequest song) throws ApiException {
+            @RequestBody final SongSimilarityDetailUpdateRequest song) throws ApiException {
         if (song != null) {
             song.setId(id);
         }
 
-        return songSimilarityDetailService.update(new EntityRequest<SongSimilarityDetailModelUpdateRequest>(song));
+        return songSimilarityDetailService.update(new EntityRequest<SongSimilarityDetailUpdateRequest>(song));
     }
 
     @Operation(summary = "Delete song sample detail")
     @DeleteMapping(value = "{id}/delete")
-    public PayloadResponse<SongSimilarityDetailModel> delete(
+    public PayloadResponse<SongSimilarityDetail> delete(
             @Parameter(required = true, description = "ID of the song sample detail") @PathVariable final Long id) throws ApiException {
         return songSimilarityDetailService.delete(new EntityRequest<>(id));
     }

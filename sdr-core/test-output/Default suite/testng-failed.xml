@@ -3,17 +3,17 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="ba.com.zira.sdr.test.suites.SongSimilarityDetailRequestValidationTest">
+      <class name="ba.com.zira.sdr.test.suites.SongSImilarityDetailServiceTest">
         <methods>
           <include name="springTestContextBeforeTestClass"/>
-          <include name="validateUpdateSongSimilarityDetailRequestNotFound"/>
           <include name="springTestContextPrepareTestInstance"/>
           <include name="springTestContextAfterTestClass"/>
           <include name="springTestContextBeforeTestMethod"/>
+          <include name="testDeleteSongSimilarityDetail"/>
           <include name="beforeMethod"/>
           <include name="springTestContextAfterTestMethod"/>
         </methods>
-      </class> <!-- ba.com.zira.sdr.test.suites.SongSimilarityDetailRequestValidationTest -->
+      </class> <!-- ba.com.zira.sdr.test.suites.SongSImilarityDetailServiceTest -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

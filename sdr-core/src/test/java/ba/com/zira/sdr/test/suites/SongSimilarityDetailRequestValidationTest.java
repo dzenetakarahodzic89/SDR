@@ -2,6 +2,7 @@ package ba.com.zira.sdr.test.suites;
 
 import static org.testng.Assert.assertEquals;
 
+import ba.com.zira.sdr.dao.SongSimilarityDAO;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -11,7 +12,7 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.User;
 import ba.com.zira.commons.model.response.ResponseCode;
-import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailModelUpdateRequest;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdateRequest;
 import ba.com.zira.sdr.core.validation.SongSimilarityDetailRequestValidation;
 import ba.com.zira.sdr.dao.SongSimilarityDetailDAO;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
@@ -23,19 +24,19 @@ public class SongSimilarityDetailRequestValidationTest extends BasicTestConfigur
     private SongSimilarityDetailDAO songSimilarityDetailDAO;
     private SongSimilarityDetailRequestValidation validation;
 
+    private SongSimilarityDAO songSimilarityDAO;
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.songSimilarityDetailDAO = Mockito.mock(SongSimilarityDetailDAO.class);
-        this.validation = new SongSimilarityDetailRequestValidation(songSimilarityDetailDAO);
+        this.validation = new SongSimilarityDetailRequestValidation(songSimilarityDetailDAO, songSimilarityDAO);
     }
 
-    // UPDATE
     @Test
     public void validateUpdateSongSimilarityDetailRequestNotFound() {
         Mockito.when(songSimilarityDetailDAO.existsByPK(1L)).thenReturn(false);
-        EntityRequest<SongSimilarityDetailModelUpdateRequest> request = new EntityRequest<>();
+        EntityRequest<SongSimilarityDetailUpdateRequest> request = new EntityRequest<>();
         request.setUser(new User("test"));
-        var respose = new SongSimilarityDetailModelUpdateRequest();
+        var respose = new SongSimilarityDetailUpdateRequest();
         respose.setId(1L);
         request.setEntity(respose);
         ValidationResponse validationResponse = validation.validateUpdateSongSimilartyDetailRequest(request);
@@ -45,7 +46,7 @@ public class SongSimilarityDetailRequestValidationTest extends BasicTestConfigur
         Mockito.verify(songSimilarityDetailDAO).existsByPK(1L);
     }
 
-    // EXISTS
+
     @Test
     public void validateExistsSongSimilarityDetailRequestNotFound() {
         Mockito.when(songSimilarityDetailDAO.existsByPK(1L)).thenReturn(false);
