@@ -9,20 +9,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Properties for update a sample")
+@Schema(description = "Properties for update a Deezer integration")
 public class DeezerIntegrationUpdateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Min(1)
-    @Schema(description = "Unique identifier of the deezer integration")
-    private long id;
+    @Schema(description = "Unique identifier of the Deezer integration")
+    private Long id;
     @NotBlank
-    @Schema(description = "Name of the deezer integration")
+    @Schema(description = "Name of the Deezer integration")
     private String name;
     @NotBlank
-    @Schema(description = "Request of the deezer integration")
+    @Schema(description = "Request of the Deezer integration")
     private String request;
     @NotBlank
-    @Schema(description = "Response of the deezer integration")
+    @Schema(description = "Response of the Deezer integration")
     private String response;
 }
