@@ -36,4 +36,8 @@ public class AlbumUpdateRequest implements Serializable {
     
     @Schema(description = "Outline text")
     private Long outlineText;
+    
+    
+    private String coverImageData;
+    private String coverImage;
 }
