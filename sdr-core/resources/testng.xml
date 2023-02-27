@@ -169,6 +169,14 @@
 					name="ba.com.zira.sdr.test.suites.DeezerIntegrationServiceTest"/>
 		</classes>
 	</test>
+        <test thread-count="5" name="MoritsIntegration">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.MoritsIntegrationValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.MoritsIntegrationServiceTest"/>
+	    </classes>
+    </test>
 
 </suite>
     
