@@ -7,27 +7,27 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Properties of an Sample response")
+@Schema(description = "Properties of an Deezer response")
 public class DeezerIntegration implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "Unique identifier of the deezer integration")
+    @Schema(description = "Unique identifier of the Deezer integration")
     private Long id;
-    @Schema(description = "Name of the deezer integration")
+    @Schema(description = "Name of the Deezer integration")
     private String name;
-    @Schema(description = "Creation date of the deezer integration")
+    @Schema(description = "Creation date of the Deezer integration")
     private LocalDateTime created;
-    @Schema(description = "User that created the deezer integration")
+    @Schema(description = "User that created the Deezer integration")
     private String createdBy;
-    @Schema(description = "Last modification date of the deezer integration")
+    @Schema(description = "Last modification date of the Deezer integration")
     private LocalDateTime modified;
-    @Schema(description = "User that modified the deezer integration")
+    @Schema(description = "User that modified the Deezer integration")
     private String modifiedBy;
     @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
     private String status;
-    @Schema(description ="Request of the deezer integration")
+    @Schema(description ="Request of the Deezer integration")
     private String request;
-    @Schema(description="Response of the deezer integration")
+    @Schema(description="Response of the Deezer integration")
     private String response;
-    
+
 }
