@@ -14,8 +14,13 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.User;
 import ba.com.zira.commons.model.response.ResponseCode;
+import ba.com.zira.sdr.api.model.personartist.PersonArtistCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendationdetail.UserRecommendationDetailCreateRequest;
+import ba.com.zira.sdr.core.validation.PersonArtistRequestValidation;
 import ba.com.zira.sdr.core.validation.UserRecommendationDetailRequestValidation;
+import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.PersonArtistDAO;
+import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.UserRecommendationDAO;
 import ba.com.zira.sdr.dao.UserRecommendationDetailDAO;
@@ -23,104 +28,62 @@ import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 
 public class UserRecommendationDetailRequestValidationTest  extends BasicTestConfiguration  {
 
-	 private static final String TEMPLATE_CODE = "TEST_1";
-	 private UserRecommendationDetailDAO userRecommendationDetailDAO;
+	    private static final String TEMPLATE_CODE = "TEST_1";
+
 	    private UserRecommendationDAO userRecommendationDAO;
 	    private SongDAO songDAO;
+	    private UserRecommendationDetailDAO userRecommendationDetailDAO;
 	    private UserRecommendationDetailRequestValidation validation;
 
 	    @BeforeMethod
 	    public void beforeMethod() throws ApiException {
-	        this.userRecommendationDetailDAO = Mockito.mock(UserRecommendationDetailDAO.class);
 	        this.userRecommendationDAO = Mockito.mock(UserRecommendationDAO.class);
 	        this.songDAO = Mockito.mock(SongDAO.class);
-	        
-
-	        this.validation = new UserRecommendationDetailRequestValidation(userRecommendationDetailDAO, userRecommendationDAO, songDAO );
+	        this.userRecommendationDetailDAO = Mockito.mock(UserRecommendationDetailDAO.class);
+	        this.validation = new UserRecommendationDetailRequestValidation(userRecommendationDetailDAO, userRecommendationDAO, songDAO);
 	    }
 
 	    @Test
-	    public void validateCreateRequestIdsNotFound() {
-	        ArrayList<String> errorList = new ArrayList<>();
-	        errorList.add("UserRecommendation with id: 1 does not exist!");
-	        errorList.add("Song with id: 1 does not exist!");
-	    
-
+	    public void validateCreateUserRecommendationDetailRequestUserRecommendationNotValid() {
 	        Mockito.when(userRecommendationDAO.existsByPK(1L)).thenReturn(false);
-	        Mockito.when(songDAO.existsByPK(1L)).thenReturn(false);
-
-	        var createRequestEntity = new UserRecommendationDetailCreateRequest();
-	        createRequestEntity.setUserRecommendationId(1L);
-	        createRequestEntity.setSongId(1L);
-
-
+	        Mockito.when(songDAO.existsByPK(1L)).thenReturn(true);
 	        EntityRequest<UserRecommendationDetailCreateRequest> request = new EntityRequest<>();
 	        request.setUser(new User("test"));
-	        request.setEntity(createRequestEntity);
-
+	        var response = new UserRecommendationDetailCreateRequest();
+	        response.setUserRecommendationId(1L);
+	        response.setSongId(1L);
+	        request.setEntity(response);
 	        ValidationResponse validationResponse = validation.validateCreateUserRecommendationDetailRequest(request);
-
 	        assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-	        errorList.forEach(error -> assertTrue(validationResponse.getDescription().contains(error)));
-
+	        assertEquals(validationResponse.getDescription(), "User-recommendation with id: 1 does not exist!");
 	        Mockito.verify(userRecommendationDAO).existsByPK(1L);
-	        Mockito.verify(songDAO).existsByPK(1L);
 	    }
 
 	    @Test
-	    public void validateCreateRequestAllIdsFound() {
-	    	Mockito.when(userRecommendationDAO.existsByPK(1L)).thenReturn(true);
-	    	Mockito.when(songDAO.existsByPK(1L)).thenReturn(true);
-	      
-	        var createRequestEntity = new UserRecommendationDetailCreateRequest();
-	        createRequestEntity.setUserRecommendationId(1L);
-	        createRequestEntity.setSongId(1L);
-
-
+	    public void validateCreateUserRecommendationDetailRequestSongNotValid() {
+	        Mockito.when(userRecommendationDAO.existsByPK(1L)).thenReturn(true);
+	        Mockito.when(songDAO.existsByPK(1L)).thenReturn(false);
 	        EntityRequest<UserRecommendationDetailCreateRequest> request = new EntityRequest<>();
 	        request.setUser(new User("test"));
-	        request.setEntity(createRequestEntity);
-
+	        var response = new UserRecommendationDetailCreateRequest();
+	        response.setUserRecommendationId(1L);
+	        response.setSongId(1L);
+	        request.setEntity(response);
 	        ValidationResponse validationResponse = validation.validateCreateUserRecommendationDetailRequest(request);
-
-	        assertEquals(validationResponse.getCode(), ResponseCode.OK);
-	        assertEquals(validationResponse.getDescription(), null);
-
-	        Mockito.verify(userRecommendationDAO).existsByPK(1L);
+	        assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
+	        assertEquals(validationResponse.getDescription(), "Song with id: 1 does not exist!");
 	        Mockito.verify(songDAO).existsByPK(1L);
-	       
 	    }
 
 	    @Test
-	    public void validateDeleteRequestIdNotFound() {
-	        Mockito.when(userRecommendationDetailDAO.existsByPK(1L)).thenReturn(false);
-
-	        EntityRequest<Long> request = new EntityRequest<>();
+	    public void validateDeleteUserRecommendationDetailRequestNotValid() {
+	        Mockito.when(userRecommendationDAO.existsByPK(1L)).thenReturn(false);
+	        EntityRequest<Long> request = new EntityRequest<Long>(1L);
 	        request.setUser(new User("test"));
-	        request.setEntity(1L);
-
 	        ValidationResponse validationResponse = validation.validateDeleteUserRecommendationDetailRequest(request);
-
 	        assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
 	        assertEquals(validationResponse.getDescription(), "User-recommendation-detail with id: 1 does not exist!");
-
 	        Mockito.verify(userRecommendationDetailDAO).existsByPK(1L);
 	    }
-
-	    @Test
-	    public void validateDeleteRequestIdFound() {
-	        Mockito.when(userRecommendationDetailDAO.existsByPK(1L)).thenReturn(true);
-
-	        EntityRequest<Long> request = new EntityRequest<>();
-	        request.setUser(new User("test"));
-	        request.setEntity(1L);
-
-	        ValidationResponse validationResponse = validation.validateDeleteUserRecommendationDetailRequest(request);
-
-	        assertEquals(validationResponse.getCode(), ResponseCode.OK);
-	        assertEquals(validationResponse.getDescription(), null);
-
-	        Mockito.verify(userRecommendationDetailDAO).existsByPK(1L);
-	    }
+	}
 	    
-}

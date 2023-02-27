@@ -69,11 +69,11 @@ public class UserRecommendationDetailServiceImpl implements UserRecommendationDe
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public PayloadResponse<UserRecommendationDetailResponse> delete(final EntityRequest<Long> entityRequest) {
+	public PayloadResponse<String> delete(final EntityRequest<Long> entityRequest) {
 		userRecommendationDetailRequestValidation.validateDeleteUserRecommendationDetailRequest(entityRequest);
 		userRecommendationDetailDAO.removeByPK(entityRequest.getEntity());
 
-		return new PayloadResponse<UserRecommendationDetailResponse>();
+		return new PayloadResponse<>(entityRequest, ResponseCode.OK, "Deleted record successfully!");
 	}
 
 }

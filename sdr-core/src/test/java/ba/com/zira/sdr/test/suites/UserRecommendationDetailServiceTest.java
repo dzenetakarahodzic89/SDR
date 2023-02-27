@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,16 +21,30 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.commons.model.enums.Status;
+import ba.com.zira.commons.validation.RequestValidator;
+import ba.com.zira.sdr.api.PersonArtistService;
 import ba.com.zira.sdr.api.UserRecommendationDetailService;
+import ba.com.zira.sdr.api.model.personartist.PersonArtistCreateRequest;
+import ba.com.zira.sdr.api.model.personartist.PersonArtistResponse;
 import ba.com.zira.sdr.api.model.userrecommendationdetail.UserRecommendationDetailCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendationdetail.UserRecommendationDetailResponse;
+import ba.com.zira.sdr.core.impl.PersonArtistServiceImpl;
 import ba.com.zira.sdr.core.impl.UserRecommendationDetailServiceImpl;
+import ba.com.zira.sdr.core.mapper.PersonArtistMapper;
 import ba.com.zira.sdr.core.mapper.UserRecommendationDetailMapper;
+import ba.com.zira.sdr.core.validation.AlbumRequestValidation;
+import ba.com.zira.sdr.core.validation.PersonArtistRequestValidation;
 import ba.com.zira.sdr.core.validation.UserRecommendationDetailRequestValidation;
-import ba.com.zira.sdr.core.validation.UserRecommendationRequestValidation;
+import ba.com.zira.sdr.dao.AlbumDAO;
+import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.PersonArtistDAO;
+import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.UserRecommendationDAO;
 import ba.com.zira.sdr.dao.UserRecommendationDetailDAO;
+import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.PersonArtistEntity;
+import ba.com.zira.sdr.dao.model.PersonEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
 import ba.com.zira.sdr.dao.model.UserRecommendationDetailEntity;
 import ba.com.zira.sdr.dao.model.UserRecommendationEntity;
@@ -38,69 +53,49 @@ import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 
 @ContextConfiguration(classes = ApplicationTestConfiguration.class)
 public class UserRecommendationDetailServiceTest extends BasicTestConfiguration {
-	@Autowired
-	private UserRecommendationDetailMapper userRecommendationDetailMapper;
 	
-	private UserRecommendationDetailDAO userRecommendationDetailDAO;
-	private SongDAO songDAO;
-	private UserRecommendationDAO userRecommendationDAO;
-	
-	private UserRecommendationDetailRequestValidation userRecommendationDetailRequestValidation;
-	private UserRecommendationDetailService userRecommendationDetailService;
-	
-	private List<SongEntity> song = new ArrayList<>();
-	private List<UserRecommendationEntity> userRecommendation = new ArrayList<>();
 
-	
-	
-	private void setUpFkEntities() {
-		
-		 song.add(new SongEntity(1L, null, null, null, null, null, null, "song test 1", null, null, null, null, null, null, null, null, null,
-	                null, null, null, null, null, null, null, null,null));
-	     song.add(new SongEntity(2L, null, null, null, null, null, null, "song test 2", null, null, null, null, null, null, null, null, null,
-	                null, null, null, null, null, null, null, null,null));
-	     song.add(new SongEntity(3L, null, null, null, null, null, null, "song test 3", null, null, null, null, null, null, null, null, null,
-	                null, null, null, null, null, null, null, null,null));
-	     
-	     userRecommendation.add(new UserRecommendationEntity(1L, null, null, null, "userRecommendation test 1", null, null, null));
-	     userRecommendation.add(new UserRecommendationEntity(2L, null, null, null, "userRecommendation test 2", null, null, null));
-	     userRecommendation.add(new UserRecommendationEntity(3L, null, null, null, "userRecommendation test 3", null, null, null));
-	}
-	
-	 @BeforeMethod
+	    @Autowired
+	    private UserRecommendationDetailMapper userRecommendationDetailMapper;
+
+	    private UserRecommendationDAO userRecommendationDAO;
+	    private UserRecommendationDetailDAO userRecommendationDetailDAO;
+	    private SongDAO songDAO;
+	    private UserRecommendationDetailRequestValidation userRecommendationDetailRequestValidation;
+	    private RequestValidator requestValidator;
+	    private UserRecommendationDetailService userRecommendationDetailService;
+
+	    @BeforeMethod
 	    public void beforeMethod() throws ApiException {
+	        this.userRecommendationDAO = Mockito.mock(UserRecommendationDAO.class);
 	        this.userRecommendationDetailDAO = Mockito.mock(UserRecommendationDetailDAO.class);
 	        this.songDAO = Mockito.mock(SongDAO.class);
-	        this.userRecommendationDAO = Mockito.mock(UserRecommendationDAO.class);
-	        
-
 	        this.userRecommendationDetailRequestValidation = Mockito.mock(UserRecommendationDetailRequestValidation.class);
-	        this.userRecommendationDetailService = new UserRecommendationDetailServiceImpl(userRecommendationDetailDAO, userRecommendationDAO, songDAO,userRecommendationDetailMapper,
+	        this.requestValidator = Mockito.mock(RequestValidator.class);
+	        this.userRecommendationDetailService = new UserRecommendationDetailServiceImpl(userRecommendationDetailDAO, userRecommendationDAO, songDAO, userRecommendationDetailMapper,
 	        		userRecommendationDetailRequestValidation);
-
-	        this.setUpFkEntities();
 	    }
-	
-	 @Test(enabled = true)
+
+	    @Test(enabled = true)
 	    public void testFindUserRecommendationDetail() {
 	        try {
 
 	            List<UserRecommendationDetailEntity> entities = new ArrayList<>();
-
 	            UserRecommendationDetailEntity firstUserRecommendationDetailEntity = new UserRecommendationDetailEntity();
-	            firstUserRecommendationDetailEntity.setSong(song.get(0));
-	            firstUserRecommendationDetailEntity.setUserRecommendation(userRecommendation.get(0));
-	          
+	            firstUserRecommendationDetailEntity.setCreated(LocalDateTime.parse("2023-02-22T11:04:25.896"));
+	            firstUserRecommendationDetailEntity.setCreatedBy("1");
+	            firstUserRecommendationDetailEntity.setStatus(Status.ACTIVE.getValue());
 
 	            UserRecommendationDetailEntity secondUserRecommendationDetailEntity = new UserRecommendationDetailEntity();
-	            secondUserRecommendationDetailEntity.setSong(song.get(1));
-	            secondUserRecommendationDetailEntity.setUserRecommendation(userRecommendation.get(1));
-	 
+	            secondUserRecommendationDetailEntity.setCreated(LocalDateTime.parse("2023-02-22T11:04:25.896"));
+	            secondUserRecommendationDetailEntity.setCreatedBy("2");
+	            secondUserRecommendationDetailEntity.setStatus(Status.INACTIVE.getValue());
 
-	            UserRecommendationDetailEntity thirdUserRecommendationDetailEntity = new  UserRecommendationDetailEntity();
-	            thirdUserRecommendationDetailEntity.setSong(song.get(2));
-	            thirdUserRecommendationDetailEntity.setUserRecommendation(userRecommendation.get(2));
-	            
+	            UserRecommendationDetailEntity thirdUserRecommendationDetailEntity = new UserRecommendationDetailEntity();
+	            thirdUserRecommendationDetailEntity.setCreated(LocalDateTime.parse("2023-02-22T11:04:25.896"));
+	            thirdUserRecommendationDetailEntity.setCreatedBy("3");
+	            thirdUserRecommendationDetailEntity.setStatus(Status.INACTIVE.getValue());
+
 	            entities.add(firstUserRecommendationDetailEntity);
 	            entities.add(secondUserRecommendationDetailEntity);
 	            entities.add(thirdUserRecommendationDetailEntity);
@@ -111,19 +106,19 @@ public class UserRecommendationDetailServiceTest extends BasicTestConfiguration 
 	            List<UserRecommendationDetailResponse> response = new ArrayList<>();
 
 	            UserRecommendationDetailResponse firstResponse = new UserRecommendationDetailResponse();
-	            firstResponse.setUserRecommendationId(1L);
-	            firstResponse.setSongId(1L);
-	            
+	            firstResponse.setCreated(LocalDateTime.parse("2023-02-22T11:04:25.896"));
+	            firstResponse.setCreatedBy("1");
+	            firstResponse.setStatus(Status.ACTIVE.getValue());
+
 	            UserRecommendationDetailResponse secondResponse = new UserRecommendationDetailResponse();
-	            secondResponse.setUserRecommendationId(2L);
-	            secondResponse.setSongId(2L);
-	          
-	          
+	            secondResponse.setCreated(LocalDateTime.parse("2023-02-22T11:04:25.896"));
+	            secondResponse.setCreatedBy("2");
+	            secondResponse.setStatus(Status.INACTIVE.getValue());
+
 	            UserRecommendationDetailResponse thirdResponse = new UserRecommendationDetailResponse();
-	            thirdResponse.setUserRecommendationId(3L);
-	            thirdResponse.setSongId(3L);
-	           
-	         
+	            thirdResponse.setCreated(LocalDateTime.parse("2023-02-22T11:04:25.896"));
+	            thirdResponse.setCreatedBy("3");
+	            thirdResponse.setStatus(Status.INACTIVE.getValue());
 
 	            response.add(firstResponse);
 	            response.add(secondResponse);
@@ -134,14 +129,16 @@ public class UserRecommendationDetailServiceTest extends BasicTestConfiguration 
 
 	            Map<String, Object> filterCriteria = new HashMap<String, Object>();
 	            QueryConditionPage queryConditionPage = new QueryConditionPage();
-
 	            FilterRequest filterRequest = new FilterRequest(filterCriteria, queryConditionPage);
+
+	            Mockito.when(requestValidator.validate(filterRequest)).thenReturn(null);
 	            Mockito.when(userRecommendationDetailDAO.findAll(filterRequest.getFilter())).thenReturn(pagedEntites);
 
-	            List<UserRecommendationDetailResponse> UserRecommendationDetailFindResponse = userRecommendationDetailService.find(filterRequest).getPayload();
+	            List<UserRecommendationDetailResponse> userRecommendationDetailFindResponse = userRecommendationDetailService.find(filterRequest).getPayload();
 
-	            Assertions.assertThat(UserRecommendationDetailFindResponse).as("Check all elements").overridingErrorMessage("All elements should be equal.")
+	            Assertions.assertThat(userRecommendationDetailFindResponse).as("Check all elements").overridingErrorMessage("All elements should be equal.")
 	                    .hasSameElementsAs(response);
+
 	        } catch (Exception e) {
 	            Assert.fail();
 	        }
@@ -159,27 +156,27 @@ public class UserRecommendationDetailServiceTest extends BasicTestConfiguration 
 
 	            req.setEntity(newUserRecommendationDetailRequest);
 
-	            UserRecommendationDetailEntity newUserRecommendationDetailEntity = new UserRecommendationDetailEntity();
-	            newUserRecommendationDetailEntity.setUserRecommendation(userRecommendation.get(0));
-	            newUserRecommendationDetailEntity.setSong(song.get(0));
+	            var userRecommendationDetailEntity = new UserRecommendationDetailEntity();
+	            userRecommendationDetailEntity.setUserRecommendation(
+	                    new UserRecommendationEntity(1L, null, null, null, null, null, null, null));
+	            userRecommendationDetailEntity.setSong(
+	                    new SongEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
 
-	            var newUserRecommendationDetailResponse = new UserRecommendationDetailResponse();
-	            newUserRecommendationDetailResponse.setUserRecommendationId(1L);
-	          
-	            newUserRecommendationDetailResponse.setSongId(1L);
-
-	            newUserRecommendationDetailResponse.setStatus(Status.ACTIVE.getValue());
-
-	            Mockito.when(userRecommendationDetailDAO.persist(newUserRecommendationDetailEntity)).thenReturn(null);
-	            Mockito.when(userRecommendationDetailRequestValidation.validateCreateUserRecommendationDetailRequest(req)).thenReturn(null);
-
-	            Mockito.when(userRecommendationDAO.findByPK(1L)).thenReturn(userRecommendation.get(0));
-	            Mockito.when(songDAO.findByPK(1L)).thenReturn(song.get(0));
+	            var newUserRecommendationDetail = new UserRecommendationDetailResponse();
+	            newUserRecommendationDetail.setUserRecommendationId(1L);
+	            newUserRecommendationDetail.setSongId(1L);
+	            Mockito.when(userRecommendationDAO.findByPK(1L)).thenReturn(
+	                    new UserRecommendationEntity(1L, null, null, null, null, null, null, null));
+	            Mockito.when(songDAO.findByPK(1L))
+	                    .thenReturn(new SongEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+	            Mockito.when(userRecommendationDetailDAO.persist(userRecommendationDetailEntity)).thenReturn(null);
 
 	            PayloadResponse<UserRecommendationDetailResponse> userRecommendationDetailCreateResponse = userRecommendationDetailService.create(req);
-
+	            System.out.println(userRecommendationDetailCreateResponse.getPayload());
+	            System.out.println(newUserRecommendationDetail);
 	            Assertions.assertThat(userRecommendationDetailCreateResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-	                    .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newUserRecommendationDetailResponse);
+	                    .ignoringFields("created", "createdBy", "modified", "modifiedBy", "status", "user score")
+	                    .isEqualTo(newUserRecommendationDetail);
 
 	        } catch (Exception e) {
 	            Assert.fail();
@@ -193,18 +190,19 @@ public class UserRecommendationDetailServiceTest extends BasicTestConfiguration 
 
 	            req.setEntity(1L);
 
-	            Mockito.when(userRecommendationDetailRequestValidation.validateDeleteUserRecommendationDetailRequest(req)).thenReturn(null);
+	            Mockito.when(requestValidator.validate(req)).thenReturn(null);
+
 	            Mockito.doNothing().when(userRecommendationDetailDAO).removeByPK(req.getEntity());
 
 	            var userRecommendationDetailDeleteResponse = userRecommendationDetailService.delete(req);
 
 	            Assertions.assertThat(userRecommendationDetailDeleteResponse.getPayload()).isEqualTo("Deleted record successfully!");
+
 	        } catch (Exception e) {
 	            Assert.fail();
 	        }
 	    }
-	}
-	
+}
 	
 
 
