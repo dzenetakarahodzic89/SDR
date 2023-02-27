@@ -19,7 +19,11 @@ public class SongSimilarityDetailCreateRequest implements Serializable {
     private String grade;
 
     @NotBlank
-    @Schema(description = "Grade of the song")
+    @Schema(description = "User code")
+    private String userCode;
+
+    @Schema(description = "ID of the song sample")
     private Long songSimilarityId;
+
 
 }
