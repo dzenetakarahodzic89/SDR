@@ -158,7 +158,8 @@ public class LookupService {
             Map<Long, List<CoverImageHelper>> lookup = mediaStoreDAO.getUrlsForList(ids, ObjectType.SONG.getValue(), "AUDIO");
             values.parallelStream().forEach(r -> setter.accept(r, getUrl(getter.apply(r), lookup, null)));
         }
-        
+    }
+
     public <E> void lookupLabelNames(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {
         List<Long> ids = values.parallelStream().map(getter).distinct().collect(Collectors.toList());
 
