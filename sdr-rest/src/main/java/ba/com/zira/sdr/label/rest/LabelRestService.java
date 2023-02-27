@@ -20,6 +20,7 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.LabelService;
+import ba.com.zira.sdr.api.model.label.LabelArtistResponse;
 import ba.com.zira.sdr.api.model.label.LabelCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelResponse;
 import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
@@ -44,11 +45,10 @@ public class LabelRestService {
         return labelService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
-    @Operation(summary = "Find label base on id")
+    @Operation(summary = "Find label by id")
     @GetMapping(value = "{id}")
-    public PayloadResponse<LabelResponse> findById(@Parameter(required = true, description = "ID of the label") @PathVariable final Long id)
-            throws ApiException {
-
+    public PayloadResponse<LabelArtistResponse> findById(
+            @Parameter(required = true, description = "ID of the label") @PathVariable final Long id) throws ApiException {
         return labelService.findById(new EntityRequest<>(id));
     }
 

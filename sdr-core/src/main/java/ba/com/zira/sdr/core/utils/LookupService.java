@@ -1,9 +1,5 @@
 package ba.com.zira.sdr.core.utils;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
-
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,9 +10,14 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
+
 import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.media.CoverImageHelper;
 import ba.com.zira.sdr.dao.CountryDAO;
+import ba.com.zira.sdr.dao.LabelDAO;
 import ba.com.zira.sdr.dao.MediaStoreDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,9 @@ public class LookupService {
 
     @NonNull
     PersonDAO personDAO;
+
+    @NonNull
+    LabelDAO labelDAO;
 
     @NonNull
     CountryDAO countryDAO;
@@ -117,6 +121,10 @@ public class LookupService {
             lookupPersonNames(values, getter, setter);
         }
 
+        if (ObjectType.LABEL.getValue().equalsIgnoreCase(objectType)) {
+            lookupLabelNames(values, getter, setter);
+        }
+
     }
 
     public <E> void lookupPersonNames(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {
@@ -134,6 +142,16 @@ public class LookupService {
 
         if (!(ids == null || ids.isEmpty())) {
             Map<Long, String> lookup = new ConcurrentHashMap<>(countryDAO.getFlagAbbs(ids));
+            values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
+        }
+
+    }
+
+    public <E> void lookupLabelNames(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {
+        List<Long> ids = values.parallelStream().map(getter).distinct().collect(Collectors.toList());
+
+        if (!(ids == null || ids.isEmpty())) {
+            Map<Long, String> lookup = new ConcurrentHashMap<>(labelDAO.getLabelNames(ids));
             values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
         }
 

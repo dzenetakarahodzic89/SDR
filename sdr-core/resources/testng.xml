@@ -121,6 +121,15 @@
 					name="ba.com.zira.sdr.test.suites.SpotifyIntegrationServiceTest"/>
 		</classes>
 	</test>
+	
+	<test thread-count="5" name="UserRecommendation">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.UserRecommendationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.UserRecommendationServiceTest"/>
+		</classes>
+	</test>
 
 
 </suite>
