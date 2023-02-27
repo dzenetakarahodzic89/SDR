@@ -30,10 +30,8 @@ import ba.com.zira.sdr.api.instrument.InstrumentResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
-import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.InstrumentMapper;
 import ba.com.zira.sdr.core.mapper.SongInstrumentMapper;
-import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.InstrumentRequestValidation;
 import ba.com.zira.sdr.dao.InstrumentDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
@@ -50,14 +48,12 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-
 public class InstrumentServiceImpl implements InstrumentService {
     InstrumentDAO instrumentDAO;
     SongInstrumentDAO songInstrumentDAO;
     PersonDAO personDAO;
     SongDAO songDAO;
     InstrumentMapper instrumentMapper;
-    LookupService lookupService;
     SongInstrumentMapper songInstrumentMapper;
     InstrumentRequestValidation instrumentRequestValidation;
     MediaService mediaService;
@@ -65,22 +61,31 @@ public class InstrumentServiceImpl implements InstrumentService {
     @Override
     public PagedPayloadResponse<InstrumentResponse> get(final FilterRequest filterRequest) {
         PagedData<InstrumentEntity> instrumentEntities = instrumentDAO.findAll(filterRequest.getFilter());
-        PagedData<InstrumentResponse> response = new PagedData<>();
-        response.setRecords(instrumentMapper.entitiesToDtos(instrumentEntities.getRecords()));
-        PagedDataMetadataMapper.remapMetadata(instrumentEntities, response);
-        lookupService.lookupCoverImage(response.getRecords(), InstrumentResponse::getId, ObjectType.INSTRUMENT.getValue(),
-                InstrumentResponse::setImageUrl, InstrumentResponse::getImageUrl);
         return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, instrumentEntities, instrumentMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<InstrumentResponse> create(final EntityRequest<InstrumentCreateRequest> request) throws ApiException {
+    public PayloadResponse<InstrumentResponse> create(final EntityRequest<InstrumentCreateRequest> request) {
         var instrumentEntity = instrumentMapper.dtoToEntity(request.getEntity());
         instrumentEntity.setStatus(Status.INACTIVE.value());
         instrumentEntity.setCreated(LocalDateTime.now());
         instrumentEntity.setModified(LocalDateTime.now());
         instrumentEntity.setCreatedBy(request.getUserId());
+        instrumentEntity.setModifiedBy(request.getUserId());
+
+        instrumentDAO.persist(instrumentEntity);
+        return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> request) throws ApiException {
+        instrumentRequestValidation.validateUpdateInstrumentRequest(request);
+        InstrumentEntity instrumentEntity = instrumentDAO.findByPK(request.getEntity().getId());
+        instrumentMapper.updateEntity(request.getEntity(), instrumentEntity);
+
+        instrumentEntity.setModified(LocalDateTime.now());
         instrumentEntity.setModifiedBy(request.getUserId());
 
         if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
@@ -96,50 +101,37 @@ public class InstrumentServiceImpl implements InstrumentService {
 
         }
 
-        instrumentDAO.persist(instrumentEntity);
+        instrumentDAO.merge(instrumentEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> entityRequest) {
-        instrumentRequestValidation.validateUpdateInstrumentRequest(entityRequest);
-        InstrumentEntity instrumentEntity = instrumentDAO.findByPK(entityRequest.getEntity().getId());
-        instrumentMapper.updateEntity(entityRequest.getEntity(), instrumentEntity);
-
-        instrumentEntity.setModified(LocalDateTime.now());
-        instrumentEntity.setModifiedBy(entityRequest.getUserId());
-
-        instrumentDAO.merge(instrumentEntity);
-        return new PayloadResponse<>(entityRequest, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<InstrumentResponse> delete(final EntityRequest<Long> entityRequest) {
+    public PayloadResponse<String> delete(final EntityRequest<Long> entityRequest) {
         instrumentRequestValidation.validateExistsInstrumentRequest(entityRequest);
         InstrumentEntity deletedEntity = instrumentDAO.findByPK(entityRequest.getEntity());
 
         instrumentDAO.removeByPK(entityRequest.getEntity());
-        return new PayloadResponse<>(entityRequest, ResponseCode.OK, instrumentMapper.entityToDto(deletedEntity));
+        return new PayloadResponse<>(entityRequest, ResponseCode.OK, "Instrument deleted");
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ListPayloadResponse<ResponseSongInstrument> insertInstrumentsToSong(ListRequest<InsertSongInstrumentRequest> entityRequest)
             throws ApiException {
-        var f = new Filter();
+        Filter f = new Filter();
 
         f.addFilterExpression(new FilterExpression(SongEntity_.id.getName(), FilterOperation.IN,
                 entityRequest.getList().stream().map(InsertSongInstrumentRequest::getSongId).collect(Collectors.toList())));
         List<SongEntity> songsFromRequest = songDAO.findAll(f).getRecords();
         f.setFilterExpressions(null);
+        //
 
         f.addFilterExpression(new FilterExpression(InstrumentEntity_.id.getName(), FilterOperation.IN,
                 entityRequest.getList().stream().map(InsertSongInstrumentRequest::getInstrumentId).collect(Collectors.toList())));
         List<InstrumentEntity> instrumentFromRequest = instrumentDAO.findAll(f).getRecords();
         f.setFilterExpressions(null);
-
+        //
         f.addFilterExpression(new FilterExpression(PersonEntity_.id.getName(), FilterOperation.IN,
                 entityRequest.getList().stream().map(InsertSongInstrumentRequest::getPersonId).collect(Collectors.toList())));
         List<PersonEntity> personFromRequest = personDAO.findAll(f).getRecords();

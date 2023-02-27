@@ -29,7 +29,9 @@ import ba.com.zira.sdr.core.impl.ArtistServiceImpl;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.EraDAO;
 import ba.com.zira.sdr.dao.PersonArtistDAO;
+import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
@@ -44,6 +46,8 @@ public class ArtistServiceTest extends BasicTestConfiguration {
     private ArtistMapper artistMapper;
 
     private ArtistDAO artistDAO;
+    EraDAO eraDAO;
+    PersonDAO personDAO;
     private PersonArtistDAO personArtistDAO;
     private SongArtistDAO songArtistDAO;
     private RequestValidator requestValidator;
@@ -58,7 +62,8 @@ public class ArtistServiceTest extends BasicTestConfiguration {
         this.personArtistDAO = Mockito.mock(PersonArtistDAO.class);
         this.artistValidation = Mockito.mock(ArtistValidation.class);
 
-        this.artistService = new ArtistServiceImpl(artistDAO, artistMapper, artistValidation, personArtistDAO, songArtistDAO);
+        this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, personDAO, artistMapper, artistValidation, personArtistDAO,
+                songArtistDAO);
     }
 
     @Test(enabled = true)
@@ -73,6 +78,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
             SongArtistEntity secondSongArtistEntity = new SongArtistEntity();
             secondSongArtistEntity.setId(2L);
             secondSongArtistEntity.setStatus("Test song 2");
+
             List<SongArtistEntity> firstSongArtistList = new ArrayList<SongArtistEntity>();
             firstSongArtistList.add(firstSongArtistEntity);
             firstSongArtistList.add(secondSongArtistEntity);
@@ -141,7 +147,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
             List<ArtistResponse> artistFindResponse = artistService.find(filterRequest).getPayload();
 
             Assertions.assertThat(artistFindResponse).as("Check all elements").overridingErrorMessage("All elements should be equal.")
-                    .hasSameElementsAs(response);
+            .hasSameElementsAs(response);
 
         } catch (Exception e) {
             Assert.fail();
@@ -189,7 +195,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
             PayloadResponse<ArtistResponse> genreCreateResponse = artistService.create(req);
 
             Assertions.assertThat(genreCreateResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-                    .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newArtist);
+            .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newArtist);
 
         } catch (Exception e) {
             Assert.fail();
@@ -249,9 +255,9 @@ public class ArtistServiceTest extends BasicTestConfiguration {
 
             var artistUpdateRequest = artistService.update(request);
             Assertions.assertThat(artistUpdateRequest.getPayload()).as("Check all fields")
-                    .overridingErrorMessage("All fields should be equal.\nExpected: %s\nActual: %s", artistResponse,
-                            artistUpdateRequest.getPayload())
-                    .usingRecursiveComparison().ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(artistResponse);
+            .overridingErrorMessage("All fields should be equal.\nExpected: %s\nActual: %s", artistResponse,
+                    artistUpdateRequest.getPayload())
+            .usingRecursiveComparison().ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(artistResponse);
 
         } catch (Exception e) {
             Assert.fail();

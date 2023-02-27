@@ -53,8 +53,7 @@ public class InstrumentRestService {
 
     @Operation(summary = "Delete instrument")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<InstrumentResponse> delete(
-            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) {
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the record") @PathVariable final Long id) {
         EntityRequest<Long> entityRequest = new EntityRequest<>();
         entityRequest.setEntity(id);
         return instrumentService.delete(entityRequest);

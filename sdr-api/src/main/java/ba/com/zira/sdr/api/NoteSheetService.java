@@ -5,16 +5,24 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
-import ba.com.zira.sdr.api.model.connectedmedia.ConnectedMedia;
-import ba.com.zira.sdr.api.model.connectedmedia.ConnectedMediaCreateRequest;
-import ba.com.zira.sdr.api.model.connectedmedia.ConnectedMediaUpdateRequest;
+import ba.com.zira.sdr.api.model.notesheet.NoteSheet;
+import ba.com.zira.sdr.api.model.notesheet.NoteSheetCreateRequest;
+import ba.com.zira.sdr.api.model.notesheet.NoteSheetUpdateRequest;
 
 /**
- * The interface Connected media service.
+ * * Methods used to manipulate {@link NoteSheet} data. <br> List of APIs implemented in this class with links:
+ * <ul>
+ * <li>{@link #find}</li>
+ * <li>{@link #create}</li>
+ *
+ * </ul>
+ *
+ * @author zira
  */
-public interface ConnectedMediaService {
+public interface NoteSheetService {
+
     /**
-     * Find paged payload response.
+     * Find.
      *
      * @param request
      *         the request
@@ -22,10 +30,10 @@ public interface ConnectedMediaService {
      * @throws ApiException
      *         the api exception
      */
-    PagedPayloadResponse<ConnectedMedia> find(final FilterRequest request) throws ApiException;
+    PagedPayloadResponse<NoteSheet> find(final FilterRequest request) throws ApiException;
 
     /**
-     * Create payload response.
+     * Creates the.
      *
      * @param request
      *         the request
@@ -33,20 +41,8 @@ public interface ConnectedMediaService {
      * @throws ApiException
      *         the api exception
      */
-    PayloadResponse<ConnectedMedia> create(EntityRequest<ConnectedMediaCreateRequest> request) throws ApiException;
+    PayloadResponse<NoteSheet> create(EntityRequest<NoteSheetCreateRequest> request) throws ApiException;
 
-    /**
-     * Update payload response.
-     *
-     * @param request
-     *         the request
-     * @return the payload response
-     * @throws ApiException
-     *         the api exception
-     */
-    PayloadResponse<ConnectedMedia> update(EntityRequest<ConnectedMediaUpdateRequest> request) throws ApiException;
-    
-    
     /**
      * Delete.
      *
@@ -58,9 +54,14 @@ public interface ConnectedMediaService {
      */
     PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
-    
-    
-    
-    
-
+    /**
+     * Update.
+     *
+     * @param entityRequest
+     *         the entity request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<NoteSheet> update(EntityRequest<NoteSheetUpdateRequest> entityRequest) throws ApiException;
 }

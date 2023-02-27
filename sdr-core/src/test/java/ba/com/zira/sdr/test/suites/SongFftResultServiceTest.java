@@ -63,18 +63,20 @@ public class SongFftResultServiceTest extends BasicTestConfiguration {
             List<SongFttResultEntity> entities = new ArrayList<>();
             var firstsongEnt = new SongEntity();
             firstsongEnt.setId(1L);
+
             SongFttResultEntity firstSongFttResultEntity  = new SongFttResultEntity();
             firstSongFttResultEntity.setId(1L);
-            firstSongFttResultEntity.setFftResults("Test Information");
+            firstSongFttResultEntity.setFftResults("Test Information 1");
             firstSongFttResultEntity.setSong(firstsongEnt);
             firstSongFttResultEntity.setStatus(Status.ACTIVE.getValue());
 
 
             var secondSongEnt = new SongEntity();
             secondSongEnt.setId(2L);
+
             SongFttResultEntity  secondSongFttResultEntity = new SongFttResultEntity();
             secondSongFttResultEntity.setId(2L);
-            secondSongFttResultEntity.setFftResults("Test Information ");
+            secondSongFttResultEntity.setFftResults("Test Information 2");
             secondSongFttResultEntity.setSong(secondSongEnt);
             secondSongFttResultEntity.setStatus(Status.ACTIVE.getValue());
 
@@ -82,6 +84,7 @@ public class SongFftResultServiceTest extends BasicTestConfiguration {
             thirdSongEnt.setId(3L);
             SongFttResultEntity thirdSongFttResultEntity = new SongFttResultEntity();
             thirdSongFttResultEntity.setId(3L);
+            thirdSongFttResultEntity.setFftResults("Test Information 3");
             thirdSongFttResultEntity.setSong(thirdSongEnt);
             thirdSongFttResultEntity.setStatus(Status.ACTIVE.getValue());
 
@@ -96,19 +99,19 @@ public class SongFftResultServiceTest extends BasicTestConfiguration {
 
             SongFftResult firstResponse = new SongFftResult();
             firstResponse.setId(1L);
-            firstResponse.setFftResults("Test Information ");
+            firstResponse.setFftResults("Test Information 1");
             firstResponse.setSongID(1L);
             firstResponse.setStatus(Status.ACTIVE.getValue());
 
             SongFftResult secondResponse = new SongFftResult();
             secondResponse.setId(2L);
-            secondResponse.setFftResults("Test Information ");
+            secondResponse.setFftResults("Test Information 2");
             secondResponse.setSongID(2L);
             secondResponse.setStatus(Status.ACTIVE.getValue());
 
             SongFftResult thirdResponse = new SongFftResult();
             thirdResponse.setId(3L);
-            thirdResponse.setFftResults("Test Information ");
+            thirdResponse.setFftResults("Test Information 3");
             thirdResponse.setSongID(3L);
             thirdResponse.setStatus(Status.ACTIVE.getValue());
 
@@ -124,12 +127,13 @@ public class SongFftResultServiceTest extends BasicTestConfiguration {
             QueryConditionPage queryConditionPage = new QueryConditionPage();
             FilterRequest filterRequest = new FilterRequest(filterCriteria, queryConditionPage);
 
+            Mockito.when(requestValidator.validate(filterRequest)).thenReturn(null);
+            Mockito.when(songFftResultDAO.findAll(filterRequest.getFilter())).thenReturn(pagedEntites);
+
             Mockito.when(songDAO.findByPK(1L)).thenReturn(firstsongEnt);
             Mockito.when(songDAO.findByPK(2L)).thenReturn(secondSongEnt);
             Mockito.when(songDAO.findByPK(3L)).thenReturn(thirdSongEnt);
 
-            Mockito.when(requestValidator.validate(filterRequest)).thenReturn(null);
-            Mockito.when(songFftResultDAO.findAll(filterRequest.getFilter())).thenReturn(pagedEntites);
 
             List<SongFftResult> songFftResultFindResponse = songFftResultService.find(filterRequest).getPayload();
 
@@ -149,7 +153,7 @@ public class SongFftResultServiceTest extends BasicTestConfiguration {
 
             var newSongFftResultRequest = new SongFftResultCreateRequest();
             newSongFftResultRequest.setFftResults("Test Information ");
-            newSongFftResultRequest.setSongId(1L);
+            newSongFftResultRequest.setSongID(1L);
 
 
             req.setEntity(newSongFftResultRequest);
@@ -168,6 +172,7 @@ public class SongFftResultServiceTest extends BasicTestConfiguration {
             newSongFftResult.setStatus(Status.ACTIVE.getValue());
 
             Mockito.when(songFftResultDAO.persist(newSongFftResultEnt)).thenReturn(null);
+            Mockito.when(songDAO.findByPK(req.getEntity().getSongID())).thenReturn(songEnt);
 
             PayloadResponse<SongFftResult> songFftResultFindResponse = songFftResultService.create(req);
 
@@ -185,6 +190,8 @@ public class SongFftResultServiceTest extends BasicTestConfiguration {
 
             EntityRequest<SongFftResultUpdateRequest> req = new EntityRequest<>();
 
+            var songEnt = new SongEntity();
+            songEnt.setId(1L);
 
             SongFftResultUpdateRequest updatesongFftResulUpdateRequest = new SongFftResultUpdateRequest();
             updatesongFftResulUpdateRequest.setId(1L);
@@ -193,7 +200,9 @@ public class SongFftResultServiceTest extends BasicTestConfiguration {
             req.setEntity(updatesongFftResulUpdateRequest);
 
             var songFftResultEnt = new SongFttResultEntity();
+            songFftResultEnt.setId(1L);
             songFftResultEnt.setFftResults("Test 1");
+            songFftResultEnt.setSong(songEnt);
             songFftResultEnt.setStatus(Status.ACTIVE.getValue());
 
             var songFftResult = new SongFftResult();
@@ -205,8 +214,9 @@ public class SongFftResultServiceTest extends BasicTestConfiguration {
 
             Mockito.when(songFftResultValidation.validateUpdateSongFftResultRequest(req)).thenReturn(null);
 
-            Mockito.when(songFftResultDAO.findByPK(req.getEntity().getId()))
-            .thenReturn(songFftResultEnt);
+            Mockito.when(songFftResultDAO.findByPK(req.getEntity().getId())).thenReturn(songFftResultEnt);
+            Mockito.when(songDAO.findByPK(1L)).thenReturn(songEnt);
+
 
             Mockito.doNothing().when(songFftResultDAO).merge(songFftResultEnt);
 
