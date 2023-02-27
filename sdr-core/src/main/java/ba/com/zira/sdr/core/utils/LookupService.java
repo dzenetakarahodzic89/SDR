@@ -74,9 +74,13 @@ public class LookupService {
         return null;
     }
 
-    public static String getImageUrl(final Long key, final Map<Long, List<CoverImageHelper>> lookup, final Random rand) {
+    public static String getUrl(final Long key, final Map<Long, List<CoverImageHelper>> lookup, final Random rand) {
         if (key != null) {
-            return lookup.get(key) == null ? null : lookup.get(key).get(rand.nextInt(lookup.get(key).size())).getUrl();
+            if (rand != null) {
+                return lookup.get(key) == null ? null : lookup.get(key).get(rand.nextInt(lookup.get(key).size())).getUrl();
+            } else {
+                return lookup.get(key) == null ? null : lookup.get(key).get(0).getUrl();
+            }
         }
         return null;
     }
@@ -88,7 +92,7 @@ public class LookupService {
 
         if (!(ids == null || ids.isEmpty())) {
             Map<Long, List<CoverImageHelper>> lookup = mediaStoreDAO.getUrlsForList(ids, objectType, "COVER_IMAGE");
-            values.parallelStream().forEach(r -> setter.accept(r, getImageUrl(getter.apply(r), lookup, random)));
+            values.parallelStream().forEach(r -> setter.accept(r, getUrl(getter.apply(r), lookup, random)));
             values.parallelStream().forEach(r -> handleDefaultImage(r, setter, getterForImage));
         }
     }
@@ -137,6 +141,15 @@ public class LookupService {
             values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
         }
 
+    }
+
+    public <E> void lookupAudio(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {
+        List<Long> ids = values.parallelStream().map(getter).distinct().collect(Collectors.toList());
+
+        if (!(ids == null || ids.isEmpty())) {
+            Map<Long, List<CoverImageHelper>> lookup = mediaStoreDAO.getUrlsForList(ids, ObjectType.SONG.getValue(), "AUDIO");
+            values.parallelStream().forEach(r -> setter.accept(r, getUrl(getter.apply(r), lookup, null)));
+        }
     }
 
 }
