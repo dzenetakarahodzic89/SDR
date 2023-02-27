@@ -5,6 +5,7 @@ import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
 import ba.com.zira.sdr.api.SongInstrumentService;
+import ba.com.zira.sdr.api.model.songinstrument.SongInstrumentCreateRequest;
 import ba.com.zira.sdr.api.model.songinstrument.SongInstrumentUpdateRequest;
 import ba.com.zira.sdr.dao.SongInstrumentDAO;
 import lombok.AllArgsConstructor;
@@ -48,5 +49,15 @@ public class SongInstrumentValidation {
         return null;
 
     }
+
+     
+    public ValidationResponse validateCreateSongInstrumentRequest(final EntityRequest<SongInstrumentCreateRequest> request) {
+        ValidationErrors errors = new ValidationErrors();
+        errors.put(exists(request.getEntity().getSongId()));
+
+        return ValidationResponse.of(request, errors);
+    }
+    
+    
 }
 

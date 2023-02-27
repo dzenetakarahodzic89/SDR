@@ -1,5 +1,12 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -8,11 +15,14 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.SongService;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import ba.com.zira.sdr.core.mapper.SongMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
+import ba.com.zira.sdr.core.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.validation.SongRequestValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.GenreDAO;
@@ -23,11 +33,6 @@ import ba.com.zira.sdr.dao.model.LyricEntity;
 import ba.com.zira.sdr.dao.model.NoteSheetEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -40,6 +45,7 @@ public class SongServiceImpl implements SongService {
     SongRequestValidation songRequestValidation;
     ArtistDAO artistDAO;
     GenreDAO genreDAO;
+    LookupService lookupService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -64,19 +70,27 @@ public class SongServiceImpl implements SongService {
     @Override
     public PagedPayloadResponse<Song> retrieveAll(final FilterRequest request) {
         PagedData<SongEntity> songEntities = songDAO.findAll(request.getFilter());
-        return new PagedPayloadResponse<>(request, ResponseCode.OK, songEntities, songMapper::entitiesToDtos);
+        PagedData<Song> songPD = new PagedData<>();
+        List<Song> songs = songMapper.entitiesToDtos(songEntities.getRecords());
+        lookupService.lookupCoverImage(songs, Song::getId, ObjectType.SONG.getValue(), Song::setImageUrl, Song::getImageUrl);
+        lookupService.lookupAudio(songs, Song::getId, Song::setAudioUrl);
+        songPD.setRecords(songs);
+        PagedDataMetadataMapper.remapMetadata(songEntities, songPD);
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, songPD);
     }
 
     @Override
     public PayloadResponse<SongSingleResponse> retrieveById(final EntityRequest<Long> request) {
         songRequestValidation.validateExistsSongRequest(request);
 
-        SongSingleResponse songEntity = songDAO.getById(request.getEntity());
-        var artists = artistDAO.getById(request.getEntity());
-        var subGenres = genreDAO.subGenresByMainGenre(songEntity.getGenreId());
-        songEntity.setArtists(artists);
-        songEntity.setSubgenres(subGenres);
-        return new PayloadResponse<>(request, ResponseCode.OK, songEntity);
+        SongSingleResponse song = songDAO.getById(request.getEntity());
+        lookupService.lookupCoverImage(Arrays.asList(song), SongSingleResponse::getId, ObjectType.SONG.getValue(),
+                SongSingleResponse::setImageUrl, SongSingleResponse::getImageUrl);
+        lookupService.lookupAudio(Arrays.asList(song), SongSingleResponse::getId, SongSingleResponse::setAudioUrl);
+        song.setPlaylistCount(songDAO.countAllPlaylistsWhereSongExists(request.getEntity()).intValue());
+        song.setArtists(artistDAO.getById(request.getEntity()));
+        song.setSubgenres(genreDAO.subGenresByMainGenre(song.getGenreId()));
+        return new PayloadResponse<>(request, ResponseCode.OK, song);
     }
 
     @Override

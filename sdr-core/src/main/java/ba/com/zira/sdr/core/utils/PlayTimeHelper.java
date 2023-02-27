@@ -24,6 +24,7 @@ public class PlayTimeHelper {
         int hours = seconds / 3600;
         int minutes = (seconds - hours * 3600) / 60;
         int secs = seconds - (hours * 3600 + minutes * 60);
-        return Integer.toString(hours) + ":" + Integer.toString(minutes) + ":" + Integer.toString(secs);
+        return (hours < 10 ? "0" : "") + Integer.toString(hours) + ":" + (minutes < 10 ? "0" : "") + Integer.toString(minutes) + ":"
+                + (seconds < 10 ? "0" : "") + Integer.toString(secs);
     }
 }

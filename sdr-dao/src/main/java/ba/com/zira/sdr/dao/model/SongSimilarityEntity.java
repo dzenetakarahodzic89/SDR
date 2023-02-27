@@ -76,4 +76,5 @@ public class SongSimilarityEntity implements Serializable {
     @OneToMany(mappedBy = "songSimilarity")
     private List<SongSimilarityDetailEntity> songSimilarityDetails;
 
+
 }

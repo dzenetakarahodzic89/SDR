@@ -14,6 +14,9 @@ public class SongInstrument implements Serializable {
     @Schema(description = "Song instrument id")
     private Long id;
 
+    @Schema(description = "Name")
+    private String name;
+
     @Schema(description = "Creation date")
     private LocalDateTime created;
 

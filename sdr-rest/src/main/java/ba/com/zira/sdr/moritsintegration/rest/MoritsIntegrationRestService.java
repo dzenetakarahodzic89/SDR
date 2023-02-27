@@ -62,7 +62,7 @@ public class MoritsIntegrationRestService {
 
     @Operation(summary = "Delete morits lyric integration")
     @DeleteMapping(value = "{id}/delete")
-    public PayloadResponse<MoritsIntegration> delete(
+    public PayloadResponse<String> delete(
             @Parameter(required = true, description = "ID of the morits lyric integration") @PathVariable final Long id)
             throws ApiException {
         return moritsIntegrationService.delete(new EntityRequest<>(id));
