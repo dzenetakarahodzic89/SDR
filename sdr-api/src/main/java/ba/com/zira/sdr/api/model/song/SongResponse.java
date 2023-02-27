@@ -26,11 +26,16 @@ public class SongResponse implements Serializable {
     @Schema(description = "Playtime")
     private String playtime;
 
-    public SongResponse(@NotNull Long id, @NotBlank String name, @NotBlank String playtime) {
+    @Schema(description = "Song genre")
+    private String genre;
+
+    public SongResponse(@NotNull final Long id, @NotBlank final String name, @NotBlank final String playtime,
+            @NotBlank final String genre) {
         super();
         this.id = id;
         this.name = name;
         this.playtime = playtime;
+        this.genre = genre;
     }
 
 }
