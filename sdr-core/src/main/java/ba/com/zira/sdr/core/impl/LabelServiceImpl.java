@@ -1,10 +1,11 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -15,11 +16,17 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.LabelService;
+import ba.com.zira.sdr.api.MediaService;
+import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.label.LabelArtistResponse;
 import ba.com.zira.sdr.api.model.label.LabelCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelResponse;
 import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
+import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.core.mapper.LabelMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.LabelRequestValidation;
+import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.LabelDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.model.LabelEntity;
@@ -32,6 +39,12 @@ public class LabelServiceImpl implements LabelService {
     private LabelMapper labelMapper;
     private PersonDAO personDAO;
     private LabelRequestValidation labelReqVal;
+    @Autowired
+    private ArtistDAO artistDAO;
+    @Autowired
+    LookupService lookupservice;
+    @Autowired
+    MediaService mediaService;
 
     @Autowired
     public LabelServiceImpl(LabelDAO labelDAO, LabelMapper labelMapper, PersonDAO personDAO, LabelRequestValidation labelReqVal) {
@@ -49,12 +62,15 @@ public class LabelServiceImpl implements LabelService {
     }
 
     @Override
-    public PayloadResponse<LabelResponse> findById(final EntityRequest<Long> request) {
+    public PayloadResponse<LabelArtistResponse> findById(final EntityRequest<Long> request) {
         labelReqVal.validateExistsLabelRequest(request);
 
-        var labelEntity = labelDAO.findByPK(request.getEntity());
+        LabelArtistResponse labelEntity = labelDAO.getById(request.getEntity());
+        lookupservice.lookupCoverImage(Arrays.asList(labelEntity), LabelArtistResponse::getId, ObjectType.LABEL.getValue(),
+                LabelArtistResponse::setImageUrl, LabelArtistResponse::getImageUrl);
+        labelEntity.setArtists(artistDAO.getId(request.getEntity()));
 
-        return new PayloadResponse<>(request, ResponseCode.OK, labelMapper.entityToDto(labelEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, labelEntity);
     }
 
     @Override
@@ -67,6 +83,18 @@ public class LabelServiceImpl implements LabelService {
         labelEntity.setCreated(LocalDateTime.now());
         labelEntity.setCreatedBy(request.getUserId());
         labelEntity.setFounder(personEntity);
+        if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
+
+            var mediaRequest = new MediaCreateRequest();
+            mediaRequest.setObjectType(ObjectType.LABEL.getValue());
+            mediaRequest.setObjectId(labelEntity.getId());
+            mediaRequest.setMediaObjectData(request.getEntity().getCoverImageData());
+            mediaRequest.setMediaObjectName(request.getEntity().getCoverImage());
+            mediaRequest.setMediaStoreType("COVER_IMAGE");
+            mediaRequest.setMediaObjectType("IMAGE");
+            mediaService.save(new EntityRequest<>(mediaRequest, request));
+
+        }
         labelDAO.persist(labelEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, labelMapper.entityToDto(labelEntity));
     }
