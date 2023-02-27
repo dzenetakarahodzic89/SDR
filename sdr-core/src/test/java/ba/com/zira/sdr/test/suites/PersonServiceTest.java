@@ -1,28 +1,39 @@
 package ba.com.zira.sdr.test.suites;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EntityRequest;
+import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.PayloadResponse;
+import ba.com.zira.commons.model.PagedData;
+import ba.com.zira.commons.model.QueryConditionPage;
+import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.validation.RequestValidator;
 import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.PersonService;
+import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
+import ba.com.zira.sdr.api.model.person.PersonResponse;
+import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
 import ba.com.zira.sdr.core.impl.PersonServiceImpl;
 import ba.com.zira.sdr.core.mapper.PersonMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
+import ba.com.zira.sdr.dao.model.PersonEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 

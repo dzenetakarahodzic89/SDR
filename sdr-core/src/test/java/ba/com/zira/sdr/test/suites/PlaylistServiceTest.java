@@ -1,10 +1,5 @@
 package ba.com.zira.sdr.test.suites;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +7,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -27,6 +27,7 @@ import ba.com.zira.sdr.api.model.playlist.PlaylistCreateRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistUpdateRequest;
 import ba.com.zira.sdr.core.impl.PlaylistServiceImpl;
 import ba.com.zira.sdr.core.mapper.PlaylistMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.PlaylistRequestValidation;
 import ba.com.zira.sdr.dao.PlaylistDAO;
 import ba.com.zira.sdr.dao.model.PlaylistEntity;
@@ -43,14 +44,15 @@ public class PlaylistServiceTest extends BasicTestConfiguration {
     private RequestValidator requestValidator;
     private PlaylistRequestValidation playlistValidation;
     private PlaylistService playlistService;
+    private LookupService lookupService;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.playlistDAO = Mockito.mock(PlaylistDAO.class);
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.playlistValidation = Mockito.mock(PlaylistRequestValidation.class);
-
-        this.playlistService = new PlaylistServiceImpl(playlistDAO, playlistMapper, playlistValidation);
+        this.lookupService = Mockito.mock(LookupService.class);
+        this.playlistService = new PlaylistServiceImpl(playlistDAO, playlistMapper, playlistValidation, lookupService);
     }
 
     @Test(enabled = true)
@@ -149,7 +151,7 @@ public class PlaylistServiceTest extends BasicTestConfiguration {
             PayloadResponse<Playlist> playlistCreateResponse = playlistService.create(req);
 
             Assertions.assertThat(playlistCreateResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-            .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newPlaylist);
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newPlaylist);
 
         } catch (Exception e) {
             Assert.fail();
@@ -184,8 +186,8 @@ public class PlaylistServiceTest extends BasicTestConfiguration {
 
             var playlistUpdateResponse = playlistService.update(request);
             Assertions.assertThat(playlistUpdateResponse.getPayload()).as("Check all fields")
-            .overridingErrorMessage("All fields should be equal.").usingRecursiveComparison()
-            .ignoringFields("created", "createdBy", "modified", "modifiedBy", "id", "status").isEqualTo(playlistResponse);
+                    .overridingErrorMessage("All fields should be equal.").usingRecursiveComparison()
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy", "id", "status").isEqualTo(playlistResponse);
 
         } catch (Exception e) {
             Assert.fail();
