@@ -56,5 +56,5 @@ public interface MoritsIntegrationService {
      * @throws ApiException
      *         the api exception
      */
-    PayloadResponse<MoritsIntegration> delete(EntityRequest<Long> request) throws ApiException;
+    PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 }

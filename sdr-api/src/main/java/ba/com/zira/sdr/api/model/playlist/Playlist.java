@@ -52,4 +52,10 @@ public class Playlist implements Serializable {
     @Schema(description = "Total playtime")
     private Long totalPlaytime;
 
+    @Schema(description = "Outline text")
+    private String outlineText;
+
+    @Schema(description = "Cover image URL")
+    private String imageUrl;
+
 }

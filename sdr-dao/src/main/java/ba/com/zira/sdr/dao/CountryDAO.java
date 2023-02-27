@@ -1,14 +1,15 @@
 package ba.com.zira.sdr.dao;
 
-import javax.persistence.TypedQuery;
-
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.persistence.TypedQuery;
+
+import org.springframework.stereotype.Repository;
+
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.dao.model.CountryEntity;
 
@@ -20,5 +21,11 @@ public class CountryDAO extends AbstractDAO<CountryEntity, Long> {
                 "select new ba.com.zira.sdr.api.model.lov.LoV(m.id, m.flagAbbriviation) from CountryEntity m where m.id in :ids");
         TypedQuery<LoV> query = entityManager.createQuery(hql.toString(), LoV.class).setParameter("ids", ids);
         return query.getResultList().stream().collect(Collectors.toMap(LoV::getId, LoV::getName));
+    }
+
+    public List<CountryResponse> getAllCountries() {
+        var hql = "select new ba.com.zira.sdr.api.model.country.CountryResponse(r.id, r.name, r.flagAbbriviation, r.region) from CountryEntity r";
+        TypedQuery<CountryResponse> query = entityManager.createQuery(hql, CountryResponse.class);
+        return query.getResultList();
     }
 }

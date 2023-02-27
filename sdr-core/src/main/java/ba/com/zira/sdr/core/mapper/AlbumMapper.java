@@ -17,7 +17,7 @@ public interface AlbumMapper {
     @Mapping(source = "eraId", target = "era.id")
     AlbumEntity dtoToEntity(AlbumCreateRequest albumCreateRequest);
 
-    @Mapping(source = "era.id", target = "eraId")
+    @Mapping(source = "era.name", target = "era")
     AlbumResponse entityToDto(AlbumEntity albumEntity);
 
     @Mapping(source = "eraId", target = "era.id")
