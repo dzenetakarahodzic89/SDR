@@ -1,5 +1,11 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -31,6 +31,7 @@ import ba.com.zira.sdr.core.impl.PersonServiceImpl;
 import ba.com.zira.sdr.core.mapper.PersonMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
+import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.model.PersonEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
@@ -43,6 +44,7 @@ public class PersonServiceTest extends BasicTestConfiguration {
     private PersonMapper personMapper;
 
     private PersonDAO personDAO;
+    private CountryDAO countryDAO;
     private RequestValidator requestValidator;
     private PersonRequestValidation personRequestValidation;
     private PersonService personService;
@@ -53,12 +55,14 @@ public class PersonServiceTest extends BasicTestConfiguration {
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.personDAO = Mockito.mock(PersonDAO.class);
+        this.countryDAO = Mockito.mock(CountryDAO.class);
         this.lookupService = Mockito.mock(LookupService.class);
         this.mediaService = Mockito.mock(MediaService.class);
         this.personRequestValidation = Mockito.mock(PersonRequestValidation.class);
         this.lookupService = Mockito.mock(LookupService.class);
         this.mediaService = Mockito.mock(MediaService.class);
-        this.personService = new PersonServiceImpl(personDAO, personMapper, personRequestValidation, lookupService, mediaService);
+        this.personService = new PersonServiceImpl(personDAO, countryDAO, personMapper, personRequestValidation, lookupService,
+                mediaService);
     }
 
     @Test(enabled = true)
