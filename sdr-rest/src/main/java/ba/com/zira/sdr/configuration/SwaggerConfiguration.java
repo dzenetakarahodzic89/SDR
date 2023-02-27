@@ -174,6 +174,12 @@ public class SwaggerConfiguration {
         return GroupedOpenApi.builder().group("deezer-integration-api").packagesToScan("ba.com.zira.sdr.deezerintegration.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
+    
+    @Bean
+    public GroupedOpenApi eraApi() {
+        return GroupedOpenApi.builder().group("era-api").packagesToScan("ba.com.zira.sdr.era.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
 
     @Bean
     public OpenAPI ziraOpenAPI() {

@@ -15,7 +15,7 @@ public class AlbumUpdateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotNull
-    @Schema(description = "Release date of album")
+    @Schema(description = "Id of the album")
     private Long id;
 
     @NotNull
@@ -30,11 +30,10 @@ public class AlbumUpdateRequest implements Serializable {
     @Schema(description = "Album name")
     private String name;
 
-    @NotBlank
-    @Schema(description = "Album status")
-    private String status;
-
     @NotNull
     @Schema(description = "Album era")
     private Long eraId;
+    
+    @Schema(description = "Outline text")
+    private Long outlineText;
 }
