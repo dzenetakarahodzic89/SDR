@@ -1,4 +1,4 @@
-package ba.com.zira.sdr.rest;
+package ba.com.zira.sdr.playlist.rest;
 
 import java.util.Map;
 
@@ -20,6 +20,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.PlaylistService;
 import ba.com.zira.sdr.api.model.playlist.Playlist;
 import ba.com.zira.sdr.api.model.playlist.PlaylistCreateRequest;
+import ba.com.zira.sdr.api.model.playlist.PlaylistSearchRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -39,6 +40,18 @@ public class PlaylistRestService {
     public PagedPayloadResponse<Playlist> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
             throws ApiException {
         return playlistService.find(new FilterRequest(filterCriteria, queryCriteria));
+    }
+
+    @Operation(summary = "Find Playlists based on custom filter")
+    @GetMapping(value = "search")
+    public PagedPayloadResponse<Playlist> findByNameSongGenre(
+            @Parameter(required = false, description = "Name of the playlist") @RequestParam(required = false) final String name,
+            @Parameter(required = false, description = "Id of a song in the playlist") @RequestParam(required = false) final Long songId,
+            @Parameter(required = false, description = "Id of a genre in the playlist") @RequestParam(required = false) final Long genreId,
+            @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy)
+            throws ApiException {
+        return playlistService
+                .searchByNameSongGenre(new EntityRequest<PlaylistSearchRequest>(new PlaylistSearchRequest(name, songId, genreId, sortBy)));
     }
 
     @Operation(summary = "Create playlist")
