@@ -3,23 +3,24 @@ package ba.com.zira.sdr.core.mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import ba.com.zira.sdr.api.model.SongFFt.SongFftResult;
-import ba.com.zira.sdr.api.model.SongFFt.SongFftResultCreateRequest;
-import ba.com.zira.sdr.api.model.SongFFt.SongFftResultUpdateRequest;
+import ba.com.zira.sdr.api.model.song.fft.SongFftResult;
+import ba.com.zira.sdr.api.model.song.fft.SongFftResultCreateRequest;
+import ba.com.zira.sdr.api.model.song.fft.SongFftResultUpdateRequest;
 import ba.com.zira.sdr.dao.model.SongFttResultEntity;
 
 @Mapper(componentModel = "spring")
 public interface SongFftMapper {
-    // @Mapping(source = "releaseData", target = "dateOfRelease")
-    // @Mapping(source = "fftResults", target = "song")
+
+    @Mapping(source = "songID", target = "song.id")
     SongFttResultEntity dtoToEntity(SongFftResultCreateRequest sampleModel);
 
-    // @Mapping(source = "song", target = "fftResults")
+    @Mapping(source = "song.id", target = "songID")
     SongFftResult entityToDto(SongFttResultEntity sampleModelEntity);
 
-    // @Mapping(source = "fftResults", target = "song")
+    @Mapping(source = "songID", target = "song.id")
     void updateEntity(SongFftResultUpdateRequest sampleModel, @MappingTarget SongFttResultEntity sampleModelEntity);
 
     List<SongFftResult> entitiesToDtos(List<SongFttResultEntity> sampleModelEntity);

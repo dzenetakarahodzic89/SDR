@@ -19,6 +19,7 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.PersonService;
+import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
@@ -33,40 +34,50 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class PersonRestService {
 
-	private PersonService personService;
+    private PersonService personService;
 
-	@Operation(summary = "Find person base on filter criteria")
-	@GetMapping
-	public PagedPayloadResponse<PersonResponse> find(@RequestParam Map<String, Object> filterCriteria,
-			final QueryConditionPage queryCriteria) throws ApiException {
-		return personService.find(new FilterRequest(filterCriteria, queryCriteria));
-	}
+    @Operation(summary = "Find person base on filter criteria")
+    @GetMapping
+    public PagedPayloadResponse<PersonResponse> find(@RequestParam Map<String, Object> filterCriteria,
+            final QueryConditionPage queryCriteria) throws ApiException {
+        return personService.find(new FilterRequest(filterCriteria, queryCriteria));
+    }
 
-	@Operation(summary = "Create person")
-	@PostMapping
-	public PayloadResponse<PersonResponse> create(@RequestBody final PersonCreateRequest person) throws ApiException {
-		return personService.create(new EntityRequest<>(person));
-	}
+    @Operation(summary = "Find person base on filter criteria")
+    @GetMapping(value = "{id}")
+    public PayloadResponse<PersonResponse> findById(@PathVariable Long id) {
+        return personService.findById(new EntityRequest<>(id));
+    }
 
-	@Operation(summary = "Update Person")
-	@PutMapping(value = "{id}")
-	public PayloadResponse<PersonResponse> edit(
-			@Parameter(required = true, description = "ID of the Person") @PathVariable final Long id,
-			@RequestBody final PersonUpdateRequest person) throws ApiException {
-		if (person != null) {
-			person.setId(id);
-		}
-		return personService.update(new EntityRequest<>(person));
-	}
+    @Operation(summary = "Create person")
+    @PostMapping
+    public PayloadResponse<PersonResponse> create(@RequestBody final PersonCreateRequest person) throws ApiException {
+        return personService.create(new EntityRequest<>(person));
+    }
 
-	@Operation(summary = "Delete person")
-	@DeleteMapping(value = "{id}")
-	public PayloadResponse<PersonResponse> delete(
-			@Parameter(required = true, description = "ID of the record") @PathVariable final Long id)
-			throws ApiException {
-		EntityRequest<Long> entityRequest = new EntityRequest<>();
-		entityRequest.setEntity(id);
-		return personService.delete(entityRequest);
-	}
+    @Operation(summary = "Update Person")
+    @PutMapping(value = "{id}")
+    public PayloadResponse<PersonResponse> edit(@Parameter(required = true, description = "ID of the Person") @PathVariable final Long id,
+            @RequestBody final PersonUpdateRequest person) throws ApiException {
+        if (person != null) {
+            person.setId(id);
+        }
+        return personService.update(new EntityRequest<>(person));
+    }
+
+    @Operation(summary = "Delete person")
+    @DeleteMapping(value = "{id}")
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the Person") @PathVariable final Long id) {
+        EntityRequest<Long> entityRequest = new EntityRequest<>();
+        entityRequest.setEntity(id);
+        return personService.delete(entityRequest);
+    }
+
+    @Operation(summary = "Update Person")
+    @PutMapping(value = "change-flag")
+    public PayloadResponse<PersonResponse> editPersonCountry(@RequestBody final PersonCountryRequest request) throws ApiException {
+
+        return personService.updatePersonCountry(new EntityRequest<>(request));
+    }
 
 }

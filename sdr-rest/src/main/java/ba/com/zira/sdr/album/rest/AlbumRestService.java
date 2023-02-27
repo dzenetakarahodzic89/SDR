@@ -22,6 +22,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.AlbumService;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
+import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -55,9 +56,9 @@ public class AlbumRestService {
 
     @Operation(summary = "Delete album")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<AlbumResponse> update(@Parameter(required = true, description = "ID of the album") @PathVariable final Long id)
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the album") @PathVariable final Long id)
             throws ApiException {
-        return albumService.delete(new EntityRequest(id));
+        return albumService.delete(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Search albums")
@@ -67,4 +68,17 @@ public class AlbumRestService {
         return albumService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
+    @Operation(summary = "Get all songs from album")
+    @GetMapping(value = "{id}/songs")
+    public PayloadResponse<AlbumSongResponse> findAllSongsForAlbum(
+            @Parameter(required = true, description = "ID of the album") @PathVariable final Long id) throws ApiException {
+        return albumService.findAllSongsForAlbum(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Get album overview")
+    @GetMapping(value = "{id}")
+    public PayloadResponse<AlbumResponse> getAlbumOverview(
+            @Parameter(required = true, description = "ID of the album") @PathVariable final Long id) throws ApiException {
+        return albumService.getById(new EntityRequest<>(id));
+    }
 }

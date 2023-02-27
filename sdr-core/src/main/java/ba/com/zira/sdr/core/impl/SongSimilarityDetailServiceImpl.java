@@ -22,6 +22,10 @@ import ba.com.zira.sdr.core.validation.SongSimilarityDetailRequestValidation;
 import ba.com.zira.sdr.dao.SongSimilarityDetailDAO;
 import ba.com.zira.sdr.dao.model.SongSimilarityDetailEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -37,7 +41,7 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
     public PagedPayloadResponse<SongSimilarityDetail> find(FilterRequest request) throws ApiException {
         PagedData<SongSimilarityDetailEntity> songsimilaritydetailEntities = songsimilaritydetailDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, songsimilaritydetailEntities,
-                songsimilaritydetailModelMapper::entitiesToDtos);
+                songSimilarityDetailMapper::entitiesToDtos);
     }
 
     @Override
@@ -45,10 +49,10 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
     public PayloadResponse<SongSimilarityDetail> delete(final EntityRequest<Long> request) throws ApiException {
         songsimilaritydetailRequestValidation.validateExistsSongSimilartyDetailRequest(request);
 
-        var SongSimilarityDetailEntity = songsimilaritydetailDAO.findByPK(request.getEntity());
-        songsimilaritydetailDAO.remove(SongSimilarityDetailEntity);
+        var songSimilarityDetailEntity = songSimilarityDetailDAO.findByPK(request.getEntity());
+        songSimilarityDetailDAO.remove(songSimilarityDetailEntity);
 
-        return new PayloadResponse<>(request, ResponseCode.OK, songsimilaritydetailModelMapper.entityToDto(SongSimilarityDetailEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, songSimilarityDetailMapper.entityToDto(songSimilarityDetailEntity));
     }
 
     @Override
@@ -61,8 +65,8 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
         songSimilarityDetailEntity.setCreated(LocalDateTime.now());
         songSimilarityDetailEntity.setCreatedBy(request.getUserId());
 
-        songsimilaritydetailDAO.persist(songSimilarityDetailEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, songsimilaritydetailModelMapper.entityToDto(songSimilarityDetailEntity));
+        songSimilarityDetailDAO.persist(songSimilarityDetailEntity);
+        return new PayloadResponse<>(request, ResponseCode.OK, songSimilarityDetailMapper.entityToDto(songSimilarityDetailEntity));
     }
 
     @Override
@@ -70,14 +74,13 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
     public PayloadResponse<SongSimilarityDetail> update(final EntityRequest<SongSimilarityDetailUpdateRequest> request)
             throws ApiException {
         songsimilaritydetailRequestValidation.validateUpdateSongSimilartyDetailRequest(request);
-        var songSimilarityDetailEntity = songsimilaritydetailDAO.findByPK(request.getEntity().getId());
+        var songSimilarityDetailEntity = songSimilarityDetailDAO.findByPK(request.getEntity().getId());
 
-        songsimilaritydetailModelMapper.updateEntity(request.getEntity(), songSimilarityDetailEntity);
+        songSimilarityDetailMapper.updateEntity(request.getEntity(), songSimilarityDetailEntity);
 
         songSimilarityDetailEntity.setModified(LocalDateTime.now());
         songSimilarityDetailEntity.setModifiedBy(request.getUserId());
-        // songSimilarityDetailEntity.merge(songSimilarityDetailEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, songsimilaritydetailModelMapper.entityToDto(songSimilarityDetailEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, songSimilarityDetailMapper.entityToDto(songSimilarityDetailEntity));
     }
 
 

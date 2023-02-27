@@ -39,9 +39,9 @@ public class LabelRestService {
 
     @Operation(summary = "Find labels base on filter criteria")
     @GetMapping
-    public PagedPayloadResponse<LabelResponse> findAll(@RequestParam Map<String, Object> filterCriteria,
+    public PagedPayloadResponse<LabelResponse> find(@RequestParam Map<String, Object> filterCriteria,
             final QueryConditionPage queryCriteria) throws ApiException {
-        return labelService.findAll(new FilterRequest(filterCriteria, queryCriteria));
+        return labelService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
     @Operation(summary = "Find label base on id")
@@ -66,13 +66,6 @@ public class LabelRestService {
             label.setId(id);
         }
         return labelService.update(new EntityRequest<>(label));
-    }
-
-    @Operation(summary = "Change label status")
-    @PutMapping(value = "{id}/change-status")
-    public PayloadResponse<LabelResponse> changeStatus(
-            @Parameter(required = true, description = "ID of the label") @PathVariable final Long id) throws ApiException {
-        return labelService.changeStatus(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Delete label")

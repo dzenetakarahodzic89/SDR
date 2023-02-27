@@ -33,7 +33,7 @@ public class MediaStoreEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    private String uuid;
+    private String id;
 
     private LocalDateTime created;
 

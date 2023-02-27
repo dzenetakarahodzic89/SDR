@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
@@ -67,4 +69,11 @@ public class CountryRestService {
         return countryService.delete(entityRequest);
     }
 
+    @Operation(summary = "Get all")
+    @GetMapping(value = "all")
+    public ListPayloadResponse<CountryResponse> getAll() throws ApiException {
+        var request = new EmptyRequest();
+        return countryService.getAll(request);
+
+    }
 }

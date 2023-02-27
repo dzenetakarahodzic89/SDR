@@ -1,6 +1,8 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -15,14 +18,19 @@ import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.ArtistService;
+import ba.com.zira.sdr.api.artist.Artist;
+import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.EraDAO;
 import ba.com.zira.sdr.dao.PersonArtistDAO;
+import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
 import lombok.AllArgsConstructor;
@@ -31,22 +39,16 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ArtistServiceImpl implements ArtistService {
     ArtistDAO artistDAO;
-    PersonArtistDAO personArtistDAO;
-    SongArtistDAO songArtistDAO;
+    EraDAO eraDAO;
+    PersonDAO personDAO;
     ArtistMapper artistMapper;
     ArtistValidation artistRequestValidation;
-
-    /*
-     * @Override public ListPayloadResponse<ArtistResponse> getAll(EmptyRequest
-     * req) throws ApiException {
-     *
-     * List<ArtistResponse> multiSearchList = artistDAO.getAllArtists(); return
-     * new ListPayloadResponse<>(req, ResponseCode.OK, multiSearchList); }
-     */
+    PersonArtistDAO personArtistDAO;
+    SongArtistDAO songArtistDAO;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ArtistResponse> create(final EntityRequest<ArtistCreateRequest> request) throws ApiException {
+    public PayloadResponse<ArtistResponse> create(final EntityRequest<ArtistCreateRequest> request) {
         var artistEntity = artistMapper.dtoToEntity(request.getEntity());
         artistEntity.setCreated(LocalDateTime.now());
         artistEntity.setCreatedBy(request.getUserId());
@@ -59,17 +61,17 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         artistRequestValidation.validateExistsArtistRequest(request);
         Long id = request.getEntity();
 
-        if (artistDAO.personArtistExist(id)) {
+        if (artistDAO.personArtistExist(id).booleanValue()) {
             ValidationErrors errors = new ValidationErrors();
             errors.put(ValidationError.of("PERSON_ARTIST_EXISTS", "Not allowed to be deleted."));
             return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, "Artist delete validation error");
         }
 
-        if (artistDAO.songArtistExist(id)) {
+        if (artistDAO.songArtistExist(id).booleanValue()) {
             ValidationErrors errors = new ValidationErrors();
             errors.put(ValidationError.of("SONG_ARTIST_EXISTS", "Not allowed to be deleted."));
             return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, "Artist delete validation error");
@@ -81,7 +83,7 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ArtistResponse> update(final EntityRequest<ArtistUpdateRequest> request) throws ApiException {
+    public PayloadResponse<ArtistResponse> update(final EntityRequest<ArtistUpdateRequest> request) {
         artistRequestValidation.validateUpdateArtistRequest(request);
 
         var artistEntity = artistDAO.findByPK(request.getEntity().getId());
@@ -96,9 +98,9 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
-    public PagedPayloadResponse<ArtistResponse> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<ArtistResponse> find(final FilterRequest request) {
         PagedData<ArtistEntity> artistEntity = artistDAO.findAll(request.getFilter());
-        PagedData<ArtistResponse> artists = new PagedData<ArtistResponse>();
+        PagedData<ArtistResponse> artists = new PagedData<>();
         artists.setRecords(artistMapper.entitiesToDtos(artistEntity.getRecords()));
         PagedDataMetadataMapper.remapMetadata(artistEntity, artists);
         artists.getRecords().forEach(artist -> {
@@ -108,4 +110,41 @@ public class ArtistServiceImpl implements ArtistService {
         });
         return new PagedPayloadResponse<>(request, ResponseCode.OK, artists);
     }
+
+    @Override
+    public ListPayloadResponse<ArtistByEras> getArtistsByEras(final EntityRequest<Long> request) throws ApiException {
+        Long eraId = request.getEntity();
+        List<Artist> artistGroup = new ArrayList<>();
+        List<Artist> artistSolo = new ArrayList<>();
+        List<LoV> persons = new ArrayList<>();
+        List<LoV> artistList = artistDAO.artistsByEras(eraId);
+
+        for (LoV artist : artistList) {
+            Long artistId = artist.getId();
+            String artistName = artist.getName();
+
+            List<LoV> personList = personDAO.personsByArtistId(artistId);
+            List<LoV> artistPersons = new ArrayList<>();
+
+            for (LoV person : personList) {
+                Long personId = person.getId();
+                String personName = person.getName();
+                artistPersons.add(new LoV(personId, personName));
+                persons.add(new LoV(personId, personName));
+            }
+
+            if (artistPersons.size() == 1) {
+                artistSolo.add(new Artist(artistId, artistName, artistPersons));
+            } else {
+                artistGroup.add(new Artist(artistId, artistName, artistPersons));
+            }
+        }
+
+        ArtistByEras artistByEras = new ArtistByEras(artistGroup, artistSolo);
+        List<ArtistByEras> artistByEras1 = new ArrayList<>();
+        artistByEras1.add(artistByEras);
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, artistByEras1);
+    }
+
 }

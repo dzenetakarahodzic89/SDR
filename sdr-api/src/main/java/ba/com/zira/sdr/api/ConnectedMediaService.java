@@ -9,11 +9,58 @@ import ba.com.zira.sdr.api.model.connectedmedia.ConnectedMedia;
 import ba.com.zira.sdr.api.model.connectedmedia.ConnectedMediaCreateRequest;
 import ba.com.zira.sdr.api.model.connectedmedia.ConnectedMediaUpdateRequest;
 
+/**
+ * The interface Connected media service.
+ */
 public interface ConnectedMediaService {
-    public PagedPayloadResponse<ConnectedMedia> find(final FilterRequest request) throws ApiException;
+    /**
+     * Find paged payload response.
+     *
+     * @param request
+     *         the request
+     * @return the paged payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PagedPayloadResponse<ConnectedMedia> find(final FilterRequest request) throws ApiException;
 
-    public PayloadResponse<ConnectedMedia> create(EntityRequest<ConnectedMediaCreateRequest> request) throws ApiException;
+    /**
+     * Create payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<ConnectedMedia> create(EntityRequest<ConnectedMediaCreateRequest> request) throws ApiException;
 
-    public PayloadResponse<ConnectedMedia> update(EntityRequest<ConnectedMediaUpdateRequest> request) throws ApiException;
+    /**
+     * Update payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<ConnectedMedia> update(EntityRequest<ConnectedMediaUpdateRequest> request) throws ApiException;
+    
+    
+    /**
+     * Delete.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
+
+    
+    
+    
+    
 
 }

@@ -9,13 +9,52 @@ import ba.com.zira.sdr.api.model.moritsintegration.MoritsIntegration;
 import ba.com.zira.sdr.api.model.moritsintegration.MoritsIntegrationCreateRequest;
 import ba.com.zira.sdr.api.model.moritsintegration.MoritsIntegrationUpdateRequest;
 
+/**
+ * The interface Morits integration service.
+ */
 public interface MoritsIntegrationService {
 
-    public PagedPayloadResponse<MoritsIntegration> find(final FilterRequest request) throws ApiException;
+    /**
+     * Find paged payload response.
+     *
+     * @param request
+     *         the request
+     * @return the paged payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PagedPayloadResponse<MoritsIntegration> find(final FilterRequest request) throws ApiException;
 
-    public PayloadResponse<MoritsIntegration> create(EntityRequest<MoritsIntegrationCreateRequest> request) throws ApiException;
+    /**
+     * Create payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<MoritsIntegration> create(EntityRequest<MoritsIntegrationCreateRequest> request) throws ApiException;
 
-    public PayloadResponse<MoritsIntegration> update(EntityRequest<MoritsIntegrationUpdateRequest> request) throws ApiException;
+    /**
+     * Update payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<MoritsIntegration> update(EntityRequest<MoritsIntegrationUpdateRequest> request) throws ApiException;
 
-    public PayloadResponse<MoritsIntegration> delete(EntityRequest<Long> request) throws ApiException;
+    /**
+     * Delete payload response.
+     *
+     * @param request
+     *         the request
+     * @return the payload response
+     * @throws ApiException
+     *         the api exception
+     */
+    PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 }

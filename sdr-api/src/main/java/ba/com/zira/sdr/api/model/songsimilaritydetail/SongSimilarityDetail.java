@@ -37,6 +37,6 @@ public class SongSimilarityDetail implements Serializable {
     private String userCode;
 
     @Schema(description = "The ID of the songsample")
-    private Long songSampleId;
+    private Long songSimilarityId;
 
 }

@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -38,7 +38,6 @@ public class CountryServiceTest extends BasicTestConfiguration {
 
     @Autowired
     private CountryMapper countryMapper;
-
     private CountryDAO countryDAO;
     private RequestValidator requestValidator;
     private CountryRequestValidation countryRequestValidation;

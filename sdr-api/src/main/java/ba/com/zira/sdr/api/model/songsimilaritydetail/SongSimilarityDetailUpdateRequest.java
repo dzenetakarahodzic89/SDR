@@ -1,9 +1,9 @@
 package ba.com.zira.sdr.api.model.songsimilaritydetail;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+
+import java.io.Serializable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -21,11 +21,7 @@ public class SongSimilarityDetailUpdateRequest implements Serializable {
     @Schema(description = "Grade of the song")
     private String grade;
 
-    @NotBlank
-    @Schema(description = "User code")
-    private String userCode;
-
     @Schema(description = "ID of the song sample")
-    private Long songSampleId;
+    private Long songSimilarityId;
 
 }

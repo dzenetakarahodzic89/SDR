@@ -1,13 +1,16 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -31,14 +34,14 @@ public class CountryServiceImpl implements CountryService {
     CountryRequestValidation countryRequestValidation;
 
     @Override
-    public PagedPayloadResponse<CountryResponse> get(FilterRequest filterRequest) throws ApiException {
+    public PagedPayloadResponse<CountryResponse> get(FilterRequest filterRequest) {
         PagedData<CountryEntity> countryList = countryDAO.findAll(filterRequest.getFilter());
         return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, countryList, countryMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<CountryResponse> create(EntityRequest<CountryCreateRequest> request) throws ApiException {
+    public PayloadResponse<CountryResponse> create(EntityRequest<CountryCreateRequest> request) {
         CountryEntity countryEntity = countryMapper.dtoToEntity(request.getEntity());
 
         countryEntity.setCreated(LocalDateTime.now());
@@ -51,7 +54,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<CountryResponse> update(EntityRequest<CountryUpdateRequest> request) throws ApiException {
+    public PayloadResponse<CountryResponse> update(EntityRequest<CountryUpdateRequest> request) {
         countryRequestValidation.validateUpdateCountryRequest(request);
 
         CountryEntity countryEntity = countryDAO.findByPK(request.getEntity().getId());
@@ -62,9 +65,15 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(EntityRequest<Long> request) {
         countryRequestValidation.validateDeleteCountryRequest(request);
         countryDAO.removeByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, "Country removed successfully!");
+    }
+
+    @Override
+    public ListPayloadResponse<CountryResponse> getAll(EmptyRequest req) throws ApiException {
+        List<CountryResponse> get = countryDAO.getAllCountries();
+        return new ListPayloadResponse<>(req, ResponseCode.OK, get);
     }
 }

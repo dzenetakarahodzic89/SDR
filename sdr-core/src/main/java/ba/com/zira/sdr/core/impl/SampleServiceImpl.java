@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,6 +16,10 @@ import ba.com.zira.sdr.core.validation.SampleRequestValidation;
 import ba.com.zira.sdr.dao.SampleDAO;
 import ba.com.zira.sdr.dao.model.SampleModelEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -32,14 +30,14 @@ public class SampleServiceImpl implements SampleService {
     SampleRequestValidation sampleRequestValidation;
 
     @Override
-    public PagedPayloadResponse<SampleModel> find(final FilterRequest request) throws ApiException {
+    public PagedPayloadResponse<SampleModel> find(final FilterRequest request) {
         PagedData<SampleModelEntity> sampleModelEntities = sampleDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, sampleModelEntities, sampleModelMapper::entitiesToDtos);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SampleModel> create(final EntityRequest<SampleModelCreateRequest> request) throws ApiException {
+    public PayloadResponse<SampleModel> create(final EntityRequest<SampleModelCreateRequest> request) {
         var sampleModelEntity = sampleModelMapper.dtoToEntity(request.getEntity());
 
         sampleModelEntity.setStatus(Status.ACTIVE.value());
@@ -52,7 +50,7 @@ public class SampleServiceImpl implements SampleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SampleModel> update(final EntityRequest<SampleModelUpdateRequest> request) throws ApiException {
+    public PayloadResponse<SampleModel> update(final EntityRequest<SampleModelUpdateRequest> request) {
         sampleRequestValidation.validateUpdateSampleModelRequest(request);
 
         var sampleModelEntity = sampleDAO.findByPK(request.getEntity().getId());
@@ -66,7 +64,7 @@ public class SampleServiceImpl implements SampleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<SampleModel> activate(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<SampleModel> activate(final EntityRequest<Long> request) {
         sampleRequestValidation.validateExistsSampleModelRequest(request);
 
         var sampleModelEntity = sampleDAO.findByPK(request.getEntity());

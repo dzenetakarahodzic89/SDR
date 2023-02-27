@@ -1,8 +1,8 @@
 package ba.com.zira.sdr.api.model.songsimilaritydetail;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotBlank;
+
+import java.io.Serializable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

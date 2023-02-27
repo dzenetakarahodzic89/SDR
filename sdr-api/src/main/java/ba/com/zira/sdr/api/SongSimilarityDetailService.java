@@ -9,6 +9,9 @@ import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetail;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdateRequest;
 
+/**
+ * The Interface SongSimilarityDetailService.
+ */
 public interface SongSimilarityDetailService {
 
     public PagedPayloadResponse<SongSimilarityDetail> find(final FilterRequest request) throws ApiException;
