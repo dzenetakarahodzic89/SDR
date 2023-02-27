@@ -71,7 +71,7 @@ public interface PlaylistService {
      * @throws ApiException
      *             the api exception
      */
-    PayloadResponse<Playlist> delete(EntityRequest<Long> request) throws ApiException;
+    PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
     /**
      * Search by name song genre.

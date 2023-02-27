@@ -98,15 +98,11 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Playlist> delete(final EntityRequest<Long> request) {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         playlistRequestValidation.validateExistsPlaylistRequest(request);
 
-        var playlistEntity = playlistDAO.findByPK(request.getEntity());
-        playlistEntity.setStatus(Status.ACTIVE.value());
-        playlistEntity.setModified(LocalDateTime.now());
-        playlistEntity.setModifiedBy(request.getUser().getUserId());
-        playlistDAO.merge(playlistEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, playlistMapper.entityToDto(playlistEntity));
+        playlistDAO.removeByPK(request.getEntity());
+        return new PayloadResponse<>(request, ResponseCode.OK, "Playlist successfully deleted.");
     }
 
 }

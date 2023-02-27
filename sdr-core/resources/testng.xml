@@ -178,6 +178,15 @@
 	    </classes>
     </test>
 
+	<test thread-count="5" name="Playlist">
+		    <classes>
+		      	<class 
+		      		name="ba.com.zira.sdr.test.suites.PlaylistRequestValidationTest"/>
+		      	<class 
+		      		name="ba.com.zira.sdr.test.suites.PlaylistServiceTest"/>
+		    </classes>
+	    </test>
+</suite>
     
 
 	

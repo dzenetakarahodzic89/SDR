@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Properties of a Playlist response")
+@Schema(description = "Properties of a playlist response")
 public class Playlist implements Serializable {
     private static final long serialVersionUID = 1L;
 
