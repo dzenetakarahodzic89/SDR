@@ -1,12 +1,24 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.assertj.core.api.Assertions;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.QueryConditionPage;
-import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.validation.RequestValidator;
 import ba.com.zira.sdr.api.SongSimilarityDetailService;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetail;
@@ -18,22 +30,8 @@ import ba.com.zira.sdr.dao.SongSimilarityDAO;
 import ba.com.zira.sdr.dao.SongSimilarityDetailDAO;
 import ba.com.zira.sdr.dao.model.SongSimilarityDetailEntity;
 import ba.com.zira.sdr.dao.model.SongSimilarityEntity;
-import org.assertj.core.api.Assertions;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @ContextConfiguration(classes = ApplicationTestConfiguration.class)
 public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
@@ -52,11 +50,9 @@ public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
 
     private void FK() {
 
-
         songSimilarityEntities.add(new SongSimilarityEntity());
         songSimilarityEntities.add(new SongSimilarityEntity());
         songSimilarityEntities.add(new SongSimilarityEntity());
-
 
     }
 
@@ -79,7 +75,6 @@ public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
             SongSimilarityDetailEntity firstSongSimilarityDetail = new SongSimilarityDetailEntity();
             firstSongSimilarityDetail.setSongSimilarity(songSimilarityEntities.get(0));
 
-
             SongSimilarityDetailEntity secondSongSimilarityDetail = new SongSimilarityDetailEntity();
             firstSongSimilarityDetail.setSongSimilarity(songSimilarityEntities.get(1));
 
@@ -99,11 +94,9 @@ public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
 
             firstResponse.setStatus(null);
 
-
             SongSimilarityDetail secondResponse = new SongSimilarityDetail();
 
             secondResponse.setStatus(null);
-
 
             SongSimilarityDetail thirdResponse = new SongSimilarityDetail();
 
@@ -131,7 +124,6 @@ public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
         }
     }
 
-
     @Test(enabled = true)
     public void testCreateSongSimilarityDetail() {
         try {
@@ -141,26 +133,17 @@ public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
             var newSongSimilarityreq = new SongSimilarityDetailCreateRequest();
             newSongSimilarityreq.setSongSimilarityId(null);
 
-
-
-
             req.setEntity(newSongSimilarityreq);
 
             SongSimilarityDetailEntity songSimilarityDetailEntity = new SongSimilarityDetailEntity();
             songSimilarityDetailEntity.setSongSimilarity(songSimilarityEntities.get(0));
 
-
-
             var songsimilaritydetail = new SongSimilarityDetail();
-            songsimilaritydetail.setSongSampleId(null);
+            songsimilaritydetail.setSongSimilarityId(null);
             songsimilaritydetail.setStatus(null);
-
 
             Mockito.when(songSimilarityDetailDAO.persist(songSimilarityDetailEntity)).thenReturn(null);
             Mockito.when(songSimilarityDetailRequestValidation.validateCreateSongSimilarityDetailRequest(req)).thenReturn(null);
-
-
-
 
             PayloadResponse<SongSimilarityDetail> songArtistCreateResponse = songSimilarityDetailService.create(req);
 
@@ -171,8 +154,6 @@ public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
             Assert.fail();
         }
     }
-
-
 
     @Test(enabled = true)
     public void testDeleteSongSimilarityDetail() {
