@@ -1,12 +1,12 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -59,7 +59,7 @@ public class InstrumentServiceImpl implements InstrumentService {
     MediaService mediaService;
 
     @Override
-    public PagedPayloadResponse<InstrumentResponse> get(final FilterRequest filterRequest) {
+    public PagedPayloadResponse<InstrumentResponse> find(final FilterRequest filterRequest) {
         PagedData<InstrumentEntity> instrumentEntities = instrumentDAO.findAll(filterRequest.getFilter());
         return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, instrumentEntities, instrumentMapper::entitiesToDtos);
     }
@@ -109,8 +109,6 @@ public class InstrumentServiceImpl implements InstrumentService {
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<String> delete(final EntityRequest<Long> entityRequest) {
         instrumentRequestValidation.validateExistsInstrumentRequest(entityRequest);
-        InstrumentEntity deletedEntity = instrumentDAO.findByPK(entityRequest.getEntity());
-
         instrumentDAO.removeByPK(entityRequest.getEntity());
         return new PayloadResponse<>(entityRequest, ResponseCode.OK, "Instrument deleted");
     }
@@ -173,6 +171,12 @@ public class InstrumentServiceImpl implements InstrumentService {
         }
 
         return new ListPayloadResponse<ResponseSongInstrument>(entityRequest, ResponseCode.OK, responseList);
+    }
+
+    @Override
+    public PayloadResponse<InstrumentResponse> get(final EntityRequest<Long> request) throws ApiException {
+        InstrumentEntity instrumentEntity = instrumentDAO.findByPK(request.getEntity());
+        return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
 }
