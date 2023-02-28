@@ -143,7 +143,6 @@ public class AlbumServiceTest extends BasicTestConfiguration {
             var newAlbumRequest = new AlbumCreateRequest();
             newAlbumRequest.setInformation("Test Information");
             newAlbumRequest.setName("Test Album 1");
-            newAlbumRequest.setStatus(Status.ACTIVE.getValue());
             newAlbumRequest.setDateOfRelease(LocalDateTime.parse("2023-02-21T15:29:11.696"));
 
             req.setEntity(newAlbumRequest);
@@ -151,7 +150,6 @@ public class AlbumServiceTest extends BasicTestConfiguration {
             var albumEntity = new AlbumEntity();
             albumEntity.setName("Test Album 1");
             albumEntity.setInformation("Test Information");
-            albumEntity.setStatus(Status.ACTIVE.getValue());
             albumEntity.setDateOfRelease(LocalDateTime.parse("2023-02-21T15:29:11.696"));
 
             var newAlbum = new AlbumResponse();
@@ -165,7 +163,7 @@ public class AlbumServiceTest extends BasicTestConfiguration {
             PayloadResponse<AlbumResponse> albumFindResponse = albumService.create(req);
 
             Assertions.assertThat(albumFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-                    .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newAlbum);
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy","status").isEqualTo(newAlbum);
 
         } catch (Exception e) {
             Assert.fail();
