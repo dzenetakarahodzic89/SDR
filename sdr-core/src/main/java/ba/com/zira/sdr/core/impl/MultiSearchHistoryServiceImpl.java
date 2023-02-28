@@ -15,6 +15,7 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.MultiSearchHistoryService;
 import ba.com.zira.sdr.api.model.multisearchhistory.MultiSearchHistoryDataStructure;
 import ba.com.zira.sdr.api.model.multisearchhistory.MultiSearchHistoryResponse;
+import ba.com.zira.sdr.core.mapper.MultiSearchHistoryMapper;
 import ba.com.zira.sdr.dao.MultiSearchDAO;
 import ba.com.zira.sdr.dao.MultiSearchHistoryDAO;
 import ba.com.zira.sdr.dao.model.MultiSearchHistoryEntity;
@@ -26,6 +27,7 @@ public class MultiSearchHistoryServiceImpl implements MultiSearchHistoryService 
 
     MultiSearchDAO multiSearchDAO;
     MultiSearchHistoryDAO multiSearchHistoryDAO;
+    MultiSearchHistoryMapper multiSearchHistoryMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -53,20 +55,14 @@ public class MultiSearchHistoryServiceImpl implements MultiSearchHistoryService 
         var mapper = new N2bObjectMapper();
 
         MultiSearchHistoryEntity last = multiSearchHistoryDAO.getLast();
-        MultiSearchHistoryResponse lastMultiSearch = new MultiSearchHistoryResponse();
-
-        lastMultiSearch.setId(last.getId());
-        LocalDateTime date = last.getRefreshTime();
-        lastMultiSearch.setRefreshTime(date);
-        lastMultiSearch.setRowsBefore(last.getRowsBefore());
-        lastMultiSearch.setRowsAfter(last.getRowsAfter());
+        var lastMultiSearchResponse = multiSearchHistoryMapper.entityToDto(last);
         try {
-            lastMultiSearch.setDataStructure(mapper.readValue(last.getDataStructure(), MultiSearchHistoryDataStructure.class));
+            lastMultiSearchResponse.setDataStructure(mapper.readValue(last.getDataStructure(), MultiSearchHistoryDataStructure.class));
         } catch (Exception e) {
             throw ApiRuntimeException.createFrom(e);
         }
 
-        return new PayloadResponse<>(request, ResponseCode.OK, lastMultiSearch);
+        return new PayloadResponse<>(request, ResponseCode.OK, lastMultiSearchResponse);
     }
 
 }
