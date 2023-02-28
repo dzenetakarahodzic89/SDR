@@ -146,6 +146,7 @@ public class SwaggerConfiguration {
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
+    @Bean
     public GroupedOpenApi connectedMediaApi() {
         return GroupedOpenApi.builder().group("connectedmedia-api").packagesToScan("ba.com.zira.sdr.connectedmedia.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -172,6 +173,12 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi deezerIntegrationApi() {
         return GroupedOpenApi.builder().group("deezer-integration-api").packagesToScan("ba.com.zira.sdr.deezerintegration.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi connectedMediaDetailApi() {
+        return GroupedOpenApi.builder().group("connectedmediadetail-api").packagesToScan("ba.com.zira.sdr.connectedmediadetail.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
