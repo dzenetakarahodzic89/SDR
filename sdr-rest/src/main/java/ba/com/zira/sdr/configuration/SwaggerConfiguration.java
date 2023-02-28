@@ -176,10 +176,11 @@ public class SwaggerConfiguration {
     }
     
     @Bean
-    public GroupedOpenApi eraApi() {
-        return GroupedOpenApi.builder().group("era-api").packagesToScan("ba.com.zira.sdr.era.rest")
+    public GroupedOpenApi userRecommendationDetailApi() {
+        return GroupedOpenApi.builder().group("userrecommendationdetail-api").packagesToScan("ba.com.zira.sdr.userrecommendationdetail.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
+
 
     @Bean
     public OpenAPI ziraOpenAPI() {
