@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -16,10 +21,6 @@ import ba.com.zira.sdr.core.validation.MoritsIntegrationRequestValidation;
 import ba.com.zira.sdr.dao.MoritsIntegrationDAO;
 import ba.com.zira.sdr.dao.model.MoritsIntegrationEntity;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -63,11 +64,24 @@ public class MoritsIntegrationServiceImpl implements MoritsIntegrationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<MoritsIntegration> delete(final EntityRequest<Long> request) {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         moritsIntegrationRequestValidation.validateExistsMoritsIntegrationRequest(request);
 
         var moritsIntegrationEntity = moritsIntegrationDAO.findByPK(request.getEntity());
         moritsIntegrationDAO.remove(moritsIntegrationEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, moritsIntegrationMapper.entityToDto(moritsIntegrationEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, "Morits lyric integration removed successfully!");
     }
+
+    /*
+     * public PayloadResponse<MoritsIntegration> delete(final
+     * EntityRequest<Long> request) {
+     * moritsIntegrationRequestValidation.validateExistsMoritsIntegrationRequest
+     * (request);
+     * 
+     * var moritsIntegrationEntity =
+     * moritsIntegrationDAO.findByPK(request.getEntity());
+     * moritsIntegrationDAO.remove(moritsIntegrationEntity); return new
+     * PayloadResponse<>(request, ResponseCode.OK,
+     * moritsIntegrationMapper.entityToDto(moritsIntegrationEntity)); }
+     */
 }

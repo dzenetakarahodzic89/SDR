@@ -2,6 +2,7 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.AlbumService;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
@@ -25,9 +27,11 @@ import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.core.mapper.AlbumMapper;
 import ba.com.zira.sdr.core.mapper.SongArtistMapper;
 import ba.com.zira.sdr.core.mapper.SongMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.utils.PlayTimeHelper;
 import ba.com.zira.sdr.core.validation.AlbumRequestValidation;
 import ba.com.zira.sdr.dao.AlbumDAO;
+import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
 import lombok.AllArgsConstructor;
 
@@ -36,10 +40,12 @@ import lombok.AllArgsConstructor;
 public class AlbumServiceImpl implements AlbumService {
 
     AlbumDAO albumDAO;
+    SongArtistDAO songArtistDAO;
     SongArtistMapper songArtistMapper;
     AlbumMapper albumMapper;
     SongMapper songMapper;
     AlbumRequestValidation albumRequestValidation;
+    LookupService lookupService;
 
     @Override
     public PagedPayloadResponse<AlbumResponse> find(final FilterRequest request) {
@@ -98,6 +104,22 @@ public class AlbumServiceImpl implements AlbumService {
         asp.setTotalPlayTime(totalPlayTime);
         asp.setMap(map);
         return new PayloadResponse<>(request, ResponseCode.OK, asp);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<AlbumResponse> getById(final EntityRequest<Long> request) {
+        List<SongResponse> listSong = albumDAO.findSongsWithPlaytimeForAlbum(request.getEntity());
+        var albumEntity = albumDAO.findByPK(request.getEntity());
+        var albumResponse = albumMapper.entityToDto(albumEntity);
+        var songArtist = albumEntity.getSongArtists();
+        if (songArtist.size() != 0) {
+            albumResponse.setArtistName(albumEntity.getSongArtists().get(0).getArtist().getName());
+        }
+        albumResponse.setSongs(listSong);
+        lookupService.lookupCoverImage(Arrays.asList(albumResponse), AlbumResponse::getId, ObjectType.ALBUM.getValue(),
+                AlbumResponse::setImageUrl, AlbumResponse::getImageUrl);
+        return new PayloadResponse<>(request, ResponseCode.OK, albumResponse);
     }
 
 }

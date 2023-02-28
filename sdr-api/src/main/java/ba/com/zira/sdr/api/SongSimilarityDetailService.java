@@ -14,48 +14,20 @@ import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdate
  */
 public interface SongSimilarityDetailService {
 
-    /**
-     * Find.
-     *
-     * @param request
-     *         the request
-     * @return the paged payload response
-     * @throws ApiException
-     *         the api exception
-     */
-    PagedPayloadResponse<SongSimilarityDetail> find(final FilterRequest request) throws ApiException;
+    public PagedPayloadResponse<SongSimilarityDetail> find(final FilterRequest request) throws ApiException;
 
-    /**
-     * Creates the.
-     *
-     * @param request
-     *         the request
-     * @return the payload response
-     * @throws ApiException
-     *         the api exception
-     */
-    PayloadResponse<SongSimilarityDetail> create(EntityRequest<SongSimilarityDetailCreateRequest> request) throws ApiException;
+    public PayloadResponse<SongSimilarityDetail> create(EntityRequest<SongSimilarityDetailCreateRequest> request)
+            throws ApiException;
 
-    /**
-     * Delete.
-     *
-     * @param request
-     *         the request
-     * @return the payload response
-     * @throws ApiException
-     *         the api exception
-     */
-    PayloadResponse<SongSimilarityDetail> delete(EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<SongSimilarityDetail> delete(EntityRequest<Long> request) throws ApiException;
 
-    /**
-     * Update.
-     *
-     * @param request
-     *         the request
-     * @return the payload response
-     * @throws ApiException
-     *         the api exception
-     */
-    PayloadResponse<SongSimilarityDetail> update(EntityRequest<SongSimilarityDetailUpdateRequest> request) throws ApiException;
+    public PayloadResponse<SongSimilarityDetail> update(EntityRequest<SongSimilarityDetailUpdateRequest> request)
+            throws ApiException;
+
+
+
+    public PagedPayloadResponse<SongSimilarityDetail> get(final FilterRequest filterRequest)
+        throws ApiException;
+
 
 }

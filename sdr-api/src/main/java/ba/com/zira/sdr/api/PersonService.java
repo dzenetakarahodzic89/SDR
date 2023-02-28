@@ -5,6 +5,7 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
+import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
@@ -65,5 +66,7 @@ public interface PersonService {
      * @return the payload response
      */
     PayloadResponse<PersonResponse> findById(EntityRequest<Long> request);
+
+    PayloadResponse<PersonResponse> updatePersonCountry(EntityRequest<PersonCountryRequest> request);
 
 }

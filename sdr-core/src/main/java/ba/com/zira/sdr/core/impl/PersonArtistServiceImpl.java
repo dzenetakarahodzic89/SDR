@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -17,10 +22,6 @@ import ba.com.zira.sdr.dao.PersonArtistDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -51,14 +52,6 @@ public class PersonArtistServiceImpl implements PersonArtistService {
         personArtistEntity.setCreated(LocalDateTime.now());
         personArtistEntity.setCreatedBy(entityRequest.getUserId());
 
-        personArtistEntity.setModified(LocalDateTime.now());
-        personArtistEntity.setModifiedBy(entityRequest.getUserId());
-
-        personArtistEntity.setStartOfRelaltionship(LocalDateTime.now());
-        personArtistEntity.setEndOfRelationship(LocalDateTime.now());
-
-        personArtistEntity.setPerson(personDAO.findByPK(personArtistEntity.getPerson().getId()));
-        personArtistEntity.setArtist(artistDAO.findByPK(personArtistEntity.getArtist().getId()));
         personArtistDAO.persist(personArtistEntity);
 
         return new PayloadResponse<>(entityRequest, ResponseCode.OK, personArtistMapper.entityToDto(personArtistEntity));
