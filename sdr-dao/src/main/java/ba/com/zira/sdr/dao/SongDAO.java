@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,12 +11,13 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
-import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
+import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
 import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
@@ -32,6 +34,31 @@ import ba.com.zira.sdr.dao.model.SongEntity_;
 
 @Repository
 public class SongDAO extends AbstractDAO<SongEntity, Long> {
+    public List<SongEntity> generatePlaylist(final PlaylistGenerateRequest request) {
+        final CriteriaQuery<SongEntity> criteriaQuery = builder.createQuery(SongEntity.class);
+
+        final Root<SongEntity> root = criteriaQuery.from(SongEntity.class);
+
+        ArrayList<Predicate> predicates = new ArrayList<>();
+
+        if (request.getIncludeCovers() == false) {
+            predicates.add(builder.isNull(root.get(SongEntity_.cover).get(SongEntity_.id)));
+        }
+
+        if (request.getIncludeRemixes() == false) {
+            predicates.add(builder.isNull(root.get(SongEntity_.remix).get(SongEntity_.id)));
+        }
+
+        if (request.getGenreId() != null) {
+            predicates.add(builder.equal(root.get(SongEntity_.genre).get(GenreEntity_.id), request.getGenreId()));
+        }
+
+        Predicate[] predicateArray = predicates.toArray(new Predicate[predicates.size()]);
+        criteriaQuery.orderBy(builder.asc(builder.function("random", null)));
+
+        return entityManager.createQuery(criteriaQuery.where(predicateArray)).setMaxResults(request.getAmountOfSongs().intValue())
+                .getResultList();
+    }
 
     public Map<Long, String> songsByGenre(Long genreId) {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from SongEntity s where s.genre.id = :id";
@@ -42,9 +69,10 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
             return new HashMap<>();
         }
     }
-    public SongSingleResponse getById(Long songId){
-    	var hql = "select new ba.com.zira.sdr.api.model.song.SongSingleResponse(ss.id, ss.name, ss.outlineText,ss.information,ss.dateOfRelease,scp.name,sg.name,sg.id) from SongEntity ss left join ChordProgressionEntity scp on ss.chordProgression.id =scp.id left join GenreEntity sg on ss.genre.id = sg.id where ss.id =:id";
-    	TypedQuery<SongSingleResponse> q = entityManager.createQuery(hql, SongSingleResponse.class).setParameter("id", songId);
+
+    public SongSingleResponse getById(Long songId) {
+        var hql = "select new ba.com.zira.sdr.api.model.song.SongSingleResponse(ss.id, ss.name, ss.outlineText,ss.information,ss.dateOfRelease,scp.name,sg.name,sg.id) from SongEntity ss left join ChordProgressionEntity scp on ss.chordProgression.id =scp.id left join GenreEntity sg on ss.genre.id = sg.id where ss.id =:id";
+        TypedQuery<SongSingleResponse> q = entityManager.createQuery(hql, SongSingleResponse.class).setParameter("id", songId);
         return q.getSingleResult();
     }
 
@@ -67,8 +95,9 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
+
     public Long countAllPlaylistsWhereSongExists(Long songId) {
-    	var hql = "select count(*) from SongPlaylistEntity ssp where ssp.song.id =:id";
+        var hql = "select count(*) from SongPlaylistEntity ssp where ssp.song.id =:id";
         TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", songId);
         return q.getSingleResult();
     }
