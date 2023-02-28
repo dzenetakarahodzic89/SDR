@@ -14,6 +14,8 @@ public class ArtistSongResponse implements Serializable{
 	private Long id;
 	 @Schema(description = "Full stage name")
 	private String name;
+	 @Schema(description="Person Id")
+	 private Long personId;
 	 @Schema(description = "Full real name")
 	private String personName;
 	 @Schema(description = "Date of Birth")
