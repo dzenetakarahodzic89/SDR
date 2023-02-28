@@ -34,6 +34,12 @@ import ba.com.zira.sdr.dao.model.SongEntity_;
 
 @Repository
 public class SongDAO extends AbstractDAO<SongEntity, Long> {
+    public List<SongEntity> findSongsByIdArray(final List<Long> songIds) {
+        final CriteriaQuery<SongEntity> cQuery = builder.createQuery(SongEntity.class);
+        final Root<SongEntity> root = cQuery.from(SongEntity.class);
+        return entityManager.createQuery(cQuery.where(root.get(SongEntity_.id).in(songIds))).getResultList();
+    }
+
     public List<SongEntity> generatePlaylist(final PlaylistGenerateRequest request) {
         final CriteriaQuery<SongEntity> criteriaQuery = builder.createQuery(SongEntity.class);
 
