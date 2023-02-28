@@ -10,6 +10,5 @@ import lombok.Data;
 public class PersonCountryRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long personId;
-    private Long countryId;
-
+	private Long countryId;
 }

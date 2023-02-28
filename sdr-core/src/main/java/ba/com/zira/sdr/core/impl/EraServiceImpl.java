@@ -19,7 +19,6 @@ public class EraServiceImpl implements EraService{
 	EraDAO eraDAO;
 	@Override
 	public ListPayloadResponse<LoV> getEraLoVs(EmptyRequest req) throws ApiException {
-		// TODO Auto-generated method stub
         List<LoV> eras = eraDAO.getAllErasLoV();
         return new ListPayloadResponse<>(req, ResponseCode.OK, eras);
 	}
