@@ -73,7 +73,6 @@ public class PersonServiceImpl implements PersonService {
         personEntity.setCreatedBy(request.getUserId());
 
         if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
-
             var mediaRequest = new MediaCreateRequest();
             mediaRequest.setObjectType(ObjectType.PERSON.getValue());
             mediaRequest.setObjectId(personEntity.getId());
@@ -82,7 +81,6 @@ public class PersonServiceImpl implements PersonService {
             mediaRequest.setMediaStoreType("COVER_IMAGE");
             mediaRequest.setMediaObjectType("IMAGE");
             mediaService.save(new EntityRequest<>(mediaRequest, request));
-
         }
 
         personDAO.persist(personEntity);
