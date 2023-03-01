@@ -48,12 +48,6 @@ public class MultiSearchDAO extends AbstractDAO<MultiSearchEntity, Long> {
         query.executeUpdate();
     }
 
-    public Long countFields() {
-        var hql = "select count(*) from MultiSearchEntity sms";
-        TypedQuery<Long> query = entityManager.createQuery(hql, Long.class);
-        return query.getSingleResult();
-    }
-
     public void createTableAndFillWithData() {
         var hql = "create table sat_multi_search as (select cc2.id,cc2.name || ' ' || cc2.surname as name,'PERSON' as type from sat_person cc2 union select cf.id,cf.name,'SONG' from sat_song cf union select cl.id,cl.name, 'ALBUM' from sat_album cl)";
         Query query = entityManager.createNativeQuery(hql);

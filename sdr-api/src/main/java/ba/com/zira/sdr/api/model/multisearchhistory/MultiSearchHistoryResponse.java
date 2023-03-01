@@ -3,6 +3,8 @@ package ba.com.zira.sdr.api.model.multisearchhistory;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +19,7 @@ public class MultiSearchHistoryResponse implements Serializable {
     @Schema(description = "Unique identifier")
     private String id;
     @Schema(description = "Refresh time of multi search table")
+    @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
     private LocalDateTime refreshTime;
     @Schema(description = "Rows before refresh")
     private Long rowsBefore;

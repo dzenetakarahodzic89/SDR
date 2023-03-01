@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.dao;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.TypedQuery;
 
@@ -20,6 +21,12 @@ public class MultiSearchHistoryDAO extends AbstractDAO<MultiSearchHistoryEntity,
         TypedQuery<MultiSearchHistoryEntity> getEntityQuery = entityManager.createQuery(hql, MultiSearchHistoryEntity.class)
                 .setParameter("refreshTime", time);
         return getEntityQuery.getSingleResult();
+    }
+
+    public List<MultiSearchHistoryEntity> getAllOrderedByRefreshTime() {
+        var hql = "select new ba.com.zira.sdr.dao.model.MultiSearchHistoryEntity(r.id, r.refreshTime, r.rowsBefore, r.rowsAfter, r.dataStructure) from MultiSearchHistoryEntity r order by r.refreshTime desc";
+        TypedQuery<MultiSearchHistoryEntity> query = entityManager.createQuery(hql, MultiSearchHistoryEntity.class).setMaxResults(7);
+        return query.getResultList();
     }
 
 }

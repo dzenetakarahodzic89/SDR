@@ -1,6 +1,8 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.exception.ApiRuntimeException;
 import ba.com.zira.commons.message.request.EmptyRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.MultiSearchHistoryService;
@@ -36,10 +39,10 @@ public class MultiSearchHistoryServiceImpl implements MultiSearchHistoryService 
         var multiSearchHistory = new MultiSearchHistoryEntity();
         multiSearchHistory.setId(UUID.randomUUID().toString());
         multiSearchHistory.setRefreshTime(LocalDateTime.now());
-        multiSearchHistory.setRowsBefore(multiSearchDAO.countFields());
+        multiSearchHistory.setRowsBefore((long) multiSearchDAO.countAll());
         multiSearchDAO.deleteTable();
         multiSearchDAO.createTableAndFillWithData();
-        multiSearchHistory.setRowsAfter(multiSearchDAO.countFields());
+        multiSearchHistory.setRowsAfter((long) multiSearchDAO.countAll());
         var dataStructure = multiSearchDAO.createDataStructure();
         try {
             multiSearchHistory.setDataStructure(mapper.writeValueAsString(dataStructure));
@@ -63,6 +66,24 @@ public class MultiSearchHistoryServiceImpl implements MultiSearchHistoryService 
         }
 
         return new PayloadResponse<>(request, ResponseCode.OK, lastMultiSearchResponse);
+    }
+
+    @Override
+    public ListPayloadResponse<MultiSearchHistoryResponse> getAllOrderedByRefreshTime(EmptyRequest request) throws ApiException {
+        var mapper = new N2bObjectMapper();
+
+        List<MultiSearchHistoryEntity> history = multiSearchHistoryDAO.getAllOrderedByRefreshTime();
+        List<MultiSearchHistoryResponse> multiSearches = new ArrayList<>();
+        for (var ms : history) {
+            try {
+                multiSearches.add(new MultiSearchHistoryResponse(ms.getId(), ms.getRefreshTime(), ms.getRowsBefore(), ms.getRowsAfter(),
+                        mapper.readValue(ms.getDataStructure(), MultiSearchHistoryDataStructure.class)));
+            } catch (Exception e) {
+                throw ApiRuntimeException.createFrom(e);
+            }
+        }
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, multiSearches);
     }
 
 }

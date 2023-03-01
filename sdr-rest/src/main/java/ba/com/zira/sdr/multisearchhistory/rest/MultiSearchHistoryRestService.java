@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.MultiSearchHistoryService;
 import ba.com.zira.sdr.api.model.multisearchhistory.MultiSearchHistoryResponse;
@@ -16,7 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "multisearch")
 @RestController
-@RequestMapping(value = "multisearch")
+@RequestMapping(value = "multisearchhistory")
 public class MultiSearchHistoryRestService {
 
     @Autowired
@@ -34,6 +35,13 @@ public class MultiSearchHistoryRestService {
     public PayloadResponse<MultiSearchHistoryResponse> getLast() throws ApiException {
         EmptyRequest request = new EmptyRequest();
         return multiSearchHistoryService.getLast(request);
+    }
+
+    @Operation(summary = "Get all history ordered by refresh time")
+    @GetMapping(value = "all-by-refresh-time")
+    public ListPayloadResponse<MultiSearchHistoryResponse> getAllOrderedByRefreshTime() throws ApiException {
+        EmptyRequest request = new EmptyRequest();
+        return multiSearchHistoryService.getAllOrderedByRefreshTime(request);
     }
 
 }
