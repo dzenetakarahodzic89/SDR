@@ -10,6 +10,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -18,12 +19,14 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.AlbumService;
+import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.SongAudio;
+import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.core.mapper.AlbumMapper;
 import ba.com.zira.sdr.core.mapper.SongArtistMapper;
@@ -47,6 +50,7 @@ public class AlbumServiceImpl implements AlbumService {
     SongMapper songMapper;
     AlbumRequestValidation albumRequestValidation;
     LookupService lookupService;
+    MediaService mediaService;
 
     @Override
     public PagedPayloadResponse<AlbumResponse> find(final FilterRequest request) {
@@ -56,12 +60,23 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<AlbumResponse> create(final EntityRequest<AlbumCreateRequest> request) {
+    public PayloadResponse<AlbumResponse> create(final EntityRequest<AlbumCreateRequest> request) throws ApiException {
         albumRequestValidation.validateCreateAlbumRequest(request);
         var albumEntity = albumMapper.dtoToEntity(request.getEntity());
         albumEntity.setCreated(LocalDateTime.now());
         albumEntity.setStatus(Status.ACTIVE.value());
         albumEntity.setCreatedBy(request.getUserId());
+        
+        if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
+            var mediaRequest = new MediaCreateRequest();
+            mediaRequest.setObjectType(ObjectType.ALBUM.getValue());
+            mediaRequest.setObjectId(albumEntity.getId());
+            mediaRequest.setMediaObjectData(request.getEntity().getCoverImageData());
+            mediaRequest.setMediaObjectName(request.getEntity().getCoverImage());
+            mediaRequest.setMediaStoreType("COVER_IMAGE");
+            mediaRequest.setMediaObjectType("IMAGE");
+            mediaService.save(new EntityRequest<>(mediaRequest, request));
+        }
         albumDAO.persist(albumEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, albumMapper.entityToDto(albumEntity));
     }

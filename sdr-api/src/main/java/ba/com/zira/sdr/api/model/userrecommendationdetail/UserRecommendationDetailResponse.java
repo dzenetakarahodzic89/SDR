@@ -36,4 +36,7 @@ public class UserRecommendationDetailResponse implements Serializable {
 
 	@Schema(description = "User score")
 	private BigDecimal userScore;
-}
+
+	
+	}
+

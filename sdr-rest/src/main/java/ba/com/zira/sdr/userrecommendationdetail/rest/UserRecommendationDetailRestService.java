@@ -50,7 +50,7 @@ public class UserRecommendationDetailRestService {
 
 	@Operation(summary = "Delete user recommendation detail")
 	@DeleteMapping(value = "{id}")
-	public PayloadResponse<UserRecommendationDetailResponse> delete(
+	public PayloadResponse<String> delete(
 			@Parameter(required = true, description = "ID of the record") @PathVariable final Long id)
 			throws ApiException {
 		EntityRequest<Long> entityRequest = new EntityRequest<>();
