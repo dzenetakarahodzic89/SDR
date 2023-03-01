@@ -88,7 +88,7 @@ public class SongServiceImpl implements SongService {
                 SongSingleResponse::setImageUrl, SongSingleResponse::getImageUrl);
         lookupService.lookupAudio(Arrays.asList(song), SongSingleResponse::getId, SongSingleResponse::setAudioUrl);
         song.setPlaylistCount(songDAO.countAllPlaylistsWhereSongExists(request.getEntity()).intValue());
-        song.setArtists(artistDAO.getById(request.getEntity()));
+        song.setArtists(artistDAO.getBySongId(request.getEntity()));
         song.setSubgenres(genreDAO.subGenresByMainGenre(song.getGenreId()));
         return new PayloadResponse<>(request, ResponseCode.OK, song);
     }
