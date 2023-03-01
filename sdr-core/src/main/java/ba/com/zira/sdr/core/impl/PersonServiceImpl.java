@@ -119,7 +119,7 @@ public class PersonServiceImpl implements PersonService {
         PersonEntity personEntity = personDAO.findByPK(request.getEntity().getPersonId());
         Long countryEntityId = request.getEntity().getCountryId();
 
-        personEntity.setCountryId(countryEntityId);
+        personEntity.setCountry(countryDAO.findByPK(countryEntityId));
         personEntity.setModified(LocalDateTime.now());
         personEntity.setModifiedBy(request.getUserId());
         personDAO.merge(personEntity);

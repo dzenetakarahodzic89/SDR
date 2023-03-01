@@ -16,9 +16,9 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.PlaylistGenerateService;
+import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSong;
 import ba.com.zira.sdr.api.model.generateplaylist.SavePlaylistRequest;
 import ba.com.zira.sdr.api.model.playlist.Playlist;
-import ba.com.zira.sdr.api.model.song.Song;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -32,8 +32,8 @@ public class PlaylistGenerateRestService {
 
     @Operation(summary = "Generate playlist based on specific criteria")
     @GetMapping
-    public PagedPayloadResponse<Song> get(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
-            throws ApiException {
+    public PagedPayloadResponse<GeneratedPlaylistSong> get(@RequestParam Map<String, Object> filterCriteria,
+            final QueryConditionPage queryCriteria) throws ApiException {
         return playlistGenerateService.generatePlaylist(new FilterRequest(filterCriteria, queryCriteria));
     }
 

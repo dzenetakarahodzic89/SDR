@@ -19,10 +19,11 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.PlaylistGenerateService;
+import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSong;
 import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
 import ba.com.zira.sdr.api.model.generateplaylist.SavePlaylistRequest;
 import ba.com.zira.sdr.api.model.playlist.Playlist;
-import ba.com.zira.sdr.api.model.song.Song;
+import ba.com.zira.sdr.core.mapper.GeneratePlaylistMapper;
 import ba.com.zira.sdr.core.mapper.PlaylistMapper;
 import ba.com.zira.sdr.core.mapper.SongMapper;
 import ba.com.zira.sdr.core.utils.PlayTimeHelper;
@@ -44,14 +45,15 @@ public class PlaylistGenerateServiceImpl implements PlaylistGenerateService {
     PlaylistDAO playlistDAO;
     PlaylistMapper playlistMapper;
     SongRequestValidation songRequestValidation;
+    GeneratePlaylistMapper generatePlaylistMapper;
 
     @Override
-    public PagedPayloadResponse<Song> generatePlaylist(FilterRequest request) throws ApiException {
-        List<SongEntity> filteredSongEntities = songDAO
-                .generatePlaylist(this.extractPlaylistGenerateRequestFromFilter(request.getFilter()));
-        PagedData<SongEntity> pagedData = new PagedData<>();
-        pagedData.setRecords(filteredSongEntities);
-        return new PagedPayloadResponse<>(request, ResponseCode.OK, pagedData, songMapper::entitiesToDtos);
+    public PagedPayloadResponse<GeneratedPlaylistSong> generatePlaylist(FilterRequest request) throws ApiException {
+        List<Object[]> generatedPlaylist = songDAO.generatePlaylistSql(this.extractPlaylistGenerateRequestFromFilter(request.getFilter()));
+        PagedData<Object[]> pagedData = new PagedData<>();
+        pagedData.setRecords(generatedPlaylist);
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, pagedData,
+                generatePlaylistMapper::complexDbObjectsToGeneratedPlaylistSongs);
     }
 
     @Override

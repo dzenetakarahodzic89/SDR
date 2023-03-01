@@ -11,5 +11,6 @@ public abstract class SongArtistEntity_ {
     public static volatile SingularAttribute<SongArtistEntity, SongEntity> song;
     public static volatile SingularAttribute<SongArtistEntity, AlbumEntity> album;
     public static volatile SingularAttribute<SongArtistEntity, Long> id;
+    public static volatile SingularAttribute<SongArtistEntity, ArtistEntity> artist;
 
 }

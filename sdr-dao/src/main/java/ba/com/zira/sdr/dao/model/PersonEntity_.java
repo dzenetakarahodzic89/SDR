@@ -9,7 +9,8 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(PersonEntity.class)
 public abstract class PersonEntity_ {
 
-    public static volatile SingularAttribute<SongEntity, Long> id;
-    public static volatile ListAttribute<SongEntity, SongArtistEntity> personArtists;
-    public static volatile SingularAttribute<SongEntity, String> name;
+    public static volatile SingularAttribute<PersonEntity, Long> id;
+    public static volatile ListAttribute<PersonEntity, PersonArtistEntity> personArtists;
+    public static volatile SingularAttribute<PersonEntity, String> name;
+    public static volatile SingularAttribute<PersonEntity, CountryEntity> country;
 }
