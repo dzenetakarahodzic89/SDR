@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.songsimilaritydetail.rest;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,17 +13,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.SongSimilarityDetailService;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetail;
-import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest2;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailResponse;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,6 +41,13 @@ public class SongSimilarityDetailRestService {
 
     private SongSimilarityDetailService songSimilarityDetailService;
 
+    @Operation(summary = "Get all")
+    @GetMapping(value = "all")
+    public ListPayloadResponse<SongSimilarityDetailResponse> getAll() throws ApiException {
+        var request = new EmptyRequest();
+        return songSimilarityDetailService.getAll(request);
+    }
+
     @Operation(summary = "Find song sample details based on filter criteria")
     @GetMapping
     public PagedPayloadResponse<SongSimilarityDetail> find(@RequestParam Map<String, Object> filterCriteria,
@@ -45,11 +55,11 @@ public class SongSimilarityDetailRestService {
         return songSimilarityDetailService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
-    @Operation(summary = "Create song sample detail")
+    @Operation(summary = "Create")
     @PostMapping
-    public PayloadResponse<SongSimilarityDetail> create(
-            @RequestBody final EntityRequest<SongSimilarityDetailCreateRequest> songSimilarityDetail) throws ApiException {
-        return songSimilarityDetailService.create(new EntityRequest<>(songSimilarityDetail));
+    public PayloadResponse<SongSimilarityDetail> create(@RequestBody final SongSimilarityDetailCreateRequest2 songSimilarityCreateRequest)
+            throws ApiException {
+        return songSimilarityDetailService.create(new EntityRequest<>(songSimilarityCreateRequest));
     }
 
     @Operation(summary = "Update song sample detail")
