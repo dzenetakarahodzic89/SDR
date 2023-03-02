@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -22,6 +24,7 @@ import ba.com.zira.sdr.api.model.label.LabelArtistResponse;
 import ba.com.zira.sdr.api.model.label.LabelCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelResponse;
 import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.core.mapper.LabelMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
@@ -124,6 +127,13 @@ public class LabelServiceImpl implements LabelService {
 
         return new PayloadResponse<>(request, ResponseCode.OK, "Label successfully deleted!");
 
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> retrieveAllLoVs(final EmptyRequest request) throws ApiException {
+        var labels = labelDAO.getLabelLoVs();
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, labels);
     }
 
 }

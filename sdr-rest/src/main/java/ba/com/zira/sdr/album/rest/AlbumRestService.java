@@ -24,6 +24,8 @@ import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.song.Song;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -81,4 +83,12 @@ public class AlbumRestService {
             @Parameter(required = true, description = "ID of the album") @PathVariable final Long id) throws ApiException {
         return albumService.getById(new EntityRequest<>(id));
     }
+
+    @Operation(summary = "Add a new song to the album")
+    @PutMapping(value = "/add-song")
+    public PayloadResponse<Song> addSongToAlbum(@RequestBody final SongOfAlbumUpdateRequest request) throws ApiException {
+
+        return albumService.addSongToAlbum(new EntityRequest<>(request));
+    }
+
 }

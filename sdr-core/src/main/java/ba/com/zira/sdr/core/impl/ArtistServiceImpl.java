@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -145,6 +146,12 @@ public class ArtistServiceImpl implements ArtistService {
         artistByEras1.add(artistByEras);
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, artistByEras1);
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> getArtistNames(EmptyRequest request) throws ApiException {
+        var artists = artistDAO.getArtistLoVs();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
     }
 
 }

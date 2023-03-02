@@ -9,6 +9,8 @@ import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.song.Song;
 
 /**
  * The Interface AlbumService.
@@ -88,5 +90,16 @@ public interface AlbumService {
      * @throws ApiException
      */
     PayloadResponse<AlbumResponse> getById(EntityRequest<Long> request) throws ApiException;
+
+    /**
+     * Adds the song and label to album.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     * @throws ApiException
+     *             the api exception
+     */
+    PayloadResponse<Song> addSongToAlbum(EntityRequest<SongOfAlbumUpdateRequest> request) throws ApiException;
 
 }
