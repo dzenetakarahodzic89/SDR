@@ -8,9 +8,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
-import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.multisearch.MultiSearchResponse;
-import ba.com.zira.sdr.api.model.multisearchhistory.MultiSearchHistoryDataStructure;
 import ba.com.zira.sdr.api.model.wiki.WikiResponse;
 import ba.com.zira.sdr.dao.model.MultiSearchEntity;
 
@@ -52,20 +50,6 @@ public class MultiSearchDAO extends AbstractDAO<MultiSearchEntity, Long> {
         var hql = "create table sat_multi_search as (select cc2.id,cc2.name || ' ' || cc2.surname as name,'PERSON' as type from sat_person cc2 union select cf.id,cf.name,'SONG' from sat_song cf union select cl.id,cl.name, 'ALBUM' from sat_album cl)";
         Query query = entityManager.createNativeQuery(hql);
         query.executeUpdate();
-    }
-
-    public MultiSearchHistoryDataStructure createDataStructure() {
-        var dataStructure = new MultiSearchHistoryDataStructure();
-
-        var hql = "select count(*) from MultiSearchEntity sms where sms.type like :type";
-        TypedQuery<Long> query = entityManager.createQuery(hql, Long.class).setParameter("type", '%' + ObjectType.SONG.getValue() + '%');
-        dataStructure.setSongs(query.getSingleResult());
-        query = entityManager.createQuery(hql, Long.class).setParameter("type", '%' + ObjectType.ALBUM.getValue() + '%');
-        dataStructure.setAlbums(query.getSingleResult());
-        query = entityManager.createQuery(hql, Long.class).setParameter("type", '%' + ObjectType.PERSON.getValue() + '%');
-        dataStructure.setPersons(query.getSingleResult());
-
-        return dataStructure;
     }
 
 }

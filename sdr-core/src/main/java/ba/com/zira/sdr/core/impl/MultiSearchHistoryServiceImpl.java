@@ -37,15 +37,26 @@ public class MultiSearchHistoryServiceImpl implements MultiSearchHistoryService 
     public PayloadResponse<String> create(EmptyRequest req) throws ApiException {
         var mapper = new N2bObjectMapper();
         var multiSearchHistory = new MultiSearchHistoryEntity();
+        var multiSearchDataStructure = new MultiSearchHistoryDataStructure();
         multiSearchHistory.setId(UUID.randomUUID().toString());
         multiSearchHistory.setRefreshTime(LocalDateTime.now());
         multiSearchHistory.setRowsBefore((long) multiSearchDAO.countAll());
         multiSearchDAO.deleteTable();
         multiSearchDAO.createTableAndFillWithData();
         multiSearchHistory.setRowsAfter((long) multiSearchDAO.countAll());
-        var dataStructure = multiSearchDAO.createDataStructure();
+        var countMultiSearches = multiSearchDAO.getWiki();
+
+        countMultiSearches.forEach(res -> {
+            if (res.getType().equals("SONG")) {
+                multiSearchDataStructure.setSongs(res.getCountType());
+            } else if (res.getType().equals("ALBUM")) {
+                multiSearchDataStructure.setAlbums(res.getCountType());
+            } else {
+                multiSearchDataStructure.setPersons(res.getCountType());
+            }
+        });
         try {
-            multiSearchHistory.setDataStructure(mapper.writeValueAsString(dataStructure));
+            multiSearchHistory.setDataStructure(mapper.writeValueAsString(multiSearchDataStructure));
         } catch (Exception e) {
             throw ApiRuntimeException.createFrom(e);
         }
