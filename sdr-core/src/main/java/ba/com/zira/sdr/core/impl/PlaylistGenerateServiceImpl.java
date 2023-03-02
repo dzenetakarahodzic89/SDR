@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.Tuple;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +51,8 @@ public class PlaylistGenerateServiceImpl implements PlaylistGenerateService {
 
     @Override
     public PagedPayloadResponse<GeneratedPlaylistSong> generatePlaylist(FilterRequest request) throws ApiException {
-        List<Object[]> generatedPlaylist = songDAO.generatePlaylistSql(this.extractPlaylistGenerateRequestFromFilter(request.getFilter()));
-        PagedData<Object[]> pagedData = new PagedData<>();
+        List<Tuple> generatedPlaylist = songDAO.generatePlaylist(this.extractPlaylistGenerateRequestFromFilter(request.getFilter()));
+        PagedData<Tuple> pagedData = new PagedData<>();
         pagedData.setRecords(generatedPlaylist);
         return new PagedPayloadResponse<>(request, ResponseCode.OK, pagedData,
                 generatePlaylistMapper::complexDbObjectsToGeneratedPlaylistSongs);
