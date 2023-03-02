@@ -18,4 +18,10 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         TypedQuery<SongResponse> query = entityManager.createQuery(hql, SongResponse.class).setParameter("albumId", albumId);
         return query.getResultList();
     }
+
+    public List<String> findAllAlbumArtists(final Long albumId) {
+        var hql = "select distinct artist.name || ' ' || artist.surname from AlbumEntity a join SongArtistEntity sa on sa.album.id = a.id join ArtistEntity artist on artist.id = sa.artist.id where a.id = :albumId";
+        TypedQuery<String> query = entityManager.createQuery(hql, String.class).setParameter("albumId", albumId);
+        return query.getResultList();
+    }
 }

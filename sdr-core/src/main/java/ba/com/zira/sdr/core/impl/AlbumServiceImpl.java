@@ -25,6 +25,7 @@ import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.album.SongAudio;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.core.mapper.AlbumMapper;
@@ -125,13 +126,21 @@ public class AlbumServiceImpl implements AlbumService {
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<AlbumResponse> getById(final EntityRequest<Long> request) {
         List<SongResponse> listSong = albumDAO.findSongsWithPlaytimeForAlbum(request.getEntity());
+        List<SongAudio> songAudioUrls = new ArrayList<>();
+        lookupService.lookupAudio(listSong, SongResponse::getId, SongResponse::setAudioUrl);
+        lookupService.lookupCoverImage(listSong, SongResponse::getId, ObjectType.SONG.getValue(), SongResponse::setCoverUrl,
+                SongResponse::getCoverUrl);
+        listSong.forEach(song -> {
+            if (song.getAudioUrl() != null) {
+                songAudioUrls.add(new SongAudio(song.getAudioUrl(), song.getName(), song.getCoverUrl()));
+            }
+        });
         var albumEntity = albumDAO.findByPK(request.getEntity());
         var albumResponse = albumMapper.entityToDto(albumEntity);
         var songArtist = albumEntity.getSongArtists();
-        if (songArtist.size() != 0) {
-            albumResponse.setArtistName(albumEntity.getSongArtists().get(0).getArtist().getName());
-        }
         albumResponse.setSongs(listSong);
+        albumResponse.setAlbumArtists(albumDAO.findAllAlbumArtists(request.getEntity()));
+        albumResponse.setAudioUrls(songAudioUrls);
         lookupService.lookupCoverImage(Arrays.asList(albumResponse), AlbumResponse::getId, ObjectType.ALBUM.getValue(),
                 AlbumResponse::setImageUrl, AlbumResponse::getImageUrl);
         return new PayloadResponse<>(request, ResponseCode.OK, albumResponse);
