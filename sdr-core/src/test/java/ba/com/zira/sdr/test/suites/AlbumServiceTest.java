@@ -1,5 +1,11 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -30,8 +30,10 @@ import ba.com.zira.sdr.core.impl.AlbumServiceImpl;
 import ba.com.zira.sdr.core.mapper.AlbumMapper;
 import ba.com.zira.sdr.core.mapper.SongArtistMapper;
 import ba.com.zira.sdr.core.mapper.SongMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.AlbumRequestValidation;
 import ba.com.zira.sdr.dao.AlbumDAO;
+import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
@@ -49,16 +51,19 @@ public class AlbumServiceTest extends BasicTestConfiguration {
     private SongMapper songMapper;
 
     private AlbumDAO albumDAO;
+    private SongArtistDAO songArtistDAO;
     private RequestValidator requestValidator;
     private AlbumRequestValidation albumRequestValidation;
     private AlbumService albumService;
+    private LookupService lookupService;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.albumDAO = Mockito.mock(AlbumDAO.class);
         this.albumRequestValidation = Mockito.mock(AlbumRequestValidation.class);
-        this.albumService = new AlbumServiceImpl(albumDAO, songArtistMapper, albumMapper, songMapper, albumRequestValidation);
+        this.albumService = new AlbumServiceImpl(albumDAO, songArtistDAO, songArtistMapper, albumMapper, songMapper, albumRequestValidation,
+                lookupService,null);
     }
 
     @Test(enabled = true)
@@ -138,7 +143,6 @@ public class AlbumServiceTest extends BasicTestConfiguration {
             var newAlbumRequest = new AlbumCreateRequest();
             newAlbumRequest.setInformation("Test Information");
             newAlbumRequest.setName("Test Album 1");
-            newAlbumRequest.setStatus(Status.ACTIVE.getValue());
             newAlbumRequest.setDateOfRelease(LocalDateTime.parse("2023-02-21T15:29:11.696"));
 
             req.setEntity(newAlbumRequest);
@@ -146,7 +150,6 @@ public class AlbumServiceTest extends BasicTestConfiguration {
             var albumEntity = new AlbumEntity();
             albumEntity.setName("Test Album 1");
             albumEntity.setInformation("Test Information");
-            albumEntity.setStatus(Status.ACTIVE.getValue());
             albumEntity.setDateOfRelease(LocalDateTime.parse("2023-02-21T15:29:11.696"));
 
             var newAlbum = new AlbumResponse();
@@ -160,7 +163,7 @@ public class AlbumServiceTest extends BasicTestConfiguration {
             PayloadResponse<AlbumResponse> albumFindResponse = albumService.create(req);
 
             Assertions.assertThat(albumFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-                    .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newAlbum);
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy","status").isEqualTo(newAlbum);
 
         } catch (Exception e) {
             Assert.fail();

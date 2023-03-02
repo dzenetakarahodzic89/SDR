@@ -16,4 +16,10 @@ public class PlaylistCreateRequest implements Serializable {
     @Schema(description = "Name of the playlist")
     private String name;
 
+    @Schema(description = "Information about the playlist")
+    private String information;
+
+    @Schema(description = "The status", allowableValues = { "Inactive", "Active" })
+    private String status;
+
 }

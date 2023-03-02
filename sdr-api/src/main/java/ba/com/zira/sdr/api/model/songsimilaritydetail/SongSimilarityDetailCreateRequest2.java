@@ -18,4 +18,5 @@ public class SongSimilarityDetailCreateRequest2 implements Serializable {
 
     private Long songSimilarity;
 
+
 }

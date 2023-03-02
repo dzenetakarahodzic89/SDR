@@ -1,14 +1,16 @@
 package ba.com.zira.sdr.dao;
 
-import ba.com.zira.commons.dao.AbstractDAO;
-import ba.com.zira.sdr.api.model.lov.LoV;
-import ba.com.zira.sdr.dao.model.SongArtistEntity;
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.TypedQuery;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.persistence.TypedQuery;
+
+import org.springframework.stereotype.Repository;
+
+import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.dao.model.SongArtistEntity;
 
 @Repository
 public class SongArtistDAO extends AbstractDAO<SongArtistEntity, Long> {

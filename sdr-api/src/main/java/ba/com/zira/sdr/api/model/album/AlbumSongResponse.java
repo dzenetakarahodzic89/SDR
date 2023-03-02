@@ -1,10 +1,10 @@
 package ba.com.zira.sdr.api.model.album;
 
-import javax.validation.constraints.NotBlank;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
+import javax.validation.constraints.NotBlank;
 
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,7 +16,7 @@ public class AlbumSongResponse implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank
-    @Schema(description = "Release date of album")
+    @Schema(description = "Album songs")
     private List<SongResponse> songs;
 
     @NotBlank

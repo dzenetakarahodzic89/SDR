@@ -17,10 +17,10 @@ public interface SongSimilarityDetailMapper {
     @Mapping(source = "songSimilarity", target = "songSimilarity.id")
     SongSimilarityDetailEntity dtoToEntity1(SongSimilarityDetailCreateRequest2 songSimilarityDetail);
 
-    @Mapping(source = "songSimilarity.id", target = "songSimilarityId")
+
     SongSimilarityDetail entityToDto(SongSimilarityDetailEntity songSimilarityDetailEntity);
 
-    @Mapping(source = "songSimilarityId", target = "songSimilarity.id")
+
     void updateEntity(SongSimilarityDetailUpdateRequest songSimilarityDetail,
             @MappingTarget SongSimilarityDetailEntity songSimilarityDetailEntitiy);
 

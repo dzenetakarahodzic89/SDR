@@ -26,4 +26,7 @@ public class LabelCreateRequest implements Serializable {
     @Schema(description = "Label outline text")
     private String outlineText;
 
+    private String coverImageData;
+    private String coverImage;
+
 }

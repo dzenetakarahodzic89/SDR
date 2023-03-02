@@ -35,4 +35,6 @@ public class LabelResponse implements Serializable {
     @Schema(description = "Label outline text")
     private String outlineText;
 
+    private String imageUrl;
+
 }

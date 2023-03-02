@@ -21,4 +21,7 @@ public class PlaylistUpdateRequest implements Serializable {
     @Schema(description = "Name of the playlist")
     private String name;
 
+    @Schema(description = "Information about the playlist")
+    private String information;
+
 }

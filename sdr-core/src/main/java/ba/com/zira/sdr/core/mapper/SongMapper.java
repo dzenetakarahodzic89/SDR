@@ -6,7 +6,6 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
 import ba.com.zira.sdr.api.model.song.SongResponse;
@@ -39,10 +38,6 @@ public interface SongMapper {
     void updateEntity(SongUpdateRequest song, @MappingTarget SongEntity songEntity);
 
     List<Song> entitiesToDtos(List<SongEntity> songEntity);
-
-    SongEntity dtoToEntity(AlbumCreateRequest albumCreateRequest);
-
-    SongResponse entityToSongResponse(SongEntity songEntity);
 
     List<SongResponse> entitiesToSongResponses(List<SongEntity> songEntities);
 
