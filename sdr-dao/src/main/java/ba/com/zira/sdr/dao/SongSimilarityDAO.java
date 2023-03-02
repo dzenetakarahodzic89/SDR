@@ -1,8 +1,8 @@
 package ba.com.zira.sdr.dao;
 
+import java.util.Collections;
 import java.util.List;
-
-import javax.persistence.TypedQuery;
+import java.util.Random;
 
 import org.springframework.stereotype.Repository;
 
@@ -13,21 +13,17 @@ import ba.com.zira.sdr.dao.model.SongSimilarityEntity;
 @Repository
 public class SongSimilarityDAO extends AbstractDAO<SongSimilarityEntity, Long> {
 
-    public List<SongSimilarityResponse> getAllSongASimilarity() {
+    public List<SongSimilarityResponse> getAllSongSimilarity() {
         var hql = "select new ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse "
-                + "(ss.songA.id, s.name, a.name, a.dateOfRelease) from SongSimilarityEntity ss join SongEntity s "
-                + "on ss.songA.id=s.id join SongArtistEntity sa on s.id=sa.song.id join AlbumEntity a on sa.album.id=a.id";
-        TypedQuery<SongSimilarityResponse> query = entityManager.createQuery(hql, SongSimilarityResponse.class);
-        query.setMaxResults(1);
-        return query.getResultList();
+                + "(ss.id, ss.songA.id, sA.name, aA.name, aA.dateOfRelease, ss.songB.id, sB.name, aB.name, aB.dateOfRelease) "
+                + "from SongSimilarityEntity ss join SongEntity sA on ss.songA.id = sA.id "
+                + "join SongEntity sB on ss.songB.id = sB.id join SongArtistEntity saA on sA.id=saA.song.id "
+                + "join SongArtistEntity saB on sB.id=saB.song.id join AlbumEntity aA on saA.album.id=aA.id "
+                + "join AlbumEntity aB on saB.album.id=aB.id order by random()";
+        List<SongSimilarityResponse> resultList = entityManager.createQuery(hql, SongSimilarityResponse.class).getResultList();
+        SongSimilarityResponse randomRecord = resultList.get(new Random().nextInt(resultList.size()));
+        return Collections.singletonList(randomRecord);
+
     }
 
-    public List<SongSimilarityResponse> getAllSongBSimilarity() {
-        var hql = "select new ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse "
-                + "(ss.songB.id, s.name, a.name, a.dateOfRelease) from SongSimilarityEntity ss join SongEntity s "
-                + "on ss.songB.id=s.id join SongArtistEntity sa on s.id=sa.song.id join AlbumEntity a on sa.album.id=a.id";
-        TypedQuery<SongSimilarityResponse> query = entityManager.createQuery(hql, SongSimilarityResponse.class);
-        query.setMaxResults(1);
-        return query.getResultList();
-    }
 }

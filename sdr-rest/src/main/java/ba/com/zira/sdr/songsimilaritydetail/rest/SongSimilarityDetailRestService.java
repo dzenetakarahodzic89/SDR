@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
-import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -43,8 +42,8 @@ public class SongSimilarityDetailRestService {
 
     @Operation(summary = "Get all")
     @GetMapping(value = "all")
-    public ListPayloadResponse<SongSimilarityDetailResponse> getAll() throws ApiException {
-        var request = new EmptyRequest();
+    public ListPayloadResponse<SongSimilarityDetailResponse> getAll(@RequestParam Long id) throws ApiException {
+        var request = new EntityRequest<>(id);
         return songSimilarityDetailService.getAll(request);
     }
 

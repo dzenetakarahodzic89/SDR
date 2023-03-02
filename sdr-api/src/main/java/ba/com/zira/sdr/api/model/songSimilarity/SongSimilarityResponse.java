@@ -4,22 +4,38 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @RequiredArgsConstructor
-@Schema(description = "Properties of an SongSimilarityDetail response")
+@Schema(description = "Properties of a SongSimilarityDetail response")
 public class SongSimilarityResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @Schema(description = "Unique identifier")
     private Long id;
-    private String songName;
-    private String albumName;
-    private LocalDateTime dateOfRelease;
+    private Long songAId;
+    private String songAName;
+    private String albumAName;
+    private LocalDateTime albumAReleaseDate;
+    private Long songBId;
+    private String songBName;
+    private String albumBName;
+    private LocalDateTime albumBReleaseDate;
+    private String songAimageUrl;
+    private String songBimageUrl;
+
+    public SongSimilarityResponse(Long id, Long songAId, String songAName, String albumAName, LocalDateTime albumAReleaseDate, Long songBId,
+            String songBName, String albumBName, LocalDateTime albumBReleaseDate) {
+        this.id = id;
+        this.songAId = songAId;
+        this.songAName = songAName;
+        this.albumAName = albumAName;
+        this.albumAReleaseDate = albumAReleaseDate;
+        this.songBId = songBId;
+        this.songBName = songBName;
+        this.albumBName = albumBName;
+        this.albumBReleaseDate = albumBReleaseDate;
+    }
 
 }

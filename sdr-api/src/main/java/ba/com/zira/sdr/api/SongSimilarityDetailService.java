@@ -1,7 +1,6 @@
 package ba.com.zira.sdr.api;
 
 import ba.com.zira.commons.exception.ApiException;
-import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -60,8 +59,8 @@ public interface SongSimilarityDetailService {
      */
     PayloadResponse<SongSimilarityDetail> update(EntityRequest<SongSimilarityDetailUpdateRequest> request) throws ApiException;
 
-    ListPayloadResponse<SongSimilarityDetailResponse> getAll(EmptyRequest req) throws ApiException;
-
     PayloadResponse<SongSimilarityDetail> create(EntityRequest<SongSimilarityDetailCreateRequest2> request);
+
+    ListPayloadResponse<SongSimilarityDetailResponse> getAll(EntityRequest<Long> request) throws ApiException;
 
 }

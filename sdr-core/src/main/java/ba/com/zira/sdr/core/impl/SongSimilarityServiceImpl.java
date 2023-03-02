@@ -2,7 +2,6 @@ package ba.com.zira.sdr.core.impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -16,10 +15,12 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.SongSimilarityService;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarity;
 import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityCreateRequest;
 import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse;
 import ba.com.zira.sdr.core.mapper.SongSimilarityMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.SongSimilarityRequestValidation;
 import ba.com.zira.sdr.dao.SongSimilarityDAO;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ public class SongSimilarityServiceImpl implements SongSimilarityService {
     SongSimilarityDAO songSimilarityDAO;
     SongSimilarityMapper songSimilarityMapper;
     SongSimilarityRequestValidation songsimilarityRequestValidation;
+    LookupService lookupService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -49,12 +51,12 @@ public class SongSimilarityServiceImpl implements SongSimilarityService {
 
     @Override
     public ListPayloadResponse<SongSimilarityResponse> getAll(EmptyRequest req) throws ApiException {
-        List<SongSimilarityResponse> songSimilarityForA = songSimilarityDAO.getAllSongASimilarity();
-        List<SongSimilarityResponse> songSimilarityForB = songSimilarityDAO.getAllSongBSimilarity();
-        List<SongSimilarityResponse> allSongSimilarity = new ArrayList<>();
-        allSongSimilarity.addAll(songSimilarityForA);
-        allSongSimilarity.addAll(songSimilarityForB);
-        return new ListPayloadResponse<>(req, ResponseCode.OK, allSongSimilarity);
+        List<SongSimilarityResponse> songSimilarity = songSimilarityDAO.getAllSongSimilarity();
+        lookupService.lookupCoverImage(songSimilarity, SongSimilarityResponse::getSongAId, ObjectType.ALBUM.getValue(),
+                SongSimilarityResponse::setSongAimageUrl, SongSimilarityResponse::getSongAimageUrl);
+        lookupService.lookupCoverImage(songSimilarity, SongSimilarityResponse::getSongBId, ObjectType.ALBUM.getValue(),
+                SongSimilarityResponse::setSongBimageUrl, SongSimilarityResponse::getSongBimageUrl);
+        return new ListPayloadResponse<>(req, ResponseCode.OK, songSimilarity);
     }
 
 }

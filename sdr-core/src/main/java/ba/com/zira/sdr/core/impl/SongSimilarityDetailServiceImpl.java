@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
-import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -121,9 +120,11 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
     }
 
     @Override
-    public ListPayloadResponse<SongSimilarityDetailResponse> getAll(EmptyRequest req) throws ApiException {
-        List<SongSimilarityDetailResponse> songSimilarityDetail = songSimilarityDetailDAO.getAllSongASimilarityDetail();
-        return new ListPayloadResponse<>(req, ResponseCode.OK, songSimilarityDetail);
+    public ListPayloadResponse<SongSimilarityDetailResponse> getAll(final EntityRequest<Long> request) throws ApiException {
+        Long songSimilarityId = request.getEntity();
+
+        List<SongSimilarityDetailResponse> songSimilarityDetail = songSimilarityDetailDAO.getAllSongASimilarityDetail(songSimilarityId);
+        return new ListPayloadResponse<>(request, ResponseCode.OK, songSimilarityDetail);
     }
 
 }
