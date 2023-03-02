@@ -38,13 +38,11 @@ public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
 
     @Autowired
     private SongSimilarityDetailMapper songSimilarityDetailMapper;
-
     private SongSimilarityDetailDAO songSimilarityDetailDAO;
-    private RequestValidator requestValidator;
     private SongSimilarityDetailRequestValidation songSimilarityDetailRequestValidation;
     private SongSimilarityDetailService songSimilarityDetailService;
-
     private SongSimilarityDAO songSimilarityDAO;
+    private RequestValidator requestValidator;
 
     private List<SongSimilarityEntity> songSimilarityEntities = new ArrayList<>();
 
@@ -58,11 +56,11 @@ public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
-        this.requestValidator = Mockito.mock(RequestValidator.class);
         this.songSimilarityDetailDAO = Mockito.mock(SongSimilarityDetailDAO.class);
         this.songSimilarityDetailRequestValidation = Mockito.mock(SongSimilarityDetailRequestValidation.class);
-        this.songSimilarityDetailService = new SongSimilarityDetailServiceImpl(songSimilarityDetailDAO, songSimilarityDetailMapper,
-                songSimilarityDetailRequestValidation);
+        this.requestValidator = Mockito.mock(RequestValidator.class);
+        this.songSimilarityDetailService = new SongSimilarityDetailServiceImpl(songSimilarityDetailDAO,
+                songSimilarityDetailRequestValidation, songSimilarityDAO, songSimilarityDetailMapper);
         this.songSimilarityDAO = new SongSimilarityDAO();
         this.FK();
     }
@@ -143,7 +141,7 @@ public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
             songsimilaritydetail.setStatus(null);
 
             Mockito.when(songSimilarityDetailDAO.persist(songSimilarityDetailEntity)).thenReturn(null);
-            Mockito.when(songSimilarityDetailRequestValidation.validateCreateSongSimilarityDetailRequest(req)).thenReturn(null);
+            // Mockito.when(songSimilarityDetailRequestValidation.validateExistsSongSimilartyDetailRequest(req)).thenReturn(null);
 
             PayloadResponse<SongSimilarityDetail> songArtistCreateResponse = songSimilarityDetailService.create(req);
 

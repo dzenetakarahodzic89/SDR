@@ -7,6 +7,7 @@ import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetail;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest2;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailResponse;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdateRequest;
@@ -16,51 +17,18 @@ import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdate
  */
 public interface SongSimilarityDetailService {
 
-    /**
-     * Find.
-     *
-     * @param request
-     *            the request
-     * @return the paged payload response
-     * @throws ApiException
-     *             the api exception
-     */
-    PagedPayloadResponse<SongSimilarityDetail> find(final FilterRequest request) throws ApiException;
+    public PagedPayloadResponse<SongSimilarityDetail> find(final FilterRequest request) throws ApiException;
 
-    /**
-     * Creates the.
-     *
-     * @param request
-     *            the request
-     * @return the payload response
-     * @throws ApiException
-     *             the api exception
-     */
+    public PayloadResponse<SongSimilarityDetail> create(EntityRequest<SongSimilarityDetailCreateRequest> request) throws ApiException;
 
-    /**
-     * Delete.
-     *
-     * @param request
-     *            the request
-     * @return the payload response
-     * @throws ApiException
-     *             the api exception
-     */
-    PayloadResponse<SongSimilarityDetail> delete(EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<SongSimilarityDetail> delete(EntityRequest<Long> request) throws ApiException;
 
-    /**
-     * Update.
-     *
-     * @param request
-     *            the request
-     * @return the payload response
-     * @throws ApiException
-     *             the api exception
-     */
-    PayloadResponse<SongSimilarityDetail> update(EntityRequest<SongSimilarityDetailUpdateRequest> request) throws ApiException;
+    public PayloadResponse<SongSimilarityDetail> update(EntityRequest<SongSimilarityDetailUpdateRequest> request) throws ApiException;
 
-    PayloadResponse<SongSimilarityDetail> create(EntityRequest<SongSimilarityDetailCreateRequest2> request);
+    PayloadResponse<SongSimilarityDetail> create1(EntityRequest<SongSimilarityDetailCreateRequest2> request);
 
     ListPayloadResponse<SongSimilarityDetailResponse> getAll(EntityRequest<Long> request) throws ApiException;
+
+    public PagedPayloadResponse<SongSimilarityDetail> get(final FilterRequest filterRequest) throws ApiException;
 
 }

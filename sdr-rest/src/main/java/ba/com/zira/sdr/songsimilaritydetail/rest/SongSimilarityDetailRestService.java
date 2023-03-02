@@ -50,7 +50,7 @@ public class SongSimilarityDetailRestService {
     @Operation(summary = "Find song sample details based on filter criteria")
     @GetMapping
     public PagedPayloadResponse<SongSimilarityDetail> find(@RequestParam Map<String, Object> filterCriteria,
-                                                           final QueryConditionPage queryCriteria) throws ApiException {
+            final QueryConditionPage queryCriteria) throws ApiException {
         return songSimilarityDetailService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
@@ -58,7 +58,7 @@ public class SongSimilarityDetailRestService {
     @PostMapping
     public PayloadResponse<SongSimilarityDetail> create(@RequestBody final SongSimilarityDetailCreateRequest2 songSimilarityCreateRequest)
             throws ApiException {
-        return songSimilarityDetailService.create(new EntityRequest<>(songSimilarityCreateRequest));
+        return songSimilarityDetailService.create1(new EntityRequest<>(songSimilarityCreateRequest));
     }
 
     @Operation(summary = "Update song sample detail")

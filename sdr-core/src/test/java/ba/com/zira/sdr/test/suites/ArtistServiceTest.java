@@ -44,7 +44,6 @@ public class ArtistServiceTest extends BasicTestConfiguration {
 
     @Autowired
     private ArtistMapper artistMapper;
-
     private ArtistDAO artistDAO;
     EraDAO eraDAO;
     PersonDAO personDAO;
@@ -53,6 +52,8 @@ public class ArtistServiceTest extends BasicTestConfiguration {
     private RequestValidator requestValidator;
     private ArtistValidation artistValidation;
     private ArtistService artistService;
+
+    ArtistValidation artistRequestValidation;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
@@ -147,7 +148,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
             List<ArtistResponse> artistFindResponse = artistService.find(filterRequest).getPayload();
 
             Assertions.assertThat(artistFindResponse).as("Check all elements").overridingErrorMessage("All elements should be equal.")
-            .hasSameElementsAs(response);
+                    .hasSameElementsAs(response);
 
         } catch (Exception e) {
             Assert.fail();
@@ -195,7 +196,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
             PayloadResponse<ArtistResponse> genreCreateResponse = artistService.create(req);
 
             Assertions.assertThat(genreCreateResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-            .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newArtist);
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newArtist);
 
         } catch (Exception e) {
             Assert.fail();
@@ -255,9 +256,9 @@ public class ArtistServiceTest extends BasicTestConfiguration {
 
             var artistUpdateRequest = artistService.update(request);
             Assertions.assertThat(artistUpdateRequest.getPayload()).as("Check all fields")
-            .overridingErrorMessage("All fields should be equal.\nExpected: %s\nActual: %s", artistResponse,
-                    artistUpdateRequest.getPayload())
-            .usingRecursiveComparison().ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(artistResponse);
+                    .overridingErrorMessage("All fields should be equal.\nExpected: %s\nActual: %s", artistResponse,
+                            artistUpdateRequest.getPayload())
+                    .usingRecursiveComparison().ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(artistResponse);
 
         } catch (Exception e) {
             Assert.fail();
