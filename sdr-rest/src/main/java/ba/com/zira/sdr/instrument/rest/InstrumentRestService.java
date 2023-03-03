@@ -38,11 +38,20 @@ import lombok.AllArgsConstructor;
 public class InstrumentRestService {
     private InstrumentService instrumentService;
 
+    @Operation(summary = "Return instrument with specified id")
+    @GetMapping(value = "{id}")
+    public PayloadResponse<InstrumentResponse> get(
+            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) throws ApiException {
+        EntityRequest<Long> request = new EntityRequest<>();
+        request.setEntity(id);
+        return instrumentService.get(request);
+    }
+
     @Operation(summary = "Find instrument records based on filter criteria")
-    @GetMapping()
-    public PagedPayloadResponse<InstrumentResponse> get(@RequestParam Map<String, Object> filterCriteria,
+    @GetMapping(value = "filter")
+    public PagedPayloadResponse<InstrumentResponse> find(@RequestParam Map<String, Object> filterCriteria,
             final QueryConditionPage queryCriteria) throws ApiException {
-        return instrumentService.get(new FilterRequest(filterCriteria, queryCriteria));
+        return instrumentService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
     @Operation(summary = "Create instrument")

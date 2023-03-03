@@ -2,13 +2,16 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -17,6 +20,7 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.PersonService;
 import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
@@ -117,11 +121,19 @@ public class PersonServiceImpl implements PersonService {
         PersonEntity personEntity = personDAO.findByPK(request.getEntity().getPersonId());
         Long countryEntityId = request.getEntity().getCountryId();
 
-        personEntity.setCountryId(countryEntityId);
+        personEntity.setCountry(countryDAO.findByPK(countryEntityId));
         personEntity.setModified(LocalDateTime.now());
         personEntity.setModifiedBy(request.getUserId());
         personDAO.merge(personEntity);
 
         return new PayloadResponse<>(request, ResponseCode.OK, personMapper.entityToDto(personEntity));
     }
+
+    @Override
+    public ListPayloadResponse<LoV> getPersonLoVs(EmptyRequest req) throws ApiException {
+        // TODO Auto-generated method stub
+        List<LoV> eras = personDAO.getAllPersonsLoV();
+        return new ListPayloadResponse<>(req, ResponseCode.OK, eras);
+    }
+
 }

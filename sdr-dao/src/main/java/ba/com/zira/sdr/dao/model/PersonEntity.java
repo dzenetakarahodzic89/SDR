@@ -1,11 +1,26 @@
 package ba.com.zira.sdr.dao.model;
 
-import lombok.*;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * The persistent class for the "sat_person" database table.
@@ -63,8 +78,9 @@ public class PersonEntity implements Serializable {
     @Column(name = "outline_text")
     private String outlineText;
 
-    @Column(name = "country_id")
-    private Long countryId;
+    @ManyToOne
+    @JoinColumn(name = "country_id")
+    private CountryEntity country;
 
     // bi-directional many-to-one association to LabelEntity
     @OneToMany(mappedBy = "founder")
