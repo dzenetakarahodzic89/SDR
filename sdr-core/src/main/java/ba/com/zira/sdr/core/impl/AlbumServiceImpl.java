@@ -3,7 +3,6 @@ package ba.com.zira.sdr.core.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -64,101 +63,102 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public PagedPayloadResponse<AlbumSearchResponse> search(EntityRequest<AlbumSearchRequest> request) {
         var albumSearchRequest = request.getEntity();
-        
+
         var eras = albumSearchRequest.getEras();
         var genres = albumSearchRequest.getGenres();
         var artists = albumSearchRequest.getArtists();
         List<AlbumEntity> albumEntities = albumDAO.findAll();
         List<AlbumEntity> resultEntities = new ArrayList<>();
-        Map<Long,List<SongResponse>> albumSongsMap = new HashMap<>();
+        Map<Long, List<SongResponse>> albumSongsMap = new HashMap<>();
 
-        for(int i =0 ; i<albumEntities.size();i++) {
+        for (int i = 0; i < albumEntities.size(); i++) {
             boolean eraFound = false;
             boolean genreFound = false;
             boolean artistFound = false;
             boolean nameFound = false;
-            
-            
+
             var albumEntity = albumEntities.get(i);
-            
-            
-            eraFound=  eras == null || eras.isEmpty() || albumEntity.getEra() != null && eras.contains(albumEntity.getEra().getId());
-            
-            nameFound = albumSearchRequest.getName()==null ||  albumSearchRequest.getName()!=null && albumEntity.getName().contains(albumSearchRequest.getName());
-            if(genres == null || genres.isEmpty()) {
+
+            eraFound = eras == null || eras.isEmpty() || albumEntity.getEra() != null && eras.contains(albumEntity.getEra().getId());
+
+            nameFound = albumSearchRequest.getName() == null
+                    || albumSearchRequest.getName() != null && albumEntity.getName().contains(albumSearchRequest.getName());
+            if (genres == null || genres.isEmpty()) {
                 genreFound = true;
-            }else {
-                for(var songArtist : albumEntity.getSongArtists() ){
+            } else {
+                for (var songArtist : albumEntity.getSongArtists()) {
                     var song = songArtist.getSong();
-                   if(song.getGenre()!=null && genres.contains(song.getGenre().getId()))
-                       genreFound = true;
-               };
+                    if (song.getGenre() != null && genres.contains(song.getGenre().getId())) {
+                        genreFound = true;
+                    }
+                }
+                ;
             }
-            
-            
-            if(artists==null || artists.isEmpty())                        
+
+            if (artists == null || artists.isEmpty()) {
                 artistFound = true;
-            else {
-                for (int j = 0 ;j<albumEntity.getSongArtists().size();j++) {
+            } else {
+                for (int j = 0; j < albumEntity.getSongArtists().size(); j++) {
                     var songArtist = albumEntity.getSongArtists().get(j);
-                    if(artists.contains(songArtist.getArtist().getId())) {
+                    if (artists.contains(songArtist.getArtist().getId())) {
                         artistFound = true;
                     }
-                };
+                }
+                ;
             }
-            
-            if(eraFound&&genreFound&&artistFound&&nameFound)
-                resultEntities.add(albumEntity);   
-        };
-        
-        if(albumSearchRequest.getSort()!=null) {
-            if(albumSearchRequest.getSort().equals("last_edit")) {
-                resultEntities.sort(new AlbumSortByModified());
-                
+
+            if (eraFound && genreFound && artistFound && nameFound) {
+                resultEntities.add(albumEntity);
             }
-            else if(albumSearchRequest.getSort().equals("alphabetical")) {
-                resultEntities.sort(new AlbumSortByName());
-                
-            }else if(albumSearchRequest.getSort().equals("play_time")) {
-                resultEntities.sort(new AlbumSortByPlayTime()); 
-            } 
         }
-        
-        
+        ;
+
+        if (albumSearchRequest.getSort() != null) {
+            if (albumSearchRequest.getSort().equals("last_edit")) {
+                resultEntities.sort(new AlbumSortByModified());
+
+            } else if (albumSearchRequest.getSort().equals("alphabetical")) {
+                resultEntities.sort(new AlbumSortByName());
+
+            } else if (albumSearchRequest.getSort().equals("play_time")) {
+                resultEntities.sort(new AlbumSortByPlayTime());
+            }
+        }
 
         List<AlbumEntity> pagedEntities = resultEntities;
-       // if(albumSearchRequest.getPageNumber() != null && albumSearchRequest.getPageSize()!=null) {
-            int firstIndex = (albumSearchRequest.getPageNumber() -1)*albumSearchRequest.getPageSize();
-            int lastIndex = firstIndex+albumSearchRequest.getPageSize();
-            if(firstIndex>=0&& lastIndex>firstIndex) {
-                if(lastIndex<resultEntities.size()) {
-                    pagedEntities = resultEntities.subList(firstIndex, lastIndex);
-                }else {
-                    pagedEntities = resultEntities.subList(firstIndex, resultEntities.size());
-                }
-            
+        // if(albumSearchRequest.getPageNumber() != null &&
+        // albumSearchRequest.getPageSize()!=null) {
+        int firstIndex = (albumSearchRequest.getPageNumber() - 1) * albumSearchRequest.getPageSize();
+        int lastIndex = firstIndex + albumSearchRequest.getPageSize();
+        if (firstIndex >= 0 && lastIndex > firstIndex) {
+            if (lastIndex < resultEntities.size()) {
+                pagedEntities = resultEntities.subList(firstIndex, lastIndex);
+            } else {
+                pagedEntities = resultEntities.subList(firstIndex, resultEntities.size());
             }
-       // }
-        
-        
+
+        }
+        // }
+
         List<AlbumSearchResponse> pagedResponse = new ArrayList<>();
-        for(var album : pagedEntities) {
-            var albumResponse  = new AlbumSearchResponse();
+        for (var album : pagedEntities) {
+            var albumResponse = new AlbumSearchResponse();
             albumResponse.setId(album.getId());
             albumResponse.setName(album.getName());
             albumResponse.setOutlineText(album.getInformation());
             lookupService.lookupCoverImage(Arrays.asList(albumResponse), AlbumSearchResponse::getId, ObjectType.ALBUM.getValue(),
                     AlbumSearchResponse::setImageUrl, AlbumSearchResponse::getImageUrl);
             pagedResponse.add(albumResponse);
-            
+
         }
-        var numberOfPages = resultEntities.size()/albumSearchRequest.getPageSize();
-        if(resultEntities.size()%albumSearchRequest.getPageSize()!=0)
-             numberOfPages++;
-        var response =  new PagedPayloadResponse<AlbumSearchResponse>();
+        var numberOfPages = resultEntities.size() / albumSearchRequest.getPageSize();
+        if (resultEntities.size() % albumSearchRequest.getPageSize() != 0) {
+            numberOfPages++;
+        }
+        var response = new PagedPayloadResponse<AlbumSearchResponse>();
         response.setResponseCode(ResponseCode.OK);
         response.setPayload(pagedResponse);
-        
+
         response.setPage(albumSearchRequest.getPageNumber());
         response.setRecordsPerPage(albumSearchRequest.getPageSize());
         response.setNumberOfRecords(resultEntities.size());
@@ -175,7 +175,7 @@ public class AlbumServiceImpl implements AlbumService {
         albumEntity.setCreated(LocalDateTime.now());
         albumEntity.setStatus(Status.ACTIVE.value());
         albumEntity.setCreatedBy(request.getUserId());
-        
+
         if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
             var mediaRequest = new MediaCreateRequest();
             mediaRequest.setObjectType(ObjectType.ALBUM.getValue());
@@ -249,63 +249,59 @@ public class AlbumServiceImpl implements AlbumService {
 
 }
 
+class AlbumSortByModified implements Comparator<AlbumEntity> {
 
-
-
-class AlbumSortByModified implements Comparator<AlbumEntity>{
-    
     @Override
     public int compare(AlbumEntity a, AlbumEntity b) {
-        if(a.getModified()==null)
+        if (a.getModified() == null) {
             return -1;
-        if(b.getModified()==null)
+        }
+        if (b.getModified() == null) {
             return 1;
+        }
         return a.getModified().compareTo(b.getModified());
     }
-    
+
 }
-class AlbumSortByName implements Comparator<AlbumEntity>{
-    
+
+class AlbumSortByName implements Comparator<AlbumEntity> {
+
     @Override
     public int compare(AlbumEntity a, AlbumEntity b) {
         return a.getName().compareTo(b.getName());
     }
-    
-}
-class AlbumSortByPlayTime implements Comparator<AlbumEntity>{
-    
 
-    
+}
+
+class AlbumSortByPlayTime implements Comparator<AlbumEntity> {
+
     @Override
     public int compare(AlbumEntity a, AlbumEntity b) {
         int playTimeA = 0;
         int playTimeB = 0;
-        
-        for(var songArtist : a.getSongArtists()) {
-            if(songArtist.getSong().getPlaytime()==null)
+
+        for (var songArtist : a.getSongArtists()) {
+            if (songArtist.getSong().getPlaytime() == null) {
                 continue;
-                   
-            var playTimeSplit =  songArtist.getSong().getPlaytime().split(":");
+            }
+
+            var playTimeSplit = songArtist.getSong().getPlaytime().split(":");
             var minutes = Integer.parseInt(playTimeSplit[0]);
             var seconds = Integer.parseInt(playTimeSplit[1]);
-            playTimeA = minutes*60 + seconds;     
+            playTimeA = minutes * 60 + seconds;
         }
-        for(var songArtist : b.getSongArtists()) {
-            if(songArtist.getSong().getPlaytime()==null)
+        for (var songArtist : b.getSongArtists()) {
+            if (songArtist.getSong().getPlaytime() == null) {
                 continue;
-                   
-            var playTimeSplit =  songArtist.getSong().getPlaytime().split(":");
+            }
+
+            var playTimeSplit = songArtist.getSong().getPlaytime().split(":");
             var minutes = Integer.parseInt(playTimeSplit[0]);
             var seconds = Integer.parseInt(playTimeSplit[1]);
-            playTimeB = minutes*60 + seconds;     
+            playTimeB = minutes * 60 + seconds;
         }
-        
-        
-        
-        
-        return playTimeA-playTimeB;
+
+        return playTimeA - playTimeB;
     }
-    
+
 }
-
-

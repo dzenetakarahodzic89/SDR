@@ -1,9 +1,5 @@
 package ba.com.zira.sdr.api;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.RequestParam;
-
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -43,8 +39,7 @@ public interface AlbumService {
      *             the api exception
      */
     PagedPayloadResponse<AlbumResponse> find(final FilterRequest request) throws ApiException;
-    
-    
+
     /**
      * Search.
      *
@@ -54,7 +49,7 @@ public interface AlbumService {
      * @throws ApiException
      *             the api exception
      */
-    
+
     PagedPayloadResponse<AlbumSearchResponse> search(EntityRequest<AlbumSearchRequest> request) throws ApiException;
 
     /**
