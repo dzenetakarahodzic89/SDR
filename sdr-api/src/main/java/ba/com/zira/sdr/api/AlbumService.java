@@ -1,5 +1,9 @@
 package ba.com.zira.sdr.api;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.RequestParam;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -7,6 +11,8 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
+import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
+import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 
@@ -37,6 +43,19 @@ public interface AlbumService {
      *             the api exception
      */
     PagedPayloadResponse<AlbumResponse> find(final FilterRequest request) throws ApiException;
+    
+    
+    /**
+     * Search.
+     *
+     * @param request
+     *            the request
+     * @return the paged payload response
+     * @throws ApiException
+     *             the api exception
+     */
+    
+    PagedPayloadResponse<AlbumSearchResponse> search(EntityRequest<AlbumSearchRequest> request) throws ApiException;
 
     /**
      * Creates the.

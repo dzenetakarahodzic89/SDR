@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.album.rest;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.AlbumService;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
+import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
+import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,6 +70,22 @@ public class AlbumRestService {
     public PagedPayloadResponse<AlbumResponse> search(final @RequestParam Map<String, Object> filterCriteria,
             final QueryConditionPage queryCriteria) throws ApiException {
         return albumService.find(new FilterRequest(filterCriteria, queryCriteria));
+    }
+    
+    @Operation(summary = "Search albums")
+    @GetMapping(value = "search")
+    public PagedPayloadResponse<AlbumSearchResponse> searchAlbum(
+            @RequestParam(required=false) List<Long>eras,
+            @RequestParam(required=false) List<Long>genres,
+            @RequestParam(required=false) List<Long>artists,
+            @RequestParam int pageNumber,
+            @RequestParam int pageSize,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String name
+            
+            ) throws ApiException {
+        //Map<String, Object> filterCriteria = new HashMap<>();
+        return albumService.search(new EntityRequest<>( new AlbumSearchRequest(eras,genres,artists,sort,pageNumber,pageSize,name)));   
     }
 
     @Operation(summary = "Get all songs from album")
