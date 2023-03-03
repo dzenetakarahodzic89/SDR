@@ -1,14 +1,12 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.persistence.Tuple;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -22,10 +20,10 @@ import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.PlaylistGenerateService;
 import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSong;
+import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbResponse;
 import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
 import ba.com.zira.sdr.api.model.generateplaylist.SavePlaylistRequest;
 import ba.com.zira.sdr.api.model.playlist.Playlist;
-import ba.com.zira.sdr.core.mapper.GeneratePlaylistMapper;
 import ba.com.zira.sdr.core.mapper.PlaylistMapper;
 import ba.com.zira.sdr.core.mapper.SongMapper;
 import ba.com.zira.sdr.core.utils.PlayTimeHelper;
@@ -47,15 +45,16 @@ public class PlaylistGenerateServiceImpl implements PlaylistGenerateService {
     PlaylistDAO playlistDAO;
     PlaylistMapper playlistMapper;
     SongRequestValidation songRequestValidation;
-    GeneratePlaylistMapper generatePlaylistMapper;
+    GeneratePlaylistServiceHelper generatePlaylistServiceHelper;
 
     @Override
     public PagedPayloadResponse<GeneratedPlaylistSong> generatePlaylist(FilterRequest request) throws ApiException {
-        List<Tuple> generatedPlaylist = songDAO.generatePlaylist(this.extractPlaylistGenerateRequestFromFilter(request.getFilter()));
-        PagedData<Tuple> pagedData = new PagedData<>();
+        List<GeneratedPlaylistSongDbResponse> generatedPlaylist = songDAO
+                .generatePlaylist(this.extractPlaylistGenerateRequestFromFilter(request.getFilter()));
+        PagedData<GeneratedPlaylistSongDbResponse> pagedData = new PagedData<>();
         pagedData.setRecords(generatedPlaylist);
         return new PagedPayloadResponse<>(request, ResponseCode.OK, pagedData,
-                generatePlaylistMapper::complexDbObjectsToGeneratedPlaylistSongs);
+                generatePlaylistServiceHelper::complexDbObjectsToGeneratedPlaylistSongs);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class PlaylistGenerateServiceImpl implements PlaylistGenerateService {
 
         List<SongEntity> songEntities = songDAO.findSongsByIdArray(entityRequest.getEntity().getSongIds());
 
-        PlaylistEntity playlistEntity = new PlaylistEntity();
+        var playlistEntity = new PlaylistEntity();
 
         playlistEntity.setId(null);
         playlistEntity.setName(entityRequest.getEntity().getName());
@@ -73,7 +72,7 @@ public class PlaylistGenerateServiceImpl implements PlaylistGenerateService {
         playlistEntity.setCreatedBy(entityRequest.getUserId());
         playlistEntity.setUserCode(entityRequest.getUserId());
         playlistEntity.setTotalPlaytime(
-                calculateSecondsPlayTime(songEntities.stream().map((song) -> song.getPlaytime()).collect(Collectors.toList())));
+                calculateSecondsPlayTime(songEntities.stream().map(SongEntity::getPlaytime).collect(Collectors.toList())));
         playlistEntity.setStatus(Status.ACTIVE.value());
 
         playlistEntity = playlistDAO.persist(playlistEntity);
@@ -81,7 +80,7 @@ public class PlaylistGenerateServiceImpl implements PlaylistGenerateService {
         List<SongPlaylistEntity> songPlaylistEntities = new ArrayList<>();
 
         for (SongEntity songEntity : songEntities) {
-            SongPlaylistEntity songPlaylistEntity = new SongPlaylistEntity();
+            var songPlaylistEntity = new SongPlaylistEntity();
 
             songPlaylistEntity.setCreated(LocalDateTime.now());
             songPlaylistEntity.setCreatedBy(entityRequest.getUserId());
@@ -106,7 +105,7 @@ public class PlaylistGenerateServiceImpl implements PlaylistGenerateService {
     }
 
     private PlaylistGenerateRequest extractPlaylistGenerateRequestFromFilter(Filter f) {
-        PlaylistGenerateRequest playlistGenerateRequest = new PlaylistGenerateRequest();
+        var playlistGenerateRequest = new PlaylistGenerateRequest();
 
         f.getFilterExpressions().forEach((FilterExpression fe) -> {
             if (fe.getAttribute().equals("genreId")) {

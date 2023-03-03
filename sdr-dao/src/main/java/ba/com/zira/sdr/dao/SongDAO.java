@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -18,6 +17,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbResponse;
 import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
 import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -43,17 +43,17 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         return entityManager.createQuery(cQuery.where(root.get(SongEntity_.id).in(songIds))).getResultList();
     }
 
-    public List<Tuple> generatePlaylist(final PlaylistGenerateRequest request) {
-        final CriteriaQuery<Tuple> criteriaQuery = builder.createQuery(Tuple.class);
+    public List<GeneratedPlaylistSongDbResponse> generatePlaylist(final PlaylistGenerateRequest request) {
+        final CriteriaQuery<GeneratedPlaylistSongDbResponse> criteriaQuery = builder.createQuery(GeneratedPlaylistSongDbResponse.class);
         final Root<GeneratedSongViewEntity> generatedSongsRoot = criteriaQuery.from(GeneratedSongViewEntity.class);
 
         ArrayList<Predicate> predicates = new ArrayList<>();
 
-        if (request.getIncludeCovers() == false) {
+        if (Boolean.FALSE.equals(request.getIncludeCovers())) {
             predicates.add(builder.isNull(generatedSongsRoot.get(GeneratedSongViewEntity_.coverId)));
         }
 
-        if (request.getIncludeRemixes() == false) {
+        if (Boolean.FALSE.equals(request.getIncludeRemixes())) {
             predicates.add(builder.isNull(generatedSongsRoot.get(GeneratedSongViewEntity_.remixId)));
         }
 
