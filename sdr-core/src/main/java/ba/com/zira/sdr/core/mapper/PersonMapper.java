@@ -15,6 +15,7 @@ import ba.com.zira.sdr.dao.model.PersonEntity;
 @Mapper(componentModel = "spring")
 public interface PersonMapper {
 
+    @Mapping(source = "countryId", target = "country.id")
     PersonEntity dtoToEntity(PersonCreateRequest personCreateRequest);
 
     void updateEntity(PersonUpdateRequest personUpdateRequest, @MappingTarget PersonEntity personEntity);
