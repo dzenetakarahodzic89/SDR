@@ -2,6 +2,7 @@ package ba.com.zira.sdr.core.mapper;
 
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public interface PersonMapper {
 
     void updateEntity(PersonUpdateRequest personUpdateRequest, @MappingTarget PersonEntity personEntity);
 
+    @Mapping(source = "country.id", target = "countryId")
     PersonResponse entityToDto(PersonEntity personEntity);
 
     List<PersonResponse> entitiesToDtos(List<PersonEntity> personEntity);
