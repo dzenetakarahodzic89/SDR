@@ -1,14 +1,16 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -16,6 +18,7 @@ import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.SongService;
 import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
@@ -125,6 +128,13 @@ public class SongServiceImpl implements SongService {
         songDAO.remove(songEntity);
 
         return new PayloadResponse<>(request, ResponseCode.OK, "Song has been successfully deleted!");
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> retrieveNotInAlbum(final EntityRequest<Long> request) throws ApiException {
+        var songs = songDAO.getSongsNotInAlbum(request.getEntity());
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, songs);
     }
 
 }

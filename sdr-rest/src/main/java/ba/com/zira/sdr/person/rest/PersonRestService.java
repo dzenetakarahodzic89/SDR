@@ -13,12 +13,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.PersonService;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
@@ -78,6 +81,13 @@ public class PersonRestService {
     public PayloadResponse<PersonResponse> editPersonCountry(@RequestBody final PersonCountryRequest request) throws ApiException {
 
         return personService.updatePersonCountry(new EntityRequest<>(request));
+    }
+
+    @Operation(summary = "Get all Person - LoV")
+    @GetMapping(value = "/lov")
+    public ListPayloadResponse<LoV> getPersonsLoV() throws ApiException {
+        var req = new EmptyRequest();
+        return personService.getPersonLoVs(req);
     }
 
 }

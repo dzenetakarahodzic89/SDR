@@ -85,4 +85,10 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         }
     }
 
+    public List<LoV> getArtistLoVs() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.name || ' ' || a.surname) from ArtistEntity a";
+        TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class);
+        return q.getResultList();
+    }
+
 }
