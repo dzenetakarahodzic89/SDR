@@ -1,14 +1,18 @@
 package ba.com.zira.sdr.dao;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
+import org.springframework.stereotype.Repository;
+
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.TypedQuery;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Repository
 public class SongArtistDAO extends AbstractDAO<SongArtistEntity, Long> {
@@ -22,6 +26,18 @@ public class SongArtistDAO extends AbstractDAO<SongArtistEntity, Long> {
             return new HashMap<>();
         }
 
+    }
+
+    public List<SongArtistEntity> songArtistByAlbum(Long albumId) {
+        var hql = "select s from SongArtistEntity s where s.album.id = :albumId";
+        TypedQuery<SongArtistEntity> q = entityManager.createQuery(hql, SongArtistEntity.class).setParameter("albumId", albumId);
+        return q.getResultList();
+    }
+
+    public void deleteByAlbumId(Long albumId) {
+        var hql = "delete from SongArtistEntity s where s.album.id =:albumId";
+        Query q = entityManager.createQuery(hql).setParameter("albumId", albumId);
+        q.executeUpdate();
     }
 
 }

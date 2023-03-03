@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.person.rest;
 
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,15 +12,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.PersonService;
+import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
@@ -66,10 +70,24 @@ public class PersonRestService {
 
     @Operation(summary = "Delete person")
     @DeleteMapping(value = "{id}")
-    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the record") @PathVariable final Long id) {
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the Person") @PathVariable final Long id) {
         EntityRequest<Long> entityRequest = new EntityRequest<>();
         entityRequest.setEntity(id);
         return personService.delete(entityRequest);
+    }
+
+    @Operation(summary = "Update Person")
+    @PutMapping(value = "change-flag")
+    public PayloadResponse<PersonResponse> editPersonCountry(@RequestBody final PersonCountryRequest request) throws ApiException {
+
+        return personService.updatePersonCountry(new EntityRequest<>(request));
+    }
+
+    @Operation(summary = "Get all Person - LoV")
+    @GetMapping(value = "/lov")
+    public ListPayloadResponse<LoV> getPersonsLoV() throws ApiException {
+        var req = new EmptyRequest();
+        return personService.getPersonLoVs(req);
     }
 
 }

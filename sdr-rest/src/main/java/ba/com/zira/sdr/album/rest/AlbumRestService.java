@@ -26,6 +26,9 @@ import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
+import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.song.Song;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -76,10 +79,28 @@ public class AlbumRestService {
             @Parameter(required = true, description = "ID of the album") @PathVariable final Long id) throws ApiException {
         return albumService.findAllSongsForAlbum(new EntityRequest<>(id));
     }
+
     @Operation(summary = "albums by artis")
     @GetMapping("/artist/{id}/albums")
     public ListPayloadResponse<AlbumsByDecadeResponse> getAlbumsByArtistId(@RequestParam Long atistId) throws ApiException{
         var req= new EntityRequest<>(atistId);
         return albumService.findAllAlbumsForArtist(req);
     }
+
+
+    @Operation(summary = "Get album overview")
+    @GetMapping(value = "{id}")
+    public PayloadResponse<AlbumResponse> getAlbumOverview(
+            @Parameter(required = true, description = "ID of the album") @PathVariable final Long id) throws ApiException {
+        return albumService.getById(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Add a new song to the album")
+    @PutMapping(value = "/add-song")
+    public PayloadResponse<Song> addSongToAlbum(@RequestBody final SongOfAlbumUpdateRequest request) throws ApiException {
+
+        return albumService.addSongToAlbum(new EntityRequest<>(request));
+    }
+
+
 }

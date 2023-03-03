@@ -1,5 +1,9 @@
 package ba.com.zira.sdr.dao.model;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,10 +13,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -73,6 +73,9 @@ public class PlaylistEntity implements Serializable {
 
     @Column(name = "user_code")
     private String userCode;
+
+    @Column(name = "outline_text")
+    private String outlineText;
 
     // bi-directional many-to-one association to SongPlaylistEntity
     @OneToMany(mappedBy = "playlist")

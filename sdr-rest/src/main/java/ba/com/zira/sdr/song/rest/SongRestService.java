@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.SongService;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
@@ -53,9 +55,16 @@ public class SongRestService {
 
     @Operation(summary = "Find song by id")
     @GetMapping(value = "{id}")
-    public PayloadResponse<SongSingleResponse> retrieveById(@Parameter(required = true, description = "ID of the song") @PathVariable final Long id)
-            throws ApiException {
+    public PayloadResponse<SongSingleResponse> retrieveById(
+            @Parameter(required = true, description = "ID of the song") @PathVariable final Long id) throws ApiException {
         return songService.retrieveById(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Get song ids and names which are not tied to the album specified by parameter albumId")
+    @GetMapping(value = "/not-in-album/{albumId}")
+    public ListPayloadResponse<LoV> findLabelsNotInAlbum(
+            @Parameter(required = true, description = "Id of the album") @PathVariable final Long albumId) throws ApiException {
+        return songService.retrieveNotInAlbum(new EntityRequest<>(albumId));
     }
 
     @Operation(summary = "Update song")

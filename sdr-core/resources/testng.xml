@@ -121,7 +121,16 @@
 					name="ba.com.zira.sdr.test.suites.SpotifyIntegrationServiceTest"/>
 		</classes>
 	</test>
-	 
+	
+	<test thread-count="5" name="UserRecommendation">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.UserRecommendationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.UserRecommendationServiceTest"/>
+		</classes>
+	</test>
+
 	 	<test thread-count="5" name="Instrument">
 		<classes>
 			<class
@@ -139,7 +148,62 @@
 	      		name="ba.com.zira.sdr.test.suites.SongInstrumentServiceTest"/>
 	    </classes>
     </test>
+    
+    
+    
+    
+    <test thread-count="5" name="ConnectedMedia">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ConnectedMediaRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ConnectedMediaServiceTest"/>
+	    </classes>
+    </test>
 
+<test thread-count="5" name="ShazamIntegration">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.ShazamIntegrationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.ShazamIntegrationServiceTest"/>
+		</classes>
+	</test>
+	
+	<test thread-count="5" name="DeezerIntegration">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.DeezerIntegrationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.DeezerIntegrationServiceTest"/>
+		</classes>
+	</test>
+        <test thread-count="5" name="MoritsIntegration">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.MoritsIntegrationValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.MoritsIntegrationServiceTest"/>
+	    </classes>
+    </test>
+
+	<test thread-count="5" name="Playlist">
+		    <classes>
+		      	<class 
+		      		name="ba.com.zira.sdr.test.suites.PlaylistRequestValidationTest"/>
+		      	<class 
+		      		name="ba.com.zira.sdr.test.suites.PlaylistServiceTest"/>
+		    </classes>
+	    </test>
 </suite>
     
 
+	
+		<test thread-count="5" name="SongSimilarityDetail">
+			<class
+		<classes>
+				name="ba.com.zira.sdr.test.suites.SongSimilarityDetailRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.SongSimilarityDetailServiceTest" />
+		</classes>
+	</test>
+</suite> 

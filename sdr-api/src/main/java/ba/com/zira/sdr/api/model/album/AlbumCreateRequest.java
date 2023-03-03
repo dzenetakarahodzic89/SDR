@@ -26,11 +26,12 @@ public class AlbumCreateRequest implements Serializable {
     @Schema(description = "Album name")
     private String name;
 
-    @NotBlank
-    @Schema(description = "Album status")
-    private String status;
-
     @NotNull
     @Schema(description = "Album era")
     private Long eraId;
+
+    private String outlineText;
+    
+    private String coverImageData;
+    private String coverImage;
 }

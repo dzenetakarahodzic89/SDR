@@ -36,4 +36,13 @@ public class Genre implements Serializable {
     private Map<Long, String> subGenreNames;
     @Schema(description = "Songs")
     private Map<Long, String> songNames;
+
+    public Genre(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Genre() {
+
+    }
 }

@@ -17,7 +17,7 @@ public class ConnectedMediaUpdateRequest implements Serializable {
     @Schema(description = "Id of the connected media")
     private Long id;
 
-    @Min(1)
+    @Min(0)
     @Schema(description = "Id of the object")
     private Long objectId;
 

@@ -45,7 +45,7 @@ public class Song implements Serializable {
 
     @Schema(description = "Playtime of the song")
     private String playtime;
-    
+
     @Schema(description = "Outline text")
     private String outlineText;
 
@@ -53,15 +53,19 @@ public class Song implements Serializable {
     private String status;
 
     @Schema(description = "Cover of the song")
-    private Song cover;
+    private Long coverId;
 
     @Schema(description = "Remix of the song")
-    private Song remix;
+    private Long remixId;
 
     @Schema(description = ("Id of chord progression of the song"))
     private Long chordProgressionId;
 
     @Schema(description = "Id of song genre")
     private Long genreId;
+
+    private String imageUrl;
+
+    private String audioUrl;
 
 }

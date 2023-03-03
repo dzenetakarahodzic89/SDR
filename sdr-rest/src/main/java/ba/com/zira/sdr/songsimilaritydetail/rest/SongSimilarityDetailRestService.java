@@ -41,7 +41,7 @@ public class SongSimilarityDetailRestService {
     @Operation(summary = "Find song sample details based on filter criteria")
     @GetMapping
     public PagedPayloadResponse<SongSimilarityDetail> find(@RequestParam Map<String, Object> filterCriteria,
-            final QueryConditionPage queryCriteria) throws ApiException {
+                                                           final QueryConditionPage queryCriteria) throws ApiException {
         return songSimilarityDetailService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
@@ -61,7 +61,7 @@ public class SongSimilarityDetailRestService {
             song.setId(id);
         }
 
-        return songSimilarityDetailService.update(new EntityRequest<>(song));
+        return songSimilarityDetailService.update(new EntityRequest<SongSimilarityDetailUpdateRequest>(song));
     }
 
     @Operation(summary = "Delete song sample detail")

@@ -15,15 +15,23 @@ public class LabelCreateRequest implements Serializable {
 
     @Schema(description = "Information about label")
     private String information;
+
     @NotBlank
     @Schema(description = "Name of the label")
     private String labelName;
+
     @Schema(description = "Label founding date")
+
     private LocalDateTime foundingDate;
+
     @Schema(description = "Label founder")
     private Long founderId;
 
     @Schema(description = "Label outline text")
     private String outlineText;
+
+    private String coverImage;
+
+    private String coverImageData;
 
 }
