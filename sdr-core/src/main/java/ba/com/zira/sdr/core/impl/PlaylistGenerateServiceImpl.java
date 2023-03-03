@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.Tuple;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +20,10 @@ import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.PlaylistGenerateService;
 import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSong;
+import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbResponse;
 import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
 import ba.com.zira.sdr.api.model.generateplaylist.SavePlaylistRequest;
 import ba.com.zira.sdr.api.model.playlist.Playlist;
-import ba.com.zira.sdr.core.mapper.GeneratePlaylistMapper;
 import ba.com.zira.sdr.core.mapper.PlaylistMapper;
 import ba.com.zira.sdr.core.mapper.SongMapper;
 import ba.com.zira.sdr.core.utils.PlayTimeHelper;
@@ -47,15 +45,16 @@ public class PlaylistGenerateServiceImpl implements PlaylistGenerateService {
     PlaylistDAO playlistDAO;
     PlaylistMapper playlistMapper;
     SongRequestValidation songRequestValidation;
-    GeneratePlaylistMapper generatePlaylistMapper;
+    GeneratePlaylistServiceHelper generatePlaylistServiceHelper;
 
     @Override
     public PagedPayloadResponse<GeneratedPlaylistSong> generatePlaylist(FilterRequest request) throws ApiException {
-        List<Tuple> generatedPlaylist = songDAO.generatePlaylist(this.extractPlaylistGenerateRequestFromFilter(request.getFilter()));
-        PagedData<Tuple> pagedData = new PagedData<>();
+        List<GeneratedPlaylistSongDbResponse> generatedPlaylist = songDAO
+                .generatePlaylist(this.extractPlaylistGenerateRequestFromFilter(request.getFilter()));
+        PagedData<GeneratedPlaylistSongDbResponse> pagedData = new PagedData<>();
         pagedData.setRecords(generatedPlaylist);
         return new PagedPayloadResponse<>(request, ResponseCode.OK, pagedData,
-                generatePlaylistMapper::complexDbObjectsToGeneratedPlaylistSongs);
+                generatePlaylistServiceHelper::complexDbObjectsToGeneratedPlaylistSongs);
     }
 
     @Override
