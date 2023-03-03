@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -140,7 +140,7 @@ public class InstrumentServiceTest extends BasicTestConfiguration {
             Mockito.when(requestValidator.validate(filterRequest)).thenReturn(null);
             Mockito.when(instrumentDAO.findAll(filterRequest.getFilter())).thenReturn(pagedEntites);
 
-            List<InstrumentResponse> instrumentFindResponse = instrumentService.get(filterRequest).getPayload();
+            List<InstrumentResponse> instrumentFindResponse = instrumentService.find(filterRequest).getPayload();
 
             Assertions.assertThat(instrumentFindResponse).as("Check all elements").overridingErrorMessage("All elements should be equal.")
                     .hasSameElementsAs(response);
