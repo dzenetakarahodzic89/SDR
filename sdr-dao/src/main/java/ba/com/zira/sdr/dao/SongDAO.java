@@ -123,8 +123,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
             List<Long> albumIds, List<Long> genreIds, int page, int pageSize) {
         var query = "select new ba.com.zira.sdr.api.model.song.SongSearchResponse(ss.id, ss.name, ss.outlineText, ss.modified) from SongEntity ss left join SongArtistEntity ssa on ss.id = ssa.song.id "
                 + "left join AlbumEntity sa on sa.id = ssa.album.id join GenreEntity sg on ss.genre.id = sg.id "
-                + "where (ss.name like :songName or :songName is null or :songName = '') and (:remixId is null or ss.remix.id = :remixId)  and (:coverId is null or ss.cover.id = :coverId) and (coalesce(:artistIds, null) is null or ssa.artist.id in :artistIds) and (coalesce(:albumIds, null) is null or ssa.album.id in :albumIds) and (coalesce(:genreIds, null) is null or ss.genre.id in :genreIds)";
-
+                + "where (ss.name like :songName or :songName is null or :songName = '') and (:remixId is null or ss.remix.id is not null) and (:coverId is null or ss.cover.id is not null) and (coalesce(:artistIds, null) is null or ssa.artist.id in :artistIds) and (coalesce(:albumIds, null) is null or ssa.album.id in :albumIds) and (coalesce(:genreIds, null) is null or ss.genre.id in :genreIds)";
         if ("last_date".equals(sortBy)) {
             query += " order by ss.modified desc";
         }
@@ -135,9 +134,25 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
         var q = entityManager.createQuery(query, SongSearchResponse.class);
 
-        q.setParameter("remixId", remixId);
+        if (remixId != null) {
+            q.setParameter("remixId", true);
+            if (remixId == 0) {
+                q.setParameter("remixId", null);
+            }
+        }
 
-        q.setParameter("coverId", coverId);
+        else {
+            q.setParameter("remixId", null);
+        }
+
+        if (coverId != null) {
+            q.setParameter("coverId", true);
+            if (coverId == 0) {
+                q.setParameter("coverId", null);
+            }
+        } else {
+            q.setParameter("coverId", null);
+        }
 
         if (songName != null && !songName.isEmpty()) {
             q.setParameter("songName", "%" + songName + "%");
