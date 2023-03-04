@@ -24,6 +24,8 @@ import ba.com.zira.sdr.api.SongService;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
+import ba.com.zira.sdr.api.model.song.SongSearchRequest;
+import ba.com.zira.sdr.api.model.song.SongSearchResponse;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -82,6 +84,12 @@ public class SongRestService {
     public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the song") @PathVariable final Long id)
             throws ApiException {
         return songService.delete(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Song search")
+    @PostMapping(value = "/search")
+    public ListPayloadResponse<SongSearchResponse> find(@RequestBody final SongSearchRequest request) throws ApiException {
+        return songService.find(new EntityRequest<>(request));
     }
 
 }
