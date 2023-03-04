@@ -118,4 +118,13 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         return query.getResultList();
     }
 
+    public List<LoV> findSongsToFetchFromSpotify(int responseLimit) {
+        var cases = "case when sa.artist.surname is null then concat('track:',s.name,' ','artist:',sa.artist.name) else"
+                + " concat('track:',s.name,' ','artist:',sa.artist.name,' ',sa.artist.surname) end";
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id," + cases + ") from SongEntity s left join"
+                + " SpotifyIntegrationEntity si on s.id = si.objectId and si.objectType like 'SONG' join SongArtistEntity sa on s.id=sa.song.id where si.id = null";
+        return entityManager.createQuery(hql, LoV.class).setMaxResults(responseLimit).getResultList();
+
+    }
+
 }
