@@ -27,27 +27,27 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
-@Tag(name = "Song Playlist", description = "Song artist rest service")
+@Tag(name = "Song Playlist", description = "Song playlist rest service")
 @RestController
-@RequestMapping(value = "song-Playlist")
+@RequestMapping(value = "song-playlist")
 @AllArgsConstructor
 public class SongPlaylistRestService {
     private SongPlaylistService songPlaylistService;
 
-    @Operation(summary = "Find song-artist records based on filter criteria")
+    @Operation(summary = "Find song playlist records based on filter criteria")
     @GetMapping
     public PagedPayloadResponse<SongPlaylist> get(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
             throws ApiException {
         return songPlaylistService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
-    @Operation(summary = "Create song artist")
+    @Operation(summary = "Create song playlist")
     @PostMapping
     public PayloadResponse<SongPlaylist> create(@RequestBody final SongPlaylistCreateRequest SongPlaylist) throws ApiException {
         return songPlaylistService.create(new EntityRequest<>(SongPlaylist));
     }
 
-    @Operation(summary = "Update SongPlaylist")
+    @Operation(summary = "Update song playlist")
     @PutMapping(value = "{id}")
     public PayloadResponse<SongPlaylist> edit(@Parameter(required = true, description = "ID of the sample") @PathVariable final Long id,
             @RequestBody final SongPlaylistUpdateRequest songPlaylist) throws ApiException {
@@ -57,7 +57,7 @@ public class SongPlaylistRestService {
         return songPlaylistService.update(new EntityRequest<>(songPlaylist));
     }
 
-    @Operation(summary = "Delete song artist")
+    @Operation(summary = "Delete song playlist")
     @DeleteMapping(value = "{id}")
     public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the record") @PathVariable final Long id)
             throws ApiException {

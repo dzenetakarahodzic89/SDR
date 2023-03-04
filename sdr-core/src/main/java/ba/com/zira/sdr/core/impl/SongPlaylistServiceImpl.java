@@ -69,7 +69,7 @@ public class SongPlaylistServiceImpl implements SongPlaylistService {
 
         var songPlaylistEntity = songPlaylistDAO.findByPK(request.getEntity());
         songPlaylistDAO.remove(songPlaylistEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, "SongPlaylist succesful deleted");
+        return new PayloadResponse<>(request, ResponseCode.OK, "SongPlaylist successfully deleted");
     }
 
 }
