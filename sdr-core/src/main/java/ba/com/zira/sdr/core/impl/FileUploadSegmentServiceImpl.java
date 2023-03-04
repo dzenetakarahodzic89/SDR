@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.PayloadResponse;
-import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.FileUploadSegmentService;
+import ba.com.zira.sdr.api.enums.FileUploadSegmentStatus;
 import ba.com.zira.sdr.api.model.fileuploadsegment.FileUploadSegmentCreateRequest;
 import ba.com.zira.sdr.core.mapper.FileUploadSegmentMapper;
 import ba.com.zira.sdr.dao.FileUploadSegmentDAO;
@@ -41,8 +41,11 @@ public class FileUploadSegmentServiceImpl implements FileUploadSegmentService {
         saveFileSegmentEntity.setId(UUID.randomUUID().toString());
         saveFileSegmentEntity.setCreated(LocalDateTime.now());
         saveFileSegmentEntity.setCreatedBy(request.getUserId());
-        saveFileSegmentEntity.setStatus(Status.ACTIVE.value());
+        saveFileSegmentEntity.setStatus(FileUploadSegmentStatus.UPLOADING.getValue());
         fileUploadSegmentDAO.persist(saveFileSegmentEntity);
+        if (saveFileSegmentEntity.getFileSegment().equals(saveFileSegmentEntity.getFileSegmentTotal())) {
+            fileUploadSegmentDAO.updateStatus(FileUploadSegmentStatus.READY_TO_MERGE.getValue(), saveFileSegmentEntity.getMedia().getId());
+        }
         return new PayloadResponse<>(request, ResponseCode.OK, "ok");
     }
 
