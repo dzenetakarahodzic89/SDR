@@ -30,7 +30,7 @@ public class PersonCreateRequest implements Serializable {
     private LocalDateTime dateOfDeath;
 
     private String outlineText;
-
+    private Long countryId;
     private String coverImageData;
     private String coverImage;
 

@@ -3,6 +3,8 @@ package ba.com.zira.sdr.api.model.spotifyintegration;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotBlank;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -29,4 +31,11 @@ public class SpotifyIntegrationResponse implements Serializable {
     private String request;
     @Schema(description = "Response of the spotify integration")
     private String response;
+    @NotBlank
+    @Schema(description = "Type of the object which fetched data represents")
+    private String objectType;
+    @NotBlank
+    @Schema(description = "Id of the object which fetched data represents")
+    private Long objectId;
+
 }
