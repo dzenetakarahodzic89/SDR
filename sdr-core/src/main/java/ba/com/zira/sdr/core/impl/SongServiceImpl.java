@@ -21,6 +21,8 @@ import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
+import ba.com.zira.sdr.api.model.song.SongSearchRequest;
+import ba.com.zira.sdr.api.model.song.SongSearchResponse;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import ba.com.zira.sdr.core.mapper.SongMapper;
@@ -133,6 +135,21 @@ public class SongServiceImpl implements SongService {
     @Override
     public ListPayloadResponse<LoV> retrieveNotInAlbum(final EntityRequest<Long> request) throws ApiException {
         var songs = songDAO.getSongsNotInAlbum(request.getEntity());
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, songs);
+    }
+
+    @Override
+    public ListPayloadResponse<SongSearchResponse> find(final EntityRequest<SongSearchRequest> request) {
+        // songRequestValidation.validateExistsSongRequest(request);
+
+        List<SongSearchResponse> songs = songDAO.find(request.getEntity().getName(), request.getEntity().getSortBy(),
+                request.getEntity().remixId, request.getEntity().coverId, request.getEntity().getAlbumIds(),
+                request.getEntity().getGenreIds(), request.getEntity().getArtistIds(), request.getEntity().getPage(),
+                request.getEntity().getPageSize());
+
+        lookupService.lookupCoverImage(songs, SongSearchResponse::getId, ObjectType.SONG.getValue(), SongSearchResponse::setImageUrl,
+                SongSearchResponse::getImageUrl);
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, songs);
     }
