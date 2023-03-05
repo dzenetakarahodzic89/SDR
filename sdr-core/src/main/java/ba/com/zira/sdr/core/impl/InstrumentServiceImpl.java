@@ -29,6 +29,7 @@ import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
+import ba.com.zira.sdr.api.instrument.ResponseSongInstrumentEra;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.core.mapper.InstrumentMapper;
 import ba.com.zira.sdr.core.mapper.SongInstrumentMapper;
@@ -174,9 +175,23 @@ public class InstrumentServiceImpl implements InstrumentService {
     }
 
     @Override
+
+    public ListPayloadResponse<ResponseSongInstrumentEra> findAllSongsInErasForInstruments(EntityRequest<Long> request) throws ApiException {
+        Long instrumentId = request.getEntity();
+        List<ResponseSongInstrumentEra> responseList = instrumentDAO.findAllSongsInErasForInstruments(instrumentId);
+
+
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, responseList);
+    }
+
+
+
     public PayloadResponse<InstrumentResponse> get(final EntityRequest<Long> request) throws ApiException {
         InstrumentEntity instrumentEntity = instrumentDAO.findByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
+
 }
+
