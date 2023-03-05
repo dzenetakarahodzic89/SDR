@@ -1,12 +1,12 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -29,6 +29,7 @@ import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
+import ba.com.zira.sdr.api.instrument.ResponseSongInstrumentEra;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.core.mapper.InstrumentMapper;
 import ba.com.zira.sdr.core.mapper.SongInstrumentMapper;
@@ -175,4 +176,16 @@ public class InstrumentServiceImpl implements InstrumentService {
         return new ListPayloadResponse<ResponseSongInstrument>(entityRequest, ResponseCode.OK, responseList);
     }
 
+    @Override
+    public ListPayloadResponse<ResponseSongInstrumentEra> findAllSongsInErasForInstruments(EntityRequest<Long> request) throws ApiException {
+        Long instrumentId = request.getEntity();
+        List<ResponseSongInstrumentEra> responseList = instrumentDAO.findAllSongsInErasForInstruments(instrumentId);
+
+
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, responseList);
+    }
+
+
 }
+

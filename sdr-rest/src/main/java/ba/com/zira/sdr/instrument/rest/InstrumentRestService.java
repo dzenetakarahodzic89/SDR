@@ -26,6 +26,7 @@ import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
+import ba.com.zira.sdr.api.instrument.ResponseSongInstrumentEra;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -76,5 +77,17 @@ public class InstrumentRestService {
             @RequestBody final ListRequest<InsertSongInstrumentRequest> request) throws ApiException {
         return instrumentService.insertInstrumentsToSong(request);
     }
+
+
+    @Operation(summary = "Get number of songs of instruments by era")
+    @GetMapping(value = "/{id}/era-timeline")
+    public ListPayloadResponse<ResponseSongInstrumentEra> getInstrumentSongByEra (
+            @Parameter(required = true, description = "ID of the instrument")
+            @PathVariable final Long id) throws ApiException {
+        return instrumentService.findAllSongsInErasForInstruments(new EntityRequest<>(id));
+
+    }
+
+
 
 }
