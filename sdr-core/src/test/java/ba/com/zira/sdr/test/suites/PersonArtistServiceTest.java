@@ -1,5 +1,19 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.assertj.core.api.Assertions;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -24,19 +38,6 @@ import ba.com.zira.sdr.dao.model.PersonArtistEntity;
 import ba.com.zira.sdr.dao.model.PersonEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
-import org.assertj.core.api.Assertions;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @ContextConfiguration(classes = ApplicationTestConfiguration.class)
 public class PersonArtistServiceTest extends BasicTestConfiguration {
@@ -148,8 +149,8 @@ public class PersonArtistServiceTest extends BasicTestConfiguration {
             req.setEntity(newPersonArtistRequest);
 
             var personArtistEntity = new PersonArtistEntity();
-            personArtistEntity.setArtist(
-                    new ArtistEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null));
+            personArtistEntity
+                    .setArtist(new ArtistEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             personArtistEntity.setPerson(
                     new PersonEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
 
@@ -159,7 +160,7 @@ public class PersonArtistServiceTest extends BasicTestConfiguration {
             Mockito.when(personDAO.findByPK(1L)).thenReturn(
                     new PersonEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             Mockito.when(artistDAO.findByPK(1L))
-                    .thenReturn(new ArtistEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                    .thenReturn(new ArtistEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             Mockito.when(personArtistDAO.persist(personArtistEntity)).thenReturn(null);
 
             PayloadResponse<PersonArtistResponse> personArtistCreateResponse = personArtistService.create(req);

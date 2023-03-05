@@ -10,6 +10,8 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
+import ba.com.zira.sdr.api.model.song.SongSearchRequest;
+import ba.com.zira.sdr.api.model.song.SongSearchResponse;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 
@@ -106,5 +108,7 @@ public interface SongService {
      *             the api exception
      */
     ListPayloadResponse<LoV> retrieveNotInAlbum(final EntityRequest<Long> request) throws ApiException;
+
+    ListPayloadResponse<SongSearchResponse> find(final EntityRequest<SongSearchRequest> request) throws ApiException;
 
 }
