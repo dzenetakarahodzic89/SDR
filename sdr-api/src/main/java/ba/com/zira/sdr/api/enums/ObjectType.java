@@ -10,7 +10,9 @@ public enum ObjectType {
     /** PERSON */
     PERSON("PERSON"),
     /** INSTRUMENT */
-    INSTRUMENT("INSTRUMENT");
+    INSTRUMENT("INSTRUMENT"),
+    /** LABEL */
+    LABEL("LABEL");
 
     private final String value;
 

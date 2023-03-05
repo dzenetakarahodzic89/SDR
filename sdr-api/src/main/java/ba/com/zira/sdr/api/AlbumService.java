@@ -9,9 +9,23 @@ import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.song.Song;
 
 /**
  * The Interface AlbumService.
+ */
+/**
+ * @author User
+ *
+ */
+/**
+ * @author User
+ *
+ */
+/**
+ * @author User
+ *
  */
 public interface AlbumService {
 
@@ -19,10 +33,10 @@ public interface AlbumService {
      * Find.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the paged payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PagedPayloadResponse<AlbumResponse> find(final FilterRequest request) throws ApiException;
 
@@ -30,10 +44,10 @@ public interface AlbumService {
      * Creates the.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<AlbumResponse> create(EntityRequest<AlbumCreateRequest> request) throws ApiException;
 
@@ -41,10 +55,10 @@ public interface AlbumService {
      * Update.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<AlbumResponse> update(EntityRequest<AlbumUpdateRequest> request) throws ApiException;
 
@@ -52,10 +66,10 @@ public interface AlbumService {
      * Delete.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
@@ -63,10 +77,29 @@ public interface AlbumService {
      * Find all songs for album.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<AlbumSongResponse> findAllSongsForAlbum(EntityRequest<Long> request) throws ApiException;
+
+    /**
+     * @param request
+     * @return
+     * @throws ApiException
+     */
+    PayloadResponse<AlbumResponse> getById(EntityRequest<Long> request) throws ApiException;
+
+    /**
+     * Adds the song and label to album.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     * @throws ApiException
+     *             the api exception
+     */
+    PayloadResponse<Song> addSongToAlbum(EntityRequest<SongOfAlbumUpdateRequest> request) throws ApiException;
+
 }

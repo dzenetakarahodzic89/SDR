@@ -52,8 +52,7 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<DeezerIntegration> update(final EntityRequest<DeezerIntegrationUpdateRequest> request) 
-    		throws ApiException {
+    public PayloadResponse<DeezerIntegration> update(final EntityRequest<DeezerIntegrationUpdateRequest> request) {
         DeezerIntegrationRequestValidation.validateUpdateDeezerIntegrationRequest(request);
 
         var deezerIntegrationEntity = deezerIntegrationDAO.findByPK(request.getEntity().getId());

@@ -1,7 +1,8 @@
-package ba.com.zira.sdr.rest;
+package ba.com.zira.sdr.playlist.rest;
 
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.PlaylistService;
 import ba.com.zira.sdr.api.model.playlist.Playlist;
 import ba.com.zira.sdr.api.model.playlist.PlaylistCreateRequest;
+import ba.com.zira.sdr.api.model.playlist.PlaylistSearchRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,6 +43,18 @@ public class PlaylistRestService {
         return playlistService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
+    @Operation(summary = "Find Playlists based on custom filter")
+    @GetMapping(value = "search")
+    public PagedPayloadResponse<Playlist> findByNameSongGenre(
+            @Parameter(required = false, description = "Name of the playlist") @RequestParam(required = false) final String name,
+            @Parameter(required = false, description = "Id of a song in the playlist") @RequestParam(required = false) final Long songId,
+            @Parameter(required = false, description = "Id of a genre in the playlist") @RequestParam(required = false) final Long genreId,
+            @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy)
+            throws ApiException {
+        return playlistService
+                .searchByNameSongGenre(new EntityRequest<PlaylistSearchRequest>(new PlaylistSearchRequest(name, songId, genreId, sortBy)));
+    }
+
     @Operation(summary = "Create playlist")
     @PostMapping
     public PayloadResponse<Playlist> create(@RequestBody final PlaylistCreateRequest playlist) throws ApiException {
@@ -58,8 +72,8 @@ public class PlaylistRestService {
     }
 
     @Operation(summary = "Delete playlist")
-    @PutMapping(value = "{id}/delete")
-    public PayloadResponse<Playlist> delete(@Parameter(required = true, description = "ID of the playlist") @PathVariable final Long id)
+    @DeleteMapping(value = "{id}")
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the playlist") @PathVariable final Long id)
             throws ApiException {
         return playlistService.delete(new EntityRequest<>(id));
     }

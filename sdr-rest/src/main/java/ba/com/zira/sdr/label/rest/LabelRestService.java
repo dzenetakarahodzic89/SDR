@@ -14,15 +14,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.LabelService;
+import ba.com.zira.sdr.api.model.label.LabelArtistResponse;
 import ba.com.zira.sdr.api.model.label.LabelCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelResponse;
 import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,12 +48,18 @@ public class LabelRestService {
         return labelService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
-    @Operation(summary = "Find label base on id")
+    @Operation(summary = "Find label by id")
     @GetMapping(value = "{id}")
-    public PayloadResponse<LabelResponse> findById(@Parameter(required = true, description = "ID of the label") @PathVariable final Long id)
-            throws ApiException {
-
+    public PayloadResponse<LabelArtistResponse> findById(
+            @Parameter(required = true, description = "ID of the label") @PathVariable final Long id) throws ApiException {
         return labelService.findById(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Get all label ids and names")
+    @GetMapping(value = "/lov")
+    public ListPayloadResponse<LoV> findAllLoVs() throws ApiException {
+        var request = new EmptyRequest();
+        return labelService.retrieveAllLoVs(request);
     }
 
     @Operation(summary = "Create label")

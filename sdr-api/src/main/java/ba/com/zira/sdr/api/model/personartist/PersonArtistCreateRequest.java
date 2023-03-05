@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.api.model.personartist;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
@@ -19,5 +20,9 @@ public class PersonArtistCreateRequest implements Serializable {
     @NotNull
     @Schema(description = "Id of associated person")
     private Long personId;
+
+    private LocalDateTime startOfRelationship;
+
+    private LocalDateTime endOfRelationship;
 
 }

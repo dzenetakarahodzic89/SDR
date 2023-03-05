@@ -13,7 +13,7 @@ import lombok.Data;
 public class ConnectedMediaCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Min(1)
+    @Min(0)
     @Schema(description = "Id of the object")
     private Long objectId;
 

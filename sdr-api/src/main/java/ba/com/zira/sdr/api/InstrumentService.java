@@ -28,7 +28,9 @@ public interface InstrumentService {
      * @throws ApiException
      *             the api exception
      */
-    PagedPayloadResponse<InstrumentResponse> get(final FilterRequest filterRequest) throws ApiException;
+    PagedPayloadResponse<InstrumentResponse> find(final FilterRequest filterRequest) throws ApiException;
+
+    PayloadResponse<InstrumentResponse> get(final EntityRequest<Long> request) throws ApiException;
 
     /**
      * Create payload response.

@@ -29,7 +29,7 @@ import lombok.AllArgsConstructor;
 
 @Tag(name = "songInstrument", description = "SongInstrument API")
 @RestController
-@RequestMapping(value = "songInstrument")
+@RequestMapping(value = "song-instrument")
 @AllArgsConstructor
 public class SongInstrumentRestService {
 

@@ -2,6 +2,7 @@ package ba.com.zira.sdr.dao;
 
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -37,6 +38,18 @@ public class MultiSearchDAO extends AbstractDAO<MultiSearchEntity, Long> {
         var hql = "select new ba.com.zira.sdr.api.model.multisearch.MultiSearchResponse(r.id, r.name, r.type) from MultiSearchEntity r order by random()";
         TypedQuery<MultiSearchResponse> query = entityManager.createQuery(hql, MultiSearchResponse.class).setMaxResults(10);
         return query.getResultList();
+    }
+
+    public void deleteTable() {
+        var hql = "drop table sat_multi_search";
+        Query query = entityManager.createNativeQuery(hql);
+        query.executeUpdate();
+    }
+
+    public void createTableAndFillWithData() {
+        var hql = "create table sat_multi_search as (select cc2.id,cc2.name || ' ' || cc2.surname as name,'PERSON' as type from sat_person cc2 union select cf.id,cf.name,'SONG' from sat_song cf union select cl.id,cl.name, 'ALBUM' from sat_album cl)";
+        Query query = entityManager.createNativeQuery(hql);
+        query.executeUpdate();
     }
 
 }

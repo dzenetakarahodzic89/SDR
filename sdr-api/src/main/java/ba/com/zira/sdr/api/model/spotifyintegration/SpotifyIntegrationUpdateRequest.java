@@ -25,4 +25,10 @@ public class SpotifyIntegrationUpdateRequest implements Serializable {
     @NotBlank
     @Schema(description = "Response of the spotify integration")
     private String response;
+    @NotBlank
+    @Schema(description = "Type of the object which fetched data represents")
+    private String objectType;
+    @Min(0)
+    @Schema(description = "Id of the object which fetched data represents")
+    private Long objectId;
 }

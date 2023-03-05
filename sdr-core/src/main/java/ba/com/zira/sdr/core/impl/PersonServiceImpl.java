@@ -1,8 +1,17 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -11,7 +20,9 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.PersonService;
 import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
+import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
@@ -19,20 +30,17 @@ import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.PersonMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
+import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.model.PersonEntity;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @Service
 @AllArgsConstructor
 public class PersonServiceImpl implements PersonService {
 
     PersonDAO personDAO;
+    CountryDAO countryDAO;
     PersonMapper personMapper;
     PersonRequestValidation personRequestValidation;
     LookupService lookupService;
@@ -69,7 +77,6 @@ public class PersonServiceImpl implements PersonService {
         personEntity.setCreatedBy(request.getUserId());
 
         if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
-
             var mediaRequest = new MediaCreateRequest();
             mediaRequest.setObjectType(ObjectType.PERSON.getValue());
             mediaRequest.setObjectId(personEntity.getId());
@@ -78,7 +85,6 @@ public class PersonServiceImpl implements PersonService {
             mediaRequest.setMediaStoreType("COVER_IMAGE");
             mediaRequest.setMediaObjectType("IMAGE");
             mediaService.save(new EntityRequest<>(mediaRequest, request));
-
         }
 
         personDAO.persist(personEntity);
@@ -107,6 +113,27 @@ public class PersonServiceImpl implements PersonService {
         personDAO.removeByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK,
                 String.format("Person with id %s is successfully deleted!", request.getEntity()));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<PersonResponse> updatePersonCountry(final EntityRequest<PersonCountryRequest> request) {
+        PersonEntity personEntity = personDAO.findByPK(request.getEntity().getPersonId());
+        Long countryEntityId = request.getEntity().getCountryId();
+
+        personEntity.setCountry(countryDAO.findByPK(countryEntityId));
+        personEntity.setModified(LocalDateTime.now());
+        personEntity.setModifiedBy(request.getUserId());
+        personDAO.merge(personEntity);
+
+        return new PayloadResponse<>(request, ResponseCode.OK, personMapper.entityToDto(personEntity));
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> getPersonLoVs(EmptyRequest req) throws ApiException {
+        // TODO Auto-generated method stub
+        List<LoV> eras = personDAO.getAllPersonsLoV();
+        return new ListPayloadResponse<>(req, ResponseCode.OK, eras);
     }
 
 }

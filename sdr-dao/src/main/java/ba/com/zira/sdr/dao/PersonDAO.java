@@ -33,4 +33,10 @@ public class PersonDAO extends AbstractDAO<PersonEntity, Long> {
         }
     }
 
+    public List<LoV> getAllPersonsLoV() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from PersonEntity s";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);
+        return query.getResultList();
+    }
+
 }

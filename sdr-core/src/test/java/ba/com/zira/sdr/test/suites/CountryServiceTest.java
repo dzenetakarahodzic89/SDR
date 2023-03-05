@@ -38,7 +38,6 @@ public class CountryServiceTest extends BasicTestConfiguration {
 
     @Autowired
     private CountryMapper countryMapper;
-
     private CountryDAO countryDAO;
     private RequestValidator requestValidator;
     private CountryRequestValidation countryRequestValidation;

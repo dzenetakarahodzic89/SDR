@@ -60,7 +60,7 @@ public class InstrumentServiceImpl implements InstrumentService {
     MediaService mediaService;
 
     @Override
-    public PagedPayloadResponse<InstrumentResponse> get(final FilterRequest filterRequest) {
+    public PagedPayloadResponse<InstrumentResponse> find(final FilterRequest filterRequest) {
         PagedData<InstrumentEntity> instrumentEntities = instrumentDAO.findAll(filterRequest.getFilter());
         return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, instrumentEntities, instrumentMapper::entitiesToDtos);
     }
@@ -110,8 +110,6 @@ public class InstrumentServiceImpl implements InstrumentService {
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<String> delete(final EntityRequest<Long> entityRequest) {
         instrumentRequestValidation.validateExistsInstrumentRequest(entityRequest);
-        InstrumentEntity deletedEntity = instrumentDAO.findByPK(entityRequest.getEntity());
-
         instrumentDAO.removeByPK(entityRequest.getEntity());
         return new PayloadResponse<>(entityRequest, ResponseCode.OK, "Instrument deleted");
     }
@@ -177,6 +175,7 @@ public class InstrumentServiceImpl implements InstrumentService {
     }
 
     @Override
+
     public ListPayloadResponse<ResponseSongInstrumentEra> findAllSongsInErasForInstruments(EntityRequest<Long> request) throws ApiException {
         Long instrumentId = request.getEntity();
         List<ResponseSongInstrumentEra> responseList = instrumentDAO.findAllSongsInErasForInstruments(instrumentId);
@@ -184,6 +183,13 @@ public class InstrumentServiceImpl implements InstrumentService {
 
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, responseList);
+    }
+
+
+
+    public PayloadResponse<InstrumentResponse> get(final EntityRequest<Long> request) throws ApiException {
+        InstrumentEntity instrumentEntity = instrumentDAO.findByPK(request.getEntity());
+        return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
 
