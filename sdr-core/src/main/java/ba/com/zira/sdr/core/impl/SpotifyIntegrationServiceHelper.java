@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,45 +28,33 @@ import ba.com.zira.sdr.api.model.spotifyintegration.SpotifyIntegrationCreateRequ
 import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.SongDAO;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class SpotifyIntegrationServiceHelper {
+    @Autowired
     private final RestTemplate restTemplate;
+    @NonNull
     private AlbumDAO albumDAO;
+    @NonNull
     private SongDAO songDAO;
+    @NonNull
     private ArtistDAO artistDAO;
+    @NonNull
     private SpotifyIntegrationService spotifyIntegrationService;
     @Value("${spring.security.oauth2.client.registration.spotify.clientId}")
-    private final String clientId;
+    private String clientId;
     @Value("${spring.security.oauth2.client.registration.spotify.clientSecret}")
-    private final String clientSecret;
+    private String clientSecret;
     @Value("${spring.security.oauth2.client.registration.spotify.accessTokenUri}")
-    private final String spotifyAuthUrl;
+    private String spotifyAuthUrl;
     @Value("${spring.security.oauth2.client.registration.spotify.apiUrl}")
-    private final String spotifyApiUrl;
+    private String spotifyApiUrl;
     @Value("${spring.security.oauth2.client.registration.spotify.responseLimit}")
-    private final int responseLimit;
+    private int responseLimit;
     private static final User systemUser = new User("System");
-
-    SpotifyIntegrationServiceHelper(AlbumDAO albumDAO, SongDAO songDAO, ArtistDAO artistDAO,
-            SpotifyIntegrationService spotifyIntegrationService,
-            @Value("${spring.security.oauth2.client.registration.spotify.clientId}") String clientId,
-            @Value("${spring.security.oauth2.client.registration.spotify.clientSecret}") String clientSecret,
-            @Value("${spring.security.oauth2.client.registration.spotify.accessTokenUri}") String spotifyAuthUrl,
-            @Value("${spring.security.oauth2.client.registration.spotify.apiUrl}") String spotifyApiUrl,
-            @Value("${spring.security.oauth2.client.registration.spotify.responseLimit}") int responseLimit) {
-        this.albumDAO = albumDAO;
-        this.songDAO = songDAO;
-        this.artistDAO = artistDAO;
-        this.spotifyIntegrationService = spotifyIntegrationService;
-        RestTemplateBuilder builder = new RestTemplateBuilder();
-        this.restTemplate = builder.build();
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.responseLimit = responseLimit;
-        this.spotifyApiUrl = spotifyApiUrl;
-        this.spotifyAuthUrl = spotifyAuthUrl;
-    }
 
     private String getAuthenticationToken() {
         String auth = clientId + ":" + clientSecret;
