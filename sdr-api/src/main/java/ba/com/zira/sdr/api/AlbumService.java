@@ -10,12 +10,10 @@ import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
-<<<<<<< sdr-api/src/main/java/ba/com/zira/sdr/api/AlbumService.java
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
-=======
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.song.Song;
->>>>>>> sdr-api/src/main/java/ba/com/zira/sdr/api/AlbumService.java
+
 
 /**
  * The Interface AlbumService.
