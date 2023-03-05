@@ -9,13 +9,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Properties for creation of a chord progression")
+@Schema(description = "Properties for upload of a file segment")
 public class FileUploadSegmentCreateRequest implements Serializable {
     private static final long serialVersionUID = 1;
 
-    @Min(1)
     @Schema(description = "Media id - song, person etc id")
-    private Long id;
+    private Long mediaObjectId;
 
     @NotBlank
     @Schema(description = "Name of the file")
