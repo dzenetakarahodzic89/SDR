@@ -1,5 +1,17 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.assertj.core.api.Assertions;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -18,17 +30,6 @@ import ba.com.zira.sdr.core.validation.SpotifyIntegrationRequestValidation;
 import ba.com.zira.sdr.dao.SpotifyIntegrationDAO;
 import ba.com.zira.sdr.dao.model.SpotifyIntegrationEntity;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
-import org.assertj.core.api.Assertions;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class SpotifyIntegrationServiceTest extends BasicTestConfiguration {
     @Autowired
@@ -37,6 +38,7 @@ public class SpotifyIntegrationServiceTest extends BasicTestConfiguration {
     private RequestValidator requestValidator;
     private SpotifyIntegrationRequestValidation spotifyIntergationRequestValidation;
     private SpotifyIntegrationService spotifyIntergationService;
+
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
@@ -45,6 +47,7 @@ public class SpotifyIntegrationServiceTest extends BasicTestConfiguration {
         this.spotifyIntergationService = new SpotifyIntegrationServiceImpl(spotifyIntergationDAO, spotifyIntergationMapper,
                 spotifyIntergationRequestValidation);
     }
+
     @Test(enabled = true)
     public void testFindSpotifyIntegration() {
         try {
@@ -106,6 +109,7 @@ public class SpotifyIntegrationServiceTest extends BasicTestConfiguration {
             Assert.fail();
         }
     }
+
     @Test(enabled = true)
     public void testCreateSpotifyIntegration() {
         try {
@@ -132,6 +136,7 @@ public class SpotifyIntegrationServiceTest extends BasicTestConfiguration {
             Assert.fail();
         }
     }
+
     @Test(enabled = true)
     public void testUpdateSpotifyIntegration() {
         try {
@@ -160,6 +165,7 @@ public class SpotifyIntegrationServiceTest extends BasicTestConfiguration {
             Assert.fail();
         }
     }
+
     @Test(enabled = true)
     public void testDeleteSpotifyIntegration() {
         try {
@@ -174,4 +180,3 @@ public class SpotifyIntegrationServiceTest extends BasicTestConfiguration {
         }
     }
 }
-
