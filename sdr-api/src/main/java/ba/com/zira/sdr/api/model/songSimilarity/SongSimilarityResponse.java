@@ -24,6 +24,8 @@ public class SongSimilarityResponse implements Serializable {
     private LocalDateTime albumBReleaseDate;
     private String songAimageUrl;
     private String songBimageUrl;
+    private String songAAudioUrl;
+    private String songBAudioUrl;
 
     public SongSimilarityResponse(Long id, Long songAId, String songAName, String albumAName, LocalDateTime albumAReleaseDate, Long songBId,
             String songBName, String albumBName, LocalDateTime albumBReleaseDate) {

@@ -56,6 +56,8 @@ public class SongSimilarityServiceImpl implements SongSimilarityService {
                 SongSimilarityResponse::setSongAimageUrl, SongSimilarityResponse::getSongAimageUrl);
         lookupService.lookupCoverImage(songSimilarity, SongSimilarityResponse::getSongBId, ObjectType.ALBUM.getValue(),
                 SongSimilarityResponse::setSongBimageUrl, SongSimilarityResponse::getSongBimageUrl);
+        lookupService.lookupAudio(songSimilarity, SongSimilarityResponse::getSongAId, SongSimilarityResponse::setSongAAudioUrl);
+        lookupService.lookupAudio(songSimilarity, SongSimilarityResponse::getSongBId, SongSimilarityResponse::setSongBAudioUrl);
         return new ListPayloadResponse<>(req, ResponseCode.OK, songSimilarity);
     }
 
