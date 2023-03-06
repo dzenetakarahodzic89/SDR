@@ -14,8 +14,25 @@ import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse;
  */
 public interface SongSimilarityService {
 
+    /**
+     * Create payload response.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     * @throws ApiException
+     *             the api exception
+     */
+
     PayloadResponse<SongSimilarity> create(EntityRequest<SongSimilarityCreateRequest> request) throws ApiException;
 
+    /**
+     * Find list payload response.
+     *
+     * @return the list payload response
+     * @throws ApiException
+     *             the api exception
+     */
     ListPayloadResponse<SongSimilarityResponse> getAll(EmptyRequest req) throws ApiException;
 
 }

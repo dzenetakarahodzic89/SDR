@@ -34,15 +34,13 @@ public class SongSimilarityRestService {
     @PostMapping
     public PayloadResponse<SongSimilarity> create(@RequestBody final SongSimilarityCreateRequest songSimilarityCreateRequest)
             throws ApiException {
-        var request = new EntityRequest<>(songSimilarityCreateRequest);
-        return songSimilarityService.create(request);
+        return songSimilarityService.create(new EntityRequest<>(songSimilarityCreateRequest));
     }
 
     @Operation(summary = "Get all")
     @GetMapping(value = "all")
     public ListPayloadResponse<SongSimilarityResponse> getAll() throws ApiException {
-        var request = new EmptyRequest();
-        return songSimilarityService.getAll(request);
+        return songSimilarityService.getAll(new EmptyRequest());
     }
 
 }

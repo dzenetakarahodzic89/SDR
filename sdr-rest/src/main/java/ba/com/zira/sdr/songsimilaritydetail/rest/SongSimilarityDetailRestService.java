@@ -43,8 +43,7 @@ public class SongSimilarityDetailRestService {
     @Operation(summary = "Get all")
     @GetMapping(value = "all")
     public ListPayloadResponse<SongSimilarityDetailResponse> getAll(@RequestParam Long id) throws ApiException {
-        var request = new EntityRequest<>(id);
-        return songSimilarityDetailService.getAll(request);
+        return songSimilarityDetailService.getAll(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Find song sample details based on filter criteria")
@@ -58,8 +57,7 @@ public class SongSimilarityDetailRestService {
     @PostMapping
     public PayloadResponse<SongSimilarityDetail> create(@RequestBody final SongSimilarityDetailCreateReq songSimilarityCreateRequest)
             throws ApiException {
-        var request = new EntityRequest<>(songSimilarityCreateRequest);
-        return songSimilarityDetailService.createSongSimilarityDetail(request);
+        return songSimilarityDetailService.createSongSimilarityDetail(new EntityRequest<>(songSimilarityCreateRequest));
     }
 
     @Operation(summary = "Update song sample detail")
