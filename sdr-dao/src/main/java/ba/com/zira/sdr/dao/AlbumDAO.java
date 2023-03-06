@@ -61,7 +61,7 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         }
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
 
-        criteriaQuery.select(root);
+        criteriaQuery.select(root).distinct(true);
 
         if (albumSearchRequest.getSort() != null && albumSearchRequest.getSort().equals("last_edit")) {
             criteriaQuery.orderBy(builder.asc(root.get(AlbumEntity_.modified)));

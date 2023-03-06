@@ -78,10 +78,16 @@ public class AlbumServiceImpl implements AlbumService {
                 if (song.getPlaytime() == null) {
                     continue;
                 }
-                var playTimeSplit = song.getPlaytime().split(":");
-                var minutes = Integer.parseInt(playTimeSplit[0]);
-                var seconds = Integer.parseInt(playTimeSplit[1]);
-                albumPlaytime = minutes * 60 + seconds;
+                try {
+                    var playTimeSplit = song.getPlaytime().split(":");
+                    var minutes = Integer.parseInt(playTimeSplit[0]);
+                    var seconds = Integer.parseInt(playTimeSplit[1]);
+                    albumPlaytime = minutes * 60 + seconds;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid format");
+                    System.out.println(song.getPlaytime());
+
+                }
             }
             albumResponse.setPlaytime(albumPlaytime);
             albumWithPlayTime.add(albumResponse);
