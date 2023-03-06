@@ -32,9 +32,9 @@ public class SongSimilarityRestService {
 
     @Operation(summary = "Create")
     @PostMapping
-    public PayloadResponse<SongSimilarity> create(@RequestBody final SongSimilarityCreateRequest songSimilarityCreateRequest)
+    public PayloadResponse<SongSimilarity> create(@RequestBody EntityRequest<SongSimilarityCreateRequest> songSimilarityCreateRequest)
             throws ApiException {
-        return songSimilarityService.create(new EntityRequest<>(songSimilarityCreateRequest));
+        return songSimilarityService.create(songSimilarityCreateRequest);
     }
 
     @Operation(summary = "Get all")
