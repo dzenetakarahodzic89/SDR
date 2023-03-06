@@ -53,10 +53,10 @@ public class Song implements Serializable {
     private String status;
 
     @Schema(description = "Cover of the song")
-    private Song cover;
+    private Long coverId;
 
     @Schema(description = "Remix of the song")
-    private Song remix;
+    private Long remixId;
 
     @Schema(description = ("Id of chord progression of the song"))
     private Long chordProgressionId;

@@ -28,4 +28,10 @@ public class LabelDAO extends AbstractDAO<LabelEntity, Long> {
         return query.getResultList().stream().collect(Collectors.toMap(LoV::getId, LoV::getName));
     }
 
+    public List<LoV> getLabelLoVs() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(l.id,l.name) from LabelEntity l";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);
+        return query.getResultList();
+    }
+
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.dao.model.AlbumEntity_;
@@ -73,31 +74,23 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
 
         }
 
-        /*
-         *
-         * criteriaQuery.where(genres.get(GenreEntity_.id).in(albumSearchRequest
-         * .getGenres()));
-         * criteriaQuery.where(songArtists.get(ArtistEntity_.id).in(
-         * albumSearchRequest.getArtists()));
-         *
-         * Join<SongEntity, GenreEntity> sgenres = root.join(SongEntity_.genre);
-         * Join<AlbumEntity, EraEntity> eraAlbum =
-         * albumArtist.join(AlbumEntity_.era); Join<GenreEntity, GenreEntity>
-         * genres = sgenres.join(GenreEntity_.mainGenre, JoinType.LEFT);
-         *
-         * Expression<Long> idSelectCase = builder.<Long> selectCase()
-         * .when(genres.get(GenreEntity_.id).isNotNull(),
-         * genres.get(GenreEntity_.id)).otherwise(sgenres.get(GenreEntity_.id));
-         * Expression<String> nameSelectCase = builder.<String> selectCase()
-         * .when(genres.get(GenreEntity_.name).isNotNull(),
-         * genres.get(GenreEntity_.name)).otherwise(sgenres.get(GenreEntity_.
-         * name));
-         *
-         * criteriaQuery.multiselect(root.get(SongEntity_.id),
-         * root.get(SongEntity_.name), idSelectCase, nameSelectCase,
-         * eraAlbum.get(EraEntity_.id), eraAlbum.get(EraEntity_.name));
-         */
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
+    public List<String> findAllAlbumArtists(final Long albumId) {
+        var hql = "select distinct artist.name || ' ' || artist.surname from AlbumEntity a join SongArtistEntity sa on sa.album.id = a.id join ArtistEntity artist on artist.id = sa.artist.id where a.id = :albumId";
+        TypedQuery<String> query = entityManager.createQuery(hql, String.class).setParameter("albumId", albumId);
+        return query.getResultList();
+    }
+
+    public List<LoV> findAlbumsToFetchFromSpotify(int responseLimit) {
+        var cases = "case when sa.artist.surname is null then concat('album:',a.name,' ','artist:',sa.artist.name) else"
+                + " concat('album:',a.name,' ','artist:',sa.artist.name,' ',sa.artist.surname) end";
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id," + cases
+                + ") from AlbumEntity a left join SpotifyIntegrationEntity si on "
+                + "a.id = si.objectId and si.objectType like 'ALBUM' join SongArtistEntity sa on a.id=sa.album.id where si.id = null";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setMaxResults(responseLimit);
+
+        return query.getResultList();
+    }
 }

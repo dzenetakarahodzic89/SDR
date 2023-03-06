@@ -146,6 +146,7 @@ public class SwaggerConfiguration {
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
+    @Bean
     public GroupedOpenApi connectedMediaApi() {
         return GroupedOpenApi.builder().group("connectedmedia-api").packagesToScan("ba.com.zira.sdr.connectedmedia.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -174,13 +175,30 @@ public class SwaggerConfiguration {
         return GroupedOpenApi.builder().group("deezer-integration-api").packagesToScan("ba.com.zira.sdr.deezerintegration.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
-    
+
     @Bean
     public GroupedOpenApi userRecommendationDetailApi() {
-        return GroupedOpenApi.builder().group("userrecommendationdetail-api").packagesToScan("ba.com.zira.sdr.userrecommendationdetail.rest")
+        return GroupedOpenApi.builder().group("userrecommendationdetail-api")
+                .packagesToScan("ba.com.zira.sdr.userrecommendationdetail.rest").addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi multiSearchHistoryApi() {
+        return GroupedOpenApi.builder().group("multi-search-history-api").packagesToScan("ba.com.zira.sdr.multisearchhistory.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
+    @Bean
+    public GroupedOpenApi connectedMediaDetailApi() {
+        return GroupedOpenApi.builder().group("connectedmediadetail-api").packagesToScan("ba.com.zira.sdr.connectedmediadetail.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi playlistGenerateApi() {
+        return GroupedOpenApi.builder().group("playlist-generate-api").packagesToScan("ba.com.zira.sdr.generateplaylist.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
 
     @Bean
     public OpenAPI ziraOpenAPI() {

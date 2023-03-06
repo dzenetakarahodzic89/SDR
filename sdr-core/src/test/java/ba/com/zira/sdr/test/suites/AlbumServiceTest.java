@@ -64,8 +64,8 @@ public class AlbumServiceTest extends BasicTestConfiguration {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.albumDAO = Mockito.mock(AlbumDAO.class);
         this.albumRequestValidation = Mockito.mock(AlbumRequestValidation.class);
-        this.albumService = new AlbumServiceImpl(albumDAO, songArtistDAO, songDAO, songArtistMapper, albumMapper, songMapper,
-                albumRequestValidation, lookupService, null);
+        this.albumService = new AlbumServiceImpl(albumDAO, songArtistDAO, songDAO, null, songArtistMapper, albumMapper, songMapper,
+                albumRequestValidation, lookupService, null, null);
     }
 
     @Test(enabled = true)

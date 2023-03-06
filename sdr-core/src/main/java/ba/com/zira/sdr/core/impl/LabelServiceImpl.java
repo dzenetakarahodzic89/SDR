@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -18,10 +20,12 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.LabelService;
 import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.image.ImageCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelArtistResponse;
 import ba.com.zira.sdr.api.model.label.LabelCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelResponse;
 import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.core.mapper.LabelMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
@@ -45,6 +49,8 @@ public class LabelServiceImpl implements LabelService {
     LookupService lookupservice;
     @Autowired
     MediaService mediaService;
+
+    ImageCreateRequest imageCreateRequest;
 
     @Autowired
     public LabelServiceImpl(LabelDAO labelDAO, LabelMapper labelMapper, PersonDAO personDAO, LabelRequestValidation labelReqVal) {
@@ -83,6 +89,37 @@ public class LabelServiceImpl implements LabelService {
         labelEntity.setCreated(LocalDateTime.now());
         labelEntity.setCreatedBy(request.getUserId());
         labelEntity.setFounder(personEntity);
+
+        labelDAO.persist(labelEntity);
+
+        if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
+
+            var mediaRequest = new MediaCreateRequest();
+            mediaRequest.setObjectType(ObjectType.LABEL.getValue());
+            mediaRequest.setObjectId(labelEntity.getId());
+            mediaRequest.setMediaObjectData(request.getEntity().getCoverImageData());
+            mediaRequest.setMediaObjectName(request.getEntity().getCoverImage());
+            mediaRequest.setMediaStoreType("COVER_IMAGE");
+            mediaRequest.setMediaObjectType("IMAGE");
+
+            mediaService.save(new EntityRequest<>(mediaRequest, request));
+
+        }
+
+        return new PayloadResponse<>(request, ResponseCode.OK, labelMapper.entityToDto(labelEntity));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<LabelResponse> update(final EntityRequest<LabelUpdateRequest> request) throws ApiException {
+        labelReqVal.validateUpdateLabelRequest(request);
+
+        var labelEntity = labelDAO.findByPK(request.getEntity().getId());
+        var personEntity = personDAO.findByPK(request.getEntity().getFounderId());
+        labelEntity.setModified(LocalDateTime.now());
+        labelEntity.setModifiedBy(request.getUserId());
+        labelEntity.setFounder(personEntity);
+
         if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
 
             var mediaRequest = new MediaCreateRequest();
@@ -95,20 +132,7 @@ public class LabelServiceImpl implements LabelService {
             mediaService.save(new EntityRequest<>(mediaRequest, request));
 
         }
-        labelDAO.persist(labelEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, labelMapper.entityToDto(labelEntity));
-    }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<LabelResponse> update(final EntityRequest<LabelUpdateRequest> request) {
-        labelReqVal.validateUpdateLabelRequest(request);
-
-        var labelEntity = labelDAO.findByPK(request.getEntity().getId());
-        var personEntity = personDAO.findByPK(request.getEntity().getFounderId());
-        labelEntity.setModified(LocalDateTime.now());
-        labelEntity.setModifiedBy(request.getUserId());
-        labelEntity.setFounder(personEntity);
         labelMapper.updateEntity(request.getEntity(), labelEntity);
         labelDAO.merge(labelEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, labelMapper.entityToDto(labelEntity));
@@ -124,6 +148,13 @@ public class LabelServiceImpl implements LabelService {
 
         return new PayloadResponse<>(request, ResponseCode.OK, "Label successfully deleted!");
 
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> retrieveAllLoVs(final EmptyRequest request) throws ApiException {
+        var labels = labelDAO.getLabelLoVs();
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, labels);
     }
 
 }

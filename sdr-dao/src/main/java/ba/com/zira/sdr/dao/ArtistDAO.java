@@ -85,4 +85,17 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         }
     }
 
+    public List<LoV> getArtistLoVs() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.name || ' ' || a.surname) from ArtistEntity a";
+        TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class);
+        return q.getResultList();
+    }
+
+    public List<LoV> findArtistsToFetchFromSpotify(int responseLimit) {
+        var cases = "case when a.surname is null then concat('artist:',a.name) else" + " concat('artist:',a.name,' ',a.surname) end";
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id," + cases + ") from ArtistEntity a left join"
+                + " SpotifyIntegrationEntity si on a.id = si.objectId and si.objectType like 'ARTIST' where si.id = null";
+        return entityManager.createQuery(hql, LoV.class).setMaxResults(responseLimit).getResultList();
+
+    }
 }

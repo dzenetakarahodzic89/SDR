@@ -42,8 +42,11 @@ public class AlbumResponse implements Serializable {
     @Schema(description = "Artist name")
     private String artistName;
 
-    private String imageUrl;
-
     @Schema(description = "Album songs")
     private List<SongResponse> songs;
+
+    private List<SongAudio> audioUrls;
+
+    private String imageUrl;
+    private List<String> albumArtists;
 }
