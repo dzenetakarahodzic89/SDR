@@ -3,6 +3,7 @@ package ba.com.zira.sdr.api;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
@@ -11,8 +12,10 @@ import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
 import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.song.Song;
+
 
 /**
  * The Interface AlbumService.
@@ -98,6 +101,9 @@ public interface AlbumService {
      */
     PayloadResponse<AlbumSongResponse> findAllSongsForAlbum(EntityRequest<Long> request) throws ApiException;
 
+    ListPayloadResponse<AlbumsByDecadeResponse> findAllAlbumsForArtist(EntityRequest<Long> request) throws ApiException;
+
+
     /**
      * @param request
      * @return
@@ -115,5 +121,6 @@ public interface AlbumService {
      *             the api exception
      */
     PayloadResponse<Song> addSongToAlbum(EntityRequest<SongOfAlbumUpdateRequest> request) throws ApiException;
+
 
 }
