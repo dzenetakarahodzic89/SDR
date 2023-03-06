@@ -52,6 +52,13 @@ public class ArtistRestService {
         return artistService.create(new EntityRequest<>(request));
     }
 
+    @Operation(summary = "Create artist from person")
+    @PostMapping(value = "create-from-person/{id}")
+    public PayloadResponse<ArtistResponse> createFromPerson(
+            @Parameter(required = true, description = "Id of the person") @PathVariable final Long id) throws ApiException {
+        return artistService.createFromPerson(new EntityRequest<>(id));
+    }
+
     @Operation(summary = "Delete artist")
     @DeleteMapping(value = "{id}/delete")
     public PayloadResponse<String> delete(@Parameter(required = true, description = "Id of the artist") @PathVariable final Long id)
