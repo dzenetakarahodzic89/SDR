@@ -42,6 +42,8 @@ public class ArtistResponse implements Serializable {
     private Map<Long, String> personArtistNames;
     @Schema(description = "Song-artist")
     private Map<Long, String> songArtistNames;
+    @Schema(description = "Outline text for the artist")
+    private String outlineText;
 
     public ArtistResponse(String name, LocalDateTime dateOfBirth, LocalDateTime dateOfDeath, String information, String status,
             String surname, String type) {

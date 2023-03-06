@@ -75,4 +75,6 @@ public interface ArtistService {
      */
     ListPayloadResponse<LoV> getArtistNames(EmptyRequest request) throws ApiException;
 
+    PayloadResponse<ArtistResponse> createFromPerson(EntityRequest<Long> request) throws ApiException;
+
 }
