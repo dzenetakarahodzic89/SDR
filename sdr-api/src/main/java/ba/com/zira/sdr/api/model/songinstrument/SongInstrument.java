@@ -41,6 +41,9 @@ public class SongInstrument implements Serializable {
     @Schema(description = "Person name")
     private String personName;
 
+    @Schema(description = "Person surname")
+    private String personSurname;
+
     @Schema(description = "Person's date of birth")
     private String personDob;
 

@@ -32,6 +32,7 @@ public interface SongInstrumentMapper {
     @Mapping(source = "person.id", target = "personId")
     @Mapping(source = "person.name", target = "personName")
     @Mapping(source = "person.dateOfBirth", target = "personDob")
+    @Mapping(source = "person.surname", target = "personSurname")
     SongInstrument entityToDto(SongInstrumentEntity songInstrumentEntity);
 
     @Mapping(source = "songId", target = "song.id")

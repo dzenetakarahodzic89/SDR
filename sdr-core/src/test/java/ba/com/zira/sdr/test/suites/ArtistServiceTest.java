@@ -28,6 +28,7 @@ import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.core.impl.ArtistServiceImpl;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
+import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.EraDAO;
 import ba.com.zira.sdr.dao.PersonArtistDAO;
@@ -52,6 +53,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
     private RequestValidator requestValidator;
     private ArtistValidation artistValidation;
     private ArtistService artistService;
+    private PersonRequestValidation personRequestValidation;
 
     ArtistValidation artistRequestValidation;
 
@@ -62,9 +64,10 @@ public class ArtistServiceTest extends BasicTestConfiguration {
         this.songArtistDAO = Mockito.mock(SongArtistDAO.class);
         this.personArtistDAO = Mockito.mock(PersonArtistDAO.class);
         this.artistValidation = Mockito.mock(ArtistValidation.class);
+        this.personRequestValidation = Mockito.mock(PersonRequestValidation.class);
 
         this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, personDAO, artistMapper, artistValidation, personArtistDAO,
-                songArtistDAO);
+                songArtistDAO, personRequestValidation);
     }
 
     @Test(enabled = true)

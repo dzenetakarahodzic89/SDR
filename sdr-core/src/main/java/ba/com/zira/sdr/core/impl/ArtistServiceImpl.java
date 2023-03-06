@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -16,6 +17,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
+import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.ArtistService;
 import ba.com.zira.sdr.api.artist.Artist;
@@ -27,12 +29,14 @@ import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
+import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.EraDAO;
 import ba.com.zira.sdr.dao.PersonArtistDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.PersonArtistEntity;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -45,6 +49,7 @@ public class ArtistServiceImpl implements ArtistService {
     ArtistValidation artistRequestValidation;
     PersonArtistDAO personArtistDAO;
     SongArtistDAO songArtistDAO;
+    PersonRequestValidation personRequestValidation;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -56,6 +61,37 @@ public class ArtistServiceImpl implements ArtistService {
         artistEntity.setModifiedBy(request.getUserId());
 
         artistDAO.persist(artistEntity);
+        return new PayloadResponse<>(request, ResponseCode.OK, artistMapper.entityToDto(artistEntity));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<ArtistResponse> createFromPerson(final EntityRequest<Long> request) throws ApiException {
+        personRequestValidation.validateExistsPersonRequest(new EntityRequest<>(request.getEntity()));
+
+        var personEntity = personDAO.findByPK(request.getEntity());
+        var artistEntity = artistMapper.personToArtist(personEntity);
+
+        artistEntity.setId(null);
+        artistEntity.setCreated(LocalDateTime.now());
+        artistEntity.setCreatedBy(request.getUserId());
+        artistEntity.setStatus(Status.ACTIVE.value());
+        artistEntity.setModified(null);
+        artistEntity.setModifiedBy(null);
+
+        artistDAO.persist(artistEntity);
+
+        var personArtistEntity = new PersonArtistEntity();
+
+        personArtistEntity.setId(null);
+        personArtistEntity.setArtist(artistEntity);
+        personArtistEntity.setPerson(personEntity);
+        personArtistEntity.setCreated(LocalDateTime.now());
+        personArtistEntity.setCreatedBy(request.getUserId());
+        personArtistEntity.setStatus(Status.ACTIVE.value());
+
+        personArtistDAO.persist(personArtistEntity);
+
         return new PayloadResponse<>(request, ResponseCode.OK, artistMapper.entityToDto(artistEntity));
     }
 
@@ -145,6 +181,12 @@ public class ArtistServiceImpl implements ArtistService {
         artistByEras1.add(artistByEras);
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, artistByEras1);
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> getArtistNames(EmptyRequest request) throws ApiException {
+        var artists = artistDAO.getArtistLoVs();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
     }
 
 }

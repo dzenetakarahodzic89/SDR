@@ -62,8 +62,8 @@ public class AlbumServiceTest extends BasicTestConfiguration {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.albumDAO = Mockito.mock(AlbumDAO.class);
         this.albumRequestValidation = Mockito.mock(AlbumRequestValidation.class);
-        this.albumService = new AlbumServiceImpl(albumDAO, songArtistDAO, songArtistMapper, albumMapper, songMapper, albumRequestValidation,
-                lookupService,null);
+        this.albumService = new AlbumServiceImpl(albumDAO, songArtistDAO, null, null, songArtistMapper, albumMapper, songMapper,
+                albumRequestValidation, lookupService, null, null);
     }
 
     @Test(enabled = true)
@@ -163,7 +163,7 @@ public class AlbumServiceTest extends BasicTestConfiguration {
             PayloadResponse<AlbumResponse> albumFindResponse = albumService.create(req);
 
             Assertions.assertThat(albumFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-                    .ignoringFields("created", "createdBy", "modified", "modifiedBy","status").isEqualTo(newAlbum);
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy", "status").isEqualTo(newAlbum);
 
         } catch (Exception e) {
             Assert.fail();

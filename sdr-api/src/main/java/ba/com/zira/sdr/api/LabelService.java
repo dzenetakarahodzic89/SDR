@@ -1,8 +1,10 @@
 package ba.com.zira.sdr.api;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.response.ResponseCode;
@@ -10,6 +12,7 @@ import ba.com.zira.sdr.api.model.label.LabelArtistResponse;
 import ba.com.zira.sdr.api.model.label.LabelCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelResponse;
 import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 
 /**
  * * Methods used to manipulate {@link LabelResponse} data. <br>
@@ -99,4 +102,13 @@ public interface LabelService {
      */
 
     public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
+
+    /**
+     * Retrieve not in album.
+     *
+     * @return the list payload response
+     * @throws ApiException
+     *             the api exception
+     */
+    ListPayloadResponse<LoV> retrieveAllLoVs(EmptyRequest request) throws ApiException;
 }

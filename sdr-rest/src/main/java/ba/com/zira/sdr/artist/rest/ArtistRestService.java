@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -25,6 +26,7 @@ import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -50,6 +52,13 @@ public class ArtistRestService {
         return artistService.create(new EntityRequest<>(request));
     }
 
+    @Operation(summary = "Create artist from person")
+    @PostMapping(value = "create-from-person/{id}")
+    public PayloadResponse<ArtistResponse> createFromPerson(
+            @Parameter(required = true, description = "Id of the person") @PathVariable final Long id) throws ApiException {
+        return artistService.createFromPerson(new EntityRequest<>(id));
+    }
+
     @Operation(summary = "Delete artist")
     @DeleteMapping(value = "{id}/delete")
     public PayloadResponse<String> delete(@Parameter(required = true, description = "Id of the artist") @PathVariable final Long id)
@@ -73,6 +82,13 @@ public class ArtistRestService {
     public ListPayloadResponse<ArtistByEras> getArtistsByEras(@RequestParam Long eraId) throws ApiException {
         var req = new EntityRequest<>(eraId);
         return artistService.getArtistsByEras(req);
+    }
+
+    @Operation(summary = "All artist ids and names")
+    @GetMapping("/lov")
+    public ListPayloadResponse<LoV> getArtistNames() throws ApiException {
+        var req = new EmptyRequest();
+        return artistService.getArtistNames(req);
     }
 
 }

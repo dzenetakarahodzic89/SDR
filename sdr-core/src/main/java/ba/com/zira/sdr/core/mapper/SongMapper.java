@@ -1,10 +1,10 @@
 package ba.com.zira.sdr.core.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-
-import java.util.List;
 
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
@@ -29,6 +29,8 @@ public interface SongMapper {
 
     @Mapping(source = "chordProgression.id", target = "chordProgressionId")
     @Mapping(source = "genre.id", target = "genreId")
+    @Mapping(source = "remix.id", target = "remixId")
+    @Mapping(source = "cover.id", target = "coverId")
     Song entityToDto(SongEntity songEntity);
 
     @Mapping(source = "chordProgressionId", target = "chordProgression.id")

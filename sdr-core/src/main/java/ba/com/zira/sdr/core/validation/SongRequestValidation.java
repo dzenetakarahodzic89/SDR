@@ -7,6 +7,7 @@ import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
 import ba.com.zira.sdr.api.SongService;
+import ba.com.zira.sdr.api.model.generateplaylist.SavePlaylistRequest;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import ba.com.zira.sdr.dao.SongDAO;
 import lombok.AllArgsConstructor;
@@ -53,6 +54,14 @@ public class SongRequestValidation {
         ValidationErrors errors = new ValidationErrors();
         errors.put(exists(request.getEntity()));
 
+        return ValidationResponse.of(request, errors);
+    }
+
+    public ValidationResponse validateExistsSongsInRequest(final EntityRequest<SavePlaylistRequest> request) {
+        ValidationErrors errors = new ValidationErrors();
+        for (Long songId : request.getEntity().getSongIds()) {
+            errors.put(exists(songId));
+        }
         return ValidationResponse.of(request, errors);
     }
 
