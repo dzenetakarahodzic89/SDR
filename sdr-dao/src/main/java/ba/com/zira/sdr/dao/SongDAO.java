@@ -15,7 +15,6 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
-import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
 import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
@@ -42,9 +41,10 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
             return new HashMap<>();
         }
     }
-    public SongSingleResponse getById(Long songId){
-    	var hql = "select new ba.com.zira.sdr.api.model.song.SongSingleResponse(ss.id, ss.name, ss.outlineText,ss.information,ss.dateOfRelease,scp.name,sg.name,sg.id) from SongEntity ss left join ChordProgressionEntity scp on ss.chordProgression.id =scp.id left join GenreEntity sg on ss.genre.id = sg.id where ss.id =:id";
-    	TypedQuery<SongSingleResponse> q = entityManager.createQuery(hql, SongSingleResponse.class).setParameter("id", songId);
+
+    public SongSingleResponse getById(Long songId) {
+        var hql = "select new ba.com.zira.sdr.api.model.song.SongSingleResponse(ss.id, ss.name, ss.outlineText,ss.information,ss.dateOfRelease,scp.name,sg.name,sg.id) from SongEntity ss left join ChordProgressionEntity scp on ss.chordProgression.id =scp.id left join GenreEntity sg on ss.genre.id = sg.id where ss.id =:id";
+        TypedQuery<SongSingleResponse> q = entityManager.createQuery(hql, SongSingleResponse.class).setParameter("id", songId);
         return q.getSingleResult();
     }
 
@@ -67,10 +67,22 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
+
     public Long countAllPlaylistsWhereSongExists(Long songId) {
-    	var hql = "select count(*) from SongPlaylistEntity ssp where ssp.song.id =:id";
+        var hql = "select count(*) from SongPlaylistEntity ssp where ssp.song.id =:id";
         TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", songId);
         return q.getSingleResult();
+    }
+
+    public List<SongEntity> findAllByAlbumId(Long id) {
+        final CriteriaQuery<SongEntity> criteriaQuery = builder.createQuery(SongEntity.class);
+        final Root<SongEntity> root = criteriaQuery.from(SongEntity.class);
+        Join<SongEntity, SongArtistEntity> songArtists = root.join(SongEntity_.songArtists);
+        Join<SongArtistEntity, AlbumEntity> albumArtist = songArtists.join(SongArtistEntity_.album);
+        criteriaQuery.where(builder.equal(albumArtist.get(AlbumEntity_.id), id));
+        criteriaQuery.select(root).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+
     }
 
 }

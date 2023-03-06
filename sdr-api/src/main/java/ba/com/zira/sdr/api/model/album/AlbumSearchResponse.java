@@ -11,5 +11,6 @@ public class AlbumSearchResponse implements Serializable {
     String imageUrl;
     String outlineText;
     Long id;
+    int playtime;
 
 }

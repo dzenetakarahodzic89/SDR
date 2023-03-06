@@ -1,6 +1,5 @@
 package ba.com.zira.sdr.album.rest;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,21 +70,17 @@ public class AlbumRestService {
             final QueryConditionPage queryCriteria) throws ApiException {
         return albumService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
-    
+
     @Operation(summary = "Search albums")
     @GetMapping(value = "search")
-    public PagedPayloadResponse<AlbumSearchResponse> searchAlbum(
-            @RequestParam(required=false) List<Long>eras,
-            @RequestParam(required=false) List<Long>genres,
-            @RequestParam(required=false) List<Long>artists,
-            @RequestParam int pageNumber,
-            @RequestParam int pageSize,
-            @RequestParam(required = false) String sort,
+    public PagedPayloadResponse<AlbumSearchResponse> searchAlbum(@RequestParam(required = false) List<Long> eras,
+            @RequestParam(required = false) List<Long> genres, @RequestParam(required = false) List<Long> artists,
+            @RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam(required = false) String sort,
             @RequestParam(required = false) String name
-            
-            ) throws ApiException {
-        //Map<String, Object> filterCriteria = new HashMap<>();
-        return albumService.search(new EntityRequest<>( new AlbumSearchRequest(eras,genres,artists,sort,pageNumber,pageSize,name)));   
+
+    ) throws ApiException {
+        // Map<String, Object> filterCriteria = new HashMap<>();
+        return albumService.search(new EntityRequest<>(new AlbumSearchRequest(eras, genres, artists, sort, pageNumber, pageSize, name)));
     }
 
     @Operation(summary = "Get all songs from album")
