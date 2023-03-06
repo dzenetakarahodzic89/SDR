@@ -7,8 +7,8 @@ import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetail;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateReq;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest;
-import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest2;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailResponse;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdateRequest;
 
@@ -25,7 +25,7 @@ public interface SongSimilarityDetailService {
 
     public PayloadResponse<SongSimilarityDetail> update(EntityRequest<SongSimilarityDetailUpdateRequest> request) throws ApiException;
 
-    PayloadResponse<SongSimilarityDetail> create1(EntityRequest<SongSimilarityDetailCreateRequest2> request);
+    PayloadResponse<SongSimilarityDetail> createSongSimilarityDetail(EntityRequest<SongSimilarityDetailCreateReq> request);
 
     ListPayloadResponse<SongSimilarityDetailResponse> getAll(EntityRequest<Long> request) throws ApiException;
 

@@ -141,7 +141,7 @@ public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
             songsimilaritydetail.setStatus(null);
 
             Mockito.when(songSimilarityDetailDAO.persist(songSimilarityDetailEntity)).thenReturn(null);
-            // Mockito.when(songSimilarityDetailRequestValidation.validateExistsSongSimilartyDetailRequest(req)).thenReturn(null);
+            Mockito.when(songSimilarityDetailRequestValidation.validateCreateSongSimilarityDetailRequest(req)).thenReturn(null);
 
             PayloadResponse<SongSimilarityDetail> songArtistCreateResponse = songSimilarityDetailService.create(req);
 

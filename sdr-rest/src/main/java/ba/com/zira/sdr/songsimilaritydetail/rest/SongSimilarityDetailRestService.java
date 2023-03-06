@@ -22,7 +22,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.SongSimilarityDetailService;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetail;
-import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest2;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateReq;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailResponse;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,9 +56,10 @@ public class SongSimilarityDetailRestService {
 
     @Operation(summary = "Create")
     @PostMapping
-    public PayloadResponse<SongSimilarityDetail> create(@RequestBody final SongSimilarityDetailCreateRequest2 songSimilarityCreateRequest)
+    public PayloadResponse<SongSimilarityDetail> create(@RequestBody final SongSimilarityDetailCreateReq songSimilarityCreateRequest)
             throws ApiException {
-        return songSimilarityDetailService.create1(new EntityRequest<>(songSimilarityCreateRequest));
+        var request = new EntityRequest<>(songSimilarityCreateRequest);
+        return songSimilarityDetailService.createSongSimilarityDetail(request);
     }
 
     @Operation(summary = "Update song sample detail")

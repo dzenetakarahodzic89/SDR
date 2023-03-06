@@ -6,7 +6,8 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
-import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest2;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateRequest;
+import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailCreateReq;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdateRequest;
 import ba.com.zira.sdr.dao.SongSimilarityDAO;
 import ba.com.zira.sdr.dao.SongSimilarityDetailDAO;
@@ -40,11 +41,20 @@ public class SongSimilarityDetailRequestValidation {
         return null;
     }
 
-    public ValidationResponse validateCreateSongSimilarityDetailRequest(
-            final EntityRequest<SongSimilarityDetailCreateRequest2> entityRequest) {
+    public ValidationResponse validateCreateSongSimilarityDetailsRequest(
+            final EntityRequest<SongSimilarityDetailCreateReq> entityRequest) {
         ValidationErrors errors = new ValidationErrors();
 
         errors.put(exists(entityRequest.getEntity().getSongSimilarity()));
+
+        return ValidationResponse.of(entityRequest, errors);
+    }
+
+    public ValidationResponse validateCreateSongSimilarityDetailRequest(
+            final EntityRequest<SongSimilarityDetailCreateRequest> entityRequest) {
+        ValidationErrors errors = new ValidationErrors();
+
+        errors.put(exists(entityRequest.getEntity().getSongSimilarityId()));
 
         return ValidationResponse.of(entityRequest, errors);
     }

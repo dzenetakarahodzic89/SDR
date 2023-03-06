@@ -34,7 +34,8 @@ public class SongSimilarityRestService {
     @PostMapping
     public PayloadResponse<SongSimilarity> create(@RequestBody final SongSimilarityCreateRequest songSimilarityCreateRequest)
             throws ApiException {
-        return songSimilarityService.create(new EntityRequest<>(songSimilarityCreateRequest));
+        var request = new EntityRequest<>(songSimilarityCreateRequest);
+        return songSimilarityService.create(request);
     }
 
     @Operation(summary = "Get all")

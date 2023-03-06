@@ -10,7 +10,7 @@ import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityCreateRequest;
 import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse;
 
 /**
- * The Interface SongSimilarityDetailService.
+ * The Interface SongSimilarityService
  */
 public interface SongSimilarityService {
 
