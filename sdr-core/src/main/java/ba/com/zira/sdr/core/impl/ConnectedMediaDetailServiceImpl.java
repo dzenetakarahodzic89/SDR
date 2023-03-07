@@ -41,7 +41,7 @@ public class ConnectedMediaDetailServiceImpl implements ConnectedMediaDetailServ
 
         var connectedMediaDetailEntity = connectedMediaDetailMapper.dtoToEntity(request.getEntity());
 
-        Map<String, Object> filterCriteria = new HashMap<String, Object>();
+        Map<String, Object> filterCriteria = new HashMap<>();
         filterCriteria.put("objectId", request.getEntity().getObjectId());
         filterCriteria.put("objectType", request.getEntity().getObjectType());
         QueryConditionPage queryConditionPage = new QueryConditionPage();

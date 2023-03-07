@@ -20,6 +20,7 @@ public class SongPlaylistRequestValidation {
     private SongPlaylistDAO songPlaylistDAO;
     private SongDAO songDAO;
     private PlaylistDAO playlistDAO;
+    private static final String DOES_NOT_EXIST = " does not exist!";
 
     public ValidationResponse validateCreateSongPlaylistRequest(final EntityRequest<SongPlaylistCreateRequest> request) {
         ValidationErrors errors = new ValidationErrors();
@@ -47,21 +48,21 @@ public class SongPlaylistRequestValidation {
 
     private ValidationError exists(Long id) {
         if (!songPlaylistDAO.existsByPK(id)) {
-            return ValidationError.of("SOngPlaylist_NOT_FOUND", "SongPlaylist with id: " + id + " does not exist!");
+            return ValidationError.of("SOngPlaylist_NOT_FOUND", "SongPlaylist with id: " + id + DOES_NOT_EXIST);
         }
         return null;
     }
 
     private ValidationError songExists(Long id) {
         if (!songDAO.existsByPK(id)) {
-            return ValidationError.of("Song_NOT_FOUND", "Song with id: " + id + " does not exist!");
+            return ValidationError.of("Song_NOT_FOUND", "Song with id: " + id + DOES_NOT_EXIST);
         }
         return null;
     }
 
     private ValidationError playlistExists(Long id) {
         if (!playlistDAO.existsByPK(id)) {
-            return ValidationError.of("Playlist_NOT_FOUND", "Playlist with id: " + id + " does not exist!");
+            return ValidationError.of("Playlist_NOT_FOUND", "Playlist with id: " + id + DOES_NOT_EXIST);
         }
         return null;
     }

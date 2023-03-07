@@ -25,6 +25,7 @@ public class SongResponse implements Serializable {
     @NotBlank
     @Schema(description = "Playtime")
     private String playtime;
+    private Long playtimeInSeconds;
 
     @Schema(description = "Song genre")
     private String genreName;

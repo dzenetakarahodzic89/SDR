@@ -31,31 +31,29 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserRecommendationDetailRestService {
 
-	private UserRecommendationDetailService userRecommendationDetailService;
+    private UserRecommendationDetailService userRecommendationDetailService;
 
-	@Operation(summary = "Find user Recommendation Detail base on filter criteria")
-	@GetMapping
-	public PagedPayloadResponse<UserRecommendationDetailResponse> find(@RequestParam Map<String, Object> filterCriteria,
-			final QueryConditionPage queryCriteria) throws ApiException {
-		return userRecommendationDetailService.find(new FilterRequest(filterCriteria, queryCriteria));
-	}
+    @Operation(summary = "Find user Recommendation Detail base on filter criteria")
+    @GetMapping
+    public PagedPayloadResponse<UserRecommendationDetailResponse> find(@RequestParam Map<String, Object> filterCriteria,
+            final QueryConditionPage queryCriteria) throws ApiException {
+        return userRecommendationDetailService.find(new FilterRequest(filterCriteria, queryCriteria));
+    }
 
-	@Operation(summary = "Create user recommendation detail")
-	@PostMapping
-	public PayloadResponse<UserRecommendationDetailResponse> create(
-			@RequestBody final UserRecommendationDetailCreateRequest userRecommendationDetail) throws ApiException {
+    @Operation(summary = "Create user recommendation detail")
+    @PostMapping
+    public PayloadResponse<UserRecommendationDetailResponse> create(
+            @RequestBody final UserRecommendationDetailCreateRequest userRecommendationDetail) throws ApiException {
 
-		return userRecommendationDetailService.create(new EntityRequest<>(userRecommendationDetail));
-	}
+        return userRecommendationDetailService.create(new EntityRequest<>(userRecommendationDetail));
+    }
 
-	@Operation(summary = "Delete user recommendation detail")
-	@DeleteMapping(value = "{id}")
-	public PayloadResponse<String> delete(
-			@Parameter(required = true, description = "ID of the record") @PathVariable final Long id)
-			throws ApiException {
-		EntityRequest<Long> entityRequest = new EntityRequest<>();
-		entityRequest.setEntity(id);
-		return userRecommendationDetailService.delete(entityRequest);
-	}
+    @Operation(summary = "Delete user recommendation detail")
+    @DeleteMapping(value = "{id}")
+    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the record") @PathVariable final Long id) {
+        EntityRequest<Long> entityRequest = new EntityRequest<>();
+        entityRequest.setEntity(id);
+        return userRecommendationDetailService.delete(entityRequest);
+    }
 
 }

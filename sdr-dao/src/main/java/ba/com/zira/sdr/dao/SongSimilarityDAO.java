@@ -8,7 +8,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
-import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse;
+import ba.com.zira.sdr.api.model.songsimilarity.SongSimilarityResponse;
 import ba.com.zira.sdr.dao.model.SongSimilarityEntity;
 
 @Repository
