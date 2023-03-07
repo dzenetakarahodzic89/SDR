@@ -95,7 +95,7 @@ public class FileUploadSegmentServiceImpl implements FileUploadSegmentService {
         return new PayloadResponse<>(request, ResponseCode.OK, status);
     }
 
-    @Scheduled(fixedDelay = 600000L)
+    @Scheduled(initialDelay = 100, fixedDelay = 300000L)
     public void uploadFileSegmentsToServer() {
         if (uploadDisabled.booleanValue()) {
             LOGGER.info("Upload is disabled.");
