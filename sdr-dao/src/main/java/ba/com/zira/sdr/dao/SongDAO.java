@@ -117,6 +117,16 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         return q.getSingleResult();
     }
 
+    public List<SongEntity> findAllByAlbumId(Long id) {
+        final CriteriaQuery<SongEntity> criteriaQuery = builder.createQuery(SongEntity.class);
+        final Root<SongEntity> root = criteriaQuery.from(SongEntity.class);
+        Join<SongEntity, SongArtistEntity> songArtists = root.join(SongEntity_.songArtists);
+        Join<SongArtistEntity, AlbumEntity> albumArtist = songArtists.join(SongArtistEntity_.album);
+        criteriaQuery.where(builder.equal(albumArtist.get(AlbumEntity_.id), id));
+        criteriaQuery.select(root).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
     public List<LoV> getSongsNotInAlbum(Long albumId) {
         var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from SongEntity s left join SongArtistEntity sa on s.id=sa.song.id where sa.album.id!=:albumId or sa.id=null";
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("albumId", albumId);

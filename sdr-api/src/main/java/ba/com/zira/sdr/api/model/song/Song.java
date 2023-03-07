@@ -45,6 +45,7 @@ public class Song implements Serializable {
 
     @Schema(description = "Playtime of the song")
     private String playtime;
+    private Long playtimeInSeconds;
 
     @Schema(description = "Outline text")
     private String outlineText;
