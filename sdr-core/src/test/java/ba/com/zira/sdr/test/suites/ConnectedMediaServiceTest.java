@@ -1,4 +1,5 @@
 package ba.com.zira.sdr.test.suites;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +48,8 @@ public class ConnectedMediaServiceTest extends BasicTestConfiguration {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.connectedMediaDAO = Mockito.mock(ConnectedMediaDAO.class);
         this.connectedMediaRequestValidation = Mockito.mock(ConnectedMediaRequestValidation.class);
-        this.connectedMediaService = new ConnectedMediaServiceImpl(connectedMediaDAO, connectedMediaMapper, connectedMediaRequestValidation);
+        this.connectedMediaService = new ConnectedMediaServiceImpl(connectedMediaDAO, connectedMediaMapper,
+                connectedMediaRequestValidation);
     }
 
     @Test(enabled = true)
@@ -118,18 +120,18 @@ public class ConnectedMediaServiceTest extends BasicTestConfiguration {
             EntityRequest<ConnectedMediaCreateRequest> req = new EntityRequest<>();
 
             var newConnectedMediaRequest = new ConnectedMediaCreateRequest();
-           
+
             newConnectedMediaRequest.setObjectId(3L);
 
             req.setEntity(newConnectedMediaRequest);
 
             var newConnectedMediaEnt = new ConnectedMediaEntity();
-           
+
             newConnectedMediaEnt.setCreatedBy("SOMEONE");
             newConnectedMediaEnt.setObjectId(3L);
 
             var newConnectedMedia = new ConnectedMedia();
-          
+
             newConnectedMedia.setCreatedBy("SOMEONE");
             newConnectedMedia.setObjectId(3L);
             newConnectedMedia.setStatus("Active");
@@ -155,7 +157,6 @@ public class ConnectedMediaServiceTest extends BasicTestConfiguration {
             ConnectedMediaEntity connectedMediaEntity = new ConnectedMediaEntity();
             connectedMediaEntity.setModifiedBy("Someone");
             connectedMediaEntity.setId(22L);
-      
 
             ConnectedMedia connectedMediaResponse = new ConnectedMedia();
             connectedMediaEntity.setModifiedBy("Someone");
