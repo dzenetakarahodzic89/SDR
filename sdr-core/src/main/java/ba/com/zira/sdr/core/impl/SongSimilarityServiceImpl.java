@@ -38,6 +38,8 @@ public class SongSimilarityServiceImpl implements SongSimilarityService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<SongSimilarity> create(final EntityRequest<SongSimilarityCreateRequest> request) {
+        songsimilarityRequestValidation.validateSongSimilarityRequest(request);
+
         var songSimilarityEntity = songSimilarityMapper.dtoToEntity(request.getEntity());
 
         songSimilarityEntity.setStatus(Status.ACTIVE.value());

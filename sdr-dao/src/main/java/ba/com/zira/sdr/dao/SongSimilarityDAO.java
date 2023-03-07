@@ -13,6 +13,10 @@ import ba.com.zira.sdr.dao.model.SongSimilarityEntity;
 @Repository
 public class SongSimilarityDAO extends AbstractDAO<SongSimilarityEntity, Long> {
 
+    public Boolean existsSimilarity(Long songA, Long songB) {
+        return false;
+    }
+
     public List<SongSimilarityResponse> getAllSongSimilarity() {
         var hql = "select new ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse "
                 + "(ss.id, MAX(ss.songA.id), MAX(sA.name), MAX(aA.name), MAX(aA.dateOfRelease), MAX(ss.songB.id), MAX(sB.name), MAX(aB.name), MAX(aB.dateOfRelease)) "
