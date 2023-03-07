@@ -1,23 +1,25 @@
 package ba.com.zira.sdr.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.model.Filter;
 import ba.com.zira.commons.model.PagedData;
-import ba.com.zira.commons.model.PaginationFilter;
 import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
+import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
@@ -36,14 +38,16 @@ import ba.com.zira.sdr.dao.model.SongEntity_;
 @Repository
 public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
 
+    static final Logger LOGGER = LoggerFactory.getLogger(AlbumDAO.class);
+
     public List<SongResponse> findSongsWithPlaytimeForAlbum(final Long albumId) {
         var hql = "select new ba.com.zira.sdr.api.model.song.SongResponse(s.id, s.name, s.playtime, g.name) from AlbumEntity a join SongArtistEntity sa on sa.album.id = a.id join SongEntity s on s.id = sa.song.id join GenreEntity g on g.id = s.genre.id where a.id = :albumId";
         TypedQuery<SongResponse> query = entityManager.createQuery(hql, SongResponse.class).setParameter("albumId", albumId);
         return query.getResultList();
     }
 
-    public PagedData<AlbumEntity> findAllAlbumsByNameGenreEraArtist(SearchRequest<AlbumSearchRequest> request) {
-        final CriteriaQuery<AlbumEntity> criteriaQuery = builder.createQuery(AlbumEntity.class);
+    public PagedData<AlbumSearchResponse> findAllAlbumsByNameGenreEraArtist(SearchRequest<AlbumSearchRequest> request) {
+        final CriteriaQuery<AlbumSearchResponse> criteriaQuery = builder.createQuery(AlbumSearchResponse.class);
         final Root<AlbumEntity> root = criteriaQuery.from(AlbumEntity.class);
 
         Join<AlbumEntity, SongArtistEntity> songArtists = root.join(AlbumEntity_.songArtists);
@@ -71,8 +75,8 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         }
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         var sumPlaytime = builder.sum(songs.get(SongEntity_.playtimeInSeconds));
-        String sort = "play_time";
-        if (request.getFilter().getSortingFilters() != null && request.getFilter().getSortingFilters().size() > 0) {
+        var sort = "play_time";
+        if (request.getFilter().getSortingFilters() != null && !request.getFilter().getSortingFilters().isEmpty()) {
             sort = request.getFilter().getSortingFilters().get(0).getAttribute();
         }
 
@@ -88,16 +92,13 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         if (sort.equals("play_time")) {
 
             criteriaQuery.orderBy(builder.desc(sumPlaytime));
-            criteriaQuery.groupBy(root.get(AlbumEntity_.id), root.get(AlbumEntity_.created), root.get(AlbumEntity_.createdBy),
-                    root.get(AlbumEntity_.dateOfRelease), root.get(AlbumEntity_.name), root.get(AlbumEntity_.information),
-                    root.get(AlbumEntity_.era), root.get(AlbumEntity_.modified), root.get(AlbumEntity_.songArtists),
-                    root.get(AlbumEntity_.modifiedBy), root.get(AlbumEntity_.spotifyId), root.get(AlbumEntity_.status)
-
-            );
+            criteriaQuery.groupBy(root.get(AlbumEntity_.id), root.get(AlbumEntity_.dateOfRelease), root.get(AlbumEntity_.name),
+                    root.get(AlbumEntity_.information), root.get(AlbumEntity_.era), root.get(AlbumEntity_.modified));
 
         }
-        criteriaQuery.select(root).distinct(true); // criteriaQuery.multiselect(root.get(AlbumEntity_.id),root.get(AlbumEntity_.name),root.get(AlbumEntity_.information),sumPlaytime).distinct(true);
-
+        criteriaQuery.multiselect(root.get(AlbumEntity_.id), root.get(AlbumEntity_.dateOfRelease), root.get(AlbumEntity_.name),
+                root.get(AlbumEntity_.information), root.get(AlbumEntity_.era).get(EraEntity_.id), root.get(AlbumEntity_.modified),
+                sumPlaytime).distinct(true);
         return handlePaginationFilterForAlbum(request.getFilter(), criteriaQuery);
 
     }
@@ -130,10 +131,11 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         return query.getResultList();
     }
 
-    public PagedData<AlbumEntity> handlePaginationFilterForAlbum(final Filter filter, final CriteriaQuery<AlbumEntity> criteriaQuery) {
-        TypedQuery<AlbumEntity> query = entityManager.createQuery(criteriaQuery);
-        PaginationFilter paginationFilter = filter.getPaginationFilter();
-        PagedData<AlbumEntity> pagedData = new PagedData<>();
+    public PagedData<AlbumSearchResponse> handlePaginationFilterForAlbum(final Filter filter,
+            final CriteriaQuery<AlbumSearchResponse> criteriaQuery) {
+        TypedQuery<AlbumSearchResponse> query = entityManager.createQuery(criteriaQuery);
+        var paginationFilter = filter.getPaginationFilter();
+        PagedData<AlbumSearchResponse> pagedData = new PagedData<>();
         if (paginationFilter != null && paginationFilter.getPage() >= 0 && paginationFilter.getEntitiesPerPage() > 0) {
             int numberOfRecords = countAllForAlbum(criteriaQuery);
             pagedData.setPage(paginationFilter.getPage());
@@ -157,7 +159,7 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         return pagedData;
     }
 
-    private void addJoinsForAlbum(final Root<AlbumEntity> root, final CriteriaQuery<AlbumEntity> criteriaQuery) {
+    private void addJoinsForAlbum(final Root<AlbumEntity> root, final CriteriaQuery<?> criteriaQuery) {
         for (Root<?> tmpRoot : criteriaQuery.getRoots()) {
             for (Join<?, ?> join : tmpRoot.getJoins()) {
                 Join<?, ?> copyOfJoin = root.join(join.getAttribute().getName(), join.getJoinType());
@@ -171,14 +173,14 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
             if (join.getJoins().isEmpty()) {
                 copyOfJoin.join(join.getAttribute().getName(), join.getJoinType());
             } else {
-                Join<?, ?> copyOfChild = parentJoin.join(join.getAttribute().getName(), join.getJoinType());
+                Join<?, ?> copyOfChild = copyOfJoin.join(join.getAttribute().getName(), join.getJoinType());
                 addJoinsRecursively(join, copyOfChild);
             }
         }
 
     }
 
-    public int countAllForAlbum(final CriteriaQuery<AlbumEntity> criteriaQuery) {
+    public int countAllForAlbum(final CriteriaQuery<AlbumSearchResponse> criteriaQuery) {
         CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
         Root<AlbumEntity> root = countQuery.from(AlbumEntity.class);
         addJoinsForAlbum(root, criteriaQuery);

@@ -1,5 +1,8 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,9 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -78,26 +78,12 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public PagedPayloadResponse<AlbumSearchResponse> search(SearchRequest<AlbumSearchRequest> request) {
-        var albumSearchRequest = request.getEntity();
-        PagedData<AlbumEntity> resultEntities = albumDAO.findAllAlbumsByNameGenreEraArtist(request);
 
-        List<AlbumSearchResponse> albumResponseList = new ArrayList<>();
+        PagedData<AlbumSearchResponse> resultEntities = albumDAO.findAllAlbumsByNameGenreEraArtist(request);
 
-        for (var album : resultEntities.getRecords()) {
-            var albumResponse = new AlbumSearchResponse();
-            albumResponse.setId(album.getId());
-            albumResponse.setName(album.getName());
-            albumResponse.setOutlineText(album.getInformation());
-
-            lookupService.lookupCoverImage(Arrays.asList(albumResponse), AlbumSearchResponse::getId, ObjectType.ALBUM.getValue(),
-                    AlbumSearchResponse::setImageUrl, AlbumSearchResponse::getImageUrl);
-            albumResponseList.add(albumResponse);
-
-        }
-        var pd = new PagedData<AlbumSearchResponse>();
-        pd.setRecords(albumResponseList);
-
-        return new PagedPayloadResponse<AlbumSearchResponse>(request, ResponseCode.OK, pd);
+        lookupService.lookupCoverImage(resultEntities.getRecords(), AlbumSearchResponse::getId, ObjectType.ALBUM.getValue(),
+                AlbumSearchResponse::setImageUrl, AlbumSearchResponse::getImageUrl);
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, resultEntities);
     }
 
     @Override
@@ -235,16 +221,6 @@ public class AlbumServiceImpl implements AlbumService {
 
         return new PayloadResponse<>(request, ResponseCode.OK, songMapper.entityToDto(newSongEntity));
 
-    }
-
-}
-
-class AlbumSortByPlayTime implements Comparator<AlbumSearchResponse> {
-
-    @Override
-    public int compare(AlbumSearchResponse a, AlbumSearchResponse b) {
-
-        return a.getPlaytime() - b.getPlaytime();
     }
 
 }
