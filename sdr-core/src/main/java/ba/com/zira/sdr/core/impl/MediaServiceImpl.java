@@ -1,15 +1,15 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -20,6 +20,7 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.FileUploadService;
 import ba.com.zira.sdr.api.MediaService;
+import ba.com.zira.sdr.api.model.audio.AudioUploadRequest;
 import ba.com.zira.sdr.api.model.image.ImageUploadRequest;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.api.model.media.MediaObjectRequest;
@@ -84,6 +85,31 @@ public class MediaServiceImpl implements MediaService {
                 mediaStoreEntity.setExtension(imageInfo.get("extension"));
                 mediaStoreEntity.setType(request.getEntity().getMediaStoreType());
                 mediaStoreEntity.setUrl(imageInfo.get("url"));
+                mediaStoreEntity.setMedia(existingMediaEntity);
+                LOGGER.debug("New media store entity for {} has been created", mediaStoreEntity.getUrl());
+                mediaStoreDAO.persist(mediaStoreEntity);
+            }
+        }
+        if ("SONG".equalsIgnoreCase(request.getEntity().getMediaObjectType())) {
+            var audioUploadRequest = new AudioUploadRequest();
+            LOGGER.debug("Entered audio saving!");
+            audioUploadRequest.setAudioData(request.getEntity().getMediaObjectData());
+            audioUploadRequest.setAudioName(request.getEntity().getMediaObjectName());
+            audioUploadRequest.setFileType(request.getEntity().getMediaFileType());
+            EntityRequest<AudioUploadRequest> uploadRequest = new EntityRequest<>();
+            uploadRequest.setEntity(audioUploadRequest);
+            Map<String, String> audioInfo = fileUploadService.uploadAudio(uploadRequest);
+            LOGGER.debug("Audio info is {}", audioInfo);
+            if (audioInfo != null) {
+                var existingMediaEntity = mediaDAO.findByTypeAndId(request.getEntity().getObjectType(), request.getEntity().getObjectId());
+                var mediaStoreEntity = new MediaStoreEntity();
+                mediaStoreEntity.setId(UUID.randomUUID().toString());
+                mediaStoreEntity.setCreated(LocalDateTime.now());
+                mediaStoreEntity.setCreatedBy(request.getUserId());
+                mediaStoreEntity.setName(audioInfo.get("baseName"));
+                mediaStoreEntity.setExtension(audioInfo.get("extension"));
+                mediaStoreEntity.setType(request.getEntity().getMediaStoreType());
+                mediaStoreEntity.setUrl(audioInfo.get("url"));
                 mediaStoreEntity.setMedia(existingMediaEntity);
                 LOGGER.debug("New media store entity for {} has been created", mediaStoreEntity.getUrl());
                 mediaStoreDAO.persist(mediaStoreEntity);

@@ -3,6 +3,9 @@ package ba.com.zira.sdr.core.impl;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import ba.com.zira.commons.exception.ApiException;
@@ -10,9 +13,12 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.FileUploadSegmentService;
+import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.enums.FileUploadSegmentStatus;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.fileuploadsegment.FileUploadSegmentCreateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.core.mapper.FileUploadSegmentMapper;
 import ba.com.zira.sdr.dao.FileUploadSegmentDAO;
 import ba.com.zira.sdr.dao.MediaDAO;
@@ -25,6 +31,9 @@ public class FileUploadSegmentServiceImpl implements FileUploadSegmentService {
     MediaDAO mediaDAO;
     FileUploadSegmentMapper fileUploadSegmentMapper;
     FileUploadSegmentDAO fileUploadSegmentDAO;
+    MediaService mediaService;
+    private static final int SCHEDULE_REPEAT_COUNT = 5;
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUploadSegmentServiceImpl.class);
 
     @Override
     public PayloadResponse<String> create(EntityRequest<FileUploadSegmentCreateRequest> request) throws ApiException {
@@ -69,4 +78,32 @@ public class FileUploadSegmentServiceImpl implements FileUploadSegmentService {
         return new PayloadResponse<>(request, ResponseCode.OK, status);
     }
 
+    @Scheduled(fixedDelay = 600000L) // 10 mins
+    public void uploadFileSegmentsToServer() {
+        for (int i = 0; i < SCHEDULE_REPEAT_COUNT; i++) {
+            StringBuilder connectedBase64String = new StringBuilder();
+            try {
+                var readyToMergeMediaId = fileUploadSegmentDAO.getReadyToMergeMediaId();
+                if (readyToMergeMediaId != null) {
+                    var fileSegmentUploadList = fileUploadSegmentDAO.getSegmentsByMediaId(readyToMergeMediaId);
+                    for (var file : fileSegmentUploadList) {
+                        connectedBase64String.append(file.getFileSegmentContent());
+                    }
+                    var mediaRequest = new MediaCreateRequest();
+                    mediaRequest.setObjectType(ObjectType.SONG.getValue());
+                    mediaRequest.setObjectId(fileSegmentUploadList.get(0).getMediaId());
+                    mediaRequest.setMediaObjectData(connectedBase64String.toString());
+                    mediaRequest.setMediaObjectName(fileSegmentUploadList.get(0).getFileName());
+                    mediaRequest.setMediaStoreType("AUDIO");
+                    mediaRequest.setMediaObjectType("SONG");
+                    mediaService.save(new EntityRequest<>(mediaRequest));
+                    fileUploadSegmentDAO.updateStatus(FileUploadSegmentStatus.SAVED.getValue(), fileSegmentUploadList.get(0).getMediaId());
+                }
+            } catch (Exception ex) {
+                LOGGER.debug("No entity found for upload!");
+                return;
+            }
+        }
+
+    }
 }
