@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
@@ -51,9 +49,6 @@ public class FileUploadSegmentEntity {
     @Column(name = "created_by")
     private String createdBy;
 
-    // bi-directional many-to-one association to MediaEntity
-    @ManyToOne
-    @JoinColumn(name = "media_id")
-    private MediaEntity media;
-
+    @Column(name = "media_id")
+    private Long media;
 }
