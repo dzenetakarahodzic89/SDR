@@ -47,7 +47,7 @@ public class FileUploadSegmentServiceImpl implements FileUploadSegmentService {
     @Value("${file.upload.segment.upload.repeat:5}")
     Long scheduleRepeatCount;
 
-    @Value("${file.upload.segment.upload:false}")
+    @Value("${file.upload.segment.upload:true}")
     Boolean uploadDisabled;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUploadSegmentServiceImpl.class);
