@@ -23,7 +23,7 @@ public class SongSimilarityRequestValidation {
     }
 
     private ValidationError validation(Long songA, Long songB) {
-        if (songA == songB) {
+        if (songA.longValue() == songB.longValue()) {
             return ValidationError.of("IDENTICAL_SONGS", "Cannot set song similarity to itself!");
         }
 

@@ -21,6 +21,7 @@ import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityCreateRequest;
 import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse;
 import ba.com.zira.sdr.core.mapper.SongSimilarityMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
+import ba.com.zira.sdr.core.validation.SongRequestValidation;
 import ba.com.zira.sdr.core.validation.SongSimilarityRequestValidation;
 import ba.com.zira.sdr.dao.SongSimilarityDAO;
 import lombok.AllArgsConstructor;
@@ -34,10 +35,13 @@ public class SongSimilarityServiceImpl implements SongSimilarityService {
     SongSimilarityMapper songSimilarityMapper;
     SongSimilarityRequestValidation songsimilarityRequestValidation;
     LookupService lookupService;
+    SongRequestValidation songRequestValidation;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<SongSimilarity> create(final EntityRequest<SongSimilarityCreateRequest> request) {
+        songRequestValidation.validateExistsSongRequest(new EntityRequest<>(request.getEntity().getSongA()));
+        songRequestValidation.validateExistsSongRequest(new EntityRequest<>(request.getEntity().getSongB()));
         songsimilarityRequestValidation.validateSongSimilarityRequest(request);
 
         var songSimilarityEntity = songSimilarityMapper.dtoToEntity(request.getEntity());

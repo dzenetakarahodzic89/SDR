@@ -3,18 +3,37 @@ package ba.com.zira.sdr.dao;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse;
+import ba.com.zira.sdr.dao.model.SongEntity_;
 import ba.com.zira.sdr.dao.model.SongSimilarityEntity;
+import ba.com.zira.sdr.dao.model.SongSimilarityEntity_;
 
 @Repository
 public class SongSimilarityDAO extends AbstractDAO<SongSimilarityEntity, Long> {
 
     public Boolean existsSimilarity(Long songA, Long songB) {
-        return false;
+        final CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        final Root<SongSimilarityEntity> songSimilarityRoot = criteriaQuery.from(SongSimilarityEntity.class);
+
+        criteriaQuery.select(builder.count(songSimilarityRoot));
+
+        Predicate firstPermutationPredicate = builder.and(
+                builder.equal(songSimilarityRoot.get(SongSimilarityEntity_.songA).get(SongEntity_.id), songA),
+                builder.equal(songSimilarityRoot.get(SongSimilarityEntity_.songB).get(SongEntity_.id), songB));
+
+        Predicate secondPermutationPredicate = builder.and(
+                builder.equal(songSimilarityRoot.get(SongSimilarityEntity_.songA).get(SongEntity_.id), songB),
+                builder.equal(songSimilarityRoot.get(SongSimilarityEntity_.songB).get(SongEntity_.id), songA));
+
+        criteriaQuery.where(builder.or(firstPermutationPredicate, secondPermutationPredicate));
+        return entityManager.createQuery(criteriaQuery).getSingleResult() != 0;
     }
 
     public List<SongSimilarityResponse> getAllSongSimilarity() {
