@@ -1,15 +1,15 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -61,8 +61,7 @@ public class MediaServiceImpl implements MediaService {
             imageUploadRequest.setImageData(request.getEntity().getMediaObjectData());
             imageUploadRequest.setImageName(request.getEntity().getMediaObjectName());
             imageUploadRequest.setFileType(request.getEntity().getMediaFileType());
-            EntityRequest<ImageUploadRequest> uploadRequest = new EntityRequest<>();
-            uploadRequest.setEntity(imageUploadRequest);
+            EntityRequest<ImageUploadRequest> uploadRequest = new EntityRequest<>(imageUploadRequest, request);
             Map<String, String> imageInfo = fileUploadService.uploadImage(uploadRequest);
             LOGGER.debug("Image info is {}", imageInfo);
             if (imageInfo != null) {
@@ -96,8 +95,7 @@ public class MediaServiceImpl implements MediaService {
             audioUploadRequest.setAudioData(request.getEntity().getMediaObjectData());
             audioUploadRequest.setAudioName(request.getEntity().getMediaObjectName());
             audioUploadRequest.setFileType(request.getEntity().getMediaFileType());
-            EntityRequest<AudioUploadRequest> uploadRequest = new EntityRequest<>();
-            uploadRequest.setEntity(audioUploadRequest);
+            EntityRequest<AudioUploadRequest> uploadRequest = new EntityRequest<>(audioUploadRequest, request);
             Map<String, String> audioInfo = fileUploadService.uploadAudio(uploadRequest);
             LOGGER.debug("Audio info is {}", audioInfo);
             if (audioInfo != null) {
