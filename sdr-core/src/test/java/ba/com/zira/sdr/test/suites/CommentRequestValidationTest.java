@@ -18,8 +18,6 @@ import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 
 public class CommentRequestValidationTest extends BasicTestConfiguration {
 
-    private static final String TEMPLATE_CODE = "TEST_1";
-
     private CommentDAO commentDAO;
     private CommentRequestValidation validation;
 
@@ -39,8 +37,8 @@ public class CommentRequestValidationTest extends BasicTestConfiguration {
         request.setEntity(respose);
         ValidationResponse validationResponse = validation.validateUpdateCommentModelRequest(request);
 
-        assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-        assertEquals(validationResponse.getDescription(), "Comment with id: 1 does not exist!");
+        assertEquals(ResponseCode.REQUEST_INVALID, validationResponse.getCode());
+        assertEquals("Comment with id: 1 does not exist!", validationResponse.getDescription());
         Mockito.verify(commentDAO).existsByPK(1L);
     }
 

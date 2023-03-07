@@ -43,8 +43,8 @@ public class SongPlaylistRestService {
 
     @Operation(summary = "Create song playlist")
     @PostMapping
-    public PayloadResponse<SongPlaylist> create(@RequestBody final SongPlaylistCreateRequest SongPlaylist) throws ApiException {
-        return songPlaylistService.create(new EntityRequest<>(SongPlaylist));
+    public PayloadResponse<SongPlaylist> create(@RequestBody final SongPlaylistCreateRequest songPlaylist) throws ApiException {
+        return songPlaylistService.create(new EntityRequest<>(songPlaylist));
     }
 
     @Operation(summary = "Update song playlist")

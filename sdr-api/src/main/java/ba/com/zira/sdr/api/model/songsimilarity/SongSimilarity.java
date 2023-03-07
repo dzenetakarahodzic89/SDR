@@ -1,4 +1,4 @@
-package ba.com.zira.sdr.api.model.songSimilarity;
+package ba.com.zira.sdr.api.model.songsimilarity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

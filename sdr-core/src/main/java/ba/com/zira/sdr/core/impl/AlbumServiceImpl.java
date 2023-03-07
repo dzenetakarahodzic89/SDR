@@ -2,8 +2,8 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,22 +23,19 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.AlbumService;
-import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
-
 import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.SongArtistService;
 import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
-
 import ba.com.zira.sdr.api.model.album.SongAudio;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.api.model.song.Song;
-
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.core.mapper.AlbumMapper;
@@ -139,19 +136,16 @@ public class AlbumServiceImpl implements AlbumService {
         asp.setMap(map);
         return new PayloadResponse<>(request, ResponseCode.OK, asp);
     }
+
     @Override
     public ListPayloadResponse<AlbumsByDecadeResponse> findAllAlbumsForArtist(EntityRequest<Long> request) throws ApiException {
         Long artistId = request.getEntity();
         List<AlbumArtistResponse> albumList = albumDAO.findAllAlbumsForArtist(artistId);
 
-        // Grupiraj albume po decenijama i sortiraj grupe od najstarije do najmlađe
         Map<Integer, List<AlbumArtistResponse>> albumsByDecade = albumList.stream()
                 .collect(Collectors.groupingBy(album -> album.getDateOfRelease().getYear() - (album.getDateOfRelease().getYear() % 10),
-                        TreeMap::new, // koristimo TreeMap da sortiramo grupe po ključu (deceniji)
-                        Collectors.toList()));
+                        TreeMap::new, Collectors.toList()));
 
-
-        // Stvori listu objekata koji predstavljaju albume po decenijama
         List<AlbumsByDecadeResponse> albumsByDecadeList = new ArrayList<>();
         albumsByDecade.forEach((decade, albums) -> {
             albums.sort(Comparator.comparing(AlbumArtistResponse::getDateOfRelease));
@@ -159,7 +153,7 @@ public class AlbumServiceImpl implements AlbumService {
             albumsByDecadeList.add(decadeAlbums);
         });
 
-        return new ListPayloadResponse(request, ResponseCode.OK, albumsByDecadeList);
+        return new ListPayloadResponse<>(request, ResponseCode.OK, albumsByDecadeList);
     }
 
     @Override
@@ -177,7 +171,6 @@ public class AlbumServiceImpl implements AlbumService {
         });
         var albumEntity = albumDAO.findByPK(request.getEntity());
         var albumResponse = albumMapper.entityToDto(albumEntity);
-        var songArtist = albumEntity.getSongArtists();
         albumResponse.setSongs(listSong);
         albumResponse.setAlbumArtists(albumDAO.findAllAlbumArtists(request.getEntity()));
         albumResponse.setAudioUrls(songAudioUrls);
@@ -210,6 +203,5 @@ public class AlbumServiceImpl implements AlbumService {
         return new PayloadResponse<>(request, ResponseCode.OK, songMapper.entityToDto(newSongEntity));
 
     }
-
 
 }

@@ -18,8 +18,6 @@ import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 
 public class ConnectedMediaValidationTest extends BasicTestConfiguration {
 
-    private static final String TEMPLATE_CODE = "TEST_1";
-
     private ConnectedMediaDAO connectedMediaDAO;
     private ConnectedMediaRequestValidation validation;
 
@@ -39,8 +37,8 @@ public class ConnectedMediaValidationTest extends BasicTestConfiguration {
         request.setEntity(respose);
         ValidationResponse validationResponse = validation.validateConnectedMediaUpdateRequest(request);
 
-        assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-        assertEquals(validationResponse.getDescription(), "Connected Media with id: 1 does not exist!");
+        assertEquals(ResponseCode.REQUEST_INVALID, validationResponse.getCode());
+        assertEquals("Connected Media with id: 1 does not exist!", validationResponse.getDescription());
         Mockito.verify(connectedMediaDAO).existsByPK(1L);
     }
 
