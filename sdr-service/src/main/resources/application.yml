@@ -6,7 +6,7 @@ spring:
   application:
     name: ${application.name}
   profiles:
-    active: 'prod'
+    active: 'default'
   datasource:
     driver-class-name: org.postgresql.Driver
     password: '!n2bvigor!'
