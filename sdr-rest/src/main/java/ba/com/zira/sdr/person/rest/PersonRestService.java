@@ -78,7 +78,7 @@ public class PersonRestService {
 
     @Operation(summary = "Update Person")
     @PutMapping(value = "change-flag")
-    public PayloadResponse<PersonResponse> editPersonCountry(@RequestBody final PersonCountryRequest request) throws ApiException {
+    public PayloadResponse<PersonResponse> editPersonCountry(@RequestBody final PersonCountryRequest request) {
 
         return personService.updatePersonCountry(new EntityRequest<>(request));
     }

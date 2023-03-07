@@ -13,7 +13,6 @@ import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
 
-// TODO: Auto-generated Javadoc
 /**
  * The interface Person service.
  */

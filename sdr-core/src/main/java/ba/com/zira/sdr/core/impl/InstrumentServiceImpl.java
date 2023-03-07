@@ -161,7 +161,7 @@ public class InstrumentServiceImpl implements InstrumentService {
         for (var item : songInstrumentList) {
             var response = new ResponseSongInstrument();
             response.setCreated(item.getCreated());
-            response.setCreated_by(item.getCreatedBy());
+            response.setCreatedBy(item.getCreatedBy());
             response.setInstrumentId(item.getInstrument().getId());
             response.setModified(item.getModified());
             response.setModifiedBy(item.getModifiedBy());
@@ -171,27 +171,23 @@ public class InstrumentServiceImpl implements InstrumentService {
             responseList.add(response);
         }
 
-        return new ListPayloadResponse<ResponseSongInstrument>(entityRequest, ResponseCode.OK, responseList);
+        return new ListPayloadResponse<>(entityRequest, ResponseCode.OK, responseList);
     }
 
     @Override
 
-    public ListPayloadResponse<ResponseSongInstrumentEra> findAllSongsInErasForInstruments(EntityRequest<Long> request) throws ApiException {
+    public ListPayloadResponse<ResponseSongInstrumentEra> findAllSongsInErasForInstruments(EntityRequest<Long> request)
+            throws ApiException {
         Long instrumentId = request.getEntity();
         List<ResponseSongInstrumentEra> responseList = instrumentDAO.findAllSongsInErasForInstruments(instrumentId);
-
-
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, responseList);
     }
 
-
-
+    @Override
     public PayloadResponse<InstrumentResponse> get(final EntityRequest<Long> request) throws ApiException {
         InstrumentEntity instrumentEntity = instrumentDAO.findByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
-
 }
-

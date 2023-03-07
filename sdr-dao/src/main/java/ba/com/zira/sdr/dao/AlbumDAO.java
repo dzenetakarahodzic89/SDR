@@ -7,7 +7,6 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
-
 import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.SongResponse;
@@ -24,14 +23,11 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
 
     public List<AlbumArtistResponse> findAllAlbumsForArtist(Long artistId) {
         var hql = "select distinct new ba.com.zira.sdr.api.model.album.AlbumArtistResponse(al.id, al.name,al.dateOfRelease) "
-                + " from ArtistEntity as a"
-                + " join SongArtistEntity as s "
-                + " on a.id = s.artist.id "
-                + " join AlbumEntity as al "
-                + " on al.id = s.album.id "
-                + " where a.id = :artistId";
+                + " from ArtistEntity as a" + " join SongArtistEntity as s " + " on a.id = s.artist.id " + " join AlbumEntity as al "
+                + " on al.id = s.album.id " + " where a.id = :artistId";
 
-        TypedQuery<AlbumArtistResponse> query = entityManager.createQuery(hql, AlbumArtistResponse.class).setParameter("artistId", artistId);
+        TypedQuery<AlbumArtistResponse> query = entityManager.createQuery(hql, AlbumArtistResponse.class).setParameter("artistId",
+                artistId);
         return query.getResultList();
     }
 
@@ -47,8 +43,8 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
                 + " concat('album:',a.name,' ','artist:',sa.artist.name,' ',sa.artist.surname) end";
         var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id," + cases
                 + ") from AlbumEntity a left join SpotifyIntegrationEntity si on "
-                + "a.id = si.objectId and si.objectType like 'ALBUM' join SongArtistEntity sa on a.id=sa.album.id where si.id = null";
-        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setMaxResults(responseLimit);
+                + "a.id = si.objectId and si.objectType like :album join SongArtistEntity sa on a.id=sa.album.id where si.id = null";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("album", "ALBUM").setMaxResults(responseLimit);
 
         return query.getResultList();
     }

@@ -4,11 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
-@Getter
+@Data
 public class ResponseSongInstrument implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -19,7 +17,7 @@ public class ResponseSongInstrument implements Serializable {
     private LocalDateTime created;
 
     @Schema(description = "crated by")
-    private String created_by;
+    private String createdBy;
 
     @Schema(description = "Last modification date")
     private LocalDateTime modified;

@@ -64,6 +64,8 @@ public class PlaylistDAO extends AbstractDAO<PlaylistEntity, Long> {
             case "NoOfSongs":
                 order = builder.desc(builder.count(songs));
                 break;
+            default:
+                break;
             }
 
         }
