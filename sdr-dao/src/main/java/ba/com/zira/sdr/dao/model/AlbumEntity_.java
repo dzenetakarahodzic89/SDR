@@ -16,5 +16,12 @@ public abstract class AlbumEntity_ {
     public static volatile SingularAttribute<AlbumEntity, Long> id;
     public static volatile SingularAttribute<AlbumEntity, String> name;
     public static volatile SingularAttribute<AlbumEntity, LocalDateTime> modified;
+    public static volatile SingularAttribute<AlbumEntity, String> information;
+    public static volatile SingularAttribute<AlbumEntity, LocalDateTime> created;
+    public static volatile SingularAttribute<AlbumEntity, String> createdBy;
+    public static volatile SingularAttribute<AlbumEntity, LocalDateTime> dateOfRelease;
+    public static volatile SingularAttribute<AlbumEntity, String> modifiedBy;
+    public static volatile SingularAttribute<AlbumEntity, String> status;
+    public static volatile SingularAttribute<AlbumEntity, Long> spotifyId;
 
 }

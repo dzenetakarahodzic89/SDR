@@ -67,6 +67,9 @@ public class SongEntity implements Serializable {
     @Column(name = "playtime")
     private String playtime;
 
+    @Column(name = "playtime_in_seconds")
+    private Long playtimeInSeconds;
+
     @Column(name = "status")
     private String status;
 

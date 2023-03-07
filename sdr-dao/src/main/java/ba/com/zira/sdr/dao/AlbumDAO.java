@@ -12,9 +12,12 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
-import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
-
+import ba.com.zira.commons.message.request.SearchRequest;
+import ba.com.zira.commons.model.Filter;
+import ba.com.zira.commons.model.PagedData;
+import ba.com.zira.commons.model.PaginationFilter;
 import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
+import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
@@ -39,54 +42,73 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         return query.getResultList();
     }
 
-    public List<AlbumEntity> findAllAlbumsByNameGenreEraArtist(AlbumSearchRequest albumSearchRequest) {
+    public PagedData<AlbumEntity> findAllAlbumsByNameGenreEraArtist(SearchRequest<AlbumSearchRequest> request) {
         final CriteriaQuery<AlbumEntity> criteriaQuery = builder.createQuery(AlbumEntity.class);
         final Root<AlbumEntity> root = criteriaQuery.from(AlbumEntity.class);
 
         Join<AlbumEntity, SongArtistEntity> songArtists = root.join(AlbumEntity_.songArtists);
-        Join<SongArtistEntity, ArtistEntity> artists = songArtists.join(SongArtistEntity_.artist);
-        Join<SongEntity, GenreEntity> genres = songArtists.join(SongArtistEntity_.song).join(SongEntity_.genre);
+        Join<SongArtistEntity, SongEntity> songs = songArtists.join(SongArtistEntity_.song);
+        Join<SongEntity, GenreEntity> genres = songs.join(SongEntity_.genre);
         Join<AlbumEntity, EraEntity> eras = root.join(AlbumEntity_.era);
-        List<Predicate> predicates = new ArrayList<>();
+        Join<SongArtistEntity, ArtistEntity> artists = songArtists.join(SongArtistEntity_.artist);
 
+        List<Predicate> predicates = new ArrayList<>();
+        var albumSearchRequest = request.getEntity();
         if (albumSearchRequest.getEras() != null && !albumSearchRequest.getEras().isEmpty()) {
             predicates.add(eras.get(EraEntity_.id).in(albumSearchRequest.getEras()));
         }
         if (albumSearchRequest.getArtists() != null && !albumSearchRequest.getArtists().isEmpty()) {
+
             predicates.add(artists.get(ArtistEntity_.id).in(albumSearchRequest.getArtists()));
         }
 
         if (albumSearchRequest.getGenres() != null && !albumSearchRequest.getGenres().isEmpty()) {
+
             predicates.add(genres.get(GenreEntity_.id).in(albumSearchRequest.getGenres()));
         }
         if (albumSearchRequest.getName() != null && !albumSearchRequest.getName().isEmpty()) {
             predicates.add(builder.like(root.get(AlbumEntity_.name), "%" + albumSearchRequest.getName() + "%"));
         }
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
+        var sumPlaytime = builder.sum(songs.get(SongEntity_.playtimeInSeconds));
+        String sort = "play_time";
+        if (request.getFilter().getSortingFilters() != null && request.getFilter().getSortingFilters().size() > 0) {
+            sort = request.getFilter().getSortingFilters().get(0).getAttribute();
+        }
 
-        criteriaQuery.select(root).distinct(true);
-
-        if (albumSearchRequest.getSort() != null && albumSearchRequest.getSort().equals("last_edit")) {
+        if (sort.equals("last_edit")) {
             criteriaQuery.orderBy(builder.asc(root.get(AlbumEntity_.modified)));
 
         }
 
-        if (albumSearchRequest.getSort() != null && albumSearchRequest.getSort().equals("alphabetical")) {
+        if (sort.equals("alphabetical")) {
             criteriaQuery.orderBy(builder.asc(root.get(AlbumEntity_.name)));
 
         }
+        if (sort.equals("play_time")) {
 
-        return entityManager.createQuery(criteriaQuery).getResultList();
+            criteriaQuery.orderBy(builder.desc(sumPlaytime));
+            criteriaQuery.groupBy(root.get(AlbumEntity_.id), root.get(AlbumEntity_.created), root.get(AlbumEntity_.createdBy),
+                    root.get(AlbumEntity_.dateOfRelease), root.get(AlbumEntity_.name), root.get(AlbumEntity_.information),
+                    root.get(AlbumEntity_.era), root.get(AlbumEntity_.modified), root.get(AlbumEntity_.songArtists),
+                    root.get(AlbumEntity_.modifiedBy), root.get(AlbumEntity_.spotifyId), root.get(AlbumEntity_.status)
+
+            );
+
+        }
+        criteriaQuery.select(root).distinct(true); // criteriaQuery.multiselect(root.get(AlbumEntity_.id),root.get(AlbumEntity_.name),root.get(AlbumEntity_.information),sumPlaytime).distinct(true);
+
+        return handlePaginationFilterForAlbum(request.getFilter(), criteriaQuery);
+
+    }
+
     public List<AlbumArtistResponse> findAllAlbumsForArtist(Long artistId) {
         var hql = "select distinct new ba.com.zira.sdr.api.model.album.AlbumArtistResponse(al.id, al.name,al.dateOfRelease) "
-                + " from ArtistEntity as a"
-                + " join SongArtistEntity as s "
-                + " on a.id = s.artist.id "
-                + " join AlbumEntity as al "
-                + " on al.id = s.album.id "
-                + " where a.id = :artistId";
+                + " from ArtistEntity as a" + " join SongArtistEntity as s " + " on a.id = s.artist.id " + " join AlbumEntity as al "
+                + " on al.id = s.album.id " + " where a.id = :artistId";
 
-        TypedQuery<AlbumArtistResponse> query = entityManager.createQuery(hql, AlbumArtistResponse.class).setParameter("artistId", artistId);
+        TypedQuery<AlbumArtistResponse> query = entityManager.createQuery(hql, AlbumArtistResponse.class).setParameter("artistId",
+                artistId);
         return query.getResultList();
     }
 
@@ -107,4 +129,65 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
 
         return query.getResultList();
     }
+
+    public PagedData<AlbumEntity> handlePaginationFilterForAlbum(final Filter filter, final CriteriaQuery<AlbumEntity> criteriaQuery) {
+        TypedQuery<AlbumEntity> query = entityManager.createQuery(criteriaQuery);
+        PaginationFilter paginationFilter = filter.getPaginationFilter();
+        PagedData<AlbumEntity> pagedData = new PagedData<>();
+        if (paginationFilter != null && paginationFilter.getPage() >= 0 && paginationFilter.getEntitiesPerPage() > 0) {
+            int numberOfRecords = countAllForAlbum(criteriaQuery);
+            pagedData.setPage(paginationFilter.getPage());
+            pagedData.setRecordsPerPage(paginationFilter.getEntitiesPerPage());
+            pagedData.setNumberOfPages((int) Math.ceil((float) numberOfRecords / paginationFilter.getEntitiesPerPage()));
+            pagedData.setNumberOfRecords(numberOfRecords);
+            query.setFirstResult((pagedData.getPage() - 1) * pagedData.getRecordsPerPage());
+            query.setMaxResults(pagedData.getRecordsPerPage());
+        } else if (paginationFilter != null && paginationFilter.isOffsetLimit()) {
+            int numberOfRecords = countAllForAlbum(criteriaQuery);
+            pagedData.setPage(paginationFilter.getPage());
+            pagedData.setRecordsPerPage(paginationFilter.getEntitiesPerPage());
+            pagedData.setNumberOfPages((int) Math.ceil((float) numberOfRecords / paginationFilter.getEntitiesPerPage()));
+
+            pagedData.setNumberOfRecords(numberOfRecords);
+            query.setFirstResult(paginationFilter.getPage());
+            query.setMaxResults(paginationFilter.getEntitiesPerPage());
+        }
+
+        pagedData.setRecords(query.getResultList());
+        return pagedData;
+    }
+
+    private void addJoinsForAlbum(final Root<AlbumEntity> root, final CriteriaQuery<AlbumEntity> criteriaQuery) {
+        for (Root<?> tmpRoot : criteriaQuery.getRoots()) {
+            for (Join<?, ?> join : tmpRoot.getJoins()) {
+                Join<?, ?> copyOfJoin = root.join(join.getAttribute().getName(), join.getJoinType());
+                addJoinsRecursively(join, copyOfJoin);
+            }
+        }
+    }
+
+    private void addJoinsRecursively(final Join<?, ?> parentJoin, final Join<?, ?> copyOfJoin) {
+        for (Join<?, ?> join : parentJoin.getJoins()) {
+            if (join.getJoins().isEmpty()) {
+                copyOfJoin.join(join.getAttribute().getName(), join.getJoinType());
+            } else {
+                Join<?, ?> copyOfChild = parentJoin.join(join.getAttribute().getName(), join.getJoinType());
+                addJoinsRecursively(join, copyOfChild);
+            }
+        }
+
+    }
+
+    public int countAllForAlbum(final CriteriaQuery<AlbumEntity> criteriaQuery) {
+        CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
+        Root<AlbumEntity> root = countQuery.from(AlbumEntity.class);
+        addJoinsForAlbum(root, criteriaQuery);
+        countQuery.select(builder.count(root));
+        if (criteriaQuery.getRestriction() != null) {
+            countQuery.where(criteriaQuery.getRestriction());
+        }
+        Long count = entityManager.createQuery(countQuery).getSingleResult();
+        return count.intValue();
+    }
+
 }

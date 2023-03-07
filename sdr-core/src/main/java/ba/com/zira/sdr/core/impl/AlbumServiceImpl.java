@@ -2,7 +2,6 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
@@ -24,11 +24,10 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.AlbumService;
-import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
-
 import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.SongArtistService;
 import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
@@ -36,12 +35,10 @@ import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
-
 import ba.com.zira.sdr.api.model.album.SongAudio;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.api.model.song.Song;
-
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.core.mapper.AlbumMapper;
@@ -80,71 +77,27 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public PagedPayloadResponse<AlbumSearchResponse> search(EntityRequest<AlbumSearchRequest> request) {
+    public PagedPayloadResponse<AlbumSearchResponse> search(SearchRequest<AlbumSearchRequest> request) {
         var albumSearchRequest = request.getEntity();
-        List<AlbumEntity> resultEntities = albumDAO.findAllAlbumsByNameGenreEraArtist(request.getEntity());
-        List<AlbumSearchResponse> albumWithPlayTime = new ArrayList<>();
-        for (var album : resultEntities) {
+        PagedData<AlbumEntity> resultEntities = albumDAO.findAllAlbumsByNameGenreEraArtist(request);
+
+        List<AlbumSearchResponse> albumResponseList = new ArrayList<>();
+
+        for (var album : resultEntities.getRecords()) {
             var albumResponse = new AlbumSearchResponse();
             albumResponse.setId(album.getId());
             albumResponse.setName(album.getName());
             albumResponse.setOutlineText(album.getInformation());
-            var albumSongs = songDAO.findAllByAlbumId(album.getId());
-            int albumPlaytime = 0;
-            for (var song : albumSongs) {
-                if (song.getPlaytime() == null) {
-                    continue;
-                }
-                try {
-                    var playTimeSplit = song.getPlaytime().split(":");
-                    var minutes = Integer.parseInt(playTimeSplit[0]);
-                    var seconds = Integer.parseInt(playTimeSplit[1]);
-                    albumPlaytime = minutes * 60 + seconds;
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid format");
-                    System.out.println(song.getPlaytime());
 
-                }
-            }
-            albumResponse.setPlaytime(albumPlaytime);
-            albumWithPlayTime.add(albumResponse);
-
-        }
-        if (albumSearchRequest.getSort() != null && albumSearchRequest.getSort().equals("play_time")) {
-            albumWithPlayTime.sort(new AlbumSortByPlayTime());
-        }
-
-        List<AlbumSearchResponse> pagedResponse = albumWithPlayTime;
-        int firstIndex = (albumSearchRequest.getPageNumber() - 1) * albumSearchRequest.getPageSize();
-        int lastIndex = firstIndex + albumSearchRequest.getPageSize();
-        if (firstIndex >= 0 && lastIndex > firstIndex) {
-            if (lastIndex < albumWithPlayTime.size()) {
-                pagedResponse = albumWithPlayTime.subList(firstIndex, lastIndex);
-            } else {
-                pagedResponse = albumWithPlayTime.subList(firstIndex, albumWithPlayTime.size());
-            }
-
-        }
-
-        for (var albumResponse : pagedResponse) {
             lookupService.lookupCoverImage(Arrays.asList(albumResponse), AlbumSearchResponse::getId, ObjectType.ALBUM.getValue(),
                     AlbumSearchResponse::setImageUrl, AlbumSearchResponse::getImageUrl);
+            albumResponseList.add(albumResponse);
 
         }
-        var numberOfPages = albumWithPlayTime.size() / albumSearchRequest.getPageSize();
-        if (albumWithPlayTime.size() % albumSearchRequest.getPageSize() != 0) {
-            numberOfPages++;
-        }
-        var response = new PagedPayloadResponse<AlbumSearchResponse>();
-        response.setResponseCode(ResponseCode.OK);
-        response.setPayload(pagedResponse);
+        var pd = new PagedData<AlbumSearchResponse>();
+        pd.setRecords(albumResponseList);
 
-        response.setPage(albumSearchRequest.getPageNumber());
-        response.setRecordsPerPage(albumSearchRequest.getPageSize());
-        response.setNumberOfRecords(resultEntities.size());
-        response.setNumberOfPages(numberOfPages);
-
-        return response;
+        return new PagedPayloadResponse<AlbumSearchResponse>(request, ResponseCode.OK, pd);
     }
 
     @Override
@@ -210,17 +163,19 @@ public class AlbumServiceImpl implements AlbumService {
         asp.setMap(map);
         return new PayloadResponse<>(request, ResponseCode.OK, asp);
     }
+
     @Override
     public ListPayloadResponse<AlbumsByDecadeResponse> findAllAlbumsForArtist(EntityRequest<Long> request) throws ApiException {
         Long artistId = request.getEntity();
         List<AlbumArtistResponse> albumList = albumDAO.findAllAlbumsForArtist(artistId);
 
-        // Grupiraj albume po decenijama i sortiraj grupe od najstarije do najmlađe
+        // Grupiraj albume po decenijama i sortiraj grupe od najstarije do
+        // najmlađe
         Map<Integer, List<AlbumArtistResponse>> albumsByDecade = albumList.stream()
                 .collect(Collectors.groupingBy(album -> album.getDateOfRelease().getYear() - (album.getDateOfRelease().getYear() % 10),
-                        TreeMap::new, // koristimo TreeMap da sortiramo grupe po ključu (deceniji)
+                        TreeMap::new, // koristimo TreeMap da sortiramo grupe po
+                                      // ključu (deceniji)
                         Collectors.toList()));
-
 
         // Stvori listu objekata koji predstavljaju albume po decenijama
         List<AlbumsByDecadeResponse> albumsByDecadeList = new ArrayList<>();
@@ -281,7 +236,6 @@ public class AlbumServiceImpl implements AlbumService {
         return new PayloadResponse<>(request, ResponseCode.OK, songMapper.entityToDto(newSongEntity));
 
     }
-
 
 }
 

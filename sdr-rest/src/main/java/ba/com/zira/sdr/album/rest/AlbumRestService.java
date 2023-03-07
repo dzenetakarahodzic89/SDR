@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.album.rest;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
@@ -31,7 +33,6 @@ import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.song.Song;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -80,12 +81,12 @@ public class AlbumRestService {
     @GetMapping(value = "search")
     public PagedPayloadResponse<AlbumSearchResponse> searchAlbum(@RequestParam(required = false) List<Long> eras,
             @RequestParam(required = false) List<Long> genres, @RequestParam(required = false) List<Long> artists,
-            @RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam(required = false) String sort,
-            @RequestParam(required = false) String name
+            @RequestParam(required = false) String name, final QueryConditionPage queryCriteria
 
     ) throws ApiException {
         // Map<String, Object> filterCriteria = new HashMap<>();
-        return albumService.search(new EntityRequest<>(new AlbumSearchRequest(eras, genres, artists, sort, pageNumber, pageSize, name)));
+        return albumService.search(
+                new SearchRequest<>(new AlbumSearchRequest(eras, genres, artists, name), new HashMap<String, Object>(), queryCriteria));
     }
 
     @Operation(summary = "Get all songs from album")
@@ -97,11 +98,10 @@ public class AlbumRestService {
 
     @Operation(summary = "albums by artis")
     @GetMapping("/artist/{id}/albums")
-    public ListPayloadResponse<AlbumsByDecadeResponse> getAlbumsByArtistId(@RequestParam Long atistId) throws ApiException{
-        var req= new EntityRequest<>(atistId);
+    public ListPayloadResponse<AlbumsByDecadeResponse> getAlbumsByArtistId(@RequestParam Long atistId) throws ApiException {
+        var req = new EntityRequest<>(atistId);
         return albumService.findAllAlbumsForArtist(req);
     }
-
 
     @Operation(summary = "Get album overview")
     @GetMapping(value = "{id}")
@@ -116,6 +116,5 @@ public class AlbumRestService {
 
         return albumService.addSongToAlbum(new EntityRequest<>(request));
     }
-
 
 }
