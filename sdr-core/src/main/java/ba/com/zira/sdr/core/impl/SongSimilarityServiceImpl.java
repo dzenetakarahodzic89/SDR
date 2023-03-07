@@ -66,9 +66,9 @@ public class SongSimilarityServiceImpl implements SongSimilarityService {
     public PayloadResponse<SongSimilarityResponse> getOne(EmptyRequest req) throws ApiException {
         SongSimilarityResponse songSimilarity = songSimilarityDAO.getRandomSongSimilarity();
 
-        lookupService.lookupCoverImage(Arrays.asList(songSimilarity), SongSimilarityResponse::getSongAId, ObjectType.ALBUM.getValue(),
+        lookupService.lookupCoverImage(Arrays.asList(songSimilarity), SongSimilarityResponse::getSongAId, ObjectType.SONG.getValue(),
                 SongSimilarityResponse::setSongAimageUrl, SongSimilarityResponse::getSongAimageUrl);
-        lookupService.lookupCoverImage(Arrays.asList(songSimilarity), SongSimilarityResponse::getSongBId, ObjectType.ALBUM.getValue(),
+        lookupService.lookupCoverImage(Arrays.asList(songSimilarity), SongSimilarityResponse::getSongBId, ObjectType.SONG.getValue(),
                 SongSimilarityResponse::setSongBimageUrl, SongSimilarityResponse::getSongBimageUrl);
         lookupService.lookupAudio((Arrays.asList(songSimilarity)), SongSimilarityResponse::getSongAId,
                 SongSimilarityResponse::setSongAAudioUrl);
