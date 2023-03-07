@@ -1,5 +1,11 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.mockito.Mockito;
@@ -7,12 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -31,8 +31,13 @@ import ba.com.zira.sdr.core.impl.PersonServiceImpl;
 import ba.com.zira.sdr.core.mapper.PersonMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
+import ba.com.zira.sdr.dao.AlbumDAO;
+import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.ConnectedMediaDAO;
 import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
+import ba.com.zira.sdr.dao.SongDAO;
+import ba.com.zira.sdr.dao.SongInstrumentDAO;
 import ba.com.zira.sdr.dao.model.PersonEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
@@ -42,6 +47,12 @@ public class PersonServiceTest extends BasicTestConfiguration {
 
     @Autowired
     private PersonMapper personMapper;
+
+    private ArtistDAO artistDAO;
+    private AlbumDAO albumDAO;
+    private SongDAO songDAO;
+    private SongInstrumentDAO songInstrumentDAO;
+    private ConnectedMediaDAO connectedMediaDAO;
 
     private PersonDAO personDAO;
     private CountryDAO countryDAO;
@@ -61,8 +72,8 @@ public class PersonServiceTest extends BasicTestConfiguration {
         this.personRequestValidation = Mockito.mock(PersonRequestValidation.class);
         this.lookupService = Mockito.mock(LookupService.class);
         this.mediaService = Mockito.mock(MediaService.class);
-        this.personService = new PersonServiceImpl(personDAO, countryDAO, personMapper, personRequestValidation, lookupService,
-                mediaService);
+        this.personService = new PersonServiceImpl(personDAO, artistDAO, albumDAO, songDAO, songInstrumentDAO, countryDAO,
+                connectedMediaDAO, personMapper, personRequestValidation, lookupService, mediaService);
     }
 
     @Test(enabled = true)
