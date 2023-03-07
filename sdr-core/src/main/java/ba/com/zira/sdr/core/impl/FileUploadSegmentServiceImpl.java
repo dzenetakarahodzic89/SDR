@@ -72,10 +72,10 @@ public class FileUploadSegmentServiceImpl implements FileUploadSegmentService {
         saveFileSegmentEntity.setCreated(LocalDateTime.now());
         saveFileSegmentEntity.setCreatedBy(request.getUserId());
         saveFileSegmentEntity.setStatus(FileUploadSegmentStatus.UPLOADING.getValue());
-        saveFileSegmentEntity.setMedia(media);
+        saveFileSegmentEntity.setMedia(requestEntity.getMediaObjectId());
         fileUploadSegmentDAO.persist(saveFileSegmentEntity);
         if (fileUploadSegmentDAO.countAllFieldsByMedia(media.getId()).equals(saveFileSegmentEntity.getFileSegmentTotal())) {
-            fileUploadSegmentDAO.updateStatus(FileUploadSegmentStatus.READY_TO_MERGE.getValue(), saveFileSegmentEntity.getMedia().getId());
+            fileUploadSegmentDAO.updateStatus(FileUploadSegmentStatus.READY_TO_MERGE.getValue(), requestEntity.getMediaObjectId());
         }
         return new PayloadResponse<>(request, ResponseCode.OK, "ok");
     }
