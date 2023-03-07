@@ -24,14 +24,20 @@ import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
+import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.PersonMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
+import ba.com.zira.sdr.dao.AlbumDAO;
+import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.ConnectedMediaDAO;
 import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
+import ba.com.zira.sdr.dao.SongDAO;
+import ba.com.zira.sdr.dao.SongInstrumentDAO;
 import ba.com.zira.sdr.dao.model.PersonEntity;
 import lombok.AllArgsConstructor;
 
@@ -40,7 +46,12 @@ import lombok.AllArgsConstructor;
 public class PersonServiceImpl implements PersonService {
 
     PersonDAO personDAO;
+    ArtistDAO artistDAO;
+    AlbumDAO albumDAO;
+    SongDAO songDAO;
+    SongInstrumentDAO songInstrumentDAO;
     CountryDAO countryDAO;
+    ConnectedMediaDAO connectedMediaDAO;
     PersonMapper personMapper;
     PersonRequestValidation personRequestValidation;
     LookupService lookupService;
@@ -49,6 +60,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public PagedPayloadResponse<PersonResponse> find(final FilterRequest filterRequest) {
         PagedData<PersonEntity> personEntities = personDAO.findAll(filterRequest.getFilter());
+
         PagedData<PersonResponse> response = new PagedData<>();
         response.setRecords(personMapper.entitiesToDtos(personEntities.getRecords()));
         PagedDataMetadataMapper.remapMetadata(personEntities, response);
@@ -62,6 +74,7 @@ public class PersonServiceImpl implements PersonService {
     public PayloadResponse<PersonResponse> findById(final EntityRequest<Long> request) {
         PersonEntity personEntities = personDAO.findByPK(request.getEntity());
         var response = personMapper.entityToDto(personEntities);
+
         lookupService.lookupCoverImage(Arrays.asList(response), PersonResponse::getId, ObjectType.PERSON.getValue(),
                 PersonResponse::setImageUrl, PersonResponse::getImageUrl);
         lookupService.lookupCountryAbbriviation(Arrays.asList(response), PersonResponse::getCountryId, PersonResponse::setFlagAbbreviation);
@@ -135,4 +148,22 @@ public class PersonServiceImpl implements PersonService {
         return new ListPayloadResponse<>(req, ResponseCode.OK, eras);
     }
 
+    @Override
+    public PayloadResponse<PersonOverviewResponse> retrieveById(final EntityRequest<Long> request) {
+        personRequestValidation.validateExistsPersonRequest(request);
+
+        PersonOverviewResponse person = personDAO.getById(request.getEntity());
+        person.setArtists(artistDAO.getArtistByPersonId(request.getEntity()));
+        person.setAlbums(albumDAO.findAlbumByPersonId(request.getEntity()));
+        person.setSongs(songDAO.findSongByPersonId(request.getEntity()));
+
+        person.setConnectedMedia(connectedMediaDAO.getConnectedMediaByPersonId(request.getEntity()));
+        lookupService.lookupCoverImage(Arrays.asList(person), PersonOverviewResponse::getId, ObjectType.PERSON.getValue(),
+                PersonOverviewResponse::setImageUrl, PersonOverviewResponse::getImageUrl);
+        lookupService.lookupCountryAbbriviation(Arrays.asList(person), PersonOverviewResponse::getCountryId,
+                PersonOverviewResponse::setFlagAbbreviation);
+
+        return new PayloadResponse<>(request, ResponseCode.OK, person);
+
+    }
 }

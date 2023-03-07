@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
+import ba.com.zira.sdr.api.model.album.AlbumPersonResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
@@ -28,6 +29,15 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
 
         TypedQuery<AlbumArtistResponse> query = entityManager.createQuery(hql, AlbumArtistResponse.class).setParameter("artistId",
                 artistId);
+        return query.getResultList();
+    }
+
+    public List<AlbumPersonResponse> findAlbumByPersonId(Long personId) {
+        var hql = "select distinct new ba.com.zira.sdr.api.model.album.AlbumPersonResponse(al.id, al.dateOfRelease, al.information, al.name, al.status) from PersonEntity sp "
+                + " inner join PersonArtistEntity spa on sp.id = spa.person.id inner join ArtistEntity sa on spa.artist.id =sa.id inner join SongArtistEntity ssa on sa.id =ssa.artist.id inner join AlbumEntity al on ssa.album.id =al.id where sp.id = :personId";
+
+        TypedQuery<AlbumPersonResponse> query = entityManager.createQuery(hql, AlbumPersonResponse.class).setParameter("personId",
+                personId);
         return query.getResultList();
     }
 
