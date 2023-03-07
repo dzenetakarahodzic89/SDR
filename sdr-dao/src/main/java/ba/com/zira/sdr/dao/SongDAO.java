@@ -39,6 +39,9 @@ import ba.com.zira.sdr.dao.model.SongEntity_;
 
 @Repository
 public class SongDAO extends AbstractDAO<SongEntity, Long> {
+    private static final String REMIX_ID = "remixId";
+    private static final String COVER_ID = "coverId";
+
     public List<SongEntity> findSongsByIdArray(final List<Long> songIds) {
         final CriteriaQuery<SongEntity> cQuery = builder.createQuery(SongEntity.class);
         final Root<SongEntity> root = cQuery.from(SongEntity.class);
@@ -146,23 +149,23 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         var q = entityManager.createQuery(query, SongSearchResponse.class);
 
         if (remixId != null) {
-            q.setParameter("remixId", true);
+            q.setParameter(REMIX_ID, true);
             if (remixId == 0) {
-                q.setParameter("remixId", null);
+                q.setParameter(REMIX_ID, null);
             }
         }
 
         else {
-            q.setParameter("remixId", null);
+            q.setParameter(REMIX_ID, null);
         }
 
         if (coverId != null) {
-            q.setParameter("coverId", true);
+            q.setParameter(COVER_ID, true);
             if (coverId == 0) {
-                q.setParameter("coverId", null);
+                q.setParameter(COVER_ID, null);
             }
         } else {
-            q.setParameter("coverId", null);
+            q.setParameter(COVER_ID, null);
         }
 
         if (songName != null && !songName.isEmpty()) {
@@ -194,17 +197,16 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         int maxResults = pageSize;
         q.setFirstResult(firstResult);
         q.setMaxResults(maxResults);
-        List<SongSearchResponse> songs = q.getResultList();
 
-        return songs;
+        return q.getResultList();
     }
 
     public List<LoV> findSongsToFetchFromSpotify(int responseLimit) {
         var cases = "case when sa.artist.surname is null then concat('track:',s.name,' ','artist:',sa.artist.name) else"
                 + " concat('track:',s.name,' ','artist:',sa.artist.name,' ',sa.artist.surname) end";
         var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id," + cases + ") from SongEntity s left join"
-                + " SpotifyIntegrationEntity si on s.id = si.objectId and si.objectType like 'SONG' join SongArtistEntity sa on s.id=sa.song.id where si.id = null";
-        return entityManager.createQuery(hql, LoV.class).setMaxResults(responseLimit).getResultList();
+                + " SpotifyIntegrationEntity si on s.id = si.objectId and si.objectType like :song join SongArtistEntity sa on s.id=sa.song.id where si.id = null";
+        return entityManager.createQuery(hql, LoV.class).setParameter("song", "SONG").setMaxResults(responseLimit).getResultList();
 
     }
 

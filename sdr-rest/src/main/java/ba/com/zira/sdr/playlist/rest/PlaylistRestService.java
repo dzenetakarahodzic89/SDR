@@ -49,10 +49,8 @@ public class PlaylistRestService {
             @Parameter(required = false, description = "Name of the playlist") @RequestParam(required = false) final String name,
             @Parameter(required = false, description = "Id of a song in the playlist") @RequestParam(required = false) final Long songId,
             @Parameter(required = false, description = "Id of a genre in the playlist") @RequestParam(required = false) final Long genreId,
-            @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy)
-            throws ApiException {
-        return playlistService
-                .searchByNameSongGenre(new EntityRequest<PlaylistSearchRequest>(new PlaylistSearchRequest(name, songId, genreId, sortBy)));
+            @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy) {
+        return playlistService.searchByNameSongGenre(new EntityRequest<>(new PlaylistSearchRequest(name, songId, genreId, sortBy)));
     }
 
     @Operation(summary = "Create playlist")

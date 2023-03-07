@@ -14,7 +14,6 @@ import ba.com.zira.sdr.api.model.playlist.PlaylistCreateRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistSearchRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistUpdateRequest;
 
-// TODO: Auto-generated Javadoc
 /**
  * The interface Playlist service.
  */

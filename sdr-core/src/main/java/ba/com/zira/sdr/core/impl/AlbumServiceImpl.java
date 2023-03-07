@@ -155,15 +155,10 @@ public class AlbumServiceImpl implements AlbumService {
         Long artistId = request.getEntity();
         List<AlbumArtistResponse> albumList = albumDAO.findAllAlbumsForArtist(artistId);
 
-        // Grupiraj albume po decenijama i sortiraj grupe od najstarije do
-        // najmlađe
         Map<Integer, List<AlbumArtistResponse>> albumsByDecade = albumList.stream()
                 .collect(Collectors.groupingBy(album -> album.getDateOfRelease().getYear() - (album.getDateOfRelease().getYear() % 10),
-                        TreeMap::new, // koristimo TreeMap da sortiramo grupe po
-                                      // ključu (deceniji)
-                        Collectors.toList()));
+                        TreeMap::new, Collectors.toList()));
 
-        // Stvori listu objekata koji predstavljaju albume po decenijama
         List<AlbumsByDecadeResponse> albumsByDecadeList = new ArrayList<>();
         albumsByDecade.forEach((decade, albums) -> {
             albums.sort(Comparator.comparing(AlbumArtistResponse::getDateOfRelease));
@@ -171,7 +166,7 @@ public class AlbumServiceImpl implements AlbumService {
             albumsByDecadeList.add(decadeAlbums);
         });
 
-        return new ListPayloadResponse(request, ResponseCode.OK, albumsByDecadeList);
+        return new ListPayloadResponse<>(request, ResponseCode.OK, albumsByDecadeList);
     }
 
     @Override
@@ -189,7 +184,6 @@ public class AlbumServiceImpl implements AlbumService {
         });
         var albumEntity = albumDAO.findByPK(request.getEntity());
         var albumResponse = albumMapper.entityToDto(albumEntity);
-        var songArtist = albumEntity.getSongArtists();
         albumResponse.setSongs(listSong);
         albumResponse.setAlbumArtists(albumDAO.findAllAlbumArtists(request.getEntity()));
         albumResponse.setAudioUrls(songAudioUrls);
