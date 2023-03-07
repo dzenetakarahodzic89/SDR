@@ -149,8 +149,8 @@ public class PersonArtistServiceTest extends BasicTestConfiguration {
             req.setEntity(newPersonArtistRequest);
 
             var personArtistEntity = new PersonArtistEntity();
-            personArtistEntity
-                    .setArtist(new ArtistEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+            personArtistEntity.setArtist(
+                    new ArtistEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             personArtistEntity.setPerson(
                     new PersonEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
 
@@ -159,8 +159,8 @@ public class PersonArtistServiceTest extends BasicTestConfiguration {
             newPersonArtist.setArtistId(1L);
             Mockito.when(personDAO.findByPK(1L)).thenReturn(
                     new PersonEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
-            Mockito.when(artistDAO.findByPK(1L))
-                    .thenReturn(new ArtistEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+            Mockito.when(artistDAO.findByPK(1L)).thenReturn(
+                    new ArtistEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             Mockito.when(personArtistDAO.persist(personArtistEntity)).thenReturn(null);
 
             PayloadResponse<PersonArtistResponse> personArtistCreateResponse = personArtistService.create(req);
