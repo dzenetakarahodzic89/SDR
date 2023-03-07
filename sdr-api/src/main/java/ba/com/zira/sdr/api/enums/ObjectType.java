@@ -12,7 +12,9 @@ public enum ObjectType {
     /** INSTRUMENT */
     INSTRUMENT("INSTRUMENT"),
     /** LABEL */
-    LABEL("LABEL");
+    LABEL("LABEL"),
+    /** ERA */
+    ERA("ERA");
 
     private final String value;
 
