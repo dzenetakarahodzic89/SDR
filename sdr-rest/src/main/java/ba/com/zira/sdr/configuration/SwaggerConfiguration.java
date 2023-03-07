@@ -171,6 +171,18 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi songSimilarityApi() {
+        return GroupedOpenApi.builder().group("songSimilarity-api").packagesToScan("ba.com.zira.sdr.songsimilarity.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi songSimilarityDetailApi() {
+        return GroupedOpenApi.builder().group("songSimilarityDetail-api").packagesToScan("ba.com.zira.sdr.songsimilaritydetail.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi deezerIntegrationApi() {
         return GroupedOpenApi.builder().group("deezer-integration-api").packagesToScan("ba.com.zira.sdr.deezerintegration.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();

@@ -21,6 +21,7 @@ import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbRespons
 import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
 import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.song.SongPersonResponse;
 import ba.com.zira.sdr.api.model.song.SongSearchResponse;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
@@ -205,6 +206,13 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
                 + " SpotifyIntegrationEntity si on s.id = si.objectId and si.objectType like 'SONG' join SongArtistEntity sa on s.id=sa.song.id where si.id = null";
         return entityManager.createQuery(hql, LoV.class).setMaxResults(responseLimit).getResultList();
 
+    }
+
+    public List<SongPersonResponse> findSongByPersonId(final Long personId) {
+        var hql = "select new ba.com.zira.sdr.api.model.song.SongPersonResponse(ss.id, ss.created, ss.createdBy, ss.dateOfRelease, ss.information, ss.modified, ss.modifiedBy, ss.name, ss.playtime, ss.outlineText, ss.spotifyId) from PersonEntity sp join PersonArtistEntity spa on sp.id = spa.person.id join ArtistEntity sa on spa.artist.id = sa.id join SongArtistEntity ssa on sa.id = ssa.artist.id join SongEntity ss on ssa.song.id=ss.id where sp.id = :personId";
+        TypedQuery<SongPersonResponse> query = entityManager.createQuery(hql, SongPersonResponse.class).setParameter("personId", personId);
+
+        return query.getResultList();
     }
 
 }

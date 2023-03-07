@@ -28,4 +28,5 @@ public class CountryDAO extends AbstractDAO<CountryEntity, Long> {
         TypedQuery<CountryResponse> query = entityManager.createQuery(hql, CountryResponse.class);
         return query.getResultList();
     }
+
 }
