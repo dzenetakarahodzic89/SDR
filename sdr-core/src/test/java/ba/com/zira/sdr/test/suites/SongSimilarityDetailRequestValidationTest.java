@@ -2,7 +2,6 @@ package ba.com.zira.sdr.test.suites;
 
 import static org.testng.Assert.assertEquals;
 
-import ba.com.zira.sdr.dao.SongSimilarityDAO;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -14,6 +13,7 @@ import ba.com.zira.commons.model.User;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.model.songsimilaritydetail.SongSimilarityDetailUpdateRequest;
 import ba.com.zira.sdr.core.validation.SongSimilarityDetailRequestValidation;
+import ba.com.zira.sdr.dao.SongSimilarityDAO;
 import ba.com.zira.sdr.dao.SongSimilarityDetailDAO;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 
@@ -25,6 +25,7 @@ public class SongSimilarityDetailRequestValidationTest extends BasicTestConfigur
     private SongSimilarityDetailRequestValidation validation;
 
     private SongSimilarityDAO songSimilarityDAO;
+
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.songSimilarityDetailDAO = Mockito.mock(SongSimilarityDetailDAO.class);
@@ -45,7 +46,6 @@ public class SongSimilarityDetailRequestValidationTest extends BasicTestConfigur
         assertEquals(validationResponse.getDescription(), "Song sample detail with id: 1 does not exist!");
         Mockito.verify(songSimilarityDetailDAO).existsByPK(1L);
     }
-
 
     @Test
     public void validateExistsSongSimilarityDetailRequestNotFound() {

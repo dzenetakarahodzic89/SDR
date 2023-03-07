@@ -2,6 +2,7 @@ package ba.com.zira.sdr.core.impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -59,6 +60,21 @@ public class SongSimilarityServiceImpl implements SongSimilarityService {
         lookupService.lookupAudio(songSimilarity, SongSimilarityResponse::getSongAId, SongSimilarityResponse::setSongAAudioUrl);
         lookupService.lookupAudio(songSimilarity, SongSimilarityResponse::getSongBId, SongSimilarityResponse::setSongBAudioUrl);
         return new ListPayloadResponse<>(req, ResponseCode.OK, songSimilarity);
+    }
+
+    @Override
+    public PayloadResponse<SongSimilarityResponse> getOne(EmptyRequest req) throws ApiException {
+        SongSimilarityResponse songSimilarity = songSimilarityDAO.getRandomSongSimilarity();
+
+        lookupService.lookupCoverImage(Arrays.asList(songSimilarity), SongSimilarityResponse::getSongAId, ObjectType.ALBUM.getValue(),
+                SongSimilarityResponse::setSongAimageUrl, SongSimilarityResponse::getSongAimageUrl);
+        lookupService.lookupCoverImage(Arrays.asList(songSimilarity), SongSimilarityResponse::getSongBId, ObjectType.ALBUM.getValue(),
+                SongSimilarityResponse::setSongBimageUrl, SongSimilarityResponse::getSongBimageUrl);
+        lookupService.lookupAudio((Arrays.asList(songSimilarity)), SongSimilarityResponse::getSongAId,
+                SongSimilarityResponse::setSongAAudioUrl);
+        lookupService.lookupAudio((Arrays.asList(songSimilarity)), SongSimilarityResponse::getSongBId,
+                SongSimilarityResponse::setSongBAudioUrl);
+        return new PayloadResponse<>(req, ResponseCode.OK, songSimilarity);
     }
 
 }
