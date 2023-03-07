@@ -1,16 +1,18 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.PayloadResponse;
+import ba.com.zira.commons.model.User;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.FileUploadSegmentService;
 import ba.com.zira.sdr.api.MediaService;
@@ -23,16 +25,31 @@ import ba.com.zira.sdr.core.mapper.FileUploadSegmentMapper;
 import ba.com.zira.sdr.dao.FileUploadSegmentDAO;
 import ba.com.zira.sdr.dao.MediaDAO;
 import ba.com.zira.sdr.dao.model.MediaEntity;
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FileUploadSegmentServiceImpl implements FileUploadSegmentService {
+
+    @NonNull
     MediaDAO mediaDAO;
+
+    @NonNull
     FileUploadSegmentMapper fileUploadSegmentMapper;
+
+    @NonNull
     FileUploadSegmentDAO fileUploadSegmentDAO;
+
+    @NonNull
     MediaService mediaService;
-    private static final int SCHEDULE_REPEAT_COUNT = 5;
+
+    @Value("${file.upload.segment.upload.repeat:5}")
+    Long scheduleRepeatCount;
+
+    @Value("${file.upload.segment.upload:false}")
+    Boolean uploadDisabled;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUploadSegmentServiceImpl.class);
 
     @Override
@@ -78,12 +95,17 @@ public class FileUploadSegmentServiceImpl implements FileUploadSegmentService {
         return new PayloadResponse<>(request, ResponseCode.OK, status);
     }
 
-    @Scheduled(fixedDelay = 600000L) // 10 mins
+    @Scheduled(fixedDelay = 600000L)
     public void uploadFileSegmentsToServer() {
-        for (int i = 0; i < SCHEDULE_REPEAT_COUNT; i++) {
-            StringBuilder connectedBase64String = new StringBuilder();
+        if (uploadDisabled.booleanValue()) {
+            LOGGER.info("Upload is disabled.");
+            return;
+        }
+        for (var i = 0; i < scheduleRepeatCount; i++) {
+            var connectedBase64String = new StringBuilder();
             try {
                 var readyToMergeMediaId = fileUploadSegmentDAO.getReadyToMergeMediaId();
+                LOGGER.info("Started upload {} of {} : {}", i + 1, scheduleRepeatCount, readyToMergeMediaId);
                 if (readyToMergeMediaId != null) {
                     var fileSegmentUploadList = fileUploadSegmentDAO.getSegmentsByMediaId(readyToMergeMediaId);
                     for (var file : fileSegmentUploadList) {
@@ -96,11 +118,11 @@ public class FileUploadSegmentServiceImpl implements FileUploadSegmentService {
                     mediaRequest.setMediaObjectName(fileSegmentUploadList.get(0).getFileName());
                     mediaRequest.setMediaStoreType("AUDIO");
                     mediaRequest.setMediaObjectType("SONG");
-                    mediaService.save(new EntityRequest<>(mediaRequest));
+                    mediaService.save(new EntityRequest<>(new User("System"), "T-1", "L-1", mediaRequest));
                     fileUploadSegmentDAO.updateStatus(FileUploadSegmentStatus.SAVED.getValue(), fileSegmentUploadList.get(0).getMediaId());
                 }
             } catch (Exception ex) {
-                LOGGER.debug("No entity found for upload!");
+                LOGGER.debug(ex.getMessage());
                 return;
             }
         }
