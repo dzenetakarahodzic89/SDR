@@ -198,6 +198,14 @@ public class SwaggerConfiguration {
     public GroupedOpenApi playlistGenerateApi() {
         return GroupedOpenApi.builder().group("playlist-generate-api").packagesToScan("ba.com.zira.sdr.generateplaylist.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
+
+    }
+
+    @Bean
+    public GroupedOpenApi eraApi() {
+        return GroupedOpenApi.builder().group("era-api").packagesToScan("ba.com.zira.sdr.era.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+
     }
 
     @Bean
