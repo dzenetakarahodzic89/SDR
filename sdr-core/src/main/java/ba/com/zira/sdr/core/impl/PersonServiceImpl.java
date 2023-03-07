@@ -144,7 +144,6 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public ListPayloadResponse<LoV> getPersonLoVs(EmptyRequest req) throws ApiException {
-        // TODO Auto-generated method stub
         List<LoV> eras = personDAO.getAllPersonsLoV();
         return new ListPayloadResponse<>(req, ResponseCode.OK, eras);
     }

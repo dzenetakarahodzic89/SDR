@@ -53,8 +53,8 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
                 + " concat('album:',a.name,' ','artist:',sa.artist.name,' ',sa.artist.surname) end";
         var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id," + cases
                 + ") from AlbumEntity a left join SpotifyIntegrationEntity si on "
-                + "a.id = si.objectId and si.objectType like 'ALBUM' join SongArtistEntity sa on a.id=sa.album.id where si.id = null";
-        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setMaxResults(responseLimit);
+                + "a.id = si.objectId and si.objectType like :album join SongArtistEntity sa on a.id=sa.album.id where si.id = null";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("album", "ALBUM").setMaxResults(responseLimit);
 
         return query.getResultList();
     }

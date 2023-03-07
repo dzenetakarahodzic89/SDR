@@ -12,6 +12,7 @@ public class SongSimilarityRequestValidation {
 
     private SongSimilarityDAO songsimilarityDAO;
 
+    @SuppressWarnings("unused")
     private ValidationError exists(Long id) {
         if (!songsimilarityDAO.existsByPK(id)) {
             return ValidationError.of("Song similarity not found", "Song with id: " + id + " does not exist!");
