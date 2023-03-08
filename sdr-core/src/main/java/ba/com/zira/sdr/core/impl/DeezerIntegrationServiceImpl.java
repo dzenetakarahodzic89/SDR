@@ -2,6 +2,7 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,6 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.DeezerIntegrationService;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegration;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationCreateRequest;
-import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationCreateRequestExtend;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.core.mapper.DeezerIntegrationMapper;
@@ -58,6 +58,7 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
     public PayloadResponse<DeezerIntegration> create(final EntityRequest<DeezerIntegrationCreateRequest> request) throws ApiException {
         var deezerIntegrationEntity = deezerIntegrationMapper.dtoToEntity(request.getEntity());
 
+        deezerIntegrationEntity.setId(UUID.randomUUID().toString());
         deezerIntegrationEntity.setStatus(Status.ACTIVE.value());
         deezerIntegrationEntity.setCreated(LocalDateTime.now());
         deezerIntegrationEntity.setCreatedBy(request.getUserId());
@@ -82,7 +83,7 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
+    public PayloadResponse<String> delete(final EntityRequest<String> request) throws ApiException {
         deezerIntegrationRequestValidation.validateExistsDeezerIntegrationRequest(request);
 
         var deezerIntegrationEntity = deezerIntegrationDAO.findByPK(request.getEntity());
@@ -90,11 +91,12 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
         return new PayloadResponse<>(request, ResponseCode.OK, "Deezer integration is removed.");
     }
 
-    @Scheduled(initialDelay = 100, fixedDelay = 10000L)
+    @Scheduled(initialDelay = 100, fixedDelay = 300000L)
     public void getArtistInformationFromDeezer() {
         List<LoV> artistsForSearch = artistDAO.getArtistsForDeezerSearch();
         for (var artist : artistsForSearch) {
-            var artistDeezerInformation = new DeezerIntegrationCreateRequestExtend();
+            var artistDeezerInformation = new DeezerIntegrationEntity();
+            artistDeezerInformation.setId(UUID.randomUUID().toString());
             artistDeezerInformation.setCreatedBy(systemUser.getUserId());
             artistDeezerInformation.setCreated(LocalDateTime.now());
             artistDeezerInformation.setObjectType("ARTIST");
@@ -106,12 +108,13 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             if (response.getStatusCode() == HttpStatus.OK) {
                 artistDeezerInformation.setResponse(response.getBody());
-                deezerIntegrationDAO.persist(deezerIntegrationMapper.dtoToEntityExtended(artistDeezerInformation));
+                deezerIntegrationDAO.persist(artistDeezerInformation);
             } else {
-                LOGGER.error("Error", response.getBody());
+                LOGGER.error(response.getBody());
             }
         }
-
-        System.out.println(artistsForSearch);
+        if (artistsForSearch.isEmpty()) {
+            LOGGER.info("All artists have been searched for.");
+        }
     }
 }

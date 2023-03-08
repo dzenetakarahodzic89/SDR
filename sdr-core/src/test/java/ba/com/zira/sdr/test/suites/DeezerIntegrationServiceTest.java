@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
@@ -138,7 +139,7 @@ public class DeezerIntegrationServiceTest extends BasicTestConfiguration {
             Mockito.when(deezerIntegrationDAO.persist(newDeezerIntegrationEnt)).thenReturn(null);
             PayloadResponse<DeezerIntegration> DeezerIntegrationFindResponse = deezerIntegrationService.create(req);
             Assertions.assertThat(DeezerIntegrationFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-                    .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newDeezerIntegration);
+                    .ignoringFields("id", "created", "createdBy", "modified", "modifiedBy").isEqualTo(newDeezerIntegration);
 
         } catch (Exception e) {
             Assert.fail();
@@ -178,9 +179,9 @@ public class DeezerIntegrationServiceTest extends BasicTestConfiguration {
     public void testDeleteDeezerIntegration() {
         try {
 
-            var req = new EntityRequest<Long>();
+            var req = new EntityRequest<String>();
 
-            req.setEntity(1L);
+            req.setEntity(UUID.randomUUID().toString());
             Mockito.when(requestValidator.validate(req)).thenReturn(null);
             Mockito.doNothing().when(deezerIntegrationDAO).removeByPK(req.getEntity());
             var deezerIntegrationFindResponse = deezerIntegrationService.delete(req);
