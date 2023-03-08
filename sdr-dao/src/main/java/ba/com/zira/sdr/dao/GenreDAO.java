@@ -1,17 +1,19 @@
 package ba.com.zira.sdr.dao;
 
-import ba.com.zira.commons.dao.AbstractDAO;
-import ba.com.zira.sdr.api.model.lov.LoV;
-import ba.com.zira.sdr.dao.model.GenreEntity;
-import ba.com.zira.sdr.dao.model.SongEntity;
-import org.springframework.stereotype.Repository;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Repository;
+
+import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.dao.model.GenreEntity;
+import ba.com.zira.sdr.dao.model.SongEntity;
 
 @Repository
 public class GenreDAO extends AbstractDAO<GenreEntity, Long> {
@@ -76,6 +78,15 @@ public class GenreDAO extends AbstractDAO<GenreEntity, Long> {
             return new HashMap<>();
         }
 
+    }
+
+    public GenreEntity findByName(String name) {
+        var hql = "select g from GenreEntity g where lower(g.name) like lower(:name)";
+        try {
+            return entityManager.createQuery(hql, GenreEntity.class).setParameter("name", name).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }
