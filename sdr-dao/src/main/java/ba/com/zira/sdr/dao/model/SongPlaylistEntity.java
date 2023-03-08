@@ -56,20 +56,14 @@ public class SongPlaylistEntity implements Serializable {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "song_id")
-    private Long songId;
-
-    @Column(name = "playlist_id")
-    private Long playlistId;
-
     // bi-directional many-to-one association to PlaylistEntity
     @ManyToOne
-    @JoinColumn(name = "playlist")
+    @JoinColumn(name = "playlist_id")
     private PlaylistEntity playlist;
 
     // bi-directional many-to-one association to SongEntity
     @ManyToOne
-    @JoinColumn(name = "song")
+    @JoinColumn(name = "song_id")
     private SongEntity song;
 
 }

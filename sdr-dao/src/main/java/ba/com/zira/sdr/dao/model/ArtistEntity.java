@@ -73,7 +73,7 @@ public class ArtistEntity implements Serializable {
     private String type;
 
     @Column(name = "spotify_id")
-    private Long spotifyId;
+    private String spotifyId;
 
     @Column(name = "outline_text")
     private String outlineText;
