@@ -41,212 +41,213 @@ import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 
 @ContextConfiguration(classes = ApplicationTestConfiguration.class)
 public class InstrumentServiceTest extends BasicTestConfiguration {
-    private InstrumentDAO instrumentDAO;
+	private InstrumentDAO instrumentDAO;
 
-    @Autowired
-    private InstrumentMapper instrumentMapper;
+	@Autowired
+	private InstrumentMapper instrumentMapper;
 
-    private SongInstrumentMapper songInstrumentMapper;
+	private SongInstrumentMapper songInstrumentMapper;
 
-    private RequestValidator requestValidator;
+	private RequestValidator requestValidator;
 
-    private InstrumentRequestValidation instrumentRequestValidation;
-    private InstrumentService instrumentService;
-    private SongInstrumentDAO songInstrumentDAO;
-    private SongDAO songDAO;
-    private PersonDAO personDAO;
-    private MediaService mediaService;
-    private LookupService lookupService;
+	private InstrumentRequestValidation instrumentRequestValidation;
+	private InstrumentService instrumentService;
+	private SongInstrumentDAO songInstrumentDAO;
+	private SongDAO songDAO;
+	private PersonDAO personDAO;
+	private MediaService mediaService;
+	private LookupService lookupService;
 
-    @BeforeMethod
-    public void beforeMethod() throws ApiException {
-        this.requestValidator = Mockito.mock(RequestValidator.class);
-        this.instrumentDAO = Mockito.mock(InstrumentDAO.class);
-        this.lookupService = Mockito.mock(LookupService.class);
-        this.mediaService = Mockito.mock(MediaService.class);
+	@BeforeMethod
+	public void beforeMethod() throws ApiException {
+		this.requestValidator = Mockito.mock(RequestValidator.class);
+		this.instrumentDAO = Mockito.mock(InstrumentDAO.class);
+		this.lookupService = Mockito.mock(LookupService.class);
+		this.mediaService = Mockito.mock(MediaService.class);
 
-        this.instrumentRequestValidation = Mockito.mock(InstrumentRequestValidation.class);
-        this.instrumentService = new InstrumentServiceImpl(instrumentDAO, songInstrumentDAO, personDAO, songDAO, instrumentMapper,
-                songInstrumentMapper, instrumentRequestValidation, mediaService);
-    }
+		this.instrumentRequestValidation = Mockito.mock(InstrumentRequestValidation.class);
+		this.instrumentService = new InstrumentServiceImpl(instrumentDAO, songInstrumentDAO, personDAO, songDAO,
+				instrumentMapper, songInstrumentMapper, instrumentRequestValidation, mediaService, lookupService);
+	}
 
-    @Test(enabled = true)
-    public void testFindInstrument() {
-        try {
+	@Test(enabled = true)
+	public void testFindInstrument() {
+		try {
 
-            List<InstrumentEntity> entities = new ArrayList<>();
-            InstrumentEntity firstInstrumentEntity = new InstrumentEntity();
-            firstInstrumentEntity.setInformation("Information about instrument");
-            firstInstrumentEntity.setName("Instrument name");
-            firstInstrumentEntity.setStatus(Status.ACTIVE.getValue());
-            firstInstrumentEntity.setType("Instrument type");
-            firstInstrumentEntity.setOutlineText("String outlineText");
+			List<InstrumentEntity> entities = new ArrayList<>();
+			InstrumentEntity firstInstrumentEntity = new InstrumentEntity();
+			firstInstrumentEntity.setInformation("Information about instrument");
+			firstInstrumentEntity.setName("Instrument name");
+			firstInstrumentEntity.setStatus(Status.ACTIVE.getValue());
+			firstInstrumentEntity.setType("Instrument type");
+			firstInstrumentEntity.setOutlineText("String outlineText");
 
-            InstrumentEntity secondInstrumentEntity = new InstrumentEntity();
-            secondInstrumentEntity.setInformation("Information about instrument");
-            secondInstrumentEntity.setName("Instrument name");
-            secondInstrumentEntity.setStatus(Status.ACTIVE.getValue());
-            secondInstrumentEntity.setType("Instrument type");
-            secondInstrumentEntity.setOutlineText("String outlineText");
+			InstrumentEntity secondInstrumentEntity = new InstrumentEntity();
+			secondInstrumentEntity.setInformation("Information about instrument");
+			secondInstrumentEntity.setName("Instrument name");
+			secondInstrumentEntity.setStatus(Status.ACTIVE.getValue());
+			secondInstrumentEntity.setType("Instrument type");
+			secondInstrumentEntity.setOutlineText("String outlineText");
 
-            InstrumentEntity thirdInstrumentEntity = new InstrumentEntity();
-            thirdInstrumentEntity.setInformation("Information about instrument");
-            thirdInstrumentEntity.setName("Instrument name");
-            thirdInstrumentEntity.setStatus(Status.ACTIVE.getValue());
-            thirdInstrumentEntity.setType("Instrument type");
-            thirdInstrumentEntity.setOutlineText("String outlineText");
+			InstrumentEntity thirdInstrumentEntity = new InstrumentEntity();
+			thirdInstrumentEntity.setInformation("Information about instrument");
+			thirdInstrumentEntity.setName("Instrument name");
+			thirdInstrumentEntity.setStatus(Status.ACTIVE.getValue());
+			thirdInstrumentEntity.setType("Instrument type");
+			thirdInstrumentEntity.setOutlineText("String outlineText");
 
-            entities.add(firstInstrumentEntity);
-            entities.add(secondInstrumentEntity);
-            entities.add(thirdInstrumentEntity);
+			entities.add(firstInstrumentEntity);
+			entities.add(secondInstrumentEntity);
+			entities.add(thirdInstrumentEntity);
 
-            PagedData<InstrumentEntity> pagedEntites = new PagedData<>();
-            pagedEntites.setRecords(entities);
+			PagedData<InstrumentEntity> pagedEntites = new PagedData<>();
+			pagedEntites.setRecords(entities);
 
-            List<InstrumentResponse> response = new ArrayList<>();
+			List<InstrumentResponse> response = new ArrayList<>();
 
-            InstrumentResponse firstResponse = new InstrumentResponse();
-            firstResponse.setInformation("Information about instrument");
-            firstResponse.setName("Instrument name");
-            firstResponse.setStatus(Status.ACTIVE.getValue());
-            firstResponse.setType("Instrument type");
-            firstResponse.setOutlineText("String outlineText");
+			InstrumentResponse firstResponse = new InstrumentResponse();
+			firstResponse.setInformation("Information about instrument");
+			firstResponse.setName("Instrument name");
+			firstResponse.setStatus(Status.ACTIVE.getValue());
+			firstResponse.setType("Instrument type");
+			firstResponse.setOutlineText("String outlineText");
 
-            InstrumentResponse secondResponse = new InstrumentResponse();
-            secondResponse.setInformation("Information about instrument");
-            secondResponse.setName("Instrument name");
-            secondResponse.setStatus(Status.ACTIVE.getValue());
-            secondResponse.setType("Instrument type");
-            secondResponse.setOutlineText("String outlineText");
+			InstrumentResponse secondResponse = new InstrumentResponse();
+			secondResponse.setInformation("Information about instrument");
+			secondResponse.setName("Instrument name");
+			secondResponse.setStatus(Status.ACTIVE.getValue());
+			secondResponse.setType("Instrument type");
+			secondResponse.setOutlineText("String outlineText");
 
-            InstrumentResponse thirdResponse = new InstrumentResponse();
-            thirdResponse.setInformation("Information about instrument");
-            thirdResponse.setName("Instrument name");
-            thirdResponse.setStatus(Status.ACTIVE.getValue());
-            thirdResponse.setType("Instrument type");
-            thirdResponse.setOutlineText("String outlineText");
+			InstrumentResponse thirdResponse = new InstrumentResponse();
+			thirdResponse.setInformation("Information about instrument");
+			thirdResponse.setName("Instrument name");
+			thirdResponse.setStatus(Status.ACTIVE.getValue());
+			thirdResponse.setType("Instrument type");
+			thirdResponse.setOutlineText("String outlineText");
 
-            response.add(firstResponse);
-            response.add(secondResponse);
-            response.add(thirdResponse);
+			response.add(firstResponse);
+			response.add(secondResponse);
+			response.add(thirdResponse);
 
-            PagedData<InstrumentResponse> pagedResponse = new PagedData<>();
-            pagedResponse.setRecords(response);
+			PagedData<InstrumentResponse> pagedResponse = new PagedData<>();
+			pagedResponse.setRecords(response);
 
-            Map<String, Object> filterCriteria = new HashMap<String, Object>();
-            QueryConditionPage queryConditionPage = new QueryConditionPage();
-            FilterRequest filterRequest = new FilterRequest(filterCriteria, queryConditionPage);
+			Map<String, Object> filterCriteria = new HashMap<String, Object>();
+			QueryConditionPage queryConditionPage = new QueryConditionPage();
+			FilterRequest filterRequest = new FilterRequest(filterCriteria, queryConditionPage);
 
-            Mockito.when(requestValidator.validate(filterRequest)).thenReturn(null);
-            Mockito.when(instrumentDAO.findAll(filterRequest.getFilter())).thenReturn(pagedEntites);
+			Mockito.when(requestValidator.validate(filterRequest)).thenReturn(null);
+			Mockito.when(instrumentDAO.findAll(filterRequest.getFilter())).thenReturn(pagedEntites);
 
-            List<InstrumentResponse> instrumentFindResponse = instrumentService.find(filterRequest).getPayload();
+			List<InstrumentResponse> instrumentFindResponse = instrumentService.find(filterRequest).getPayload();
 
-            Assertions.assertThat(instrumentFindResponse).as("Check all elements").overridingErrorMessage("All elements should be equal.")
-                    .hasSameElementsAs(response);
+			Assertions.assertThat(instrumentFindResponse).as("Check all elements")
+					.overridingErrorMessage("All elements should be equal.").hasSameElementsAs(response);
 
-        } catch (Exception e) {
-            Assert.fail();
-        }
-    }
+		} catch (Exception e) {
+			Assert.fail();
+		}
+	}
 
-    @Test(enabled = true)
-    public void testCreateInstrument() {
-        try {
+	@Test(enabled = true)
+	public void testCreateInstrument() {
+		try {
 
-            EntityRequest<InstrumentCreateRequest> req = new EntityRequest<>();
+			EntityRequest<InstrumentCreateRequest> req = new EntityRequest<>();
 
-            var newInstrumentRequest = new InstrumentCreateRequest();
-            newInstrumentRequest.setName("Test Name");
-            newInstrumentRequest.setInformation("Instrument Information");
-            newInstrumentRequest.setType("Instrument Type");
-            newInstrumentRequest.setOutlineText("Instrument OutlineText");
+			var newInstrumentRequest = new InstrumentCreateRequest();
+			newInstrumentRequest.setName("Test Name");
+			newInstrumentRequest.setInformation("Instrument Information");
+			newInstrumentRequest.setType("Instrument Type");
+			newInstrumentRequest.setOutlineText("Instrument OutlineText");
 
-            req.setEntity(newInstrumentRequest);
+			req.setEntity(newInstrumentRequest);
 
-            var newInstrumentEnt = new InstrumentEntity();
-            newInstrumentEnt.setName("Test Name");
-            newInstrumentEnt.setInformation("Instrument Information");
-            newInstrumentEnt.setType("Instrument Type");
-            newInstrumentEnt.setOutlineText("Instrument OutlineText");
+			var newInstrumentEnt = new InstrumentEntity();
+			newInstrumentEnt.setName("Test Name");
+			newInstrumentEnt.setInformation("Instrument Information");
+			newInstrumentEnt.setType("Instrument Type");
+			newInstrumentEnt.setOutlineText("Instrument OutlineText");
 
-            var newInstrument = new InstrumentResponse();
-            newInstrument.setName("Test Name");
-            newInstrument.setInformation("Instrument Information");
-            newInstrument.setType("Instrument Type");
-            newInstrument.setOutlineText("Instrument OutlineText");
+			var newInstrument = new InstrumentResponse();
+			newInstrument.setName("Test Name");
+			newInstrument.setInformation("Instrument Information");
+			newInstrument.setType("Instrument Type");
+			newInstrument.setOutlineText("Instrument OutlineText");
 
-            Mockito.when(instrumentDAO.persist(newInstrumentEnt)).thenReturn(null);
+			Mockito.when(instrumentDAO.persist(newInstrumentEnt)).thenReturn(null);
 
-            PayloadResponse<InstrumentResponse> instrumentFindResponse = instrumentService.create(req);
+			PayloadResponse<InstrumentResponse> instrumentFindResponse = instrumentService.create(req);
 
-            Assertions.assertThat(instrumentFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-                    .ignoringFields("created", "createdBy", "modified", "modifiedBy", "imageUrl", "status").isEqualTo(newInstrument);
-        } catch (Exception e) {
-            Assert.fail();
-        }
-    }
+			Assertions.assertThat(instrumentFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
+					.ignoringFields("created", "createdBy", "modified", "modifiedBy", "imageUrl", "status")
+					.isEqualTo(newInstrument);
+		} catch (Exception e) {
+			Assert.fail();
+		}
+	}
 
-    @Test(enabled = true)
-    public void testUpdateInstrument() {
-        try {
+	@Test(enabled = true)
+	public void testUpdateInstrument() {
+		try {
 
-            EntityRequest<InstrumentUpdateRequest> request = new EntityRequest<>();
+			EntityRequest<InstrumentUpdateRequest> request = new EntityRequest<>();
 
-            InstrumentEntity instrumentEntity = new InstrumentEntity();
-            instrumentEntity.setName("Update name");
-            instrumentEntity.setInformation("Instrument information");
-            instrumentEntity.setType("Update type");
-            instrumentEntity.setOutlineText("Update OutlineText");
+			InstrumentEntity instrumentEntity = new InstrumentEntity();
+			instrumentEntity.setName("Update name");
+			instrumentEntity.setInformation("Instrument information");
+			instrumentEntity.setType("Update type");
+			instrumentEntity.setOutlineText("Update OutlineText");
 
-            InstrumentResponse instrumentResponse = new InstrumentResponse();
-            instrumentEntity.setName("Update name");
-            instrumentEntity.setInformation("Instrument information");
-            instrumentEntity.setType("Update type");
-            instrumentEntity.setOutlineText("Update OutlineText");
+			InstrumentResponse instrumentResponse = new InstrumentResponse();
+			instrumentEntity.setName("Update name");
+			instrumentEntity.setInformation("Instrument information");
+			instrumentEntity.setType("Update type");
+			instrumentEntity.setOutlineText("Update OutlineText");
 
-            InstrumentUpdateRequest updateInstrumentRequest = new InstrumentUpdateRequest();
-            instrumentEntity.setName("Update name");
-            instrumentEntity.setInformation("Instrument information");
-            instrumentEntity.setType("Update type");
-            instrumentEntity.setOutlineText("Update OutlineText");
+			InstrumentUpdateRequest updateInstrumentRequest = new InstrumentUpdateRequest();
+			instrumentEntity.setName("Update name");
+			instrumentEntity.setInformation("Instrument information");
+			instrumentEntity.setType("Update type");
+			instrumentEntity.setOutlineText("Update OutlineText");
 
-            request.setEntity(updateInstrumentRequest);
+			request.setEntity(updateInstrumentRequest);
 
-            Mockito.when(instrumentRequestValidation.validateUpdateInstrumentRequest(request)).thenReturn(null);
+			Mockito.when(instrumentRequestValidation.validateUpdateInstrumentRequest(request)).thenReturn(null);
 
-            Mockito.when(instrumentDAO.findByPK(request.getEntity().getId())).thenReturn(instrumentEntity);
+			Mockito.when(instrumentDAO.findByPK(request.getEntity().getId())).thenReturn(instrumentEntity);
 
-            Mockito.doNothing().when(instrumentDAO).merge(instrumentEntity);
+			Mockito.doNothing().when(instrumentDAO).merge(instrumentEntity);
 
-            var instrumentUpdateResponse = instrumentService.update(request);
-            Assertions.assertThat(instrumentUpdateResponse.getPayload()).as("Check all fields")
-                    .overridingErrorMessage("All fields should be equal.").usingRecursiveComparison()
-                    .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(instrumentResponse);
+			var instrumentUpdateResponse = instrumentService.update(request);
+			Assertions.assertThat(instrumentUpdateResponse.getPayload()).as("Check all fields")
+					.overridingErrorMessage("All fields should be equal.").usingRecursiveComparison()
+					.ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(instrumentResponse);
 
-        } catch (Exception e) {
-            Assert.fail();
-        }
-    }
+		} catch (Exception e) {
+			Assert.fail();
+		}
+	}
 
-    @Test(enabled = true)
-    public void testDeleteInstrument() {
-        try {
-            var req = new EntityRequest<Long>();
+	@Test(enabled = true)
+	public void testDeleteInstrument() {
+		try {
+			var req = new EntityRequest<Long>();
 
-            req.setEntity(1L);
+			req.setEntity(1L);
 
-            Mockito.when(requestValidator.validate(req)).thenReturn(null);
+			Mockito.when(requestValidator.validate(req)).thenReturn(null);
 
-            Mockito.doNothing().when(instrumentDAO).removeByPK(req.getEntity());
+			Mockito.doNothing().when(instrumentDAO).removeByPK(req.getEntity());
 
-            var instrumentFindResponse = instrumentService.delete(req);
+			var instrumentFindResponse = instrumentService.delete(req);
 
-            Assertions.assertThat(instrumentFindResponse.getPayload()).isEqualTo("Instrument deleted");
+			Assertions.assertThat(instrumentFindResponse.getPayload()).isEqualTo("Instrument deleted");
 
-        } catch (Exception e) {
-            Assert.fail();
-        }
-    }
+		} catch (Exception e) {
+			Assert.fail();
+		}
+	}
 
 }
