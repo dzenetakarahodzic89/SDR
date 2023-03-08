@@ -107,4 +107,15 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return entityManager.createQuery(hql, LoV.class).setParameter("artist", "ARTIST").setMaxResults(responseLimit).getResultList();
 
     }
+
+    public List<ArtistEntity> findArtistsToFetchAlbumsFromSpotify(int responseLimit) {
+        var hql = "select a from ArtistEntity a where a.spotifyId is not null and length(a.spotifyId)>0 and a.spotifyStatus!=:status";
+        return entityManager.createQuery(hql, ArtistEntity.class).setMaxResults(responseLimit).setParameter("status", "Done")
+                .getResultList();
+    }
+
+    public List<ArtistEntity> artistsByAlbum(Long albumId) {
+        var hql = "select art from ArtistEntity art join SongArtistEntity sa on art.id=sa.artist.id where sa.album.id=:albumId";
+        return entityManager.createQuery(hql, ArtistEntity.class).setParameter("albumId", albumId).getResultList();
+    }
 }

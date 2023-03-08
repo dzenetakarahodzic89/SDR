@@ -68,6 +68,9 @@ public class AlbumEntity implements Serializable {
     @Column(name = "spotify_id")
     private String spotifyId;
 
+    @Column(name = "spotify_status")
+    private String spotifyStatus;
+
     // bi-directional many-to-one association to SongArtistEntity
     @OneToMany(mappedBy = "album")
     private List<SongArtistEntity> songArtists;
