@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -29,6 +29,8 @@ import ba.com.zira.sdr.core.impl.SongPlaylistServiceImpl;
 import ba.com.zira.sdr.core.mapper.SongPlaylistMapper;
 import ba.com.zira.sdr.core.validation.SongPlaylistRequestValidation;
 import ba.com.zira.sdr.dao.SongPlaylistDAO;
+import ba.com.zira.sdr.dao.model.PlaylistEntity;
+import ba.com.zira.sdr.dao.model.SongEntity;
 import ba.com.zira.sdr.dao.model.SongPlaylistEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
@@ -59,18 +61,24 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             List<SongPlaylistEntity> entities = new ArrayList<>();
 
             SongPlaylistEntity firstSongPlaylistEntity = new SongPlaylistEntity();
-            firstSongPlaylistEntity.setPlaylistId(Long.valueOf(5));
-            firstSongPlaylistEntity.setSongId(10L);
+            firstSongPlaylistEntity
+                    .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
+            firstSongPlaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null,
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             firstSongPlaylistEntity.setStatus(Status.ACTIVE.getValue());
 
             SongPlaylistEntity secondSongPlaylistEntity = new SongPlaylistEntity();
-            secondSongPlaylistEntity.setPlaylistId(Long.valueOf(5));
-            secondSongPlaylistEntity.setSongId(10L);
+            secondSongPlaylistEntity
+                    .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
+            secondSongPlaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null,
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             secondSongPlaylistEntity.setStatus(Status.INACTIVE.getValue());
 
             SongPlaylistEntity thirdSongPlaylistEntity = new SongPlaylistEntity();
-            thirdSongPlaylistEntity.setPlaylistId(Long.valueOf(5));
-            thirdSongPlaylistEntity.setSongId(10L);
+            thirdSongPlaylistEntity
+                    .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
+            thirdSongPlaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null,
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             thirdSongPlaylistEntity.setStatus(Status.ACTIVE.getValue());
 
             entities.add(firstSongPlaylistEntity);
@@ -133,8 +141,10 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             req.setEntity(newSongPlaylistRequest);
 
             var songplaylistEntity = new SongPlaylistEntity();
-            songplaylistEntity.setPlaylistId(Long.valueOf(5));
-            songplaylistEntity.setSongId(10L);
+            songplaylistEntity
+                    .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
+            songplaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             songplaylistEntity.setStatus(Status.ACTIVE.getValue());
 
             var newSongPlaylist = new SongPlaylist();
@@ -161,8 +171,10 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             EntityRequest<SongPlaylistUpdateRequest> request = new EntityRequest<>();
 
             SongPlaylistEntity songPlaylistEntity = new SongPlaylistEntity();
-            songPlaylistEntity.setPlaylistId(Long.valueOf(5));
-            songPlaylistEntity.setSongId(10L);
+            songPlaylistEntity
+                    .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
+            songPlaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null));
 
             SongPlaylist songPlaylistResponse = new SongPlaylist();
             songPlaylistResponse.setPlaylistId(Long.valueOf(5));
@@ -204,7 +216,6 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             var songplaylistDeleteResponse = songplaylistService.delete(req);
 
             Assertions.assertThat(songplaylistDeleteResponse.getPayload()).isEqualTo("SongPlaylist successfully deleted");
-
         } catch (Exception e) {
             Assert.fail();
         }
