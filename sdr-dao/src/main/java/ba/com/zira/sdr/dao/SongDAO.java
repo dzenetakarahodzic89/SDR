@@ -117,6 +117,16 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         return q.getSingleResult();
     }
 
+    public List<SongEntity> findAllByAlbumId(Long id) {
+        final CriteriaQuery<SongEntity> criteriaQuery = builder.createQuery(SongEntity.class);
+        final Root<SongEntity> root = criteriaQuery.from(SongEntity.class);
+        Join<SongEntity, SongArtistEntity> songArtists = root.join(SongEntity_.songArtists);
+        Join<SongArtistEntity, AlbumEntity> albumArtist = songArtists.join(SongArtistEntity_.album);
+        criteriaQuery.where(builder.equal(albumArtist.get(AlbumEntity_.id), id));
+        criteriaQuery.select(root).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
     public List<LoV> getSongsNotInAlbum(Long albumId) {
         var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from SongEntity s left join SongArtistEntity sa on s.id=sa.song.id where sa.album.id!=:albumId or sa.id=null";
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("albumId", albumId);
@@ -201,7 +211,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
     }
 
     public List<SongPersonResponse> findSongByPersonId(final Long personId) {
-        var hql = "select new ba.com.zira.sdr.api.model.song.SongPersonResponse(ss.id, ss.created, ss.createdBy, ss.dateOfRelease, ss.information, ss.modified, ss.modifiedBy, ss.name, ss.playtime, ss.outlineText, ss.spotifyId) from PersonEntity sp join PersonArtistEntity spa on sp.id = spa.person.id join ArtistEntity sa on spa.artist.id = sa.id join SongArtistEntity ssa on sa.id = ssa.artist.id join SongEntity ss on ssa.song.id=ss.id where sp.id = :personId";
+        var hql = "select new ba.com.zira.sdr.api.model.song.SongPersonResponse(ss.id, ss.created, ss.name, ss.status, ss.playtime, ss.dateOfRelease) from PersonEntity sp join PersonArtistEntity spa on sp.id = spa.person.id join ArtistEntity sa on spa.artist.id = sa.id join SongArtistEntity ssa on sa.id = ssa.artist.id join SongEntity ss on ssa.song.id=ss.id where sp.id = :personId";
         TypedQuery<SongPersonResponse> query = entityManager.createQuery(hql, SongPersonResponse.class).setParameter("personId", personId);
 
         return query.getResultList();

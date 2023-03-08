@@ -14,5 +14,6 @@ public abstract class SongEntity_ {
     public static volatile ListAttribute<SongEntity, SongArtistEntity> songArtists;
     public static volatile SingularAttribute<SongEntity, String> name;
     public static volatile SingularAttribute<SongEntity, GenreEntity> genre;
+    public static volatile SingularAttribute<SongEntity, Long> playtimeInSeconds;
 
 }

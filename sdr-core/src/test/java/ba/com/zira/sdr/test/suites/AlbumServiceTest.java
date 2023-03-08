@@ -34,6 +34,7 @@ import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.AlbumRequestValidation;
 import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
@@ -56,13 +57,14 @@ public class AlbumServiceTest extends BasicTestConfiguration {
     private AlbumRequestValidation albumRequestValidation;
     private AlbumService albumService;
     private LookupService lookupService;
+    private SongDAO songDAO;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.albumDAO = Mockito.mock(AlbumDAO.class);
         this.albumRequestValidation = Mockito.mock(AlbumRequestValidation.class);
-        this.albumService = new AlbumServiceImpl(albumDAO, songArtistDAO, null, null, songArtistMapper, albumMapper, songMapper,
+        this.albumService = new AlbumServiceImpl(albumDAO, songArtistDAO, songDAO, null, songArtistMapper, albumMapper, songMapper,
                 albumRequestValidation, lookupService, null, null);
     }
 
