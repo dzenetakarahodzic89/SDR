@@ -203,8 +203,7 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
 
             var songplaylistDeleteResponse = songplaylistService.delete(req);
 
-            Assertions.assertThat(songplaylistDeleteResponse.getPayload()).isEqualTo("SongPlaylist successfully deleted.");
-
+            Assertions.assertThat(songplaylistDeleteResponse.getPayload()).isEqualTo("SongPlaylist successfully deleted");
         } catch (Exception e) {
             Assert.fail();
         }
