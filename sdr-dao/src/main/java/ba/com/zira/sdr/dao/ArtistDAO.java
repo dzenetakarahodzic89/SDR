@@ -1,13 +1,13 @@
 package ba.com.zira.sdr.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.artist.ArtistLabelResponse;
@@ -103,7 +103,7 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
     public List<LoV> findArtistsToFetchFromSpotify(int responseLimit) {
         var cases = "case when a.surname is null then concat('artist:',a.name) else" + " concat('artist:',a.name,' ',a.surname) end";
         var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id," + cases + ") from ArtistEntity a left join"
-                + " SpotifyIntegrationEntity si on a.id = si.objectId and si.objectType like :artist where si.id = null";
+                + " SpotifyIntegrationEntity si on a.id = si.objectId and si.objectType like :artist where si.id = null and (a.spotifyId is null or length(a.spotifyId)=0)";
         return entityManager.createQuery(hql, LoV.class).setParameter("artist", "ARTIST").setMaxResults(responseLimit).getResultList();
 
     }

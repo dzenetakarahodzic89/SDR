@@ -1,5 +1,8 @@
 package ba.com.zira.sdr.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -9,9 +12,6 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.commons.message.request.SearchRequest;
@@ -137,7 +137,7 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
                 + " concat('album:',a.name,' ','artist:',sa.artist.name,' ',sa.artist.surname) end";
         var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id," + cases
                 + ") from AlbumEntity a left join SpotifyIntegrationEntity si on "
-                + "a.id = si.objectId and si.objectType like :album join SongArtistEntity sa on a.id=sa.album.id where si.id = null";
+                + "a.id = si.objectId and si.objectType like :album join SongArtistEntity sa on a.id=sa.album.id where si.id = null and (a.spotifyId is null or length(a.spotifyId)=0)";
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("album", "ALBUM").setMaxResults(responseLimit);
 
         return query.getResultList();
