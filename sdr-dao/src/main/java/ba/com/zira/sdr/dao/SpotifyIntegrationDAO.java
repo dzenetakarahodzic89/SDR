@@ -13,20 +13,23 @@ public class SpotifyIntegrationDAO extends AbstractDAO<SpotifyIntegrationEntity,
     public List<SpotifyIntegrationEntity> getObjectsWithoutSpotifyId(int responseLimit) {
 
         var albumHql = "select si from SpotifyIntegrationEntity si join AlbumEntity a on si.objectId=a.id and si.objectType like :type"
-                + " where a.spotifyId=null and a.spotifyStatus=null";
+                + " where a.spotifyId is null and a.spotifyStatus!=:status";
         var artistHql = "select si from SpotifyIntegrationEntity si join ArtistEntity art on si.objectId=art.id and si.objectType like :type"
-                + " where art.spotifyId=null and art.spotifyStatus=null";
+                + " where art.spotifyId is null and art.spotifyStatus!=:status";
         var songHql = "select si from SpotifyIntegrationEntity si join SongEntity s on si.objectId=s.id and si.objectType like :type"
-                + " where s.spotifyId=null and s.spotifyStatus=null";
+                + " where s.spotifyId is null and s.spotifyStatus!=:status";
 
         List<SpotifyIntegrationEntity> list1 = entityManager.createQuery(albumHql, SpotifyIntegrationEntity.class)
-                .setParameter("type", "ALBUM").setMaxResults(responseLimit).getResultList();
+                .setParameter("type", "ALBUM").setParameter("status", "Done").setMaxResults(responseLimit).getResultList();
         List<SpotifyIntegrationEntity> list2 = entityManager.createQuery(artistHql, SpotifyIntegrationEntity.class)
-                .setParameter("type", "ARTIST").setMaxResults(responseLimit).getResultList();
+                .setParameter("type", "ARTIST").setParameter("status", "Done").setMaxResults(responseLimit).getResultList();
         List<SpotifyIntegrationEntity> list3 = entityManager.createQuery(songHql, SpotifyIntegrationEntity.class)
-                .setParameter("type", "SONG").setMaxResults(responseLimit).getResultList();
+                .setParameter("type", "SONG").setParameter("status", "Done").setMaxResults(responseLimit).getResultList();
         list1.addAll(list2);
         list1.addAll(list3);
+        if (list1.size() > 5) {
+            return list1.subList(0, 5);
+        }
         return list1;
     }
 

@@ -1,5 +1,8 @@
 package ba.com.zira.sdr.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -10,18 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.model.Filter;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
+import ba.com.zira.sdr.api.model.album.AlbumPersonResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
 import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
-import ba.com.zira.sdr.api.model.album.AlbumPersonResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
@@ -206,7 +205,8 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
     }
 
     public List<AlbumEntity> findAlbumsToFetchSongsFromSpotify(int responseLimit) {
-        var hql = "select a from AlbumEntity a where a.spotifyId!=null and a.spotifyStatus=null";
-        return entityManager.createQuery(hql, AlbumEntity.class).setMaxResults(responseLimit).getResultList();
+        var hql = "select a from AlbumEntity a where a.spotifyId is not null and length(a.spotifyId)>0 and a.spotifyStatus!=:status";
+        return entityManager.createQuery(hql, AlbumEntity.class).setParameter("status", "Done").setMaxResults(responseLimit)
+                .getResultList();
     }
 }

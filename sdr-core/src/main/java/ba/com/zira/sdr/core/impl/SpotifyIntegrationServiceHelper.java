@@ -136,6 +136,7 @@ public class SpotifyIntegrationServiceHelper {
     private void fetchAlbumsFromSpotify(String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for albums on Spotify...");
         List<LoV> albums = albumDAO.findAlbumsToFetchFromSpotify(responseLimit);
+        LOGGER.info("SPOTIFY INTEGRATION: Found {} albums to fetch from Spotify.", albums.size());
         albums.forEach(album -> {
             var spotifyIntegration = new SpotifyIntegrationCreateRequest();
             spotifyIntegration.setName(album.getName());
@@ -150,14 +151,14 @@ public class SpotifyIntegrationServiceHelper {
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 spotifyIntegration.setResponse(response.getBody());
-                LOGGER.info("SPOTIFY INTEGRATION: Albums successfully found!");
+                LOGGER.info("SPOTIFY INTEGRATION: Album successfully found!");
                 try {
                     var entityRequest = new EntityRequest<>(spotifyIntegration);
                     entityRequest.setUser(systemUser);
                     spotifyIntegrationService.create(entityRequest);
-                    LOGGER.info("SPOTIFY INTEGRATION: Album responses successfully saved to database!");
+                    LOGGER.info("SPOTIFY INTEGRATION: Album response successfully saved to database!");
                 } catch (ApiException e) {
-                    LOGGER.error("SPOTIFY INTEGRATION: Error saving album responses to database! Exception message: {}", e.getMessage());
+                    LOGGER.error("SPOTIFY INTEGRATION: Error saving album response to database! Exception message: {}", e.getMessage());
                 }
             } else {
                 LOGGER.error("SPOTIFY INTEGRATION: Album search request failed! Api response: {}", response.getBody());
@@ -170,6 +171,7 @@ public class SpotifyIntegrationServiceHelper {
     private void fetchSongsFromSpotify(String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for songs on Spotify...");
         List<LoV> songs = songDAO.findSongsToFetchFromSpotify(responseLimit);
+        LOGGER.info("SPOTIFY INTEGRATION: Found {} songs to fetch from Spotify.", songs.size());
         songs.forEach(song -> {
             var spotifyIntegration = new SpotifyIntegrationCreateRequest();
             spotifyIntegration.setName(song.getName());
@@ -184,14 +186,14 @@ public class SpotifyIntegrationServiceHelper {
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 spotifyIntegration.setResponse(response.getBody());
-                LOGGER.info("SPOTIFY INTEGRATION: Songs successfully found!");
+                LOGGER.info("SPOTIFY INTEGRATION: Song successfully found!");
                 try {
                     var entityRequest = new EntityRequest<>(spotifyIntegration);
                     entityRequest.setUser(systemUser);
                     spotifyIntegrationService.create(entityRequest);
-                    LOGGER.info("SPOTIFY INTEGRATION: Song responses successfully saved to database!");
+                    LOGGER.info("SPOTIFY INTEGRATION: Song response successfully saved to database!");
                 } catch (ApiException e) {
-                    LOGGER.error("SPOTIFY INTEGRATION: Error saving song responses to database! Exception message: {}", e.getMessage());
+                    LOGGER.error("SPOTIFY INTEGRATION: Error saving song response to database! Exception message: {}", e.getMessage());
                 }
             } else {
                 LOGGER.error("SPOTIFY INTEGRATION: Song search request failed! Api response: {}", response.getBody());
@@ -204,6 +206,7 @@ public class SpotifyIntegrationServiceHelper {
     private void fetchArtistsFromSpotify(String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for artists on Spotify...");
         List<LoV> artists = artistDAO.findArtistsToFetchFromSpotify(responseLimit);
+        LOGGER.info("SPOTIFY INTEGRATION: Found {} artists to fetch from Spotify.", artists.size());
         artists.forEach(artist -> {
             var spotifyIntegration = new SpotifyIntegrationCreateRequest();
             spotifyIntegration.setName(artist.getName());
@@ -218,14 +221,14 @@ public class SpotifyIntegrationServiceHelper {
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 spotifyIntegration.setResponse(response.getBody());
-                LOGGER.info("SPOTIFY INTEGRATION: Artists successfully found!");
+                LOGGER.info("SPOTIFY INTEGRATION: Artist successfully found!");
                 try {
                     var entityRequest = new EntityRequest<>(spotifyIntegration);
                     entityRequest.setUser(systemUser);
                     spotifyIntegrationService.create(entityRequest);
-                    LOGGER.info("SPOTIFY INTEGRATION: Artist responses successfully saved to database!");
+                    LOGGER.info("SPOTIFY INTEGRATION: Artist response successfully saved to database!");
                 } catch (ApiException e) {
-                    LOGGER.error("SPOTIFY INTEGRATION: Error saving artist responses to database! Exception message: {}", e.getMessage());
+                    LOGGER.error("SPOTIFY INTEGRATION: Error saving artist response to database! Exception message: {}", e.getMessage());
                 }
             } else {
                 LOGGER.error("SPOTIFY INTEGRATION: Artist search request failed! Api response: {}", response.getBody());
@@ -237,8 +240,7 @@ public class SpotifyIntegrationServiceHelper {
     private void updateSpotifyId() {
         LOGGER.info("SPOTIFY INTEGRATION: Fetching objects without Spotify id...");
         var objectsToUpdateSpotifyId = spotifyIntegrationDAO.getObjectsWithoutSpotifyId(responseLimit);
-        var numberOfFetchedObjects = objectsToUpdateSpotifyId.size();
-        LOGGER.info("SPOTIFY INTEGRATION: Fetched {} objects without Spotify id.", numberOfFetchedObjects);
+        LOGGER.info("SPOTIFY INTEGRATION: Fetched {} objects without Spotify id.", objectsToUpdateSpotifyId.size());
         objectsToUpdateSpotifyId.forEach(r -> {
 
             switch (r.getObjectType()) {
@@ -369,7 +371,7 @@ public class SpotifyIntegrationServiceHelper {
             songEntity.setCreated(LocalDateTime.now());
             songEntity.setCreatedBy(systemUser.getUserId());
             songEntity.setStatus("Active");
-
+            songEntity.setPlaytimeInSeconds(TimeUnit.MILLISECONDS.toSeconds(durationInMs));
             try {
                 songDAO.persist(songEntity);
 
@@ -504,7 +506,7 @@ public class SpotifyIntegrationServiceHelper {
         });
     }
 
-    @Scheduled(fixedDelay = 600000)
+    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}")
     public void fetchDataFromSpotify() {
         LOGGER.info("SPOTIFY INTEGRATION: Scheduled search started");
         String token = getAuthenticationToken();
@@ -513,7 +515,7 @@ public class SpotifyIntegrationServiceHelper {
         fetchArtistsFromSpotify(token);
     }
 
-    @Scheduled(fixedDelay = 600000, initialDelay = 300000)
+    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}", initialDelay = 300000)
     public void updateWithDataFromSpotify() {
         LOGGER.info("SPOTIFY INTEGRATION: Scheduled data update started");
         updateSpotifyId();

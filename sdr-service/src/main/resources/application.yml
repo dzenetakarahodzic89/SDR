@@ -32,6 +32,8 @@ spring:
               accessTokenUri: https://accounts.spotify.com/api/token
               apiUrl: https://api.spotify.com/v1
               responseLimit: 5
+              taskDelay: 600000
+              
 
 uaa:
   service:
@@ -56,7 +58,7 @@ eureka:
   instance:
     preferIpAddress: true
   client:
-    registerWithEureka: false
+    registerWithEureka: true
     serviceUrl:
       defaultZone: http://172.20.20.45:8081/eureka
   
