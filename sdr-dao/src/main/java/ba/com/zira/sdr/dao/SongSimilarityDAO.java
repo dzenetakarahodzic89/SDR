@@ -15,7 +15,7 @@ import ba.com.zira.sdr.dao.model.SongSimilarityEntity;
 public class SongSimilarityDAO extends AbstractDAO<SongSimilarityEntity, Long> {
 
     public List<SongSimilarityResponse> getAllSongSimilarity() {
-        var hql = "select new ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse "
+        var hql = "select new ba.com.zira.sdr.api.model.songsimilarity.SongSimilarityResponse "
                 + "(ss.id, MAX(ss.songA.id), MAX(sA.name), MAX(aA.name), MAX(aA.dateOfRelease), MAX(ss.songB.id), MAX(sB.name), MAX(aB.name), MAX(aB.dateOfRelease)) "
                 + "from SongSimilarityEntity ss join SongEntity sA on ss.songA.id = sA.id "
                 + "join SongEntity sB on ss.songB.id = sB.id join SongArtistEntity saA on sA.id=saA.song.id "
@@ -27,7 +27,7 @@ public class SongSimilarityDAO extends AbstractDAO<SongSimilarityEntity, Long> {
     }
 
     public SongSimilarityResponse getRandomSongSimilarity() {
-        var hql = "select new ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse "
+        var hql = "select new ba.com.zira.sdr.api.model.songsimilarity.SongSimilarityResponse "
                 + "(ss.id, MAX(ss.songA.id), MAX(sA.name), MAX(aA.name), MAX(aA.dateOfRelease), MAX(ss.songB.id), MAX(sB.name), MAX(aB.name), MAX(aB.dateOfRelease)) "
                 + "from SongSimilarityEntity ss join SongEntity sA on ss.songA.id = sA.id "
                 + "join SongEntity sB on ss.songB.id = sB.id join SongArtistEntity saA on sA.id=saA.song.id "
