@@ -11,6 +11,7 @@ import ba.com.zira.sdr.api.model.genre.Genre;
 import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
 import ba.com.zira.sdr.api.model.genre.GenreEraOverview;
 import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 
 /**
  * The interface Genre service.
@@ -38,6 +39,28 @@ public interface GenreService {
      *             the api exception
      */
     public ListPayloadResponse<GenreEraOverview> getGenresOverEras(EmptyRequest request) throws ApiException;
+
+    /**
+     * Gets the main genres.
+     *
+     * @param request
+     *            the request
+     * @return main genres LoV
+     * @throws ApiException
+     *             the api exception
+     */
+    public ListPayloadResponse<LoV> getMainGenresLoV(EmptyRequest request) throws ApiException;
+
+    /**
+     * Gets the genres over eras.
+     *
+     * @param request
+     *            the request
+     * @return subgenres of genre LoV
+     * @throws ApiException
+     *             the api exception
+     */
+    public ListPayloadResponse<LoV> getSubgenresLoV(EntityRequest<Long> request) throws ApiException;
 
     /**
      * Create payload response.

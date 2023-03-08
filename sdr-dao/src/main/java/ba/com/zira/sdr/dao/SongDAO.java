@@ -75,7 +75,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
                 .where(predicateArray)).setMaxResults(request.getAmountOfSongs().intValue()).getResultList();
     }
 
-    public Map<Long, String> songsByGenre(Long genreId) {
+    public Map<Long, String> songsByGenre(final Long genreId) {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from SongEntity s where s.genre.id = :id";
         TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setParameter("id", genreId);
         try {
@@ -85,8 +85,8 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         }
     }
 
-    public SongSingleResponse getById(Long songId) {
-        var hql = "select new ba.com.zira.sdr.api.model.song.SongSingleResponse(ss.id, ss.name, ss.outlineText,ss.information,ss.dateOfRelease,scp.name,sg.name,sg.id) from SongEntity ss left join ChordProgressionEntity scp on ss.chordProgression.id =scp.id left join GenreEntity sg on ss.genre.id = sg.id where ss.id =:id";
+    public SongSingleResponse getById(final Long songId) {
+        var hql = "select new ba.com.zira.sdr.api.model.song.SongSingleResponse(ss.id, ss.name, ss.outlineText,ss.information,ss.dateOfRelease,ss.playtime,ss.remix.id,ss.cover.id,scp.name,sg.name,sg.id) from SongEntity ss left join SongEntity on ss.remix.id=ss.id left join SongEntity on ss.cover.id=ss.id left join ChordProgressionEntity scp on ss.chordProgression.id =scp.id left join GenreEntity sg on ss.genre.id = sg.id where ss.id =:id";
         TypedQuery<SongSingleResponse> q = entityManager.createQuery(hql, SongSingleResponse.class).setParameter("id", songId);
         return q.getSingleResult();
     }
@@ -111,7 +111,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
-    public Long countAllPlaylistsWhereSongExists(Long songId) {
+    public Long countAllPlaylistsWhereSongExists(final Long songId) {
         var hql = "select count(*) from SongPlaylistEntity ssp where ssp.song.id =:id";
         TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", songId);
         return q.getSingleResult();

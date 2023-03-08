@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.genre.rest;
 
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -25,6 +25,7 @@ import ba.com.zira.sdr.api.model.genre.Genre;
 import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
 import ba.com.zira.sdr.api.model.genre.GenreEraOverview;
 import ba.com.zira.sdr.api.model.genre.GenreUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,7 +41,7 @@ public class GenreRestService {
 
     @Operation(summary = "Find genres based on filter criteria")
     @GetMapping
-    public PagedPayloadResponse<Genre> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
+    public PagedPayloadResponse<Genre> find(@RequestParam final Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
             throws ApiException {
         return genreService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
@@ -50,6 +51,20 @@ public class GenreRestService {
     public ListPayloadResponse<GenreEraOverview> getGenresOverEras() throws ApiException {
         var request = new EmptyRequest();
         return genreService.getGenresOverEras(request);
+    }
+
+    @Operation(summary = "Get main genres - LoV")
+    @GetMapping(value = "main-genre")
+    public ListPayloadResponse<LoV> getMainGenresLoV() throws ApiException {
+        var request = new EmptyRequest();
+        return genreService.getMainGenresLoV(request);
+    }
+
+    @Operation(summary = "Get subgenres of genre - LoV")
+    @GetMapping(value = "{id}/subgenres")
+    public ListPayloadResponse<LoV> getSubgenresLoV(
+            @Parameter(required = true, description = "Id of the genre") @PathVariable final Long id) throws ApiException {
+        return genreService.getSubgenresLoV(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Create a genre")

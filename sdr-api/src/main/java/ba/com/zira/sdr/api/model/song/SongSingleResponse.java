@@ -26,6 +26,9 @@ public class SongSingleResponse implements Serializable {
     private String information;
     private int playlistCount;
     private LocalDateTime dateOfRelease;
+    private String playtime;
+    private Long remixId;
+    private Long coverId;
     @Schema(description = "Label name")
     private String label;
     @Schema(description = "Chord progression name")
@@ -34,6 +37,7 @@ public class SongSingleResponse implements Serializable {
     private Long genreId;
     @Schema(description = "Genre name")
     private String genre;
+    private Long subgenreId;
     @Schema(description = "Subgenres - format 1-rock")
     private Map<Long, String> subgenres;
     @Schema(description = "List of artists")
@@ -41,13 +45,17 @@ public class SongSingleResponse implements Serializable {
 
     private String audioUrl;
 
-    public SongSingleResponse(Long id, String songName, String outlineText, String information, LocalDateTime dateOfRelease,
-            String chordName, String genreName, Long genreId) {
+    public SongSingleResponse(final Long id, final String songName, final String outlineText, final String information,
+            final LocalDateTime dateOfRelease, final String playtime, final Long remixId, final Long coverId, final String chordName,
+            final String genreName, final Long genreId) {
         this.id = id;
         this.name = songName;
         this.outlineText = outlineText;
         this.information = information;
         this.dateOfRelease = dateOfRelease;
+        this.playtime = playtime;
+        this.remixId = remixId;
+        this.coverId = coverId;
         this.chordProgression = chordName;
         this.genre = genreName;
         this.genreId = genreId;

@@ -174,7 +174,7 @@ public class GenreServiceImpl implements GenreService {
      *             the api exception
      */
     @Override
-    public ListPayloadResponse<GenreEraOverview> getGenresOverEras(EmptyRequest request) throws ApiException {
+    public ListPayloadResponse<GenreEraOverview> getGenresOverEras(final EmptyRequest request) throws ApiException {
         List<SongGenreEraLink> links = songDAO.findSongGenreEraLinks();
         Map<LoV, List<SongGenreEraLink>> songsByEras = new HashMap<>();
 
@@ -210,7 +210,7 @@ public class GenreServiceImpl implements GenreService {
      *            the song links
      * @return the map
      */
-    private Map<LoV, Double> calculateGenrePercentageInEra(List<SongGenreEraLink> songLinks) {
+    private Map<LoV, Double> calculateGenrePercentageInEra(final List<SongGenreEraLink> songLinks) {
         Map<LoV, Double> genrePercentageInEra = new HashMap<>();
         songLinks.forEach(link -> {
             var genreLoV = new LoV(link.getGenreId(), link.getGenreName());
@@ -222,6 +222,19 @@ public class GenreServiceImpl implements GenreService {
         });
         genrePercentageInEra.replaceAll((key, value) -> (value / songLinks.size()) * 100);
         return genrePercentageInEra;
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> getMainGenresLoV(final EmptyRequest request) throws ApiException {
+        List<LoV> mainGenres = genreDAO.getMainGenresLoV();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, mainGenres);
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> getSubgenresLoV(final EntityRequest<Long> request) throws ApiException {
+        List<LoV> subgenres = genreDAO.getSubgenresLoV(request.getEntity());
+        return new ListPayloadResponse<>(request, ResponseCode.OK, subgenres);
+
     }
 
 }

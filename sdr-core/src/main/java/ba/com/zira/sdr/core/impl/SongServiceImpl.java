@@ -34,6 +34,7 @@ import ba.com.zira.sdr.dao.GenreDAO;
 import ba.com.zira.sdr.dao.LyricDAO;
 import ba.com.zira.sdr.dao.NoteSheetDAO;
 import ba.com.zira.sdr.dao.SongDAO;
+import ba.com.zira.sdr.dao.model.GenreEntity;
 import ba.com.zira.sdr.dao.model.LyricEntity;
 import ba.com.zira.sdr.dao.model.NoteSheetEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
@@ -84,6 +85,21 @@ public class SongServiceImpl implements SongService {
         return new PagedPayloadResponse<>(request, ResponseCode.OK, songPD);
     }
 
+    private void determineSubgenre(final Long genreId, final SongSingleResponse song) {
+        GenreEntity mainGenreEntity = genreDAO.findByPK(genreId).getMainGenre();
+
+        if (mainGenreEntity == null) {
+            song.setSubgenreId(null);
+        } else {
+            Long mainGenreId = mainGenreEntity.getId();
+            String mainGenreName = mainGenreEntity.getName();
+
+            song.setSubgenreId(genreId);
+            song.setGenreId(mainGenreId);
+            song.setGenre(mainGenreName);
+        }
+    }
+
     @Override
     public PayloadResponse<SongSingleResponse> retrieveById(final EntityRequest<Long> request) {
         songRequestValidation.validateExistsSongRequest(request);
@@ -95,6 +111,7 @@ public class SongServiceImpl implements SongService {
         song.setPlaylistCount(songDAO.countAllPlaylistsWhereSongExists(request.getEntity()).intValue());
         song.setArtists(artistDAO.getBySongId(request.getEntity()));
         song.setSubgenres(genreDAO.subGenresByMainGenre(song.getGenreId()));
+        determineSubgenre(song.getGenreId(), song);
         return new PayloadResponse<>(request, ResponseCode.OK, song);
     }
 
