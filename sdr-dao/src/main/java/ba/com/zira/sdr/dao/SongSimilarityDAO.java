@@ -10,7 +10,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
-import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse;
+import ba.com.zira.sdr.api.model.songsimilarity.SongSimilarityResponse;
 import ba.com.zira.sdr.dao.model.SongEntity_;
 import ba.com.zira.sdr.dao.model.SongSimilarityEntity;
 import ba.com.zira.sdr.dao.model.SongSimilarityEntity_;

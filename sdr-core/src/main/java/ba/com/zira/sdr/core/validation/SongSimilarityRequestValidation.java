@@ -6,7 +6,7 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
-import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityCreateRequest;
+import ba.com.zira.sdr.api.model.songsimilarity.SongSimilarityCreateRequest;
 import ba.com.zira.sdr.dao.SongSimilarityDAO;
 import lombok.AllArgsConstructor;
 
