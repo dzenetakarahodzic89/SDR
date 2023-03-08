@@ -28,15 +28,18 @@ public class SongPlaylistRequestValidationTest extends BasicTestConfiguration {
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
-        this.songPlaylistDAO = Mockito.mock(SongPlaylistDAO.class);
         this.songDAO = Mockito.mock(SongDAO.class);
         this.playlistDAO = Mockito.mock(PlaylistDAO.class);
+        this.songPlaylistDAO = Mockito.mock(SongPlaylistDAO.class);
         this.validation = new SongPlaylistRequestValidation(songPlaylistDAO, songDAO, playlistDAO);
     }
 
     @Test
     public void validateUpdateRequestSongPlaylistNotFound() {
         Mockito.when(songPlaylistDAO.existsByPK(1L)).thenReturn(false);
+        Mockito.when(songDAO.existsByPK(null)).thenReturn(true);
+        Mockito.when(playlistDAO.existsByPK(null)).thenReturn(true);
+
         EntityRequest<SongPlaylistUpdateRequest> request = new EntityRequest<>();
         request.setUser(new User("TEST"));
         var respose = new SongPlaylistUpdateRequest();
@@ -45,15 +48,13 @@ public class SongPlaylistRequestValidationTest extends BasicTestConfiguration {
         ValidationResponse validationResponse = validation.validateUpdateSongPlaylistRequest(request);
 
         assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-        assertEquals(validationResponse.getDescription(),
-                "SongPlaylist with id: 1 does not exist! | Song with id: null does not exist! | Playlist with id: null does not exist!");
+        assertEquals(validationResponse.getDescription(), "SongPlaylist with id: 1 does not exist!");
         Mockito.verify(songPlaylistDAO).existsByPK(1L);
     }
 
     @Test
     public void validateExistsSongPlaylistNotFound() {
         Mockito.when(songPlaylistDAO.existsByPK(1L)).thenReturn(false);
-        Mockito.when(songDAO.existsByPK(1L)).thenReturn(false);
         EntityRequest<Long> request = new EntityRequest<>();
         request.setUser(new User("TEST"));
         request.setEntity(1L);
