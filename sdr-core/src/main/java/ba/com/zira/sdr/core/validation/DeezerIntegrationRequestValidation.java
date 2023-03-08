@@ -6,7 +6,6 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
-import ba.com.zira.sdr.api.DeezerIntegrationService;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationUpdateRequest;
 import ba.com.zira.sdr.dao.DeezerIntegrationDAO;
 import lombok.AllArgsConstructor;

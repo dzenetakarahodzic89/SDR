@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JsonParser;
@@ -55,13 +57,16 @@ public class SpotifyIntegrationServiceHelper {
     @Value("${spring.security.oauth2.client.registration.spotify.responseLimit}")
     private int responseLimit;
     private static final User systemUser = new User("System");
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BEARER = "Bearer ";
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyIntegrationServiceHelper.class);
 
     private String getAuthenticationToken() {
         String auth = clientId + ":" + clientSecret;
         byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
         String authHeader = "Basic " + new String(encodedAuth);
         var headers = new HttpHeaders();
-        headers.set("Authorization", authHeader);
+        headers.set(AUTHORIZATION, authHeader);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         var body = "grant_type=client_credentials";
@@ -89,7 +94,7 @@ public class SpotifyIntegrationServiceHelper {
             spotifyIntegration.setObjectType("ALBUM");
 
             var headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + token);
+            headers.set(AUTHORIZATION, BEARER + token);
             headers.setContentType(MediaType.APPLICATION_JSON);
             var url = spotifyApiUrl + "?q=" + album.getName() + "&type=album&limit=" + responseLimit;
 
@@ -106,7 +111,7 @@ public class SpotifyIntegrationServiceHelper {
                     entityRequest.setUser(systemUser);
                     spotifyIntegrationService.create(entityRequest);
                 } catch (ApiException e) {
-                    e.printStackTrace();
+                    LOGGER.debug(e.getMessage());
                 }
             }
 
@@ -123,7 +128,7 @@ public class SpotifyIntegrationServiceHelper {
             spotifyIntegration.setObjectType("SONG");
 
             var headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + token);
+            headers.set(AUTHORIZATION, BEARER + token);
             headers.setContentType(MediaType.APPLICATION_JSON);
             var url = spotifyApiUrl + "?q=" + song.getName() + "&type=track&limit=" + responseLimit;
 
@@ -140,7 +145,7 @@ public class SpotifyIntegrationServiceHelper {
                     entityRequest.setUser(systemUser);
                     spotifyIntegrationService.create(entityRequest);
                 } catch (ApiException e) {
-                    e.printStackTrace();
+                    LOGGER.debug(e.getMessage());
                 }
             }
 
@@ -157,7 +162,7 @@ public class SpotifyIntegrationServiceHelper {
             spotifyIntegration.setObjectType("ARTIST");
 
             var headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + token);
+            headers.set(AUTHORIZATION, BEARER + token);
             headers.setContentType(MediaType.APPLICATION_JSON);
             var url = spotifyApiUrl + "?q=" + artist.getName() + "&type=artist&limit=" + responseLimit;
 
@@ -174,7 +179,7 @@ public class SpotifyIntegrationServiceHelper {
                     entityRequest.setUser(systemUser);
                     spotifyIntegrationService.create(entityRequest);
                 } catch (ApiException e) {
-                    e.printStackTrace();
+                    LOGGER.debug(e.getMessage());
                 }
             }
         });
