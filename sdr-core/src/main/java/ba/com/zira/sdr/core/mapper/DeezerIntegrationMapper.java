@@ -1,12 +1,13 @@
 package ba.com.zira.sdr.core.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
-import java.util.List;
-
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegration;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationCreateRequest;
+import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationCreateRequestExtend;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationUpdateRequest;
 import ba.com.zira.sdr.dao.model.DeezerIntegrationEntity;
 
@@ -14,6 +15,8 @@ import ba.com.zira.sdr.dao.model.DeezerIntegrationEntity;
 public interface DeezerIntegrationMapper {
 
     DeezerIntegrationEntity dtoToEntity(DeezerIntegrationCreateRequest deezerIntegration);
+
+    DeezerIntegrationEntity dtoToEntityExtended(DeezerIntegrationCreateRequestExtend deezerIntegration);
 
     DeezerIntegration entityToDto(DeezerIntegrationEntity deezerIntegrationEntity);
 
