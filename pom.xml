@@ -91,6 +91,5 @@
 		<module>sdr-rest</module>
 		<module>sdr-service</module>
 		<module>sdr-fatjar</module>
-		<module>sdr-spotify</module>
 	</modules>
 </project>

@@ -2,8 +2,6 @@ package ba.com.zira.sdr.dao;
 
 import java.util.List;
 
-import javax.persistence.TypedQuery;
-
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
@@ -14,14 +12,22 @@ public class SpotifyIntegrationDAO extends AbstractDAO<SpotifyIntegrationEntity,
 
     public List<SpotifyIntegrationEntity> getObjectsWithoutSpotifyId(int responseLimit) {
 
-        var hql = "select si from SpotifyIntegrationEntity si join AlbumEntity a on si.objectId=a.id and si.objectType like 'ALBUM'"
-                + " join ArtistEntity art on si.objectId=art.id and si.objectType like 'ARTIST'"
-                + " join SongEntity s on si.objectId and si.objectType like 'SONG'"
-                + " where a.spotifyId=null and s.spotifyId=null and art.spotifyId=null";
+        var albumHql = "select si from SpotifyIntegrationEntity si join AlbumEntity a on si.objectId=a.id and si.objectType like :type"
+                + " where a.spotifyId=null and a.spotifyStatus=null";
+        var artistHql = "select si from SpotifyIntegrationEntity si join ArtistEntity art on si.objectId=art.id and si.objectType like :type"
+                + " where art.spotifyId=null and art.spotifyStatus=null";
+        var songHql = "select si from SpotifyIntegrationEntity si join SongEntity s on si.objectId=s.id and si.objectType like :type"
+                + " where s.spotifyId=null and s.spotifyStatus=null";
 
-        TypedQuery<SpotifyIntegrationEntity> q = entityManager.createQuery(hql, SpotifyIntegrationEntity.class)
-                .setMaxResults(responseLimit);
-        return q.getResultList();
+        List<SpotifyIntegrationEntity> list1 = entityManager.createQuery(albumHql, SpotifyIntegrationEntity.class)
+                .setParameter("type", "ALBUM").setMaxResults(responseLimit).getResultList();
+        List<SpotifyIntegrationEntity> list2 = entityManager.createQuery(artistHql, SpotifyIntegrationEntity.class)
+                .setParameter("type", "ARTIST").setMaxResults(responseLimit).getResultList();
+        List<SpotifyIntegrationEntity> list3 = entityManager.createQuery(songHql, SpotifyIntegrationEntity.class)
+                .setParameter("type", "SONG").setMaxResults(responseLimit).getResultList();
+        list1.addAll(list2);
+        list1.addAll(list3);
+        return list1;
     }
 
 }
