@@ -1,20 +1,9 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,16 +19,30 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ba.com.zira.commons.exception.ApiException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.model.User;
+import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.sdr.api.SpotifyIntegrationService;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.multisearch.MultiSearchResponse;
 import ba.com.zira.sdr.api.model.spotifyintegration.SpotifyIntegrationCreateRequest;
 import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.GenreDAO;
 import ba.com.zira.sdr.dao.LabelDAO;
+import ba.com.zira.sdr.dao.MultiSearchDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.SpotifyIntegrationDAO;
@@ -83,6 +86,10 @@ public class SpotifyIntegrationServiceHelper {
     private SpotifyIntegrationService spotifyIntegrationService;
     @NonNull
     private SpotifyIntegrationDAO spotifyIntegrationDAO;
+
+    @NonNull
+    MultiSearchDAO multiSearchDAO;
+
     @Value("${spring.security.oauth2.client.registration.spotify.clientId}")
     private String clientId;
     @Value("${spring.security.oauth2.client.registration.spotify.clientSecret}")
@@ -93,11 +100,11 @@ public class SpotifyIntegrationServiceHelper {
     private String spotifyApiUrl;
     @Value("${spring.security.oauth2.client.registration.spotify.responseLimit}")
     private int responseLimit;
-    private static final User systemUser = new User("System");
+    private static final User systemUser = new User("Spotify Integration");
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyIntegrationServiceHelper.class);
     private static final String AUTHORIZATION = "Authorization";
 
-    private HttpEntity getHttpEntity(String token) {
+    private HttpEntity<?> getHttpEntity(String token) {
         var headers = new HttpHeaders();
         headers.set(AUTHORIZATION, "Bearer " + token);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -116,20 +123,23 @@ public class SpotifyIntegrationServiceHelper {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         var body = "grant_type=client_credentials";
 
-        HttpEntity<String> entity = new HttpEntity<>(body, headers);
+        try {
+            HttpEntity<String> entity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(spotifyAuthUrl, HttpMethod.POST, entity, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(spotifyAuthUrl, HttpMethod.POST, entity, String.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            LOGGER.info("SPOTIFY INTEGRATION: Authentication token successfully obtained!");
-            var responseBody = response.getBody();
-            JsonParser springParser = JsonParserFactory.getJsonParser();
-            Map<String, Object> map = springParser.parseMap(responseBody);
-            return (String) map.get("access_token");
-        } else {
-            LOGGER.error("SPOTIFY INTEGRATION: Authentication token request failed! Api response: {}", response.getBody());
+            if (response.getStatusCode() == HttpStatus.OK) {
+                LOGGER.info("SPOTIFY INTEGRATION: Authentication token successfully obtained!");
+                var responseBody = response.getBody();
+                var springParser = JsonParserFactory.getJsonParser();
+                Map<String, Object> map = springParser.parseMap(responseBody);
+                return (String) map.get("access_token");
+            } else {
+                LOGGER.error("SPOTIFY INTEGRATION: Authentication token request failed! Api response: {}", response.getBody());
+            }
+        } catch (Exception e) {
+            LOGGER.error("SPOTIFY INTEGRATION: Authentication token request failed! Api response: {}", e.getMessage());
         }
-
         return null;
     }
 
@@ -147,21 +157,20 @@ public class SpotifyIntegrationServiceHelper {
 
             spotifyIntegration.setRequest(url);
 
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, getHttpEntity(token), String.class);
-
-            if (response.getStatusCode() == HttpStatus.OK) {
-                spotifyIntegration.setResponse(response.getBody());
-                LOGGER.info("SPOTIFY INTEGRATION: Album successfully found!");
-                try {
+            try {
+                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, getHttpEntity(token), String.class);
+                if (response.getStatusCode() == HttpStatus.OK) {
+                    spotifyIntegration.setResponse(response.getBody());
+                    LOGGER.info("SPOTIFY INTEGRATION: Album successfully found!");
                     var entityRequest = new EntityRequest<>(spotifyIntegration);
                     entityRequest.setUser(systemUser);
                     spotifyIntegrationService.create(entityRequest);
                     LOGGER.info("SPOTIFY INTEGRATION: Album response successfully saved to database!");
-                } catch (ApiException e) {
-                    LOGGER.error("SPOTIFY INTEGRATION: Error saving album response to database! Exception message: {}", e.getMessage());
+                } else {
+                    LOGGER.error("SPOTIFY INTEGRATION: Album search request failed! Api response: {}", response.getBody());
                 }
-            } else {
-                LOGGER.error("SPOTIFY INTEGRATION: Album search request failed! Api response: {}", response.getBody());
+            } catch (Exception e) {
+                LOGGER.error("SPOTIFY INTEGRATION: Album search request failed! Api response: {}", e.getMessage());
             }
 
         });
@@ -182,21 +191,22 @@ public class SpotifyIntegrationServiceHelper {
 
             spotifyIntegration.setRequest(url);
 
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, getHttpEntity(token), String.class);
+            try {
+                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, getHttpEntity(token), String.class);
 
-            if (response.getStatusCode() == HttpStatus.OK) {
-                spotifyIntegration.setResponse(response.getBody());
-                LOGGER.info("SPOTIFY INTEGRATION: Song successfully found!");
-                try {
+                if (response.getStatusCode() == HttpStatus.OK) {
+                    spotifyIntegration.setResponse(response.getBody());
+                    LOGGER.info("SPOTIFY INTEGRATION: Song successfully found!");
                     var entityRequest = new EntityRequest<>(spotifyIntegration);
                     entityRequest.setUser(systemUser);
                     spotifyIntegrationService.create(entityRequest);
                     LOGGER.info("SPOTIFY INTEGRATION: Song response successfully saved to database!");
-                } catch (ApiException e) {
-                    LOGGER.error("SPOTIFY INTEGRATION: Error saving song response to database! Exception message: {}", e.getMessage());
+
+                } else {
+                    LOGGER.error("SPOTIFY INTEGRATION: Song search request failed! Api response: {}", response.getBody());
                 }
-            } else {
-                LOGGER.error("SPOTIFY INTEGRATION: Song search request failed! Api response: {}", response.getBody());
+            } catch (Exception e) {
+                LOGGER.error("SPOTIFY INTEGRATION: Song search request failed! Api response: {}", e.getMessage());
             }
 
         });
@@ -217,21 +227,21 @@ public class SpotifyIntegrationServiceHelper {
 
             spotifyIntegration.setRequest(url);
 
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, getHttpEntity(token), String.class);
+            try {
+                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, getHttpEntity(token), String.class);
 
-            if (response.getStatusCode() == HttpStatus.OK) {
-                spotifyIntegration.setResponse(response.getBody());
-                LOGGER.info("SPOTIFY INTEGRATION: Artist successfully found!");
-                try {
+                if (response.getStatusCode() == HttpStatus.OK) {
+                    spotifyIntegration.setResponse(response.getBody());
+                    LOGGER.info("SPOTIFY INTEGRATION: Artist successfully found!");
                     var entityRequest = new EntityRequest<>(spotifyIntegration);
                     entityRequest.setUser(systemUser);
                     spotifyIntegrationService.create(entityRequest);
                     LOGGER.info("SPOTIFY INTEGRATION: Artist response successfully saved to database!");
-                } catch (ApiException e) {
-                    LOGGER.error("SPOTIFY INTEGRATION: Error saving artist response to database! Exception message: {}", e.getMessage());
+                } else {
+                    LOGGER.error("SPOTIFY INTEGRATION: Artist search request failed! Api response: {}", response.getBody());
                 }
-            } else {
-                LOGGER.error("SPOTIFY INTEGRATION: Artist search request failed! Api response: {}", response.getBody());
+            } catch (Exception e) {
+                LOGGER.error("SPOTIFY INTEGRATION: Artist search request failed! Api response: {}", e.getMessage());
             }
         });
 
@@ -264,11 +274,11 @@ public class SpotifyIntegrationServiceHelper {
     }
 
     private void updateAlbumSpotifyId(String response, Long objectId) {
-        ObjectMapper mapper = new ObjectMapper();
+        var mapper = new N2bObjectMapper();
         try {
             SpotifyAlbumSearch albums = mapper.readValue(response, SpotifyAlbumSearch.class);
             List<SpotifyAlbumItem> albumItemList = albums.getAlbums().getItems();
-            AlbumEntity albumEntity = albumDAO.findByPK(objectId);
+            var albumEntity = albumDAO.findByPK(objectId);
             if (!albumItemList.isEmpty()) {
                 SpotifyAlbumItem firstResponse = albumItemList.get(0);
                 albumEntity.setSpotifyId(firstResponse.getId());
@@ -286,11 +296,11 @@ public class SpotifyIntegrationServiceHelper {
     }
 
     private void updateSongSpotifyId(String response, Long objectId) {
-        ObjectMapper mapper = new ObjectMapper();
+        var mapper = new N2bObjectMapper();
         try {
             SpotifyTrackSearch tracks = mapper.readValue(response, SpotifyTrackSearch.class);
             List<SpotifyTrackItem> trackItemList = tracks.getTracks().getItems();
-            SongEntity songEntity = songDAO.findByPK(objectId);
+            var songEntity = songDAO.findByPK(objectId);
             if (!trackItemList.isEmpty()) {
                 SpotifyTrackItem firstResponse = trackItemList.get(0);
                 songEntity.setSpotifyId(firstResponse.getId());
@@ -308,11 +318,11 @@ public class SpotifyIntegrationServiceHelper {
     }
 
     private void updateArtistSpotifyId(String response, Long objectId) {
-        ObjectMapper mapper = new ObjectMapper();
+        var mapper = new N2bObjectMapper();
         try {
             SpotifyArtistSearch artists = mapper.readValue(response, SpotifyArtistSearch.class);
             List<SpotifyArtistItem> artistItemList = artists.getArtists().getItems();
-            ArtistEntity artistEntity = artistDAO.findByPK(objectId);
+            var artistEntity = artistDAO.findByPK(objectId);
             if (!artistItemList.isEmpty()) {
                 SpotifyArtistItem firstResponse = artistItemList.get(0);
                 artistEntity.setSpotifyId(firstResponse.getId());
@@ -342,67 +352,78 @@ public class SpotifyIntegrationServiceHelper {
         var token = getAuthenticationToken();
         var url = spotifyApiUrl + "/albums/" + albumSpotifyId;
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, getHttpEntity(token), String.class);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, getHttpEntity(token), String.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            LOGGER.info("SPOTIFY INTEGRATION: Songs of album successfully fetched!");
-            return response.getBody();
+            if (response.getStatusCode() == HttpStatus.OK) {
+                LOGGER.info("SPOTIFY INTEGRATION: Songs of album successfully fetched!");
+                return response.getBody();
 
-        } else {
-            LOGGER.error("SPOTIFY INTEGRATION: Get album songs request failed! Api response: {}", response.getBody());
+            } else {
+                LOGGER.error("SPOTIFY INTEGRATION: Get album songs request failed! Api response: {}", response.getBody());
+            }
+        } catch (Exception e) {
+            LOGGER.error("SPOTIFY INTEGRATION: Get album songs request failed! Api response: {}", e.getMessage());
         }
         return null;
     }
 
     private void saveSongs(List<SpotifyAlbumsTrackItem> songs, AlbumEntity album, List<ArtistEntity> artists, LabelEntity label,
-            GenreEntity genre, LocalDateTime releaseDate) {
+            GenreEntity genre, LocalDateTime releaseDate, Map<String, MultiSearchResponse> mapOfExistingSpotifyIds) {
         songs.forEach(song -> {
-            var durationInMs = song.getDurationMs();
-            SongEntity songEntity = new SongEntity();
-            songEntity.setName(song.getName());
-            songEntity.setSpotifyId(song.getId());
-            songEntity.setSpotifyStatus("Done");
-            songEntity.setPlaytime(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(durationInMs),
-                    TimeUnit.MILLISECONDS.toMinutes(durationInMs) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(durationInMs)),
-                    TimeUnit.MILLISECONDS.toSeconds(durationInMs)
-                            - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(durationInMs))));
-            songEntity.setDateOfRelease(releaseDate);
-            songEntity.setGenre(genre);
-            songEntity.setCreated(LocalDateTime.now());
-            songEntity.setCreatedBy(systemUser.getUserId());
-            songEntity.setStatus("Active");
-            songEntity.setPlaytimeInSeconds(TimeUnit.MILLISECONDS.toSeconds(durationInMs));
-            try {
-                songDAO.persist(songEntity);
+            if (mapOfExistingSpotifyIds.get(song.getId()) == null) {
+                var durationInMs = song.getDurationMs();
+                var songEntity = new SongEntity();
+                songEntity.setName(song.getName());
+                songEntity.setSpotifyId(song.getId());
+                songEntity.setSpotifyStatus("Done");
+                songEntity.setPlaytime(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(durationInMs),
+                        TimeUnit.MILLISECONDS.toMinutes(durationInMs)
+                                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(durationInMs)),
+                        TimeUnit.MILLISECONDS.toSeconds(durationInMs)
+                                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(durationInMs))));
+                songEntity.setDateOfRelease(releaseDate);
+                songEntity.setGenre(genre);
+                songEntity.setCreated(LocalDateTime.now());
+                songEntity.setCreatedBy(systemUser.getUserId());
+                songEntity.setStatus(Status.ACTIVE.getValue());
+                songEntity.setPlaytimeInSeconds(TimeUnit.MILLISECONDS.toSeconds(durationInMs));
+                mapOfExistingSpotifyIds.put(song.getId(),
+                        new MultiSearchResponse(song.getName(), ObjectType.SONG.getValue(), song.getId()));
+                try {
+                    songDAO.persist(songEntity);
 
-                artists.forEach(artist -> {
-                    SongArtistEntity songArtistEntity = new SongArtistEntity();
-                    songArtistEntity.setAlbum(album);
-                    songArtistEntity.setArtist(artist);
-                    songArtistEntity.setSong(songEntity);
-                    songArtistEntity.setCreated(LocalDateTime.now());
-                    songArtistEntity.setCreatedBy(systemUser.getUserId());
-                    songArtistEntity.setLabel(label);
-                    songArtistEntity.setStatus("Active");
-                    try {
-                        songArtistDAO.persist(songArtistEntity);
-                        LOGGER.info("SPOTIFY INTEGRATION: Successfully saved new song to database!");
-                    } catch (Exception e) {
-                        LOGGER.error("SPOTIFY INTEGRATION: Saving new SongArtist record to database failed! Exception message: {}",
-                                e.getMessage());
-                    }
-                });
-            } catch (Exception e) {
-                LOGGER.error("SPOTIFY INTEGRATION: Saving new song to database failed! Exception message: {}", e.getMessage());
+                    artists.forEach(artist -> {
+                        var songArtistEntity = new SongArtistEntity();
+                        songArtistEntity.setAlbum(album);
+                        songArtistEntity.setArtist(artist);
+                        songArtistEntity.setSong(songEntity);
+                        songArtistEntity.setCreated(LocalDateTime.now());
+                        songArtistEntity.setCreatedBy(systemUser.getUserId());
+                        songArtistEntity.setLabel(label);
+                        songArtistEntity.setStatus("Active");
+                        try {
+                            songArtistDAO.persist(songArtistEntity);
+                            LOGGER.info("SPOTIFY INTEGRATION: Successfully saved new song to database!");
+                        } catch (Exception e) {
+                            LOGGER.error("SPOTIFY INTEGRATION: Saving new SongArtist record to database failed! Exception message: {}",
+                                    e.getMessage());
+                        }
+                    });
+                } catch (Exception e) {
+                    LOGGER.error("SPOTIFY INTEGRATION: Saving new song to database failed! Exception message: {}", e.getMessage());
 
+                }
+            } else {
+                LOGGER.info("Song {} has already been integrated.", song.getName());
             }
-
         });
 
     }
 
-    private void addSongsFromSpotifyForAlbum(AlbumEntity album, List<ArtistEntity> artists, LabelEntity label) {
-        ObjectMapper mapper = new ObjectMapper();
+    private void addSongsFromSpotifyForAlbum(AlbumEntity album, List<ArtistEntity> artists, LabelEntity label,
+            Map<String, MultiSearchResponse> mapOfExistingSpotifyIds) {
+        var mapper = new ObjectMapper();
         try {
             SpotifyGetAlbumsSongs response = mapper.readValue(fetchSongsOfAlbumFromSpotify(album.getSpotifyId()),
                     SpotifyGetAlbumsSongs.class);
@@ -417,7 +438,8 @@ public class SpotifyIntegrationServiceHelper {
                 genre = genreDAO.findByPK(0L);
             }
 
-            saveSongs(response.getTracks().getItems(), album, artists, label, genre, parseDate(response.getReleaseDate()));
+            saveSongs(response.getTracks().getItems(), album, artists, label, genre, parseDate(response.getReleaseDate()),
+                    mapOfExistingSpotifyIds);
         } catch (JsonMappingException e) {
             LOGGER.error("SPOTIFY INTEGRATION: Error mapping GetAlbum response! Exception message: {}", e.getMessage());
         } catch (JsonProcessingException e) {
@@ -426,14 +448,14 @@ public class SpotifyIntegrationServiceHelper {
 
     }
 
-    private void addSongsFromSpotifyForAlbums() {
+    private void addSongsFromSpotifyForAlbums(Map<String, MultiSearchResponse> mapOfExistingSpotifyIds) {
         LabelEntity defaultLabel = labelDAO.findByPK(0L);
         var albums = albumDAO.findAlbumsToFetchSongsFromSpotify(responseLimit);
         LOGGER.info("SPOTIFY INTEGRATION: Found {} albums to fetch songs for!", albums.size());
 
         albums.forEach(album -> {
             List<ArtistEntity> artists = artistDAO.artistsByAlbum(album.getId());
-            addSongsFromSpotifyForAlbum(album, artists, defaultLabel);
+            addSongsFromSpotifyForAlbum(album, artists, defaultLabel, mapOfExistingSpotifyIds);
         });
     }
 
@@ -441,59 +463,68 @@ public class SpotifyIntegrationServiceHelper {
         var token = getAuthenticationToken();
         var url = spotifyApiUrl + "/artists/" + artistSpotifyId + "/albums";
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, getHttpEntity(token), String.class);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, getHttpEntity(token), String.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            LOGGER.info("SPOTIFY INTEGRATION: Albums of artist successfully fetched!");
-            return response.getBody();
+            if (response.getStatusCode() == HttpStatus.OK) {
+                LOGGER.info("SPOTIFY INTEGRATION: Albums of artist successfully fetched!");
+                return response.getBody();
 
-        } else {
-            LOGGER.error("SPOTIFY INTEGRATION: Get artist albums request failed! Api response: {}", response.getBody());
+            } else {
+                LOGGER.error("SPOTIFY INTEGRATION: Get artist albums request failed! Api response: {}", response.getBody());
+            }
+        } catch (Exception e) {
+            LOGGER.error("SPOTIFY INTEGRATION: Get artist albums request failed! Api response: {}", e.getMessage());
         }
         return null;
     }
 
-    private void saveAlbums(List<SpotifyArtistsAlbumItem> albums, ArtistEntity artist, LabelEntity defaultLabel) {
+    private void saveAlbums(List<SpotifyArtistsAlbumItem> albums, ArtistEntity artist, LabelEntity defaultLabel,
+            Map<String, MultiSearchResponse> mapOfExistingSpotifyIds) {
         albums.forEach(album -> {
-            List<ArtistEntity> artists = new ArrayList<>();
-            artists.add(artist);
-            AlbumEntity albumEntity = new AlbumEntity();
-            albumEntity.setName(album.getName());
-            albumEntity.setSpotifyId(album.getId());
-            albumEntity.setSpotifyStatus("Done");
-            albumEntity.setDateOfRelease(parseDate(album.getReleaseDate()));
-            albumEntity.setCreated(LocalDateTime.now());
-            albumEntity.setCreatedBy(systemUser.getUserId());
-            albumEntity.setStatus("Active");
-
-            try {
-                albumDAO.persist(albumEntity);
-                addSongsFromSpotifyForAlbum(albumEntity, artists, defaultLabel);
+            if (mapOfExistingSpotifyIds.get(album.getId()) == null) {
+                List<ArtistEntity> artists = new ArrayList<>();
+                artists.add(artist);
+                var albumEntity = new AlbumEntity();
+                albumEntity.setName(album.getName());
+                albumEntity.setSpotifyId(album.getId());
                 albumEntity.setSpotifyStatus("Done");
-                albumEntity.setModified(LocalDateTime.now());
-                albumEntity.setModifiedBy(systemUser.getUserId());
-                albumDAO.merge(albumEntity);
-                LOGGER.info("SPOTIFY INTEGRATION: Successfully saved new album to database!");
-            } catch (Exception e) {
-                LOGGER.error("SPOTIFY INTEGRATION: Saving new album to database failed! Exception message: {}", e.getMessage());
+                albumEntity.setDateOfRelease(parseDate(album.getReleaseDate()));
+                albumEntity.setCreated(LocalDateTime.now());
+                albumEntity.setCreatedBy(systemUser.getUserId());
+                albumEntity.setStatus("Active");
+                mapOfExistingSpotifyIds.put(album.getId(),
+                        new MultiSearchResponse(album.getName(), ObjectType.ALBUM.getValue(), album.getId()));
+                try {
+                    albumDAO.persist(albumEntity);
+                    addSongsFromSpotifyForAlbum(albumEntity, artists, defaultLabel, mapOfExistingSpotifyIds);
+                    albumEntity.setSpotifyStatus("Done");
+                    albumEntity.setModified(LocalDateTime.now());
+                    albumEntity.setModifiedBy(systemUser.getUserId());
+                    albumDAO.merge(albumEntity);
+                    LOGGER.info("SPOTIFY INTEGRATION: Successfully saved new album to database!");
+                } catch (Exception e) {
+                    LOGGER.error("SPOTIFY INTEGRATION: Saving new album to database failed! Exception message: {}", e.getMessage());
 
+                }
+            } else {
+                LOGGER.info("Album {} has already been integrated.", album.getName());
             }
-
         });
 
     }
 
-    private void addAlbumsFromSpotifyForArtist() {
+    private void addAlbumsFromSpotifyForArtist(Map<String, MultiSearchResponse> mapOfExistingSpotifyIds) {
         LabelEntity defaultLabel = labelDAO.findByPK(0L);
         var artists = artistDAO.findArtistsToFetchAlbumsFromSpotify(responseLimit);
         LOGGER.info("SPOTIFY INETGRATION: Found {} artists to fetch albums for!", artists.size());
-        ObjectMapper mapper = new ObjectMapper();
+        var mapper = new N2bObjectMapper();
         artists.forEach(artist -> {
             try {
                 SpotifyGetArtistsAlbums response = mapper.readValue(fetchAlbumsOfArtistFromSpotify(artist.getSpotifyId()),
                         SpotifyGetArtistsAlbums.class);
 
-                saveAlbums(response.getItems(), artist, defaultLabel);
+                saveAlbums(response.getItems(), artist, defaultLabel, mapOfExistingSpotifyIds);
                 artist.setSpotifyStatus("Done");
                 artist.setModified(LocalDateTime.now());
                 artist.setModifiedBy(systemUser.getUserId());
@@ -506,7 +537,7 @@ public class SpotifyIntegrationServiceHelper {
         });
     }
 
-    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}")
+    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}", initialDelay = 300000)
     public void fetchDataFromSpotify() {
         LOGGER.info("SPOTIFY INTEGRATION: Scheduled search started");
         String token = getAuthenticationToken();
@@ -515,12 +546,15 @@ public class SpotifyIntegrationServiceHelper {
         fetchArtistsFromSpotify(token);
     }
 
-    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}", initialDelay = 300000)
+    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}")
     public void updateWithDataFromSpotify() {
         LOGGER.info("SPOTIFY INTEGRATION: Scheduled data update started");
         updateSpotifyId();
-        addSongsFromSpotifyForAlbums();
-        addAlbumsFromSpotifyForArtist();
+        multiSearchDAO.deleteTable();
+        multiSearchDAO.createTableAndFillWithData();
+        Map<String, MultiSearchResponse> mapOfExistingSpotifyIds = multiSearchDAO.getCurrentSpotifyIds();
+        addSongsFromSpotifyForAlbums(mapOfExistingSpotifyIds);
+        addAlbumsFromSpotifyForArtist(mapOfExistingSpotifyIds);
 
     }
 

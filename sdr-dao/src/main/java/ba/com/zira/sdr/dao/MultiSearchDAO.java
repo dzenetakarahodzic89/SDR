@@ -1,11 +1,12 @@
 package ba.com.zira.sdr.dao;
 
-import java.util.List;
-
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.multisearch.MultiSearchResponse;
@@ -42,14 +43,27 @@ public class MultiSearchDAO extends AbstractDAO<MultiSearchEntity, Long> {
 
     public void deleteTable() {
         var hql = "drop table sat_multi_search";
-        Query query = entityManager.createNativeQuery(hql);
+        var query = entityManager.createNativeQuery(hql);
         query.executeUpdate();
     }
 
     public void createTableAndFillWithData() {
-        var hql = "create table sat_multi_search as (select cc2.id,cc2.name || ' ' || cc2.surname as name,'PERSON' as type from sat_person cc2 union select cf.id,cf.name,'SONG' from sat_song cf union select cl.id,cl.name, 'ALBUM' from sat_album cl)";
-        Query query = entityManager.createNativeQuery(hql);
+        var hql = "create table sat_multi_search as (select    cc2.id,    cc2.name || ' ' || cc2.surname as name,"
+                + "    'PERSON' as type,'' as spotify_id from    sat_person cc2 union select    cf.id,"
+                + "    cf.name,    'SONG',    cf.spotify_id from    sat_song cf union select    cl.id,"
+                + "    cl.name,    'ALBUM',    cl.spotify_id from    sat_album cl union select    cl.id,"
+                + "    cl.name,    'ARTIST',    cl.spotify_id from    sat_artist cl)";
+        var query = entityManager.createNativeQuery(hql);
         query.executeUpdate();
+    }
+
+    public Map<String, MultiSearchResponse> getCurrentSpotifyIds() {
+        var hql = "select new ba.com.zira.sdr.api.model.multisearch.MultiSearchResponse(r.name, r.type, r.spotifyId) from MultiSearchEntity r";
+        TypedQuery<MultiSearchResponse> query = entityManager.createQuery(hql, MultiSearchResponse.class);
+        return query.getResultList().stream().filter(a -> a.getSpotifyId() != null)
+                .collect(Collectors.toMap(MultiSearchResponse::getSpotifyId, a -> a, (a1, a2) -> {
+                    return a1;
+                }));
     }
 
 }

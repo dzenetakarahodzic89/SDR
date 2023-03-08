@@ -1,8 +1,5 @@
 package ba.com.zira.sdr.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -12,6 +9,9 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.commons.message.request.SearchRequest;
@@ -205,7 +205,7 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
     }
 
     public List<AlbumEntity> findAlbumsToFetchSongsFromSpotify(int responseLimit) {
-        var hql = "select a from AlbumEntity a where a.spotifyId is not null and length(a.spotifyId)>0 and a.spotifyStatus!=:status";
+        var hql = "select a from AlbumEntity a where a.spotifyId is not null and length(a.spotifyId)>0 and (a.spotifyStatus!=:status or a.spotifyStatus is null)";
         return entityManager.createQuery(hql, AlbumEntity.class).setParameter("status", "Done").setMaxResults(responseLimit)
                 .getResultList();
     }
