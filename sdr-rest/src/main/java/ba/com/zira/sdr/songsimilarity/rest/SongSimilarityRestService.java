@@ -43,4 +43,10 @@ public class SongSimilarityRestService {
         return songSimilarityService.getAll(new EmptyRequest());
     }
 
+    @Operation(summary = "Get one")
+    @GetMapping(value = "one")
+    public PayloadResponse<SongSimilarityResponse> getOne() throws ApiException {
+        return songSimilarityService.getOne(new EmptyRequest());
+    }
+
 }

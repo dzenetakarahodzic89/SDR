@@ -146,7 +146,6 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
     @Override
     public ListPayloadResponse<SongSimilarityDetailResponse> getAll(final EntityRequest<Long> request) throws ApiException {
         Long songSimilarityId = request.getEntity();
-
         List<SongSimilarityDetailResponse> songSimilarityDetail = songSimilarityDetailDAO.getAllSongASimilarityDetail(songSimilarityId);
         return new ListPayloadResponse<>(request, ResponseCode.OK, songSimilarityDetail);
     }

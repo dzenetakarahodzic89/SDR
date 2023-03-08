@@ -35,4 +35,6 @@ public interface SongSimilarityService {
      */
     ListPayloadResponse<SongSimilarityResponse> getAll(EmptyRequest req) throws ApiException;
 
+    PayloadResponse<SongSimilarityResponse> getOne(EmptyRequest req) throws ApiException;
+
 }
