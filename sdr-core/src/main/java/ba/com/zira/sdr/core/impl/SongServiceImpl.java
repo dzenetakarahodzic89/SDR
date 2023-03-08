@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -151,6 +152,21 @@ public class SongServiceImpl implements SongService {
                 SongSearchResponse::getImageUrl);
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, songs);
+    }
+
+    /**
+     * Gets the song titles artist names.
+     *
+     * @param request
+     *            the request
+     * @return the song titles artist names
+     * @throws ApiException
+     *             the api exception
+     */
+    @Override
+    public ListPayloadResponse<LoV> getSongTitlesArtistNames(EmptyRequest request) throws ApiException {
+        var songTitlesArtistNames = songDAO.getSongTitlesArtistNames();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, songTitlesArtistNames);
     }
 
 }
