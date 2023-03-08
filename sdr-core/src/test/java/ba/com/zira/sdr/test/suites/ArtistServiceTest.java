@@ -45,7 +45,6 @@ public class ArtistServiceTest extends BasicTestConfiguration {
 
     @Autowired
     private ArtistMapper artistMapper;
-
     private ArtistDAO artistDAO;
     EraDAO eraDAO;
     PersonDAO personDAO;
@@ -55,6 +54,8 @@ public class ArtistServiceTest extends BasicTestConfiguration {
     private ArtistValidation artistValidation;
     private ArtistService artistService;
     private PersonRequestValidation personRequestValidation;
+
+    ArtistValidation artistRequestValidation;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
