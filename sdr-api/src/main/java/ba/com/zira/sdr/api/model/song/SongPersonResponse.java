@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Properties of a song person response")
 public class SongPersonResponse implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Schema(description = "songID")
     private Long id;
 
@@ -50,19 +51,14 @@ public class SongPersonResponse implements Serializable {
     @Schema(description = "spotify_id")
     private Long spotifyId;
 
-    public SongPersonResponse(Long id, LocalDateTime created, String createdBy, LocalDateTime dateOfRelease, String information,
-            LocalDateTime modified, String modifiedBy, String name, String playtime, String outlineText, Long spotifyId) {
+    public SongPersonResponse(Long id, LocalDateTime created, String name, String status, String playtime, LocalDateTime dateOfRelease) {
         super();
         this.id = id;
         this.created = created;
-        this.createdBy = createdBy;
-        this.dateOfRelease = dateOfRelease;
-        this.information = information;
-        this.modified = modified;
-        this.modifiedBy = modifiedBy;
         this.name = name;
+        this.status = status;
         this.playtime = playtime;
-        this.outlineText = outlineText;
-        this.spotifyId = spotifyId;
+        this.dateOfRelease = dateOfRelease;
+
     }
 }
