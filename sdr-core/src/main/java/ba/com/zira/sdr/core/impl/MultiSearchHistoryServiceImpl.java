@@ -60,7 +60,7 @@ public class MultiSearchHistoryServiceImpl implements MultiSearchHistoryService 
         } catch (Exception e) {
             throw ApiRuntimeException.createFrom(e);
         }
-        multiSearchHistory = multiSearchHistoryDAO.persist(multiSearchHistory);
+        multiSearchHistoryDAO.persist(multiSearchHistory);
         return new PayloadResponse<>(req, ResponseCode.OK, "created successfully");
     }
 

@@ -95,7 +95,7 @@ public class LyricServiceImpl implements LyricService {
             List<LyricsSongResponse> listToPut = new ArrayList<>();
             listLyrics.stream().forEach((final LyricsSongResponse s) -> {
                 texts.add(s.getText());
-                if (l == s.getLanguage()) {
+                if (l.equals(s.getLanguage())) {
                     listToPut.add(s);
                 }
             });

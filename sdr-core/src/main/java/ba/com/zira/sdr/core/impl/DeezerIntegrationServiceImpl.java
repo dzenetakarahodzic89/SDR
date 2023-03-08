@@ -29,7 +29,7 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
 
     DeezerIntegrationDAO deezerIntegrationDAO;
     DeezerIntegrationMapper deezerIntegrationMapper;
-    DeezerIntegrationRequestValidation DeezerIntegrationRequestValidation;
+    DeezerIntegrationRequestValidation deezerIntegrationRequestValidation;
 
     @Override
     public PagedPayloadResponse<DeezerIntegration> find(final FilterRequest request) throws ApiException {
@@ -53,7 +53,7 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<DeezerIntegration> update(final EntityRequest<DeezerIntegrationUpdateRequest> request) {
-        DeezerIntegrationRequestValidation.validateUpdateDeezerIntegrationRequest(request);
+        deezerIntegrationRequestValidation.validateUpdateDeezerIntegrationRequest(request);
 
         var deezerIntegrationEntity = deezerIntegrationDAO.findByPK(request.getEntity().getId());
         deezerIntegrationMapper.updateEntity(request.getEntity(), deezerIntegrationEntity);
@@ -67,7 +67,7 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException {
-        DeezerIntegrationRequestValidation.validateExistsDeezerIntegrationRequest(request);
+        deezerIntegrationRequestValidation.validateExistsDeezerIntegrationRequest(request);
 
         var deezerIntegrationEntity = deezerIntegrationDAO.findByPK(request.getEntity());
         deezerIntegrationDAO.remove(deezerIntegrationEntity);

@@ -13,9 +13,9 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.SongSimilarityService;
-import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarity;
-import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityCreateRequest;
-import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse;
+import ba.com.zira.sdr.api.model.songsimilarity.SongSimilarity;
+import ba.com.zira.sdr.api.model.songsimilarity.SongSimilarityCreateRequest;
+import ba.com.zira.sdr.api.model.songsimilarity.SongSimilarityResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -32,9 +32,9 @@ public class SongSimilarityRestService {
 
     @Operation(summary = "Create")
     @PostMapping
-    public PayloadResponse<SongSimilarity> create(@RequestBody EntityRequest<SongSimilarityCreateRequest> songSimilarityCreateRequest)
+    public PayloadResponse<SongSimilarity> create(@RequestBody SongSimilarityCreateRequest songSimilarityCreateRequest)
             throws ApiException {
-        return songSimilarityService.create(songSimilarityCreateRequest);
+        return songSimilarityService.create(new EntityRequest<>(songSimilarityCreateRequest));
     }
 
     @Operation(summary = "Get all")

@@ -52,4 +52,13 @@ public class SongSingleResponse implements Serializable {
         this.genre = genreName;
         this.genreId = genreId;
     }
+
+    public SongSingleResponse(Long id, String songName, String outlineText, String information, LocalDateTime dateOfRelease) {
+        this.id = id;
+        this.name = songName;
+        this.outlineText = outlineText;
+        this.information = information;
+        this.dateOfRelease = dateOfRelease;
+
+    }
 }

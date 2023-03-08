@@ -128,6 +128,7 @@ public class SongSimilarityDetailServiceImpl implements SongSimilarityDetailServ
         return new PayloadResponse<>(request, ResponseCode.OK, songSimilarityDetailMapper.entityToDto(songSimilarityDetailEntity));
     }
 
+    @SuppressWarnings("unused")
     private void updateTotalSimilarityScore(Long songSimilarityId) {
         SongSimilarityEntity songSimilarity = songSimilarityDAO.findByPK(songSimilarityId);
         if (songSimilarity != null) {

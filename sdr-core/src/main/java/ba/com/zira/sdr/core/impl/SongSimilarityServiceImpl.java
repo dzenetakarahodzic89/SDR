@@ -16,9 +16,9 @@ import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.SongSimilarityService;
 import ba.com.zira.sdr.api.enums.ObjectType;
-import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarity;
-import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityCreateRequest;
-import ba.com.zira.sdr.api.model.songSimilarity.SongSimilarityResponse;
+import ba.com.zira.sdr.api.model.songsimilarity.SongSimilarity;
+import ba.com.zira.sdr.api.model.songsimilarity.SongSimilarityCreateRequest;
+import ba.com.zira.sdr.api.model.songsimilarity.SongSimilarityResponse;
 import ba.com.zira.sdr.core.mapper.SongSimilarityMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.SongSimilarityRequestValidation;
@@ -38,6 +38,8 @@ public class SongSimilarityServiceImpl implements SongSimilarityService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<SongSimilarity> create(final EntityRequest<SongSimilarityCreateRequest> request) {
+        songsimilarityRequestValidation.validateSongSimilarityRequest(request);
+
         var songSimilarityEntity = songSimilarityMapper.dtoToEntity(request.getEntity());
 
         songSimilarityEntity.setStatus(Status.ACTIVE.value());

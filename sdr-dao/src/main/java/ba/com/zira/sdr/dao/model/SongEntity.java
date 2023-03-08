@@ -1,9 +1,5 @@
 package ba.com.zira.sdr.dao.model;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +11,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -66,6 +66,9 @@ public class SongEntity implements Serializable {
 
     @Column(name = "playtime")
     private String playtime;
+
+    @Column(name = "playtime_in_seconds")
+    private Long playtimeInSeconds;
 
     @Column(name = "status")
     private String status;

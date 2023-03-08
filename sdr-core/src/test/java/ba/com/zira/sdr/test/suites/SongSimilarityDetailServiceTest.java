@@ -168,7 +168,7 @@ public class SongSimilarityDetailServiceTest extends BasicTestConfiguration {
 
             Assertions.assertThat(songSimilarityDetailDeleteResponse.getPayload())
 
-                    .isEqualTo(null);
+                    .isNull();
 
         } catch (Exception e) {
             Assert.fail();

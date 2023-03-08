@@ -95,10 +95,11 @@ public class SpotifyIntegrationServiceHelper {
     private int responseLimit;
     private static final User systemUser = new User("System");
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyIntegrationServiceHelper.class);
+    private static final String AUTHORIZATION = "Authorization";
 
     private HttpEntity getHttpEntity(String token) {
         var headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
+        headers.set(AUTHORIZATION, "Bearer " + token);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         return new HttpEntity<>(headers);
@@ -110,7 +111,7 @@ public class SpotifyIntegrationServiceHelper {
         byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
         String authHeader = "Basic " + new String(encodedAuth);
         var headers = new HttpHeaders();
-        headers.set("Authorization", authHeader);
+        headers.set(AUTHORIZATION, authHeader);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         var body = "grant_type=client_credentials";

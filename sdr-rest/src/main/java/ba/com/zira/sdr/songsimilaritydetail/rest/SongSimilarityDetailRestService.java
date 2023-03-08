@@ -55,8 +55,7 @@ public class SongSimilarityDetailRestService {
 
     @Operation(summary = "Create")
     @PostMapping
-    public PayloadResponse<SongSimilarityDetail> create(@RequestBody final SongSimilarityDetailCreateReq songSimilarityCreateRequest)
-            throws ApiException {
+    public PayloadResponse<SongSimilarityDetail> create(@RequestBody final SongSimilarityDetailCreateReq songSimilarityCreateRequest) {
         return songSimilarityDetailService.createSongSimilarityDetail(new EntityRequest<>(songSimilarityCreateRequest));
     }
 
@@ -69,7 +68,7 @@ public class SongSimilarityDetailRestService {
             song.setId(id);
         }
 
-        return songSimilarityDetailService.update(new EntityRequest<SongSimilarityDetailUpdateRequest>(song));
+        return songSimilarityDetailService.update(new EntityRequest<>(song));
     }
 
     @Operation(summary = "Delete song sample detail")
