@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
-import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -68,13 +67,6 @@ public class SongRestService {
     public ListPayloadResponse<LoV> findLabelsNotInAlbum(
             @Parameter(required = true, description = "Id of the album") @PathVariable final Long albumId) throws ApiException {
         return songService.retrieveNotInAlbum(new EntityRequest<>(albumId));
-    }
-
-    @Operation(summary = "Get all song titles along with artist names")
-    @GetMapping(value = "song-artist-titles")
-    public ListPayloadResponse<LoV> getSongTitlesArtistNames() throws ApiException {
-        var request = new EmptyRequest();
-        return songService.getSongTitlesArtistNames(request);
     }
 
     @Operation(summary = "Update song")

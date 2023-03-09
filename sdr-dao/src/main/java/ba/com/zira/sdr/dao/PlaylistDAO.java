@@ -40,14 +40,14 @@ public class PlaylistDAO extends AbstractDAO<PlaylistEntity, Long> {
         }
 
         if (genreId != null) {
-            Predicate[] genreSubqueryPredicates = new Predicate[2];
+            Predicate[] subqueryPredicates = new Predicate[2];
 
-            Subquery<SongEntity> genreSubquery = criteriaQuery.subquery(SongEntity.class);
-            Root<SongEntity> song2 = genreSubquery.from(SongEntity.class);
-            genreSubqueryPredicates[0] = builder.equal(builder.literal(genreId), song2.get(SongEntity_.genre).get(GenreEntity_.id));
-            genreSubqueryPredicates[1] = song2.in(songs);
-            genreSubquery.select(song2).where(genreSubqueryPredicates);
-            predicates.add(builder.exists(genreSubquery));
+            Subquery<SongEntity> subquery = criteriaQuery.subquery(SongEntity.class);
+            Root<SongEntity> song = subquery.from(SongEntity.class);
+            subqueryPredicates[0] = builder.equal(builder.literal(genreId), song.get(SongEntity_.genre).get(GenreEntity_.id));
+            subqueryPredicates[1] = song.in(songs);
+            subquery.select(song).where(subqueryPredicates);
+            predicates.add(builder.exists(subquery));
         }
 
         Predicate[] predicateArray = predicates.toArray(new Predicate[predicates.size()]);

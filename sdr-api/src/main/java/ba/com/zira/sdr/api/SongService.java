@@ -1,7 +1,6 @@
 package ba.com.zira.sdr.api;
 
 import ba.com.zira.commons.exception.ApiException;
-import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -111,16 +110,5 @@ public interface SongService {
     ListPayloadResponse<LoV> retrieveNotInAlbum(final EntityRequest<Long> request) throws ApiException;
 
     ListPayloadResponse<SongSearchResponse> find(final EntityRequest<SongSearchRequest> request) throws ApiException;
-
-    /**
-     * Gets the song titles artist names.
-     *
-     * @param request
-     *            the request
-     * @return the song titles artist names
-     * @throws ApiException
-     *             the api exception
-     */
-    ListPayloadResponse<LoV> getSongTitlesArtistNames(final EmptyRequest request) throws ApiException;
 
 }

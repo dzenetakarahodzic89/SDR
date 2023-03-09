@@ -33,7 +33,6 @@ spring:
               apiUrl: https://api.spotify.com/v1
               responseLimit: 5
               taskDelay: 600000
-              disabled: true
               
 
 uaa:
