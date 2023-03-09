@@ -224,4 +224,19 @@ public class GenreServiceImpl implements GenreService {
         return genrePercentageInEra;
     }
 
+    /**
+     * Gets the sub genre main genre names.
+     *
+     * @param request
+     *            the request
+     * @return the sub genre main genre names
+     * @throws ApiException
+     *             the api exception
+     */
+    @Override
+    public ListPayloadResponse<LoV> getSubGenreMainGenreNames(EmptyRequest request) throws ApiException {
+        var subGenreMainGenreNames = genreDAO.getSubGenreMainGenreNames();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, subGenreMainGenreNames);
+    }
+
 }
