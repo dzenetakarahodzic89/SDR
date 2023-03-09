@@ -93,6 +93,8 @@ public class SpotifyIntegrationServiceHelper {
     private String spotifyApiUrl;
     @Value("${spring.security.oauth2.client.registration.spotify.responseLimit}")
     private int responseLimit;
+    @Value("${spring.security.oauth2.client.registration.spotify.disable:true}")
+    Boolean integrationDisabled;
     private static final User systemUser = new User("System");
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyIntegrationServiceHelper.class);
     private static final String AUTHORIZATION = "Authorization";
@@ -506,8 +508,12 @@ public class SpotifyIntegrationServiceHelper {
         });
     }
 
-    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}")
+    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}", initialDelay = 300000)
     public void fetchDataFromSpotify() {
+        if (Boolean.TRUE.equals(integrationDisabled)) {
+            LOGGER.info("Spotify integration disabled!");
+            return;
+        }
         LOGGER.info("SPOTIFY INTEGRATION: Scheduled search started");
         String token = getAuthenticationToken();
         fetchAlbumsFromSpotify(token);
@@ -515,8 +521,12 @@ public class SpotifyIntegrationServiceHelper {
         fetchArtistsFromSpotify(token);
     }
 
-    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}", initialDelay = 300000)
+    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}")
     public void updateWithDataFromSpotify() {
+        if (Boolean.TRUE.equals(integrationDisabled)) {
+            LOGGER.info("Spotify integration disabled!");
+            return;
+        }
         LOGGER.info("SPOTIFY INTEGRATION: Scheduled data update started");
         updateSpotifyId();
         addSongsFromSpotifyForAlbums();
