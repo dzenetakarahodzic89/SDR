@@ -6,6 +6,6 @@ import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.dao.model.DeezerIntegrationEntity;
 
 @Repository
-public class DeezerIntegrationDAO extends AbstractDAO<DeezerIntegrationEntity, Long> {
+public class DeezerIntegrationDAO extends AbstractDAO<DeezerIntegrationEntity, String> {
 
 }

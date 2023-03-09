@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
@@ -31,7 +32,6 @@ import ba.com.zira.sdr.dao.DeezerIntegrationDAO;
 import ba.com.zira.sdr.dao.model.DeezerIntegrationEntity;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 
-
 public class DeezerIntegrationServiceTest extends BasicTestConfiguration {
     @Autowired
     private DeezerIntegrationMapper deezerIntegrationMapper;
@@ -39,14 +39,16 @@ public class DeezerIntegrationServiceTest extends BasicTestConfiguration {
     private RequestValidator requestValidator;
     private DeezerIntegrationRequestValidation deezerIntegrationRequestValidation;
     private DeezerIntegrationService deezerIntegrationService;
+
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.deezerIntegrationDAO = Mockito.mock(DeezerIntegrationDAO.class);
         this.deezerIntegrationRequestValidation = Mockito.mock(DeezerIntegrationRequestValidation.class);
         this.deezerIntegrationService = new DeezerIntegrationServiceImpl(deezerIntegrationDAO, deezerIntegrationMapper,
-                deezerIntegrationRequestValidation);
+                deezerIntegrationRequestValidation, null, null);
     }
+
     @Test(enabled = true)
     public void testFindDeezerIntegration() {
         try {
@@ -103,13 +105,14 @@ public class DeezerIntegrationServiceTest extends BasicTestConfiguration {
             Mockito.when(requestValidator.validate(filterRequest)).thenReturn(null);
             Mockito.when(deezerIntegrationDAO.findAll(filterRequest.getFilter())).thenReturn(pagedEntities);
             List<DeezerIntegration> deezerIntegrationFindResponse = deezerIntegrationService.find(filterRequest).getPayload();
-            Assertions.assertThat(deezerIntegrationFindResponse).as("Check all elements").overridingErrorMessage("All elements should be equal.")
-                .hasSameElementsAs(response);
+            Assertions.assertThat(deezerIntegrationFindResponse).as("Check all elements")
+                    .overridingErrorMessage("All elements should be equal.").hasSameElementsAs(response);
 
         } catch (Exception e) {
             Assert.fail();
         }
     }
+
     @Test(enabled = true)
     public void testCreateDeezerIntegration() {
         try {
@@ -136,12 +139,13 @@ public class DeezerIntegrationServiceTest extends BasicTestConfiguration {
             Mockito.when(deezerIntegrationDAO.persist(newDeezerIntegrationEnt)).thenReturn(null);
             PayloadResponse<DeezerIntegration> DeezerIntegrationFindResponse = deezerIntegrationService.create(req);
             Assertions.assertThat(DeezerIntegrationFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-                .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newDeezerIntegration);
+                    .ignoringFields("id", "created", "createdBy", "modified", "modifiedBy").isEqualTo(newDeezerIntegration);
 
         } catch (Exception e) {
             Assert.fail();
         }
     }
+
     @Test(enabled = true)
     public void testUpdateDeezerIntegration() {
         try {
@@ -170,13 +174,14 @@ public class DeezerIntegrationServiceTest extends BasicTestConfiguration {
             Assert.fail();
         }
     }
+
     @Test(enabled = true)
     public void testDeleteDeezerIntegration() {
         try {
 
-            var req = new EntityRequest<Long>();
+            var req = new EntityRequest<String>();
 
-            req.setEntity(1L);
+            req.setEntity(UUID.randomUUID().toString());
             Mockito.when(requestValidator.validate(req)).thenReturn(null);
             Mockito.doNothing().when(deezerIntegrationDAO).removeByPK(req.getEntity());
             var deezerIntegrationFindResponse = deezerIntegrationService.delete(req);
