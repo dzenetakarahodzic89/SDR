@@ -1,18 +1,23 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.request.SearchRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -22,10 +27,14 @@ import ba.com.zira.sdr.api.AlbumService;
 import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.SongArtistService;
 import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
+import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
+import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
 import ba.com.zira.sdr.api.model.album.SongAudio;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
@@ -65,6 +74,16 @@ public class AlbumServiceImpl implements AlbumService {
     public PagedPayloadResponse<AlbumResponse> find(final FilterRequest request) {
         PagedData<AlbumEntity> albumEntities = albumDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, albumEntities, albumMapper::entitiesToDtos);
+    }
+
+    @Override
+    public PagedPayloadResponse<AlbumSearchResponse> search(SearchRequest<AlbumSearchRequest> request) {
+
+        PagedData<AlbumSearchResponse> resultEntities = albumDAO.findAllAlbumsByNameGenreEraArtist(request);
+
+        lookupService.lookupCoverImage(resultEntities.getRecords(), AlbumSearchResponse::getId, ObjectType.ALBUM.getValue(),
+                AlbumSearchResponse::setImageUrl, AlbumSearchResponse::getImageUrl);
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, resultEntities);
     }
 
     @Override
@@ -132,6 +151,25 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
+    public ListPayloadResponse<AlbumsByDecadeResponse> findAllAlbumsForArtist(EntityRequest<Long> request) throws ApiException {
+        Long artistId = request.getEntity();
+        List<AlbumArtistResponse> albumList = albumDAO.findAllAlbumsForArtist(artistId);
+
+        Map<Integer, List<AlbumArtistResponse>> albumsByDecade = albumList.stream()
+                .collect(Collectors.groupingBy(album -> album.getDateOfRelease().getYear() - (album.getDateOfRelease().getYear() % 10),
+                        TreeMap::new, Collectors.toList()));
+
+        List<AlbumsByDecadeResponse> albumsByDecadeList = new ArrayList<>();
+        albumsByDecade.forEach((decade, albums) -> {
+            albums.sort(Comparator.comparing(AlbumArtistResponse::getDateOfRelease));
+            AlbumsByDecadeResponse decadeAlbums = new AlbumsByDecadeResponse(decade, albums);
+            albumsByDecadeList.add(decadeAlbums);
+        });
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, albumsByDecadeList);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<AlbumResponse> getById(final EntityRequest<Long> request) {
         List<SongResponse> listSong = albumDAO.findSongsWithPlaytimeForAlbum(request.getEntity());
@@ -146,7 +184,6 @@ public class AlbumServiceImpl implements AlbumService {
         });
         var albumEntity = albumDAO.findByPK(request.getEntity());
         var albumResponse = albumMapper.entityToDto(albumEntity);
-        var songArtist = albumEntity.getSongArtists();
         albumResponse.setSongs(listSong);
         albumResponse.setAlbumArtists(albumDAO.findAllAlbumArtists(request.getEntity()));
         albumResponse.setAudioUrls(songAudioUrls);

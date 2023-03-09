@@ -21,6 +21,8 @@ import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbRespons
 import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
 import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.song.SongPersonResponse;
+import ba.com.zira.sdr.api.model.song.SongSearchResponse;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.dao.model.AlbumEntity_;
@@ -37,6 +39,9 @@ import ba.com.zira.sdr.dao.model.SongEntity_;
 
 @Repository
 public class SongDAO extends AbstractDAO<SongEntity, Long> {
+    private static final String REMIX_ID = "remixId";
+    private static final String COVER_ID = "coverId";
+
     public List<SongEntity> findSongsByIdArray(final List<Long> songIds) {
         final CriteriaQuery<SongEntity> cQuery = builder.createQuery(SongEntity.class);
         final Root<SongEntity> root = cQuery.from(SongEntity.class);
@@ -112,10 +117,111 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         return q.getSingleResult();
     }
 
+    public List<SongEntity> findAllByAlbumId(Long id) {
+        final CriteriaQuery<SongEntity> criteriaQuery = builder.createQuery(SongEntity.class);
+        final Root<SongEntity> root = criteriaQuery.from(SongEntity.class);
+        Join<SongEntity, SongArtistEntity> songArtists = root.join(SongEntity_.songArtists);
+        Join<SongArtistEntity, AlbumEntity> albumArtist = songArtists.join(SongArtistEntity_.album);
+        criteriaQuery.where(builder.equal(albumArtist.get(AlbumEntity_.id), id));
+        criteriaQuery.select(root).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
     public List<LoV> getSongsNotInAlbum(Long albumId) {
         var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from SongEntity s left join SongArtistEntity sa on s.id=sa.song.id where sa.album.id!=:albumId or sa.id=null";
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("albumId", albumId);
         return query.getResultList();
+    }
+
+    public List<SongSearchResponse> find(String songName, String sortBy, Long remixId, Long coverId, List<Long> artistIds,
+            List<Long> albumIds, List<Long> genreIds, int page, int pageSize) {
+        var query = "select new ba.com.zira.sdr.api.model.song.SongSearchResponse(ss.id, ss.name, ss.outlineText, ss.modified) from SongEntity ss left join SongArtistEntity ssa on ss.id = ssa.song.id "
+                + "left join AlbumEntity sa on sa.id = ssa.album.id join GenreEntity sg on ss.genre.id = sg.id "
+                + "where (ss.name like :songName or :songName is null or :songName = '') and (:remixId is null or ss.remix.id is not null) and (:coverId is null or ss.cover.id is not null) and (coalesce(:artistIds, null) is null or ssa.artist.id in :artistIds) and (coalesce(:albumIds, null) is null or ssa.album.id in :albumIds) and (coalesce(:genreIds, null) is null or ss.genre.id in :genreIds)";
+        if ("last_date".equals(sortBy)) {
+            query += " order by ss.modified desc";
+        }
+
+        else {
+            query += " order by ss.name";
+        }
+
+        var q = entityManager.createQuery(query, SongSearchResponse.class);
+
+        if (remixId != null) {
+            q.setParameter(REMIX_ID, true);
+            if (remixId == 0) {
+                q.setParameter(REMIX_ID, null);
+            }
+        }
+
+        else {
+            q.setParameter(REMIX_ID, null);
+        }
+
+        if (coverId != null) {
+            q.setParameter(COVER_ID, true);
+            if (coverId == 0) {
+                q.setParameter(COVER_ID, null);
+            }
+        } else {
+            q.setParameter(COVER_ID, null);
+        }
+
+        if (songName != null && !songName.isEmpty()) {
+            q.setParameter("songName", "%" + songName + "%");
+        } else {
+            q.setParameter("songName", null);
+        }
+
+        if (artistIds != null) {
+            q.setParameter("artistIds", artistIds);
+        } else {
+            q.setParameter("artistIds", null);
+        }
+
+        if (albumIds != null) {
+            q.setParameter("albumIds", albumIds);
+        } else {
+            q.setParameter("albumIds", null);
+        }
+
+        if (genreIds != null) {
+            q.setParameter("genreIds", genreIds);
+        } else {
+            q.setParameter("genreIds", null);
+        }
+
+        // Apply pagination
+        int firstResult = (page - 1) * pageSize;
+        int maxResults = pageSize;
+        q.setFirstResult(firstResult);
+        q.setMaxResults(maxResults);
+
+        return q.getResultList();
+    }
+
+    public List<LoV> findSongsToFetchFromSpotify(int responseLimit) {
+        var cases = "case when sa.artist.surname is null then concat('track:',s.name,' ','artist:',sa.artist.name) else"
+                + " concat('track:',s.name,' ','artist:',sa.artist.name,' ',sa.artist.surname) end";
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id," + cases + ") from SongEntity s left join"
+                + " SpotifyIntegrationEntity si on s.id = si.objectId and si.objectType like :song join SongArtistEntity sa on s.id=sa.song.id where si.id = null";
+        return entityManager.createQuery(hql, LoV.class).setParameter("song", "SONG").setMaxResults(responseLimit).getResultList();
+
+    }
+
+    public List<SongPersonResponse> findSongByPersonId(final Long personId) {
+        var hql = "select new ba.com.zira.sdr.api.model.song.SongPersonResponse(ss.id, ss.created, ss.name, ss.status, ss.playtime, ss.dateOfRelease) from PersonEntity sp join PersonArtistEntity spa on sp.id = spa.person.id join ArtistEntity sa on spa.artist.id = sa.id join SongArtistEntity ssa on sa.id = ssa.artist.id join SongEntity ss on ssa.song.id=ss.id where sp.id = :personId";
+        TypedQuery<SongPersonResponse> query = entityManager.createQuery(hql, SongPersonResponse.class).setParameter("personId", personId);
+
+        return query.getResultList();
+    }
+
+    public List<LoV> getSongTitlesArtistNames() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id, case when sa.artist.surname is null then"
+                + " concat(s.name,' - ',sa.artist.name) else concat(s.name,' - ',sa.artist.name,' ',sa.artist.surname) end) from SongEntity s join SongArtistEntity sa"
+                + " on s.id=sa.song.id group by s.id,sa.artist.name,sa.artist.surname";
+        return entityManager.createQuery(hql, LoV.class).getResultList();
     }
 
 }

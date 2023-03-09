@@ -195,15 +195,22 @@
 		      		name="ba.com.zira.sdr.test.suites.PlaylistServiceTest"/>
 		    </classes>
 	    </test>
-</suite>
     
 
-	
 		<test thread-count="5" name="SongSimilarityDetail">
+			<classes>
 			<class
-		<classes>
 				name="ba.com.zira.sdr.test.suites.SongSimilarityDetailRequestValidationTest" />
 			<class name="ba.com.zira.sdr.test.suites.SongSimilarityDetailServiceTest" />
 		</classes>
 	</test>
+	
+	<test thread-count="5" name="SongPlaylist">
+		    <classes>
+		      	<class 
+		      		name="ba.com.zira.sdr.test.suites.SongPlaylistRequestValidationTest"/>
+		      	<class 
+		      		name="ba.com.zira.sdr.test.suites.SongPlaylistServiceTest"/>
+		    </classes>
+	    </test>
 </suite> 

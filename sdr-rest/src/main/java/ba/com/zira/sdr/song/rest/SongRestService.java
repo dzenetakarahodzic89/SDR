@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -24,6 +25,8 @@ import ba.com.zira.sdr.api.SongService;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
+import ba.com.zira.sdr.api.model.song.SongSearchRequest;
+import ba.com.zira.sdr.api.model.song.SongSearchResponse;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,6 +70,13 @@ public class SongRestService {
         return songService.retrieveNotInAlbum(new EntityRequest<>(albumId));
     }
 
+    @Operation(summary = "Get all song titles along with artist names")
+    @GetMapping(value = "song-artist-titles")
+    public ListPayloadResponse<LoV> getSongTitlesArtistNames() throws ApiException {
+        var request = new EmptyRequest();
+        return songService.getSongTitlesArtistNames(request);
+    }
+
     @Operation(summary = "Update song")
     @PutMapping(value = "{id}")
     public PayloadResponse<Song> update(@Parameter(required = true, description = "ID of the song") @PathVariable final Long id,
@@ -82,6 +92,12 @@ public class SongRestService {
     public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the song") @PathVariable final Long id)
             throws ApiException {
         return songService.delete(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Song search")
+    @PostMapping(value = "/search")
+    public ListPayloadResponse<SongSearchResponse> find(@RequestBody final SongSearchRequest request) throws ApiException {
+        return songService.find(new EntityRequest<>(request));
     }
 
 }

@@ -67,11 +67,20 @@ public class SongEntity implements Serializable {
     @Column(name = "playtime")
     private String playtime;
 
+    @Column(name = "playtime_in_seconds")
+    private Long playtimeInSeconds;
+
     @Column(name = "status")
     private String status;
-    
+
     @Column(name = "outline_text")
     private String outlineText;
+
+    @Column(name = "spotify_id")
+    private String spotifyId;
+
+    @Column(name = "spotify_status")
+    private String spotifyStatus;
 
     // bi-directional many-to-one association to LyricEntity
     @OneToMany(mappedBy = "song")

@@ -1,4 +1,5 @@
 package ba.com.zira.sdr.test.suites;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.Test;
@@ -13,16 +14,12 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.model.songinstrument.SongInstrumentUpdateRequest;
 import ba.com.zira.sdr.core.validation.SongInstrumentValidation;
 import ba.com.zira.sdr.dao.SongInstrumentDAO;
-
-
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 
 public class SongInstrumentRequestValidationTest extends BasicTestConfiguration {
-    
- 
+
     private SongInstrumentDAO songInstrumentDAO;
     private SongInstrumentValidation validation;
-    
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
@@ -40,8 +37,8 @@ public class SongInstrumentRequestValidationTest extends BasicTestConfiguration 
         request.setEntity(respose);
         ValidationResponse validationResponse = validation.validateUpdateSongInstrumentRequest(request);
 
-        assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-        assertEquals(validationResponse.getDescription(), "Song Instrument with id: 1 does not exist!");
+        assertEquals(ResponseCode.REQUEST_INVALID, validationResponse.getCode());
+        assertEquals("Song Instrument with id: 1 does not exist!", validationResponse.getDescription());
         Mockito.verify(songInstrumentDAO).existsByPK(1L);
     }
 

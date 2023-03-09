@@ -19,10 +19,10 @@ import ba.com.zira.sdr.api.ConnectedMediaService;
 import ba.com.zira.sdr.api.model.connectedmedia.ConnectedMediaCreateRequest;
 import ba.com.zira.sdr.api.model.connectedmediadetail.ConnectedMediaDetail;
 import ba.com.zira.sdr.api.model.connectedmediadetail.ConnectedMediaDetailCreateRequest;
-import ba.com.zira.sdr.configuration.ConnectedMediaDetailDAO;
 import ba.com.zira.sdr.core.mapper.ConnectedMediaDetailMapper;
 import ba.com.zira.sdr.core.validation.ConnectedMediaDetailRequestValidation;
 import ba.com.zira.sdr.dao.ConnectedMediaDAO;
+import ba.com.zira.sdr.dao.ConnectedMediaDetailDAO;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -41,7 +41,7 @@ public class ConnectedMediaDetailServiceImpl implements ConnectedMediaDetailServ
 
         var connectedMediaDetailEntity = connectedMediaDetailMapper.dtoToEntity(request.getEntity());
 
-        Map<String, Object> filterCriteria = new HashMap<String, Object>();
+        Map<String, Object> filterCriteria = new HashMap<>();
         filterCriteria.put("objectId", request.getEntity().getObjectId());
         filterCriteria.put("objectType", request.getEntity().getObjectType());
         QueryConditionPage queryConditionPage = new QueryConditionPage();

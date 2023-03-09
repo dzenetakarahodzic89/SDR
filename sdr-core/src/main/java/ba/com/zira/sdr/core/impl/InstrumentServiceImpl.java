@@ -29,6 +29,7 @@ import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
+import ba.com.zira.sdr.api.instrument.ResponseSongInstrumentEra;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.core.mapper.InstrumentMapper;
 import ba.com.zira.sdr.core.mapper.SongInstrumentMapper;
@@ -160,7 +161,7 @@ public class InstrumentServiceImpl implements InstrumentService {
         for (var item : songInstrumentList) {
             var response = new ResponseSongInstrument();
             response.setCreated(item.getCreated());
-            response.setCreated_by(item.getCreatedBy());
+            response.setCreatedBy(item.getCreatedBy());
             response.setInstrumentId(item.getInstrument().getId());
             response.setModified(item.getModified());
             response.setModifiedBy(item.getModifiedBy());
@@ -170,7 +171,17 @@ public class InstrumentServiceImpl implements InstrumentService {
             responseList.add(response);
         }
 
-        return new ListPayloadResponse<ResponseSongInstrument>(entityRequest, ResponseCode.OK, responseList);
+        return new ListPayloadResponse<>(entityRequest, ResponseCode.OK, responseList);
+    }
+
+    @Override
+
+    public ListPayloadResponse<ResponseSongInstrumentEra> findAllSongsInErasForInstruments(EntityRequest<Long> request)
+            throws ApiException {
+        Long instrumentId = request.getEntity();
+        List<ResponseSongInstrumentEra> responseList = instrumentDAO.findAllSongsInErasForInstruments(instrumentId);
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, responseList);
     }
 
     @Override

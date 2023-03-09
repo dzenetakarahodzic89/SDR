@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -16,10 +21,6 @@ import ba.com.zira.sdr.core.validation.SpotifyIntegrationRequestValidation;
 import ba.com.zira.sdr.dao.SpotifyIntegrationDAO;
 import ba.com.zira.sdr.dao.model.SpotifyIntegrationEntity;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -38,6 +39,8 @@ public class SpotifyIntegrationServiceImpl implements SpotifyIntegrationService 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<SpotifyIntegrationResponse> create(final EntityRequest<SpotifyIntegrationCreateRequest> request) {
+        spotifyIntegrationRequestValidation.validateCreateSpotifyIntegrationRequest(request);
+
         var spotifyIntegrationEntity = spotifyIntegrationMapper.dtoToEntity(request.getEntity());
         spotifyIntegrationEntity.setCreated(LocalDateTime.now());
         spotifyIntegrationEntity.setCreatedBy(request.getUserId());
@@ -70,4 +73,5 @@ public class SpotifyIntegrationServiceImpl implements SpotifyIntegrationService 
         spotifyIntegrationDAO.remove(spotifyIntegrationEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, "Integration removed successfully!");
     }
+
 }

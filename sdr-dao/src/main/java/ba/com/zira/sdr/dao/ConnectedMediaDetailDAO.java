@@ -1,4 +1,4 @@
-package ba.com.zira.sdr.configuration;
+package ba.com.zira.sdr.dao;
 
 import org.springframework.stereotype.Repository;
 

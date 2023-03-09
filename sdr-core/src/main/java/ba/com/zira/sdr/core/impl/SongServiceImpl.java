@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -21,6 +22,8 @@ import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
+import ba.com.zira.sdr.api.model.song.SongSearchRequest;
+import ba.com.zira.sdr.api.model.song.SongSearchResponse;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.api.model.song.SongUpdateRequest;
 import ba.com.zira.sdr.core.mapper.SongMapper;
@@ -135,6 +138,35 @@ public class SongServiceImpl implements SongService {
         var songs = songDAO.getSongsNotInAlbum(request.getEntity());
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, songs);
+    }
+
+    @Override
+    public ListPayloadResponse<SongSearchResponse> find(final EntityRequest<SongSearchRequest> request) {
+
+        List<SongSearchResponse> songs = songDAO.find(request.getEntity().getName(), request.getEntity().getSortBy(),
+                request.getEntity().getRemixId(), request.getEntity().getCoverId(), request.getEntity().getAlbumIds(),
+                request.getEntity().getGenreIds(), request.getEntity().getArtistIds(), request.getEntity().getPage(),
+                request.getEntity().getPageSize());
+
+        lookupService.lookupCoverImage(songs, SongSearchResponse::getId, ObjectType.SONG.getValue(), SongSearchResponse::setImageUrl,
+                SongSearchResponse::getImageUrl);
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, songs);
+    }
+
+    /**
+     * Gets the song titles artist names.
+     *
+     * @param request
+     *            the request
+     * @return the song titles artist names
+     * @throws ApiException
+     *             the api exception
+     */
+    @Override
+    public ListPayloadResponse<LoV> getSongTitlesArtistNames(EmptyRequest request) throws ApiException {
+        var songTitlesArtistNames = songDAO.getSongTitlesArtistNames();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, songTitlesArtistNames);
     }
 
 }
