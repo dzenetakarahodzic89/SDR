@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -24,6 +27,7 @@ import ba.com.zira.commons.model.User;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.DeezerIntegrationService;
+import ba.com.zira.sdr.api.enums.DeezerStatus;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegration;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationCreateRequest;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationUpdateRequest;
@@ -32,7 +36,12 @@ import ba.com.zira.sdr.core.mapper.DeezerIntegrationMapper;
 import ba.com.zira.sdr.core.validation.DeezerIntegrationRequestValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.DeezerIntegrationDAO;
+import ba.com.zira.sdr.dao.MediaDAO;
+import ba.com.zira.sdr.dao.MediaStoreDAO;
 import ba.com.zira.sdr.dao.model.DeezerIntegrationEntity;
+import ba.com.zira.sdr.dao.model.MediaEntity;
+import ba.com.zira.sdr.dao.model.MediaStoreEntity;
+import ba.com.zira.sdr.deezer.ArtistSearch;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -43,6 +52,9 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
     DeezerIntegrationMapper deezerIntegrationMapper;
     DeezerIntegrationRequestValidation deezerIntegrationRequestValidation;
     ArtistDAO artistDAO;
+    ObjectMapper objectMapper;
+    MediaDAO mediaDAO;
+    MediaStoreDAO mediaStoreDAO;
     private final RestTemplate restTemplate;
     private static final Logger LOGGER = LoggerFactory.getLogger(DeezerIntegrationServiceImpl.class);
     private static final User systemUser = new User("System");
@@ -118,4 +130,50 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
         }
     }
 
+    @Scheduled(initialDelay = 100, fixedDelay = 300000L)
+    @Transactional
+    public void insertDataIntoTables() throws JsonProcessingException {
+        var artistApiResponses = deezerIntegrationDAO.getForTableFill();
+        if (artistApiResponses.isEmpty()) {
+            LOGGER.info("There is no artist responses to go through.");
+            return;
+        }
+        for (var artistApiResponse : artistApiResponses) {
+            var responseData = objectMapper.readValue(artistApiResponse.getResponse(), ArtistSearch.class);
+            for (var entity : responseData.getData()) {
+
+                if (entity.getName().equalsIgnoreCase(artistApiResponse.getName().substring(7))) {
+                    artistDAO.updateDeezerFields(artistApiResponse.getObjectId(), (long) entity.getId(), (long) entity.getNbFan());
+                }
+                if (entity.getName().contains(artistApiResponse.getName().substring(7))) {
+                    var newMediaStore = new MediaStoreEntity();
+                    newMediaStore.setId(UUID.randomUUID().toString());
+                    newMediaStore.setName(artistApiResponse.getName().substring(7));
+                    newMediaStore.setType("COVER_IMAGE");
+                    var media = mediaDAO.findByTypeAndId("ARTIST", artistApiResponse.getObjectId());
+                    if (media == null) {
+                        var newMedia = new MediaEntity();
+                        newMedia.setObjectType("ARTIST");
+                        newMedia.setObjectId(artistApiResponse.getObjectId());
+                        newMedia.setCreated(LocalDateTime.now());
+                        newMedia.setCreatedBy(systemUser.getUserId());
+                        newMediaStore.setMedia(mediaDAO.persist(newMedia));
+                    } else {
+                        newMediaStore.setMedia(media);
+                    }
+                    newMediaStore.setCreated(LocalDateTime.now());
+                    newMediaStore.setCreatedBy(systemUser.getUserId());
+                    if (!entity.getPictureXl().isEmpty()) {
+                        newMediaStore.setUrl(entity.getPictureXl());
+                        newMediaStore.setExtension(entity.getPictureXl().substring(entity.getPictureXl().lastIndexOf(".") + 1));
+                    } else if (!entity.getPicture().isEmpty()) {
+                        newMediaStore.setUrl(entity.getPicture());
+                        newMediaStore.setExtension(entity.getPicture().substring(entity.getPicture().lastIndexOf(".") + 1));
+                    }
+                    mediaStoreDAO.persist(newMediaStore);
+                }
+            }
+            deezerIntegrationDAO.updateStatus(DeezerStatus.SAVED.getValue(), artistApiResponse.getId());
+        }
+    }
 }
