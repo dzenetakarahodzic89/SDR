@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -123,6 +124,13 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(sa.id,sa.name || ' ' || sa.surname) from ArtistEntity sa where not exists (select sdi from DeezerIntegrationEntity sdi where sdi.objectId = sa.id)";
         TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setMaxResults(10);
         return q.getResultList();
+    }
+
+    public void updateDeezerFields(Long id, Long deezerId, Long deezerFanCount) {
+        var hql = "update ArtistEntity set deezerId = :deezerId, deezerFans = :deezerFanCount where id = :id";
+        Query query = entityManager.createQuery(hql).setParameter("deezerId", deezerId).setParameter("deezerFanCount", deezerFanCount)
+                .setParameter("id", id);
+        query.executeUpdate();
     }
 
 }
