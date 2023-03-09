@@ -217,4 +217,11 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         return query.getResultList();
     }
 
+    public List<LoV> getSongTitlesArtistNames() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id, case when sa.artist.surname is null then"
+                + " concat(s.name,' - ',sa.artist.name) else concat(s.name,' - ',sa.artist.name,' ',sa.artist.surname) end) from SongEntity s join SongArtistEntity sa"
+                + " on s.id=sa.song.id group by s.id,sa.artist.name,sa.artist.surname";
+        return entityManager.createQuery(hql, LoV.class).getResultList();
+    }
+
 }
