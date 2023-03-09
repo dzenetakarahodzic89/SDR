@@ -117,4 +117,5 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
             LOGGER.info("All artists have been searched for.");
         }
     }
+
 }
