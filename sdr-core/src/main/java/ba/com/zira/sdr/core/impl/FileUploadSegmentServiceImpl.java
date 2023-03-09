@@ -1,13 +1,13 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -87,10 +87,10 @@ public class FileUploadSegmentServiceImpl implements FileUploadSegmentService {
             return new PayloadResponse<>(request, ResponseCode.OK, "Not uploaded yet");
         }
         var status = "";
-        if (fileUploadSegmentDAO.countAllFieldsByMedia(media.getId()) == 0) {
+        if (fileUploadSegmentDAO.countAllFieldsByMedia(media.getObjectId()) == 0) {
             status = "Upload not started yet";
         } else {
-            status = fileUploadSegmentDAO.checkStatusOfMediaId(media.getId());
+            status = fileUploadSegmentDAO.checkStatusOfMediaId(media.getObjectId());
         }
         return new PayloadResponse<>(request, ResponseCode.OK, status);
     }

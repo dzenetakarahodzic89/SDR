@@ -1,6 +1,8 @@
 package ba.com.zira.sdr.test.suites;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.Assert.assertEquals;
+
+import java.util.UUID;
 
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
@@ -20,22 +22,25 @@ public class DeezerIntegrationRequestValidationTest extends BasicTestConfigurati
     private static final String TEMPLATE_CODE = "TEST_1";
     private DeezerIntegrationDAO deezerIntegrationDAO;
     private DeezerIntegrationRequestValidation validation;
+
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.deezerIntegrationDAO = Mockito.mock(DeezerIntegrationDAO.class);
         this.validation = new DeezerIntegrationRequestValidation(deezerIntegrationDAO);
     }
+
     @Test
     public void validateUpdateRequestDeezerIntegrationNotFound() {
-        Mockito.when(deezerIntegrationDAO.existsByPK(1L)).thenReturn(false);
+        var uuid = UUID.randomUUID().toString();
+        Mockito.when(deezerIntegrationDAO.existsByPK(uuid)).thenReturn(false);
         EntityRequest<DeezerIntegrationUpdateRequest> request = new EntityRequest<>();
         request.setUser(new User("test"));
         var response = new DeezerIntegrationUpdateRequest();
-        response.setId(1L);
+        response.setId(uuid);
         request.setEntity(response);
         ValidationResponse validationResponse = validation.validateUpdateDeezerIntegrationRequest(request);
         assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-        assertEquals(validationResponse.getDescription(), "Deezer integration with id: 1 does not exist!");
-        Mockito.verify(deezerIntegrationDAO).existsByPK(1L);
+        assertEquals(validationResponse.getDescription(), "Deezer integration with id: " + uuid + " does not exist!");
+        Mockito.verify(deezerIntegrationDAO).existsByPK(uuid);
     }
 }
