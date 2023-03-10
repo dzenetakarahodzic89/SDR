@@ -1,5 +1,5 @@
 
-package ba.com.zira.sdr.spotify.album.songs;
+package ba.com.zira.sdr.spotify;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,27 +13,28 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import ba.com.zira.sdr.spotify.SpotifyArtistResponse;
 import lombok.Data;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "artists", "duration_ms", "id", "name", "preview_url", "track_number" })
+@JsonPropertyOrder({ "album_type", "artists", "id", "images", "name", "release_date", "total_tracks" })
 @Generated("jsonschema2pojo")
 @Data
-public class SpotifyAlbumsTrackItem {
+public class SpotifyAlbumItem {
 
+    @JsonProperty("album_type")
+    private String albumType;
     @JsonProperty("artists")
     private List<SpotifyArtistResponse> artists = new ArrayList<>();
-    @JsonProperty("duration_ms")
-    private Integer durationMs;
     @JsonProperty("id")
     private String id;
+    @JsonProperty("images")
+    private List<SpotifyImage> images = new ArrayList<>();
     @JsonProperty("name")
     private String name;
-    @JsonProperty("preview_url")
-    private String previewUrl;
-    @JsonProperty("track_number")
-    private Integer trackNumber;
+    @JsonProperty("release_date")
+    private String releaseDate;
+    @JsonProperty("total_tracks")
+    private Integer totalTracks;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<>();
 

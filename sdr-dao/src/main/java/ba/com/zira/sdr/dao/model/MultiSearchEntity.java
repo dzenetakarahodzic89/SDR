@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.dao.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
@@ -29,5 +30,7 @@ public class MultiSearchEntity implements Serializable {
     private Long id;
     private String name;
     private String type;
+    @Column(name = "spotify_id")
+    private String spotifyId;
 
 }
