@@ -187,6 +187,9 @@ public class SpotifyIntegrationServiceHelper {
     @Value("${spring.security.oauth2.client.registration.spotify.responseLimit}")
     private int responseLimit;
 
+    @Value("${spring.security.oauth2.client.registration.spotify.disabled}")
+    private Boolean integrationDisabled;
+
     /** The Constant systemUser. */
     private static final User systemUser = new User("Spotify Integration");
 
@@ -259,7 +262,7 @@ public class SpotifyIntegrationServiceHelper {
      * @param token
      *            the token
      *
-     * 
+     *
      */
     private void fetchAlbumsFromSpotify(String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for albums on Spotify...");
@@ -304,7 +307,7 @@ public class SpotifyIntegrationServiceHelper {
      * @param token
      *            the token
      *
-     * 
+     *
      */
     private void fetchSongsFromSpotify(String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for songs on Spotify...");
@@ -351,7 +354,7 @@ public class SpotifyIntegrationServiceHelper {
      * @param token
      *            the token
      *
-     * 
+     *
      */
     private void fetchArtistsFromSpotify(String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for artists on Spotify...");
@@ -430,7 +433,7 @@ public class SpotifyIntegrationServiceHelper {
      * @param objectId
      *            the object id
      *
-     * 
+     *
      */
     private void updateAlbumSpotifyId(String response, Long objectId) {
         var mapper = new N2bObjectMapper();
@@ -466,7 +469,7 @@ public class SpotifyIntegrationServiceHelper {
      * @param objectId
      *            the object id
      *
-     * 
+     *
      */
     private void updateSongSpotifyId(String response, String query, Long objectId) {
         var mapper = new N2bObjectMapper();
@@ -502,7 +505,7 @@ public class SpotifyIntegrationServiceHelper {
      * @param objectId
      *            the object id
      *
-     * 
+     *
      */
     private void updateArtistSpotifyId(String response, Long objectId) {
         var mapper = new N2bObjectMapper();
@@ -553,7 +556,7 @@ public class SpotifyIntegrationServiceHelper {
      *            the album name
      * @return the string
      *
-     * 
+     *
      */
     private String fetchSongsOfAlbumFromSpotify(String albumSpotifyId, String albumName) {
         var token = getAuthenticationToken();
@@ -622,7 +625,7 @@ public class SpotifyIntegrationServiceHelper {
      * @param releaseDate
      *            the release date
      *
-     * 
+     *
      */
     private void saveSongs(List<SpotifyAlbumsTrackItem> songs, AlbumEntity album, List<ArtistEntity> artists, LabelEntity label,
             GenreEntity genre, LocalDateTime releaseDate) {
@@ -681,7 +684,7 @@ public class SpotifyIntegrationServiceHelper {
      * @param label
      *            the label
      *
-     * 
+     *
      */
     private void addSongsFromSpotifyForAlbum(AlbumEntity album, List<ArtistEntity> artists, LabelEntity label) {
         var mapper = new ObjectMapper();
@@ -725,7 +728,7 @@ public class SpotifyIntegrationServiceHelper {
      *            the spotify status
      * @return the artist entity
      *
-     * 
+     *
      */
     private ArtistEntity saveArtistFromSpotify(String artistName, String artistSpotifyId, String spotifyStatus) {
         if (mapOfExistingSpotifyIds.get(artistSpotifyId) == null) {
@@ -807,7 +810,7 @@ public class SpotifyIntegrationServiceHelper {
      *            the artist name
      * @return the string
      *
-     * 
+     *
      */
     private String fetchAlbumsOfArtistFromSpotify(String artistSpotifyId, String artistName) {
         var token = getAuthenticationToken();
@@ -848,7 +851,7 @@ public class SpotifyIntegrationServiceHelper {
      *            the label
      * @return the album entity
      *
-     * 
+     *
      */
     private AlbumEntity saveAlbum(String albumName, String albumSpotifyId, String releaseDate, List<ArtistEntity> artists,
             LabelEntity label) {

@@ -235,6 +235,8 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
                 + " concat(s.name,' - ',sa.artist.name) else concat(s.name,' - ',sa.artist.name,' ',sa.artist.surname) end) from SongEntity s join SongArtistEntity sa"
                 + " on s.id=sa.song.id group by s.id,sa.artist.name,sa.artist.surname";
         return entityManager.createQuery(hql, LoV.class).getResultList();
+    }
+
     public List<SongEntity> getDuplicateSongs() {
         var hql = "select s from SongEntity s where s.created > "
                 + "(select min(s2.created) from SongEntity s2 where s2.spotifyId = s.spotifyId group by s2.spotifyId )"
