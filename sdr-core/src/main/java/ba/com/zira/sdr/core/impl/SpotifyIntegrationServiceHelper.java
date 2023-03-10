@@ -1018,6 +1018,10 @@ public class SpotifyIntegrationServiceHelper {
      */
     @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}", initialDelay = 300000)
     public void fetchDataFromSpotify() {
+        if (Boolean.TRUE.equals(integrationDisabled)) {
+            LOGGER.info("Spotify integration disabled!");
+            return;
+        }
         LOGGER.info("SPOTIFY INTEGRATION: Scheduled search started");
         String token = getAuthenticationToken();
         fetchAlbumsFromSpotify(token);
@@ -1030,6 +1034,10 @@ public class SpotifyIntegrationServiceHelper {
      */
     @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}")
     public void updateWithDataFromSpotify() {
+        if (Boolean.TRUE.equals(integrationDisabled)) {
+            LOGGER.info("Spotify integration disabled!");
+            return;
+        }
         LOGGER.info("SPOTIFY INTEGRATION: Scheduled data update started");
         updateSpotifyId();
         multiSearchDAO.deleteTable();

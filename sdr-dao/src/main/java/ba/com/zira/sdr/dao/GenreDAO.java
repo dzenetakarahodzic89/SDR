@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.dao;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -87,6 +88,12 @@ public class GenreDAO extends AbstractDAO<GenreEntity, Long> {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public List<LoV> getSubGenreMainGenreNames() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(g.id,case when g.mainGenre=null then g.name"
+                + " else concat(g.name,' - ', gg.name) end) from GenreEntity g left join GenreEntity gg on g.mainGenre.id=gg.id";
+        return entityManager.createQuery(hql, LoV.class).getResultList();
     }
 
 }
