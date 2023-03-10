@@ -24,7 +24,7 @@ public class PersonDAO extends AbstractDAO<PersonEntity, Long> {
     }
 
     public List<LoV> personsByArtistId(Long artistId) {
-        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(p.id,p.name) from PersonEntity p "
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(p.id,p.name) from PersonEntity p "
                 + "join PersonArtistEntity pa on p.id=pa.person.id join ArtistEntity a on pa.artist.id=a.id where a.id=:id";
         TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setParameter("id", artistId);
         try {

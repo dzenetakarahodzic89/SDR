@@ -84,7 +84,7 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
     }
 
     public List<LoV> artistsByEras(Long eraId) {
-        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.name) from EraEntity e join AlbumEntity al on e.id=al.era.id "
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.name) from EraEntity e join AlbumEntity al on e.id=al.era.id "
                 + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id";
         TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setParameter("id", eraId);
         try {
@@ -118,4 +118,21 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         var hql = "select art from ArtistEntity art join SongArtistEntity sa on art.id=sa.artist.id where sa.album.id=:albumId";
         return entityManager.createQuery(hql, ArtistEntity.class).setParameter("albumId", albumId).getResultList();
     }
+
+    public Long countSoloArtistsByEras(Long era) {
+        var hql = "select count(distinct sa.artist.id) from EraEntity e join AlbumEntity al on e.id=al.era.id "
+                + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id "
+                + "and (select count(pa.person.id) from PersonArtistEntity pa where pa.artist.id=a.id) = 1";
+        TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", era);
+        return q.getSingleResult();
+    }
+
+    public Long countGroupArtistsByEras(Long era) {
+        var hql = "select count(distinct sa.artist.id) from EraEntity e join AlbumEntity al on e.id=al.era.id "
+                + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id "
+                + "and (select count(pa.person.id) from PersonArtistEntity pa where pa.artist.id=a.id) > 1";
+        TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", era);
+        return q.getSingleResult();
+    }
+
 }

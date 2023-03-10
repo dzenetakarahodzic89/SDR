@@ -36,6 +36,7 @@ import ba.com.zira.sdr.dao.PersonArtistDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.EraEntity;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
 import lombok.AllArgsConstructor;
 
@@ -187,6 +188,22 @@ public class ArtistServiceImpl implements ArtistService {
     public ListPayloadResponse<LoV> getArtistNames(EmptyRequest request) throws ApiException {
         var artists = artistDAO.getArtistLoVs();
         return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
+    }
+
+    @Override
+    public PayloadResponse<ArtistByEras> countArtistsByEras(EntityRequest<Long> request) {
+        Long eraId = request.getEntity();
+        Long soloArtistsCount = artistDAO.countSoloArtistsByEras(eraId);
+        Long groupArtistsCount = artistDAO.countGroupArtistsByEras(eraId);
+
+        EraEntity era = eraDAO.findByPK(eraId);
+        if (era == null) {
+            throw new IllegalArgumentException("Era cannot be null.");
+        }
+
+        ArtistByEras artistByEras = new ArtistByEras(era.getName(), soloArtistsCount, groupArtistsCount);
+
+        return new PayloadResponse<>(request, ResponseCode.OK, artistByEras);
     }
 
 }
