@@ -87,16 +87,12 @@ public class InstrumentRestService {
         return instrumentService.insertInstrumentsToSong(request);
     }
 
-
     @Operation(summary = "Get number of songs of instruments by era")
     @GetMapping(value = "/{id}/era-timeline")
-    public ListPayloadResponse<ResponseSongInstrumentEra> getInstrumentSongByEra (
-            @Parameter(required = true, description = "ID of the instrument")
-            @PathVariable final Long id) throws ApiException {
+    public ListPayloadResponse<ResponseSongInstrumentEra> getInstrumentSongByEra(
+            @Parameter(required = true, description = "ID of the instrument") @PathVariable final Long id) throws ApiException {
         return instrumentService.findAllSongsInErasForInstruments(new EntityRequest<>(id));
 
     }
-
-
 
 }

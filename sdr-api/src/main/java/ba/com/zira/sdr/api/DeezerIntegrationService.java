@@ -15,7 +15,7 @@ public interface DeezerIntegrationService {
 
     public PayloadResponse<DeezerIntegration> create(final EntityRequest<DeezerIntegrationCreateRequest> request) throws ApiException;
 
-    public PayloadResponse<DeezerIntegration> update(final EntityRequest<DeezerIntegrationUpdateRequest> request) throws ApiException;    
-    
-    public PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException;
+    public PayloadResponse<DeezerIntegration> update(final EntityRequest<DeezerIntegrationUpdateRequest> request) throws ApiException;
+
+    public PayloadResponse<String> delete(final EntityRequest<String> request) throws ApiException;
 }

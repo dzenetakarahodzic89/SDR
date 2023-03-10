@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -31,9 +32,11 @@ import ba.com.zira.sdr.core.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.validation.SongRequestValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.GenreDAO;
+import ba.com.zira.sdr.dao.InstrumentDAO;
 import ba.com.zira.sdr.dao.LyricDAO;
 import ba.com.zira.sdr.dao.NoteSheetDAO;
 import ba.com.zira.sdr.dao.SongDAO;
+import ba.com.zira.sdr.dao.SongInstrumentDAO;
 import ba.com.zira.sdr.dao.model.LyricEntity;
 import ba.com.zira.sdr.dao.model.NoteSheetEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
@@ -48,9 +51,11 @@ public class SongServiceImpl implements SongService {
     NoteSheetDAO noteSheetDAO;
     SongMapper songMapper;
     SongRequestValidation songRequestValidation;
+    SongInstrumentDAO songInstrumentDAO;
     ArtistDAO artistDAO;
     GenreDAO genreDAO;
     LookupService lookupService;
+    InstrumentDAO instrumentDAO;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -95,6 +100,8 @@ public class SongServiceImpl implements SongService {
         song.setPlaylistCount(songDAO.countAllPlaylistsWhereSongExists(request.getEntity()).intValue());
         song.setArtists(artistDAO.getBySongId(request.getEntity()));
         song.setSubgenres(genreDAO.subGenresByMainGenre(song.getGenreId()));
+        song.setInstruments(instrumentDAO.getInstrumentsForSong(request.getEntity()));
+        song.setSongInstruments(songInstrumentDAO.getAllBySongId(request.getEntity()));
         return new PayloadResponse<>(request, ResponseCode.OK, song);
     }
 
@@ -151,6 +158,21 @@ public class SongServiceImpl implements SongService {
                 SongSearchResponse::getImageUrl);
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, songs);
+    }
+
+    /**
+     * Gets the song titles artist names.
+     *
+     * @param request
+     *            the request
+     * @return the song titles artist names
+     * @throws ApiException
+     *             the api exception
+     */
+    @Override
+    public ListPayloadResponse<LoV> getSongTitlesArtistNames(EmptyRequest request) throws ApiException {
+        var songTitlesArtistNames = songDAO.getSongTitlesArtistNames();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, songTitlesArtistNames);
     }
 
 }
