@@ -28,8 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -54,11 +54,10 @@ import ba.com.zira.sdr.dao.model.GenreEntity;
 import ba.com.zira.sdr.dao.model.LabelEntity;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
-import ba.com.zira.sdr.spotify.album.search.SpotifyAlbumItem;
+import ba.com.zira.sdr.spotify.SpotifyAlbumItem;
 import ba.com.zira.sdr.spotify.album.search.SpotifyAlbumSearch;
 import ba.com.zira.sdr.spotify.album.songs.SpotifyAlbumsTrackItem;
 import ba.com.zira.sdr.spotify.album.songs.SpotifyGetAlbumsSongs;
-import ba.com.zira.sdr.spotify.artist.albums.SpotifyArtistsAlbumItem;
 import ba.com.zira.sdr.spotify.artist.albums.SpotifyGetArtistsAlbums;
 import ba.com.zira.sdr.spotify.artist.search.SpotifyArtistItem;
 import ba.com.zira.sdr.spotify.artist.search.SpotifyArtistSearch;
@@ -123,6 +122,10 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class SpotifyIntegrationServiceHelper {
+
+    private static final String SEARCH_Q = "/search?q=";
+
+    private static final String STATUS_ACTIVE = "Active";
 
     /** The Constant SPOTIFY_STATUS_DONE. */
     private static final String SPOTIFY_STATUS_DONE = "Done";
@@ -202,6 +205,8 @@ public class SpotifyIntegrationServiceHelper {
     /** The map of existing spotify ids. */
     private Map<String, MultiSearchResponse> mapOfExistingSpotifyIds = new HashMap<>();
 
+    private N2bObjectMapper mapper = new N2bObjectMapper();
+
     /**
      * Gets the http entity.
      *
@@ -274,7 +279,7 @@ public class SpotifyIntegrationServiceHelper {
             spotifyIntegration.setObjectId(album.getId());
             spotifyIntegration.setObjectType(ObjectType.ALBUM.getValue());
 
-            var url = spotifyApiUrl + "/search?q=" + album.getName() + "&type=album&limit=" + responseLimit;
+            var url = spotifyApiUrl + SEARCH_Q + album.getName() + "&type=album&limit=" + responseLimit;
 
             spotifyIntegration.setRequest(url);
 
@@ -319,7 +324,7 @@ public class SpotifyIntegrationServiceHelper {
             spotifyIntegration.setObjectId(song.getId());
             spotifyIntegration.setObjectType(ObjectType.SONG.getValue());
 
-            var url = spotifyApiUrl + "/search?q=" + song.getName() + "&type=track&limit=" + responseLimit;
+            var url = spotifyApiUrl + SEARCH_Q + song.getName() + "&type=track&limit=" + responseLimit;
 
             spotifyIntegration.setRequest(url);
 
@@ -366,7 +371,7 @@ public class SpotifyIntegrationServiceHelper {
             spotifyIntegration.setObjectId(artist.getId());
             spotifyIntegration.setObjectType(ObjectType.ARTIST.getValue());
 
-            var url = spotifyApiUrl + "/search?q=" + artist.getName() + "&type=artist&limit=" + responseLimit;
+            var url = spotifyApiUrl + SEARCH_Q + artist.getName() + "&type=artist&limit=" + responseLimit;
 
             spotifyIntegration.setRequest(url);
 
@@ -436,7 +441,6 @@ public class SpotifyIntegrationServiceHelper {
      *
      */
     private void updateAlbumSpotifyId(String response, Long objectId) {
-        var mapper = new N2bObjectMapper();
         try {
             SpotifyAlbumSearch albums = mapper.readValue(response, SpotifyAlbumSearch.class);
             List<SpotifyAlbumItem> albumItemList = albums.getAlbums().getItems();
@@ -472,7 +476,6 @@ public class SpotifyIntegrationServiceHelper {
      *
      */
     private void updateSongSpotifyId(String response, String query, Long objectId) {
-        var mapper = new N2bObjectMapper();
         try {
             SpotifyTrackSearch tracks = mapper.readValue(response, SpotifyTrackSearch.class);
             List<SpotifyTrackItem> trackItemList = tracks.getTracks().getItems();
@@ -508,7 +511,6 @@ public class SpotifyIntegrationServiceHelper {
      *
      */
     private void updateArtistSpotifyId(String response, Long objectId) {
-        var mapper = new N2bObjectMapper();
         try {
             SpotifyArtistSearch artists = mapper.readValue(response, SpotifyArtistSearch.class);
             List<SpotifyArtistItem> artistItemList = artists.getArtists().getItems();
@@ -599,7 +601,7 @@ public class SpotifyIntegrationServiceHelper {
         songArtistEntity.setCreated(LocalDateTime.now());
         songArtistEntity.setCreatedBy(systemUser.getUserId());
         songArtistEntity.setLabel(label);
-        songArtistEntity.setStatus("Active");
+        songArtistEntity.setStatus(STATUS_ACTIVE);
         songArtistDAO.persist(songArtistEntity);
     }
 
@@ -687,17 +689,16 @@ public class SpotifyIntegrationServiceHelper {
      *
      */
     private void addSongsFromSpotifyForAlbum(AlbumEntity album, List<ArtistEntity> artists, LabelEntity label) {
-        var mapper = new ObjectMapper();
         try {
             SpotifyGetAlbumsSongs response = mapper.readValue(fetchSongsOfAlbumFromSpotify(album.getSpotifyId(), album.getName()),
                     SpotifyGetAlbumsSongs.class);
 
             GenreEntity genre = null;
             if (!response.getGenres().isEmpty()) {
-                var genreFound = response.getGenres().stream().filter(g -> genreDAO.findByName((String) g) != null).findFirst();
+                var genreFound = response.getGenres().stream().filter(g -> genreDAO.findByName(g) != null).findFirst();
 
                 if (genreFound.isPresent()) {
-                    genre = (GenreEntity) genreFound.get();
+                    genre = genreDAO.findByName(genreFound.get());
                 } else {
                     genre = genreDAO.findByPK(0L);
                 }
@@ -734,7 +735,7 @@ public class SpotifyIntegrationServiceHelper {
         if (mapOfExistingSpotifyIds.get(artistSpotifyId) == null) {
             ArtistEntity artistEntity = new ArtistEntity();
             artistEntity.setName(artistName);
-            artistEntity.setStatus("Active");
+            artistEntity.setStatus(STATUS_ACTIVE);
             artistEntity.setCreated(LocalDateTime.now());
             artistEntity.setCreatedBy(systemUser.getUserId());
             artistEntity.setSpotifyId(artistSpotifyId);
@@ -765,7 +766,6 @@ public class SpotifyIntegrationServiceHelper {
         LabelEntity defaultLabel = labelDAO.findByPK(0L);
         var albums = albumDAO.findAlbumsToFetchSongsFromSpotify(responseLimit);
         LOGGER.info("SPOTIFY INTEGRATION: Found {} albums to fetch songs for!", albums.size());
-        var mapper = new N2bObjectMapper();
 
         albums.forEach(album -> {
             LOGGER.info("SPOTIFY INTEGRATION: Fetching songs for album {}...", album.getName());
@@ -864,7 +864,7 @@ public class SpotifyIntegrationServiceHelper {
             albumEntity.setDateOfRelease(parseDate(releaseDate));
             albumEntity.setCreated(LocalDateTime.now());
             albumEntity.setCreatedBy(systemUser.getUserId());
-            albumEntity.setStatus("Active");
+            albumEntity.setStatus(STATUS_ACTIVE);
             mapOfExistingSpotifyIds.put(albumSpotifyId, new MultiSearchResponse(albumName, ObjectType.ALBUM.getValue(), albumSpotifyId));
             try {
                 albumDAO.persist(albumEntity);
@@ -896,7 +896,7 @@ public class SpotifyIntegrationServiceHelper {
      * @param label
      *            the label
      */
-    private void saveAlbums(List<SpotifyArtistsAlbumItem> albums, ArtistEntity artist, LabelEntity label) {
+    private void saveAlbums(List<SpotifyAlbumItem> albums, ArtistEntity artist, LabelEntity label) {
         albums.forEach(album -> {
             List<ArtistEntity> artists = new ArrayList<>();
             artists.add(artist);
@@ -918,7 +918,6 @@ public class SpotifyIntegrationServiceHelper {
         LabelEntity defaultLabel = labelDAO.findByPK(0L);
         var artists = artistDAO.findArtistsToFetchAlbumsFromSpotify(responseLimit);
         LOGGER.info("SPOTIFY INTEGRATION: Found {} artists to fetch albums for!", artists.size());
-        var mapper = new N2bObjectMapper();
 
         artists.forEach(artist -> {
             var artistName = artist.getName();
@@ -956,7 +955,6 @@ public class SpotifyIntegrationServiceHelper {
         LabelEntity defaultLabel = labelDAO.findByPK(0L);
         var songs = songDAO.findSongsToFetchArtistsAndAlbumFromSpotify(responseLimit);
         LOGGER.info("SPOTIFY INTEGRATION: Found {} songs to fetch artist and album for!", songs.size());
-        var mapper = new N2bObjectMapper();
 
         songs.forEach(song -> {
             LOGGER.info("SPOTIFY INTEGRATION: Fetching album and artists for song {}...", song.getName());
@@ -1019,7 +1017,7 @@ public class SpotifyIntegrationServiceHelper {
     /**
      * Fetch data from spotify.
      */
-    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}", initialDelay = 300000)
+    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}")
     public void fetchDataFromSpotify() {
         if (Boolean.TRUE.equals(integrationDisabled)) {
             LOGGER.info("Spotify integration disabled!");
@@ -1035,13 +1033,14 @@ public class SpotifyIntegrationServiceHelper {
     /**
      * Update with data from spotify.
      */
-    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}")
+    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}", initialDelay = 300000)
     public void updateWithDataFromSpotify() {
         if (Boolean.TRUE.equals(integrationDisabled)) {
             LOGGER.info("Spotify integration disabled!");
             return;
         }
         LOGGER.info("SPOTIFY INTEGRATION: Scheduled data update started");
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         updateSpotifyId();
         multiSearchDAO.deleteTable();
         multiSearchDAO.createTableAndFillWithData();
