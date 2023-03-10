@@ -16,10 +16,13 @@ import org.springframework.stereotype.Component;
 
 import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.media.CoverImageHelper;
+import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.CountryDAO;
+import ba.com.zira.sdr.dao.InstrumentDAO;
 import ba.com.zira.sdr.dao.LabelDAO;
 import ba.com.zira.sdr.dao.MediaStoreDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
+import ba.com.zira.sdr.dao.SongDAO;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -40,6 +43,15 @@ public class LookupService {
 
     @NonNull
     CountryDAO countryDAO;
+
+    @NonNull
+    SongDAO songDAO;
+
+    @NonNull
+    ArtistDAO artistDAO;
+
+    @NonNull
+    InstrumentDAO instrumentDAO;
 
     private static SecureRandom random = new SecureRandom();
 
@@ -87,6 +99,45 @@ public class LookupService {
             }
         }
         return null;
+    }
+
+    public <E> void lookupSongDateOfRelease(List<E> values, Function<E, Long> getter, BiConsumer<E, LocalDateTime> setter) {
+        List<Long> songIds = values.parallelStream().map(getter).distinct().collect(Collectors.toList());
+
+        if (!(songIds == null || songIds.isEmpty())) {
+            Map<Long, LocalDateTime> lookup = new ConcurrentHashMap<>(songDAO.getSongDateOfRelease(songIds));
+            values.parallelStream().forEach(r -> setter.accept(r, getDate(getter.apply(r), lookup)));
+        }
+    }
+
+    public <E> void lookupArtistNames(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {
+        List<Long> ids = values.parallelStream().map(getter).distinct().collect(Collectors.toList());
+
+        if (!(ids == null || ids.isEmpty())) {
+            Map<Long, String> lookup = new ConcurrentHashMap<>(artistDAO.getArtistNames(ids));
+            values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
+        }
+
+    }
+
+    public <E> void lookupSongNames(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {
+        List<Long> ids = values.parallelStream().map(getter).distinct().collect(Collectors.toList());
+
+        if (!(ids == null || ids.isEmpty())) {
+            Map<Long, String> lookup = new ConcurrentHashMap<>(songDAO.getSongNames(ids));
+            values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
+        }
+
+    }
+
+    public <E> void lookupInstrumentNames(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {
+        List<Long> ids = values.parallelStream().map(getter).distinct().collect(Collectors.toList());
+
+        if (!(ids == null || ids.isEmpty())) {
+            Map<Long, String> lookup = new ConcurrentHashMap<>(instrumentDAO.getInstrumentNames(ids));
+            values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
+        }
+
     }
 
     public <E> void lookupCoverImage(final List<E> values, final Function<E, Long> getter, final String objectType,

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import ba.com.zira.sdr.api.artist.ArtistSongResponse;
+import ba.com.zira.sdr.api.instrument.InstrumentSongResponse;
+import ba.com.zira.sdr.api.model.songinstrument.SongInstrumentSingleSongResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,6 +44,8 @@ public class SongSingleResponse implements Serializable {
     private Map<Long, String> subgenres;
     @Schema(description = "List of artists")
     private List<ArtistSongResponse> artists;
+    private List<InstrumentSongResponse> instruments;
+    private List<SongInstrumentSingleSongResponse> songInstruments;
 
     private String audioUrl;
 

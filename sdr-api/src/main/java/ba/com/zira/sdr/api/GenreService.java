@@ -95,4 +95,15 @@ public interface GenreService {
      */
     PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
+    /**
+     * Gets the sub genre main genre names.
+     *
+     * @param request
+     *            the request
+     * @return the sub genre main genre names
+     * @throws ApiException
+     *             the api exception
+     */
+    ListPayloadResponse<LoV> getSubGenreMainGenreNames(final EmptyRequest request) throws ApiException;
+
 }

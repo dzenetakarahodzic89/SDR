@@ -75,8 +75,17 @@ public class ArtistEntity implements Serializable {
     @Column(name = "spotify_id")
     private String spotifyId;
 
+    @Column(name = "spotify_status")
+    private String spotifyStatus;
+
     @Column(name = "outline_text")
     private String outlineText;
+
+    @Column(name = "deezer_id")
+    private Long deezerId;
+
+    @Column(name = "deezer_fans")
+    private Long deezerFans;
 
     // bi-directional many-to-one association to PersonArtistEntity
     @OneToMany(mappedBy = "artist")

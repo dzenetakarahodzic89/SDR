@@ -1,0 +1,196 @@
+{
+"albums" : {
+"href" : "https://api.spotify.com/v1/search?query=album%3AHelp%21+artist%3AThe+Beatles&type=album&offset=0&limit=5",
+"items" : [ {
+"album_type" : "album",
+"artists" : [ {
+"external_urls" : {
+"spotify" : "https://open.spotify.com/artist/3WrFJ7ztbogyGnTHbHJFl2"
+},
+"href" : "https://api.spotify.com/v1/artists/3WrFJ7ztbogyGnTHbHJFl2",
+"id" : "3WrFJ7ztbogyGnTHbHJFl2",
+"name" : "The Beatles",
+"type" : "artist",
+"uri" : "spotify:artist:3WrFJ7ztbogyGnTHbHJFl2"
+} ],
+"available_markets" : [ "AD", "AE", "AG", "AL", "AM", "AO", "AR", "AT", "AU", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BN", "BO", "BR", "BS", "BT", "BW", "BY", "BZ", "CA", "CD", "CG", "CH", "CI", "CL", "CM", "CO", "CR", "CV", "CW", "CY", "CZ", "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "ES", "ET", "FI", "FJ", "FM", "FR", "GA", "GB", "GD", "GE", "GH", "GM", "GN", "GQ", "GR", "GT", "GW", "GY", "HK", "HN", "HR", "HT", "HU", "ID", "IE", "IL", "IN", "IQ", "IS", "IT", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KR", "KW", "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MG", "MH", "MK", "ML", "MN", "MO", "MR", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NR", "NZ", "OM", "PA", "PE", "PG", "PH", "PK", "PL", "PS", "PT", "PW", "PY", "QA", "RO", "RS", "RW", "SA", "SB", "SC", "SE", "SG", "SI", "SK", "SL", "SM", "SN", "SR", "ST", "SV", "SZ", "TD", "TG", "TH", "TJ", "TL", "TN", "TO", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "US", "UY", "UZ", "VC", "VE", "VN", "VU", "WS", "XK", "ZA", "ZM", "ZW" ],
+"external_urls" : {
+"spotify" : "https://open.spotify.com/album/0PT5m6hwPRrpBwIHVnvbFX"
+},
+"href" : "https://api.spotify.com/v1/albums/0PT5m6hwPRrpBwIHVnvbFX",
+"id" : "0PT5m6hwPRrpBwIHVnvbFX",
+"images" : [ {
+"height" : 640,
+"url" : "https://i.scdn.co/image/ab67616d0000b273e3e3b64cea45265469d4cafa",
+"width" : 640
+}, {
+"height" : 300,
+"url" : "https://i.scdn.co/image/ab67616d00001e02e3e3b64cea45265469d4cafa",
+"width" : 300
+}, {
+"height" : 64,
+"url" : "https://i.scdn.co/image/ab67616d00004851e3e3b64cea45265469d4cafa",
+"width" : 64
+} ],
+"name" : "Help! (Remastered)",
+"release_date" : "1965-08-06",
+"release_date_precision" : "day",
+"total_tracks" : 14,
+"type" : "album",
+"uri" : "spotify:album:0PT5m6hwPRrpBwIHVnvbFX"
+}, {
+"album_type" : "album",
+"artists" : [ {
+"external_urls" : {
+"spotify" : "https://open.spotify.com/artist/5o723EMxNulM5ydXRh7Qkk"
+},
+"href" : "https://api.spotify.com/v1/artists/5o723EMxNulM5ydXRh7Qkk",
+"id" : "5o723EMxNulM5ydXRh7Qkk",
+"name" : "The Beatles Complete On Ukulele",
+"type" : "artist",
+"uri" : "spotify:artist:5o723EMxNulM5ydXRh7Qkk"
+} ],
+"available_markets" : [ "AD", "AE", "AG", "AL", "AM", "AO", "AR", "AT", "AU", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BN", "BO", "BR", "BS", "BT", "BW", "BY", "BZ", "CA", "CD", "CG", "CH", "CI", "CL", "CM", "CO", "CR", "CV", "CW", "CY", "CZ", "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "ES", "ET", "FI", "FJ", "FM", "FR", "GA", "GB", "GD", "GE", "GH", "GM", "GN", "GQ", "GR", "GT", "GW", "GY", "HK", "HN", "HR", "HT", "HU", "ID", "IE", "IL", "IN", "IQ", "IS", "IT", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KR", "KW", "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MG", "MH", "MK", "ML", "MN", "MO", "MR", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NR", "NZ", "OM", "PA", "PE", "PG", "PH", "PK", "PL", "PS", "PT", "PW", "PY", "QA", "RO", "RS", "RW", "SA", "SB", "SC", "SE", "SG", "SI", "SK", "SL", "SM", "SN", "SR", "ST", "SV", "SZ", "TD", "TG", "TH", "TJ", "TL", "TN", "TO", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "US", "UY", "UZ", "VC", "VE", "VN", "VU", "WS", "XK", "ZA", "ZM", "ZW" ],
+"external_urls" : {
+"spotify" : "https://open.spotify.com/album/3Zl2mKpZWfC0N1rzu68mTK"
+},
+"href" : "https://api.spotify.com/v1/albums/3Zl2mKpZWfC0N1rzu68mTK",
+"id" : "3Zl2mKpZWfC0N1rzu68mTK",
+"images" : [ {
+"height" : 640,
+"url" : "https://i.scdn.co/image/ab67616d0000b273c17c6282651f14f10e833b7c",
+"width" : 640
+}, {
+"height" : 300,
+"url" : "https://i.scdn.co/image/ab67616d00001e02c17c6282651f14f10e833b7c",
+"width" : 300
+}, {
+"height" : 64,
+"url" : "https://i.scdn.co/image/ab67616d00004851c17c6282651f14f10e833b7c",
+"width" : 64
+} ],
+"name" : "Help!",
+"release_date" : "2020-07-27",
+"release_date_precision" : "day",
+"total_tracks" : 14,
+"type" : "album",
+"uri" : "spotify:album:3Zl2mKpZWfC0N1rzu68mTK"
+}, {
+"album_type" : "single",
+"artists" : [ {
+"external_urls" : {
+"spotify" : "https://open.spotify.com/artist/5UloVKzUNJcjORzhhTWWiJ"
+},
+"href" : "https://api.spotify.com/v1/artists/5UloVKzUNJcjORzhhTWWiJ",
+"id" : "5UloVKzUNJcjORzhhTWWiJ",
+"name" : "The Karaoke Channel",
+"type" : "artist",
+"uri" : "spotify:artist:5UloVKzUNJcjORzhhTWWiJ"
+} ],
+"available_markets" : [ "AD", "AE", "AG", "AL", "AM", "AO", "AR", "AT", "AU", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BN", "BO", "BR", "BS", "BT", "BW", "BY", "BZ", "CA", "CD", "CG", "CH", "CI", "CL", "CM", "CO", "CR", "CV", "CW", "CY", "CZ", "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "ES", "ET", "FI", "FJ", "FM", "FR", "GA", "GB", "GD", "GE", "GH", "GM", "GN", "GQ", "GR", "GT", "GW", "GY", "HK", "HN", "HR", "HT", "HU", "ID", "IE", "IL", "IN", "IQ", "IS", "IT", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KR", "KW", "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MG", "MH", "MK", "ML", "MN", "MO", "MR", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NR", "NZ", "OM", "PA", "PE", "PG", "PH", "PK", "PL", "PS", "PT", "PW", "PY", "QA", "RO", "RS", "RW", "SA", "SB", "SC", "SE", "SG", "SI", "SK", "SL", "SM", "SN", "SR", "ST", "SV", "SZ", "TD", "TG", "TH", "TJ", "TL", "TN", "TO", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "US", "UY", "UZ", "VC", "VE", "VN", "VU", "WS", "XK", "ZA", "ZM", "ZW" ],
+"external_urls" : {
+"spotify" : "https://open.spotify.com/album/6cLnH6lhJfzB9asOnH3iku"
+},
+"href" : "https://api.spotify.com/v1/albums/6cLnH6lhJfzB9asOnH3iku",
+"id" : "6cLnH6lhJfzB9asOnH3iku",
+"images" : [ {
+"height" : 640,
+"url" : "https://i.scdn.co/image/ab67616d0000b27370bf375af838c8ae8ebe8d99",
+"width" : 640
+}, {
+"height" : 300,
+"url" : "https://i.scdn.co/image/ab67616d00001e0270bf375af838c8ae8ebe8d99",
+"width" : 300
+}, {
+"height" : 64,
+"url" : "https://i.scdn.co/image/ab67616d0000485170bf375af838c8ae8ebe8d99",
+"width" : 64
+} ],
+"name" : "The Karaoke Channel - Sing Help! Like the Beatles",
+"release_date" : "2015-07-24",
+"release_date_precision" : "day",
+"total_tracks" : 2,
+"type" : "album",
+"uri" : "spotify:album:6cLnH6lhJfzB9asOnH3iku"
+}, {
+"album_type" : "single",
+"artists" : [ {
+"external_urls" : {
+"spotify" : "https://open.spotify.com/artist/5UloVKzUNJcjORzhhTWWiJ"
+},
+"href" : "https://api.spotify.com/v1/artists/5UloVKzUNJcjORzhhTWWiJ",
+"id" : "5UloVKzUNJcjORzhhTWWiJ",
+"name" : "The Karaoke Channel",
+"type" : "artist",
+"uri" : "spotify:artist:5UloVKzUNJcjORzhhTWWiJ"
+} ],
+"available_markets" : [ "AD", "AE", "AG", "AL", "AM", "AO", "AR", "AT", "AU", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BN", "BO", "BR", "BS", "BT", "BW", "BY", "BZ", "CA", "CD", "CG", "CH", "CI", "CL", "CM", "CO", "CR", "CV", "CW", "CY", "CZ", "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "ES", "ET", "FI", "FJ", "FM", "FR", "GA", "GB", "GD", "GE", "GH", "GM", "GN", "GQ", "GR", "GT", "GW", "GY", "HK", "HN", "HR", "HT", "HU", "ID", "IE", "IL", "IN", "IQ", "IS", "IT", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KR", "KW", "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MG", "MH", "MK", "ML", "MN", "MO", "MR", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NR", "NZ", "OM", "PA", "PE", "PG", "PH", "PK", "PL", "PS", "PT", "PW", "PY", "QA", "RO", "RS", "RW", "SA", "SB", "SC", "SE", "SG", "SI", "SK", "SL", "SM", "SN", "SR", "ST", "SV", "SZ", "TD", "TG", "TH", "TJ", "TL", "TN", "TO", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "US", "UY", "UZ", "VC", "VE", "VN", "VU", "WS", "XK", "ZA", "ZM", "ZW" ],
+"external_urls" : {
+"spotify" : "https://open.spotify.com/album/088DhcTNLVQxExpwtqJrzD"
+},
+"href" : "https://api.spotify.com/v1/albums/088DhcTNLVQxExpwtqJrzD",
+"id" : "088DhcTNLVQxExpwtqJrzD",
+"images" : [ {
+"height" : 640,
+"url" : "https://i.scdn.co/image/ab67616d0000b273eebf54d7549fa92f11eb39d3",
+"width" : 640
+}, {
+"height" : 300,
+"url" : "https://i.scdn.co/image/ab67616d00001e02eebf54d7549fa92f11eb39d3",
+"width" : 300
+}, {
+"height" : 64,
+"url" : "https://i.scdn.co/image/ab67616d00004851eebf54d7549fa92f11eb39d3",
+"width" : 64
+} ],
+"name" : "Help! (Sing Like the Beatles) [Karaoke and Vocal Versions]",
+"release_date" : "2012-10-23",
+"release_date_precision" : "day",
+"total_tracks" : 2,
+"type" : "album",
+"uri" : "spotify:album:088DhcTNLVQxExpwtqJrzD"
+}, {
+"album_type" : "single",
+"artists" : [ {
+"external_urls" : {
+"spotify" : "https://open.spotify.com/artist/5UloVKzUNJcjORzhhTWWiJ"
+},
+"href" : "https://api.spotify.com/v1/artists/5UloVKzUNJcjORzhhTWWiJ",
+"id" : "5UloVKzUNJcjORzhhTWWiJ",
+"name" : "The Karaoke Channel",
+"type" : "artist",
+"uri" : "spotify:artist:5UloVKzUNJcjORzhhTWWiJ"
+} ],
+"available_markets" : [ "AD", "AE", "AG", "AL", "AM", "AO", "AR", "AT", "AU", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BN", "BO", "BR", "BS", "BT", "BW", "BY", "BZ", "CA", "CD", "CG", "CH", "CI", "CL", "CM", "CO", "CR", "CV", "CW", "CY", "CZ", "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "ES", "ET", "FI", "FJ", "FM", "FR", "GA", "GB", "GD", "GE", "GH", "GM", "GN", "GQ", "GR", "GT", "GW", "GY", "HK", "HN", "HR", "HT", "HU", "ID", "IE", "IL", "IN", "IQ", "IS", "IT", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KR", "KW", "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MG", "MH", "MK", "ML", "MN", "MO", "MR", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NR", "NZ", "OM", "PA", "PE", "PG", "PH", "PK", "PL", "PS", "PT", "PW", "PY", "QA", "RO", "RS", "RW", "SA", "SB", "SC", "SE", "SG", "SI", "SK", "SL", "SM", "SN", "SR", "ST", "SV", "SZ", "TD", "TG", "TH", "TJ", "TL", "TN", "TO", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "US", "UY", "UZ", "VC", "VE", "VN", "VU", "WS", "XK", "ZA", "ZM", "ZW" ],
+"external_urls" : {
+"spotify" : "https://open.spotify.com/album/6ieeljUemYQvVtnPs2FGgB"
+},
+"href" : "https://api.spotify.com/v1/albums/6ieeljUemYQvVtnPs2FGgB",
+"id" : "6ieeljUemYQvVtnPs2FGgB",
+"images" : [ {
+"height" : 640,
+"url" : "https://i.scdn.co/image/ab67616d0000b2730bbfc7b50dd95c22b46283b5",
+"width" : 640
+}, {
+"height" : 300,
+"url" : "https://i.scdn.co/image/ab67616d00001e020bbfc7b50dd95c22b46283b5",
+"width" : 300
+}, {
+"height" : 64,
+"url" : "https://i.scdn.co/image/ab67616d000048510bbfc7b50dd95c22b46283b5",
+"width" : 64
+} ],
+"name" : "The Karaoke Channel - Sing with a Little Help from My Friends Like the Beatles",
+"release_date" : "2015-07-06",
+"release_date_precision" : "day",
+"total_tracks" : 2,
+"type" : "album",
+"uri" : "spotify:album:6ieeljUemYQvVtnPs2FGgB"
+} ],
+"limit" : 5,
+"next" : "https://api.spotify.com/v1/search?query=album%3AHelp%21+artist%3AThe+Beatles&type=album&offset=5&limit=5",
+"offset" : 0,
+"previous" : null,
+"total" : 6
+}
+}

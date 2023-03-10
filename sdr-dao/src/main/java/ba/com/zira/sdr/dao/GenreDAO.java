@@ -81,6 +81,21 @@ public class GenreDAO extends AbstractDAO<GenreEntity, Long> {
 
     }
 
+    public GenreEntity findByName(String name) {
+        var hql = "select g from GenreEntity g where lower(g.name) like lower(:name)";
+        try {
+            return entityManager.createQuery(hql, GenreEntity.class).setParameter("name", name).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<LoV> getSubGenreMainGenreNames() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(g.id,case when g.mainGenre=null then g.name"
+                + " else concat(g.name,' - ', gg.name) end) from GenreEntity g left join GenreEntity gg on g.mainGenre.id=gg.id";
+        return entityManager.createQuery(hql, LoV.class).getResultList();
+    }
+    
     public List<LoV> getMainGenresLoV() {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(g.id,g.name) from GenreEntity g where g.mainGenre.id is null";
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);

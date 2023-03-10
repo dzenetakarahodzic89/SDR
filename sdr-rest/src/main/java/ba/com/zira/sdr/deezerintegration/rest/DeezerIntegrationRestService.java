@@ -37,20 +37,22 @@ public class DeezerIntegrationRestService {
 
     @Operation(summary = "Find deezer integration base on filter criteria")
     @GetMapping
-    public PagedPayloadResponse<DeezerIntegration> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
-            throws ApiException {
+    public PagedPayloadResponse<DeezerIntegration> find(@RequestParam Map<String, Object> filterCriteria,
+            final QueryConditionPage queryCriteria) throws ApiException {
         return deezerIntegrationService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
     @Operation(summary = "Create deezer integration")
     @PostMapping
-    public PayloadResponse<DeezerIntegration> create(@RequestBody final DeezerIntegrationCreateRequest deezerIntegration) throws ApiException {
+    public PayloadResponse<DeezerIntegration> create(@RequestBody final DeezerIntegrationCreateRequest deezerIntegration)
+            throws ApiException {
         return deezerIntegrationService.create(new EntityRequest<>(deezerIntegration));
     }
 
     @Operation(summary = "Update deezer integration")
     @PutMapping(value = "{id}")
-    public PayloadResponse<DeezerIntegration> edit(@Parameter(required = true, description = "ID of the deezer integration") @PathVariable final Long id,
+    public PayloadResponse<DeezerIntegration> edit(
+            @Parameter(required = true, description = "ID of the deezer integration") @PathVariable final String id,
             @RequestBody final DeezerIntegrationUpdateRequest deezerIntegration) throws ApiException {
         if (deezerIntegration != null) {
             deezerIntegration.setId(id);
@@ -60,8 +62,8 @@ public class DeezerIntegrationRestService {
 
     @Operation(summary = "Delete deezer integration")
     @DeleteMapping(value = "{id}/delete")
-    public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the deezer integration") @PathVariable final Long id)
-            throws ApiException {
+    public PayloadResponse<String> delete(
+            @Parameter(required = true, description = "ID of the deezer integration") @PathVariable final String id) throws ApiException {
         return deezerIntegrationService.delete(new EntityRequest<>(id));
     }
 }

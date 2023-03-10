@@ -64,21 +64,21 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             firstSongPlaylistEntity
                     .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
             firstSongPlaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             firstSongPlaylistEntity.setStatus(Status.ACTIVE.getValue());
 
             SongPlaylistEntity secondSongPlaylistEntity = new SongPlaylistEntity();
             secondSongPlaylistEntity
                     .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
             secondSongPlaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             secondSongPlaylistEntity.setStatus(Status.INACTIVE.getValue());
 
             SongPlaylistEntity thirdSongPlaylistEntity = new SongPlaylistEntity();
             thirdSongPlaylistEntity
                     .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
             thirdSongPlaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             thirdSongPlaylistEntity.setStatus(Status.ACTIVE.getValue());
 
             entities.add(firstSongPlaylistEntity);
@@ -144,7 +144,7 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             songplaylistEntity
                     .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
             songplaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             songplaylistEntity.setStatus(Status.ACTIVE.getValue());
 
             var newSongPlaylist = new SongPlaylist();
@@ -174,7 +174,7 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             songPlaylistEntity
                     .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
             songPlaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
 
             SongPlaylist songPlaylistResponse = new SongPlaylist();
             songPlaylistResponse.setPlaylistId(Long.valueOf(5));

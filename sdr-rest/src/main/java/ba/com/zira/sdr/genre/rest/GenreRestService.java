@@ -53,6 +53,13 @@ public class GenreRestService {
         return genreService.getGenresOverEras(request);
     }
 
+    @Operation(summary = "Get subgenre and main genre names")
+    @GetMapping(value = "subGenre-mainGenre")
+    public ListPayloadResponse<LoV> getSubGenreMainGenreNames() throws ApiException {
+        var request = new EmptyRequest();
+        return genreService.getSubGenreMainGenreNames(request);
+    }
+    
     @Operation(summary = "Get main genres - LoV")
     @GetMapping(value = "main-genre")
     public ListPayloadResponse<LoV> getMainGenresLoV() throws ApiException {
