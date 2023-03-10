@@ -35,7 +35,7 @@ public class SpotifyAlbumItem {
     @JsonProperty("album_type")
     private String albumType;
     @JsonProperty("artists")
-    private List<Artist> artists = new ArrayList<Artist>();
+    private List<SpotifyAlbumsArtist> artists = new ArrayList<SpotifyAlbumsArtist>();
     @JsonProperty("available_markets")
     private List<String> availableMarkets = new ArrayList<String>();
     @JsonProperty("external_urls")
@@ -77,16 +77,16 @@ public class SpotifyAlbumItem {
     }
 
     @JsonProperty("artists")
-    public List<Artist> getArtists() {
+    public List<SpotifyAlbumsArtist> getArtists() {
         return artists;
     }
 
     @JsonProperty("artists")
-    public void setArtists(List<Artist> artists) {
+    public void setArtists(List<SpotifyAlbumsArtist> artists) {
         this.artists = artists;
     }
 
-    public SpotifyAlbumItem withArtists(List<Artist> artists) {
+    public SpotifyAlbumItem withArtists(List<SpotifyAlbumsArtist> artists) {
         this.artists = artists;
         return this;
     }

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "uri"
 })
 @Generated("jsonschema2pojo")
-public class Artist {
+public class SpotifyAlbumsArtist {
 
     @JsonProperty("external_urls")
     private ExternalUrls externalUrls;
@@ -48,7 +48,7 @@ public class Artist {
         this.externalUrls = externalUrls;
     }
 
-    public Artist withExternalUrls(ExternalUrls externalUrls) {
+    public SpotifyAlbumsArtist withExternalUrls(ExternalUrls externalUrls) {
         this.externalUrls = externalUrls;
         return this;
     }
@@ -63,7 +63,7 @@ public class Artist {
         this.href = href;
     }
 
-    public Artist withHref(String href) {
+    public SpotifyAlbumsArtist withHref(String href) {
         this.href = href;
         return this;
     }
@@ -78,7 +78,7 @@ public class Artist {
         this.id = id;
     }
 
-    public Artist withId(String id) {
+    public SpotifyAlbumsArtist withId(String id) {
         this.id = id;
         return this;
     }
@@ -93,7 +93,7 @@ public class Artist {
         this.name = name;
     }
 
-    public Artist withName(String name) {
+    public SpotifyAlbumsArtist withName(String name) {
         this.name = name;
         return this;
     }
@@ -108,7 +108,7 @@ public class Artist {
         this.type = type;
     }
 
-    public Artist withType(String type) {
+    public SpotifyAlbumsArtist withType(String type) {
         this.type = type;
         return this;
     }
@@ -123,7 +123,7 @@ public class Artist {
         this.uri = uri;
     }
 
-    public Artist withUri(String uri) {
+    public SpotifyAlbumsArtist withUri(String uri) {
         this.uri = uri;
         return this;
     }
@@ -138,7 +138,7 @@ public class Artist {
         this.additionalProperties.put(name, value);
     }
 
-    public Artist withAdditionalProperty(String name, Object value) {
+    public SpotifyAlbumsArtist withAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
         return this;
     }
@@ -146,7 +146,7 @@ public class Artist {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(Artist.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(SpotifyAlbumsArtist.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("externalUrls");
         sb.append('=');
         sb.append(((this.externalUrls == null)?"<null>":this.externalUrls));
@@ -201,10 +201,10 @@ public class Artist {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Artist) == false) {
+        if ((other instanceof SpotifyAlbumsArtist) == false) {
             return false;
         }
-        Artist rhs = ((Artist) other);
+        SpotifyAlbumsArtist rhs = ((SpotifyAlbumsArtist) other);
         return ((((((((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name)))&&((this.externalUrls == rhs.externalUrls)||((this.externalUrls!= null)&&this.externalUrls.equals(rhs.externalUrls))))&&((this.href == rhs.href)||((this.href!= null)&&this.href.equals(rhs.href))))&&((this.id == rhs.id)||((this.id!= null)&&this.id.equals(rhs.id))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.type == rhs.type)||((this.type!= null)&&this.type.equals(rhs.type))))&&((this.uri == rhs.uri)||((this.uri!= null)&&this.uri.equals(rhs.uri))));
     }
 

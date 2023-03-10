@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -102,20 +103,41 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
 
     public List<LoV> findArtistsToFetchFromSpotify(int responseLimit) {
         var cases = "case when a.surname is null then concat('artist:',a.name) else" + " concat('artist:',a.name,' ',a.surname) end";
-        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id," + cases + ") from ArtistEntity a left join"
-                + " SpotifyIntegrationEntity si on a.id = si.objectId and si.objectType like :artist where si.id = null and (a.spotifyId is null or length(a.spotifyId)=0)";
+        var subquery = "select si from SpotifyIntegrationEntity si where si.objectId=a.id and si.objectType like :artist";
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id," + cases + ") from ArtistEntity a" + " where not exists("
+                + subquery + ") and (a.spotifyId is null or length(a.spotifyId)<1)";
         return entityManager.createQuery(hql, LoV.class).setParameter("artist", "ARTIST").setMaxResults(responseLimit).getResultList();
 
     }
 
     public List<ArtistEntity> findArtistsToFetchAlbumsFromSpotify(int responseLimit) {
-        var hql = "select a from ArtistEntity a where a.spotifyId is not null and length(a.spotifyId)>0 and (a.spotifyStatus!=:status or a.spotifyStatus is null)";
+        var hql = "select a from ArtistEntity a where a.spotifyId is not null and length(a.spotifyId)>0 and "
+                + "(a.spotifyStatus!=:status or a.spotifyStatus is null)"
+                + " and exists(select si from SpotifyIntegrationEntity si where si.objectId=a.id and si.objectType like :artist)";
         return entityManager.createQuery(hql, ArtistEntity.class).setMaxResults(responseLimit).setParameter("status", "Done")
-                .getResultList();
+                .setParameter("artist", "ARTIST").getResultList();
     }
 
     public List<ArtistEntity> artistsByAlbum(Long albumId) {
         var hql = "select art from ArtistEntity art join SongArtistEntity sa on art.id=sa.artist.id where sa.album.id=:albumId";
         return entityManager.createQuery(hql, ArtistEntity.class).setParameter("albumId", albumId).getResultList();
+    }
+
+    public ArtistEntity getArtistBySpotifyId(String spotifyId) {
+        var hql = "select a from ArtistEntity a where a.spotifyId=:spotifyId";
+        return entityManager.createQuery(hql, ArtistEntity.class).setParameter("spotifyId", spotifyId).getSingleResult();
+    }
+
+    public List<ArtistEntity> getDuplicateArtists() {
+        var hql = "select a from ArtistEntity a where a.created > "
+                + "(select min(a2.created) from ArtistEntity a2 where a2.spotifyId = a.spotifyId group by a2.spotifyId )"
+                + " and a.spotifyId is not null and length(a.spotifyId)>0";
+        return entityManager.createQuery(hql, ArtistEntity.class).getResultList();
+    }
+
+    public void deleteArtists(List<Long> artistIds) {
+        var hql = "delete from ArtistEntity a where a.id in (:artistIds)";
+        Query q = entityManager.createQuery(hql).setParameter("artistIds", artistIds);
+        q.executeUpdate();
     }
 }

@@ -6,9 +6,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,45 +67,145 @@ import ba.com.zira.sdr.spotify.song.search.SpotifyTrackSearch;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * The Class SpotifyIntegrationServiceHelper.
+ */
 @Service
+
+/**
+ * Instantiates a new spotify integration service helper.
+ *
+ * @param restTemplate
+ *            the rest template
+ * @param albumDAO
+ *            the album DAO
+ * @param songDAO
+ *            the song DAO
+ * @param artistDAO
+ *            the artist DAO
+ * @param labelDAO
+ *            the label DAO
+ * @param genreDAO
+ *            the genre DAO
+ * @param songArtistDAO
+ *            the song artist DAO
+ * @param spotifyIntegrationService
+ *            the spotify integration service
+ * @param spotifyIntegrationDAO
+ *            the spotify integration DAO
+ * @param multiSearchDAO
+ *            the multi search DAO
+ */
+
+/**
+ * Instantiates a new spotify integration service helper.
+ *
+ * @param restTemplate
+ *            the rest template
+ * @param albumDAO
+ *            the album DAO
+ * @param songDAO
+ *            the song DAO
+ * @param artistDAO
+ *            the artist DAO
+ * @param labelDAO
+ *            the label DAO
+ * @param genreDAO
+ *            the genre DAO
+ * @param songArtistDAO
+ *            the song artist DAO
+ * @param spotifyIntegrationService
+ *            the spotify integration service
+ * @param spotifyIntegrationDAO
+ *            the spotify integration DAO
+ * @param multiSearchDAO
+ *            the multi search DAO
+ */
 @RequiredArgsConstructor
 public class SpotifyIntegrationServiceHelper {
+
+    /** The Constant SPOTIFY_STATUS_DONE. */
+    private static final String SPOTIFY_STATUS_DONE = "Done";
+
+    /** The rest template. */
     @Autowired
     private final RestTemplate restTemplate;
+
+    /** The album DAO. */
     @NonNull
     private AlbumDAO albumDAO;
+
+    /** The song DAO. */
     @NonNull
     private SongDAO songDAO;
+
+    /** The artist DAO. */
     @NonNull
     private ArtistDAO artistDAO;
+
+    /** The label DAO. */
     @NonNull
     private LabelDAO labelDAO;
+
+    /** The genre DAO. */
     @NonNull
     private GenreDAO genreDAO;
+
+    /** The song artist DAO. */
     @NonNull
     private SongArtistDAO songArtistDAO;
+
+    /** The spotify integration service. */
     @NonNull
     private SpotifyIntegrationService spotifyIntegrationService;
+
+    /** The spotify integration DAO. */
     @NonNull
     private SpotifyIntegrationDAO spotifyIntegrationDAO;
 
+    /** The multi search DAO. */
     @NonNull
     MultiSearchDAO multiSearchDAO;
 
+    /** The client id. */
     @Value("${spring.security.oauth2.client.registration.spotify.clientId}")
     private String clientId;
+
+    /** The client secret. */
     @Value("${spring.security.oauth2.client.registration.spotify.clientSecret}")
     private String clientSecret;
+
+    /** The spotify auth url. */
     @Value("${spring.security.oauth2.client.registration.spotify.accessTokenUri}")
     private String spotifyAuthUrl;
+
+    /** The spotify api url. */
     @Value("${spring.security.oauth2.client.registration.spotify.apiUrl}")
     private String spotifyApiUrl;
+
+    /** The response limit. */
     @Value("${spring.security.oauth2.client.registration.spotify.responseLimit}")
     private int responseLimit;
+
+    /** The Constant systemUser. */
     private static final User systemUser = new User("Spotify Integration");
+
+    /** The Constant LOGGER. */
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyIntegrationServiceHelper.class);
+
+    /** The Constant AUTHORIZATION. */
     private static final String AUTHORIZATION = "Authorization";
 
+    /** The map of existing spotify ids. */
+    private Map<String, MultiSearchResponse> mapOfExistingSpotifyIds = new HashMap<>();
+
+    /**
+     * Gets the http entity.
+     *
+     * @param token
+     *            the token
+     * @return the http entity
+     */
     private HttpEntity<?> getHttpEntity(String token) {
         var headers = new HttpHeaders();
         headers.set(AUTHORIZATION, "Bearer " + token);
@@ -112,6 +214,11 @@ public class SpotifyIntegrationServiceHelper {
         return new HttpEntity<>(headers);
     }
 
+    /**
+     * Gets the authentication token.
+     *
+     * @return the authentication token
+     */
     private String getAuthenticationToken() {
         LOGGER.info("SPOTIFY INTEGRATION: Fetching authentication token...");
         String auth = clientId + ":" + clientSecret;
@@ -143,6 +250,17 @@ public class SpotifyIntegrationServiceHelper {
         return null;
     }
 
+    /**
+     * Fetch albums from spotify. Finds albums not present in spotify_int table
+     * which do not have a set spotify_id and sends a search request to Spotify
+     * API and saves the API response to spotify_int table. The number of albums
+     * processed is limited by responseLimit property.
+     *
+     * @param token
+     *            the token
+     *
+     * 
+     */
     private void fetchAlbumsFromSpotify(String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for albums on Spotify...");
         List<LoV> albums = albumDAO.findAlbumsToFetchFromSpotify(responseLimit);
@@ -151,7 +269,7 @@ public class SpotifyIntegrationServiceHelper {
             var spotifyIntegration = new SpotifyIntegrationCreateRequest();
             spotifyIntegration.setName(album.getName());
             spotifyIntegration.setObjectId(album.getId());
-            spotifyIntegration.setObjectType("ALBUM");
+            spotifyIntegration.setObjectType(ObjectType.ALBUM.getValue());
 
             var url = spotifyApiUrl + "/search?q=" + album.getName() + "&type=album&limit=" + responseLimit;
 
@@ -177,6 +295,17 @@ public class SpotifyIntegrationServiceHelper {
 
     }
 
+    /**
+     * Fetch songs from spotify. Finds songs not present in spotify_int table
+     * which do not have a set spotify_id and sends a search request to Spotify
+     * API and saves the API response to spotify_int table. The number of songs
+     * processed is limited by responseLimit property.
+     *
+     * @param token
+     *            the token
+     *
+     * 
+     */
     private void fetchSongsFromSpotify(String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for songs on Spotify...");
         List<LoV> songs = songDAO.findSongsToFetchFromSpotify(responseLimit);
@@ -185,7 +314,7 @@ public class SpotifyIntegrationServiceHelper {
             var spotifyIntegration = new SpotifyIntegrationCreateRequest();
             spotifyIntegration.setName(song.getName());
             spotifyIntegration.setObjectId(song.getId());
-            spotifyIntegration.setObjectType("SONG");
+            spotifyIntegration.setObjectType(ObjectType.SONG.getValue());
 
             var url = spotifyApiUrl + "/search?q=" + song.getName() + "&type=track&limit=" + responseLimit;
 
@@ -213,6 +342,17 @@ public class SpotifyIntegrationServiceHelper {
 
     }
 
+    /**
+     * Fetch artists from spotify. Finds artists not present in spotify_int
+     * table which do not have a set spotify_id and sends a search request to
+     * Spotify API and saves the API response to spotify_int table. The number
+     * of artists processed is limited by responseLimit property.
+     *
+     * @param token
+     *            the token
+     *
+     * 
+     */
     private void fetchArtistsFromSpotify(String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for artists on Spotify...");
         List<LoV> artists = artistDAO.findArtistsToFetchFromSpotify(responseLimit);
@@ -221,7 +361,7 @@ public class SpotifyIntegrationServiceHelper {
             var spotifyIntegration = new SpotifyIntegrationCreateRequest();
             spotifyIntegration.setName(artist.getName());
             spotifyIntegration.setObjectId(artist.getId());
-            spotifyIntegration.setObjectType("ARTIST");
+            spotifyIntegration.setObjectType(ObjectType.ARTIST.getValue());
 
             var url = spotifyApiUrl + "/search?q=" + artist.getName() + "&type=artist&limit=" + responseLimit;
 
@@ -247,6 +387,13 @@ public class SpotifyIntegrationServiceHelper {
 
     }
 
+    /**
+     * Update spotify id.
+     *
+     * Finds objects present in spotify_int table which do not have a set
+     * spotify_id and uses the API response to set their spotify_id. The number
+     * of objects processed is limited by responseLimit property.
+     */
     private void updateSpotifyId() {
         LOGGER.info("SPOTIFY INTEGRATION: Fetching objects without Spotify id...");
         var objectsToUpdateSpotifyId = spotifyIntegrationDAO.getObjectsWithoutSpotifyId(responseLimit);
@@ -258,7 +405,7 @@ public class SpotifyIntegrationServiceHelper {
                 updateAlbumSpotifyId(r.getResponse(), r.getObjectId());
                 break;
             case "SONG":
-                updateSongSpotifyId(r.getResponse(), r.getObjectId());
+                updateSongSpotifyId(r.getResponse(), r.getName(), r.getObjectId());
                 break;
             case "ARTIST":
                 updateArtistSpotifyId(r.getResponse(), r.getObjectId());
@@ -273,6 +420,18 @@ public class SpotifyIntegrationServiceHelper {
         LOGGER.info("SPOTIFY INTEGRATION: Updating Spotify ids done!");
     }
 
+    /**
+     * Update album spotify id. Sets spotify_id of an album based on the Spotify
+     * API response. If the API response contains no data, the spotify_status of
+     * the album is marked as done.
+     *
+     * @param response
+     *            the response
+     * @param objectId
+     *            the object id
+     *
+     * 
+     */
     private void updateAlbumSpotifyId(String response, Long objectId) {
         var mapper = new N2bObjectMapper();
         try {
@@ -283,7 +442,7 @@ public class SpotifyIntegrationServiceHelper {
                 SpotifyAlbumItem firstResponse = albumItemList.get(0);
                 albumEntity.setSpotifyId(firstResponse.getId());
             } else {
-                albumEntity.setSpotifyStatus("Done");
+                albumEntity.setSpotifyStatus(SPOTIFY_STATUS_DONE);
             }
             albumEntity.setModified(LocalDateTime.now());
             albumEntity.setModifiedBy(systemUser.getUserId());
@@ -295,7 +454,21 @@ public class SpotifyIntegrationServiceHelper {
         }
     }
 
-    private void updateSongSpotifyId(String response, Long objectId) {
+    /**
+     * Update song spotify id. Sets spotify_id of a song based on the Spotify
+     * API response. If the song is tied to an artist in the database, it is
+     * marked as done.
+     *
+     * @param response
+     *            the response
+     * @param query
+     *            the query
+     * @param objectId
+     *            the object id
+     *
+     * 
+     */
+    private void updateSongSpotifyId(String response, String query, Long objectId) {
         var mapper = new N2bObjectMapper();
         try {
             SpotifyTrackSearch tracks = mapper.readValue(response, SpotifyTrackSearch.class);
@@ -307,7 +480,9 @@ public class SpotifyIntegrationServiceHelper {
                 songEntity.setModified(LocalDateTime.now());
                 songEntity.setModifiedBy(systemUser.getUserId());
             }
-            songEntity.setSpotifyStatus("Done");
+            if (query.contains("artist")) {
+                songEntity.setSpotifyStatus(SPOTIFY_STATUS_DONE);
+            }
 
             songDAO.merge(songEntity);
         } catch (JsonMappingException e) {
@@ -317,6 +492,18 @@ public class SpotifyIntegrationServiceHelper {
         }
     }
 
+    /**
+     * Update artist spotify id. Sets spotify_id of an artist based on the
+     * Spotify API response. If the API response contains no data, the
+     * spotify_status of the artist is marked as done.
+     *
+     * @param response
+     *            the response
+     * @param objectId
+     *            the object id
+     *
+     * 
+     */
     private void updateArtistSpotifyId(String response, Long objectId) {
         var mapper = new N2bObjectMapper();
         try {
@@ -327,7 +514,7 @@ public class SpotifyIntegrationServiceHelper {
                 SpotifyArtistItem firstResponse = artistItemList.get(0);
                 artistEntity.setSpotifyId(firstResponse.getId());
             } else {
-                artistEntity.setSpotifyStatus("Done");
+                artistEntity.setSpotifyStatus(SPOTIFY_STATUS_DONE);
             }
             artistEntity.setModified(LocalDateTime.now());
             artistEntity.setModifiedBy(systemUser.getUserId());
@@ -339,6 +526,13 @@ public class SpotifyIntegrationServiceHelper {
         }
     }
 
+    /**
+     * Parses the date.
+     *
+     * @param date
+     *            the date
+     * @return the local date time
+     */
     private LocalDateTime parseDate(String date) {
         var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
@@ -348,6 +542,19 @@ public class SpotifyIntegrationServiceHelper {
         }
     }
 
+    /**
+     * Fetch songs of album from spotify. Returns the response of a Spotify API
+     * get request for all the tracks tied to a specific album, based on the
+     * album spotify_id.
+     *
+     * @param albumSpotifyId
+     *            the album spotify id
+     * @param albumName
+     *            the album name
+     * @return the string
+     *
+     * 
+     */
     private String fetchSongsOfAlbumFromSpotify(String albumSpotifyId, String albumName) {
         var token = getAuthenticationToken();
         var url = spotifyApiUrl + "/albums/" + albumSpotifyId;
@@ -368,15 +575,64 @@ public class SpotifyIntegrationServiceHelper {
         return null;
     }
 
+    /**
+     * Save song artist.
+     *
+     * @param album
+     *            the album
+     * @param artist
+     *            the artist
+     * @param song
+     *            the song
+     * @param label
+     *            the label
+     *
+     */
+    private void saveSongArtist(AlbumEntity album, ArtistEntity artist, SongEntity song, LabelEntity label) {
+        var songArtistEntity = new SongArtistEntity();
+        songArtistEntity.setAlbum(album);
+        songArtistEntity.setArtist(artist);
+        songArtistEntity.setSong(song);
+        songArtistEntity.setCreated(LocalDateTime.now());
+        songArtistEntity.setCreatedBy(systemUser.getUserId());
+        songArtistEntity.setLabel(label);
+        songArtistEntity.setStatus("Active");
+        songArtistDAO.persist(songArtistEntity);
+    }
+
+    /**
+     * Save songs. Takes a list of song data fetched via Spotify API and creates
+     * and saves a record to song table for each song which is not already
+     * present in the database based on its spotify_id. Spotify_ids of newly
+     * created songs are saved to the global map to prevent duplicate records.
+     * Each newly created song is tied to the album and artists passed to the
+     * function via the song_artist table, therefore its spotify_status is
+     * marked as done.
+     *
+     * @param songs
+     *            the songs
+     * @param album
+     *            the album
+     * @param artists
+     *            the artists
+     * @param label
+     *            the label
+     * @param genre
+     *            the genre
+     * @param releaseDate
+     *            the release date
+     *
+     * 
+     */
     private void saveSongs(List<SpotifyAlbumsTrackItem> songs, AlbumEntity album, List<ArtistEntity> artists, LabelEntity label,
-            GenreEntity genre, LocalDateTime releaseDate, Map<String, MultiSearchResponse> mapOfExistingSpotifyIds) {
+            GenreEntity genre, LocalDateTime releaseDate) {
         songs.forEach(song -> {
             if (mapOfExistingSpotifyIds.get(song.getId()) == null) {
                 var durationInMs = song.getDurationMs();
                 var songEntity = new SongEntity();
                 songEntity.setName(song.getName());
                 songEntity.setSpotifyId(song.getId());
-                songEntity.setSpotifyStatus("Done");
+                songEntity.setSpotifyStatus(SPOTIFY_STATUS_DONE);
                 songEntity.setPlaytime(String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(durationInMs),
                         TimeUnit.MILLISECONDS.toMinutes(durationInMs)
                                 - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(durationInMs)),
@@ -394,16 +650,8 @@ public class SpotifyIntegrationServiceHelper {
                     songDAO.persist(songEntity);
 
                     artists.forEach(artist -> {
-                        var songArtistEntity = new SongArtistEntity();
-                        songArtistEntity.setAlbum(album);
-                        songArtistEntity.setArtist(artist);
-                        songArtistEntity.setSong(songEntity);
-                        songArtistEntity.setCreated(LocalDateTime.now());
-                        songArtistEntity.setCreatedBy(systemUser.getUserId());
-                        songArtistEntity.setLabel(label);
-                        songArtistEntity.setStatus("Active");
                         try {
-                            songArtistDAO.persist(songArtistEntity);
+                            saveSongArtist(album, artist, songEntity, label);
                             LOGGER.info("SPOTIFY INTEGRATION: Successfully saved song {} to database!", song.getName());
                         } catch (Exception e) {
                             LOGGER.error("SPOTIFY INTEGRATION: Saving new SongArtist record to database failed! Exception message: {}",
@@ -421,8 +669,21 @@ public class SpotifyIntegrationServiceHelper {
 
     }
 
-    private void addSongsFromSpotifyForAlbum(AlbumEntity album, List<ArtistEntity> artists, LabelEntity label,
-            Map<String, MultiSearchResponse> mapOfExistingSpotifyIds) {
+    /**
+     * Adds the songs from spotify for album. Based on the Spotify API response
+     * for a search request of an album, saves songs of the album to the
+     * database and ties the album and artists with the songs.
+     *
+     * @param album
+     *            the album
+     * @param artists
+     *            the artists
+     * @param label
+     *            the label
+     *
+     * 
+     */
+    private void addSongsFromSpotifyForAlbum(AlbumEntity album, List<ArtistEntity> artists, LabelEntity label) {
         var mapper = new ObjectMapper();
         try {
             SpotifyGetAlbumsSongs response = mapper.readValue(fetchSongsOfAlbumFromSpotify(album.getSpotifyId(), album.getName()),
@@ -430,16 +691,18 @@ public class SpotifyIntegrationServiceHelper {
 
             GenreEntity genre = null;
             if (!response.getGenres().isEmpty()) {
-                genre = genreDAO.findByName((String) response.getGenres().get(0));
-                if (genre == null) {
+                var genreFound = response.getGenres().stream().filter(g -> genreDAO.findByName((String) g) != null).findFirst();
+
+                if (genreFound.isPresent()) {
+                    genre = (GenreEntity) genreFound.get();
+                } else {
                     genre = genreDAO.findByPK(0L);
                 }
             } else {
                 genre = genreDAO.findByPK(0L);
             }
 
-            saveSongs(response.getTracks().getItems(), album, artists, label, genre, parseDate(response.getReleaseDate()),
-                    mapOfExistingSpotifyIds);
+            saveSongs(response.getTracks().getItems(), album, artists, label, genre, parseDate(response.getReleaseDate()));
         } catch (JsonMappingException e) {
             LOGGER.error("SPOTIFY INTEGRATION: Error mapping GetAlbum response! Exception message: {}", e.getMessage());
         } catch (JsonProcessingException e) {
@@ -448,21 +711,104 @@ public class SpotifyIntegrationServiceHelper {
 
     }
 
-    private void addSongsFromSpotifyForAlbums(Map<String, MultiSearchResponse> mapOfExistingSpotifyIds) {
+    /**
+     * Save artist from spotify. Saves and returns a new artist to the database
+     * if it is not already present based on its spotify_id, otherwise finds the
+     * existing artist and returns it. If a new artist is created, its
+     * spotify_id is saved to the global map to prevent duplicate records.
+     *
+     * @param artistName
+     *            the artist name
+     * @param artistSpotifyId
+     *            the artist spotify id
+     * @param spotifyStatus
+     *            the spotify status
+     * @return the artist entity
+     *
+     * 
+     */
+    private ArtistEntity saveArtistFromSpotify(String artistName, String artistSpotifyId, String spotifyStatus) {
+        if (mapOfExistingSpotifyIds.get(artistSpotifyId) == null) {
+            ArtistEntity artistEntity = new ArtistEntity();
+            artistEntity.setName(artistName);
+            artistEntity.setStatus("Active");
+            artistEntity.setCreated(LocalDateTime.now());
+            artistEntity.setCreatedBy(systemUser.getUserId());
+            artistEntity.setSpotifyId(artistSpotifyId);
+            artistEntity.setSpotifyStatus(spotifyStatus);
+            artistDAO.persist(artistEntity);
+            mapOfExistingSpotifyIds.put(artistSpotifyId,
+                    new MultiSearchResponse(artistName, ObjectType.ARTIST.getValue(), artistSpotifyId));
+            return artistEntity;
+        } else {
+            return artistDAO.getArtistBySpotifyId(artistSpotifyId);
+        }
+    }
+
+    /**
+     * Adds the songs from spotify for albums.
+     *
+     * Finds albums with a set spotify_id and spotify_status not marked as done.
+     * If an album has no records in the song_artist table, its artists are
+     * created and saved to the database based on the data provided by Spotify
+     * API for that album, otherwise the artists of the album are fetched from
+     * the database. The artists are passed to the auxiliary function which adds
+     * songs of the album based on the data provided by Spotify API for that
+     * album. The spotify_status of each album is marked as done, since all of
+     * its songs are fetched from Spotify and saved to the database. The number
+     * of albums processed is specified by responseLimit property.
+     */
+    private void addSongsFromSpotifyForAlbums() {
         LabelEntity defaultLabel = labelDAO.findByPK(0L);
         var albums = albumDAO.findAlbumsToFetchSongsFromSpotify(responseLimit);
         LOGGER.info("SPOTIFY INTEGRATION: Found {} albums to fetch songs for!", albums.size());
+        var mapper = new N2bObjectMapper();
 
         albums.forEach(album -> {
+            LOGGER.info("SPOTIFY INTEGRATION: Fetching songs for album {}...", album.getName());
             List<ArtistEntity> artists = artistDAO.artistsByAlbum(album.getId());
-            addSongsFromSpotifyForAlbum(album, artists, defaultLabel, mapOfExistingSpotifyIds);
-            album.setSpotifyStatus("Done");
+            if (artists.isEmpty()) {
+                // Add artists for album
+                var spotifyArtists = new ArrayList<ArtistEntity>();
+                try {
+                    SpotifyAlbumItem spotifyResponse = mapper
+                            .readValue(spotifyIntegrationDAO.getResponseByObjectIdAndObjectType(album.getId(), ObjectType.ALBUM.getValue()),
+                                    SpotifyAlbumSearch.class)
+                            .getAlbums().getItems().get(0);
+                    spotifyResponse.getArtists().forEach(artist -> {
+                        var artistEntity = saveArtistFromSpotify(artist.getName(), artist.getId(), SPOTIFY_STATUS_DONE);
+                        spotifyArtists.add(artistEntity);
+                    });
+
+                } catch (JsonMappingException e) {
+                    LOGGER.error("SPOTIFY INTEGRATION: Error mapping Album search response! Exception message: {}", e.getMessage());
+                } catch (JsonProcessingException e) {
+                    LOGGER.error("SPOTIFY INTEGRATION: Error processing Album search response! Exception message: {}", e.getMessage());
+                }
+                artists = spotifyArtists;
+            }
+            addSongsFromSpotifyForAlbum(album, artists, defaultLabel);
+            album.setSpotifyStatus(SPOTIFY_STATUS_DONE);
             album.setModified(LocalDateTime.now());
             album.setModifiedBy(systemUser.getUserId());
             albumDAO.merge(album);
+            LOGGER.info("SPOTIFY INTEGRATION: Successfully added songs for album {}!", album.getName());
         });
     }
 
+    /**
+     * Fetch albums of artist from spotify. Returns the response of a Spotify
+     * API get request for all the albums tied to a specific artist, based on
+     * the artist spotify_id.
+     *
+     * @param artistSpotifyId
+     *            the artist spotify id
+     * @param artistName
+     *            the artist name
+     * @return the string
+     *
+     * 
+     */
     private String fetchAlbumsOfArtistFromSpotify(String artistSpotifyId, String artistName) {
         var token = getAuthenticationToken();
         var url = spotifyApiUrl + "/artists/" + artistSpotifyId + "/albums";
@@ -483,42 +829,89 @@ public class SpotifyIntegrationServiceHelper {
         return null;
     }
 
-    private void saveAlbums(List<SpotifyArtistsAlbumItem> albums, ArtistEntity artist, LabelEntity defaultLabel,
-            Map<String, MultiSearchResponse> mapOfExistingSpotifyIds) {
-        albums.forEach(album -> {
-            if (mapOfExistingSpotifyIds.get(album.getId()) == null) {
-                List<ArtistEntity> artists = new ArrayList<>();
-                artists.add(artist);
-                var albumEntity = new AlbumEntity();
-                albumEntity.setName(album.getName());
-                albumEntity.setSpotifyId(album.getId());
-                albumEntity.setSpotifyStatus("Done");
-                albumEntity.setDateOfRelease(parseDate(album.getReleaseDate()));
-                albumEntity.setCreated(LocalDateTime.now());
-                albumEntity.setCreatedBy(systemUser.getUserId());
-                albumEntity.setStatus("Active");
-                mapOfExistingSpotifyIds.put(album.getId(),
-                        new MultiSearchResponse(album.getName(), ObjectType.ALBUM.getValue(), album.getId()));
-                try {
-                    albumDAO.persist(albumEntity);
-                    addSongsFromSpotifyForAlbum(albumEntity, artists, defaultLabel, mapOfExistingSpotifyIds);
-                    albumEntity.setSpotifyStatus("Done");
-                    albumEntity.setModified(LocalDateTime.now());
-                    albumEntity.setModifiedBy(systemUser.getUserId());
-                    albumDAO.merge(albumEntity);
-                    LOGGER.info("SPOTIFY INTEGRATION: Successfully saved album {} to database!", album.getName());
-                } catch (Exception e) {
-                    LOGGER.error("SPOTIFY INTEGRATION: Saving new album to database failed! Exception message: {}", e.getMessage());
+    /**
+     * Save album. Creates and saves a new album to the database if it is not
+     * already present based on its spotify_id. Auxiliary function is used to
+     * add all songs of the album based on the data provided by Spotify API and
+     * to tie the songs to the album and its artists, therefore the
+     * spotify_status of the album is marked as done.
+     *
+     * @param albumName
+     *            the album name
+     * @param albumSpotifyId
+     *            the album spotify id
+     * @param releaseDate
+     *            the release date
+     * @param artists
+     *            the artists
+     * @param label
+     *            the label
+     * @return the album entity
+     *
+     * 
+     */
+    private AlbumEntity saveAlbum(String albumName, String albumSpotifyId, String releaseDate, List<ArtistEntity> artists,
+            LabelEntity label) {
+        if (mapOfExistingSpotifyIds.get(albumSpotifyId) == null) {
 
-                }
-            } else {
-                LOGGER.info("Album {} has already been integrated.", album.getName());
+            var albumEntity = new AlbumEntity();
+            albumEntity.setName(albumName);
+            albumEntity.setSpotifyId(albumSpotifyId);
+            albumEntity.setSpotifyStatus(SPOTIFY_STATUS_DONE);
+            albumEntity.setDateOfRelease(parseDate(releaseDate));
+            albumEntity.setCreated(LocalDateTime.now());
+            albumEntity.setCreatedBy(systemUser.getUserId());
+            albumEntity.setStatus("Active");
+            mapOfExistingSpotifyIds.put(albumSpotifyId, new MultiSearchResponse(albumName, ObjectType.ALBUM.getValue(), albumSpotifyId));
+            try {
+                albumDAO.persist(albumEntity);
+                addSongsFromSpotifyForAlbum(albumEntity, artists, label);
+                albumEntity.setSpotifyStatus(SPOTIFY_STATUS_DONE);
+                albumEntity.setModified(LocalDateTime.now());
+                albumEntity.setModifiedBy(systemUser.getUserId());
+                albumDAO.merge(albumEntity);
+                LOGGER.info("SPOTIFY INTEGRATION: Successfully saved album {} to database!", albumName);
+                return albumEntity;
+            } catch (Exception e) {
+                LOGGER.error("SPOTIFY INTEGRATION: Saving new album to database failed! Exception message: {}", e.getMessage());
+                return null;
             }
+        } else {
+            LOGGER.info("Album {} has already been integrated.", albumName);
+            return albumDAO.getAlbumBySpotifyId(albumSpotifyId);
+        }
+
+    }
+
+    /**
+     * Save albums.
+     *
+     * @param albums
+     *            the albums
+     * @param artist
+     *            the artist
+     * @param label
+     *            the label
+     */
+    private void saveAlbums(List<SpotifyArtistsAlbumItem> albums, ArtistEntity artist, LabelEntity label) {
+        albums.forEach(album -> {
+            List<ArtistEntity> artists = new ArrayList<>();
+            artists.add(artist);
+            saveAlbum(album.getName(), album.getId(), album.getReleaseDate(), artists, label);
         });
 
     }
 
-    private void addAlbumsFromSpotifyForArtist(Map<String, MultiSearchResponse> mapOfExistingSpotifyIds) {
+    /**
+     * Adds the albums from spotify for artist.
+     *
+     * Finds artists with a set spotify_id and spotify_status not marked as done
+     * and sends a get request for them based on the spotify_id to Spotify API.
+     * The API response is used to add albums of the artists along with their
+     * songs to the database. Spotify_status of each artist is marked as done.
+     * The number of artists processed is specified by responseLimit property.
+     */
+    private void addAlbumsFromSpotifyForArtist() {
         LabelEntity defaultLabel = labelDAO.findByPK(0L);
         var artists = artistDAO.findArtistsToFetchAlbumsFromSpotify(responseLimit);
         LOGGER.info("SPOTIFY INTEGRATION: Found {} artists to fetch albums for!", artists.size());
@@ -529,15 +922,17 @@ public class SpotifyIntegrationServiceHelper {
             if (artist.getSurname() != null) {
                 artistName += " " + artist.getSurname();
             }
+            LOGGER.info("Fetching albums for artist {}...", artistName);
             try {
                 SpotifyGetArtistsAlbums response = mapper.readValue(fetchAlbumsOfArtistFromSpotify(artist.getSpotifyId(), artistName),
                         SpotifyGetArtistsAlbums.class);
 
-                saveAlbums(response.getItems(), artist, defaultLabel, mapOfExistingSpotifyIds);
-                artist.setSpotifyStatus("Done");
+                saveAlbums(response.getItems(), artist, defaultLabel);
+                artist.setSpotifyStatus(SPOTIFY_STATUS_DONE);
                 artist.setModified(LocalDateTime.now());
                 artist.setModifiedBy(systemUser.getUserId());
                 artistDAO.merge(artist);
+                LOGGER.info("Successfully added albums for artist {}!", artistName);
             } catch (JsonMappingException e) {
                 LOGGER.error("SPOTIFY INTEGRATION: Error mapping GetAlbum response! Exception message: {}", e.getMessage());
             } catch (JsonProcessingException e) {
@@ -546,7 +941,82 @@ public class SpotifyIntegrationServiceHelper {
         });
     }
 
-    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}", initialDelay = 30000)
+    /**
+     * Adds the albums and artists from spotify for songs.
+     *
+     * Finds songs with set spotify_id which have no records in the song_artist
+     * table and adds artists and album of each song to the database based on
+     * the data provided by Spotify API. Spotify_status of each song is marked
+     * as done.
+     */
+    public void addAlbumsAndArtistsFromSpotifyForSongs() {
+        LabelEntity defaultLabel = labelDAO.findByPK(0L);
+        var songs = songDAO.findSongsToFetchArtistsAndAlbumFromSpotify(responseLimit);
+        LOGGER.info("SPOTIFY INTEGRATION: Found {} songs to fetch artist and album for!", songs.size());
+        var mapper = new N2bObjectMapper();
+
+        songs.forEach(song -> {
+            LOGGER.info("SPOTIFY INTEGRATION: Fetching album and artists for song {}...", song.getName());
+            var artists = new ArrayList<ArtistEntity>();
+            try {
+                SpotifyTrackItem spotifyResponse = mapper
+                        .readValue(spotifyIntegrationDAO.getResponseByObjectIdAndObjectType(song.getId(), "SONG"), SpotifyTrackSearch.class)
+                        .getTracks().getItems().get(0);
+                spotifyResponse.getArtists().forEach(artist -> {
+                    var artistEntity = saveArtistFromSpotify(artist.getName(), artist.getId(), SPOTIFY_STATUS_DONE);
+                    artists.add(artistEntity);
+                });
+
+                var album = spotifyResponse.getAlbum();
+                var albumEntity = saveAlbum(album.getName(), album.getId(), album.getReleaseDate(), artists, defaultLabel);
+
+                artists.forEach(artist -> {
+                    try {
+                        saveSongArtist(albumEntity, artist, song, defaultLabel);
+                    } catch (Exception e) {
+                        LOGGER.error("SPOTIFY INTEGRATION: Error saving SongArtistEntity for song {} and artist {}. Exception message: {}",
+                                song.getName(), artist.getName(), e.getMessage());
+                    }
+                });
+
+                song.setSpotifyStatus(SPOTIFY_STATUS_DONE);
+                song.setModified(LocalDateTime.now());
+                song.setModifiedBy(systemUser.getUserId());
+                songDAO.merge(song);
+            } catch (JsonMappingException e) {
+                LOGGER.error("SPOTIFY INTEGRATION: Error mapping Track search response! Exception message: {}", e.getMessage());
+            } catch (JsonProcessingException e) {
+                LOGGER.error("SPOTIFY INTEGRATION: Error processing Track search response! Exception message: {}", e.getMessage());
+            }
+            LOGGER.info("SPOTIFY INTEGRATION: Successfully added album and artists for song {}!", song.getName());
+        });
+
+    }
+
+    /**
+     * Removes the duplicates.
+     */
+    private void removeDuplicates() {
+        var duplicateAlbums = albumDAO.getDuplicateAlbums().stream().map(a -> a.getId()).collect(Collectors.toList());
+        var duplicateArtists = artistDAO.getDuplicateArtists().stream().map(a -> a.getId()).collect(Collectors.toList());
+        var duplicateSongs = songDAO.getDuplicateSongs().stream().map(s -> s.getId()).collect(Collectors.toList());
+
+        LOGGER.info("SPOTIFY INTEGRATION: Found {} duplicate albums, {} duplicate songs and {} duplicate artists. Removing duplicates...",
+                duplicateAlbums.size(), duplicateSongs.size(), duplicateArtists.size());
+        songArtistDAO.removeDuplicateAlbums(duplicateAlbums);
+        albumDAO.deleteAlbums(duplicateAlbums);
+
+        songArtistDAO.removeDuplicateSongs(duplicateSongs);
+        songDAO.deleteSongs(duplicateSongs);
+
+        songArtistDAO.removeDuplicateArtists(duplicateArtists);
+        artistDAO.deleteArtists(duplicateArtists);
+    }
+
+    /**
+     * Fetch data from spotify.
+     */
+    @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}", initialDelay = 300000)
     public void fetchDataFromSpotify() {
         LOGGER.info("SPOTIFY INTEGRATION: Scheduled search started");
         String token = getAuthenticationToken();
@@ -555,16 +1025,20 @@ public class SpotifyIntegrationServiceHelper {
         fetchArtistsFromSpotify(token);
     }
 
+    /**
+     * Update with data from spotify.
+     */
     @Scheduled(fixedDelayString = "${spring.security.oauth2.client.registration.spotify.taskDelay}")
     public void updateWithDataFromSpotify() {
         LOGGER.info("SPOTIFY INTEGRATION: Scheduled data update started");
         updateSpotifyId();
         multiSearchDAO.deleteTable();
         multiSearchDAO.createTableAndFillWithData();
-        Map<String, MultiSearchResponse> mapOfExistingSpotifyIds = multiSearchDAO.getCurrentSpotifyIds();
-        addSongsFromSpotifyForAlbums(mapOfExistingSpotifyIds);
-        addAlbumsFromSpotifyForArtist(mapOfExistingSpotifyIds);
-
+        mapOfExistingSpotifyIds = multiSearchDAO.getCurrentSpotifyIds();
+        addSongsFromSpotifyForAlbums();
+        addAlbumsFromSpotifyForArtist();
+        addAlbumsAndArtistsFromSpotifyForSongs();
+        removeDuplicates();
     }
 
 }
