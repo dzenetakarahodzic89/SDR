@@ -31,6 +31,7 @@ import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.validation.SongRequestValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.ChordProgressionDAO;
 import ba.com.zira.sdr.dao.GenreDAO;
 import ba.com.zira.sdr.dao.InstrumentDAO;
 import ba.com.zira.sdr.dao.LyricDAO;
@@ -49,6 +50,7 @@ public class SongServiceImpl implements SongService {
 
     SongDAO songDAO;
     LyricDAO lyricDAO;
+    ChordProgressionDAO chordProgressionDAO;
     NoteSheetDAO noteSheetDAO;
     SongMapper songMapper;
     SongRequestValidation songRequestValidation;
@@ -63,6 +65,25 @@ public class SongServiceImpl implements SongService {
     public PayloadResponse<Song> create(final EntityRequest<SongCreateRequest> request) {
         var songCreateRequest = request.getEntity();
         var songEntity = songMapper.dtoToEntity(songCreateRequest);
+
+        if (songCreateRequest.getChordProgressionId() != null) {
+            songEntity.setChordProgression(chordProgressionDAO.findByPK(songCreateRequest.getChordProgressionId()));
+        } else {
+            songEntity.setChordProgression(null);
+        }
+
+        if (songCreateRequest.getRemixId() != null) {
+            songEntity.setRemix(songDAO.findByPK(songCreateRequest.getRemixId()));
+        } else {
+            songEntity.setRemix(null);
+        }
+
+        if (songCreateRequest.getCoverId() != null) {
+            songEntity.setCover(songDAO.findByPK(songCreateRequest.getCoverId()));
+        } else {
+            songEntity.setCover(null);
+        }
+
         songEntity.setStatus(Status.ACTIVE.value());
         songEntity.setCreated(LocalDateTime.now());
         songEntity.setCreatedBy(request.getUserId());
@@ -91,13 +112,13 @@ public class SongServiceImpl implements SongService {
     }
 
     private void determineSubgenre(final Long genreId, final SongSingleResponse song) {
-        GenreEntity mainGenreEntity = genreDAO.findByPK(genreId).getMainGenre();
+        GenreEntity genreEntity = genreDAO.findByPK(genreId);
 
-        if (mainGenreEntity == null) {
+        if (genreEntity.getMainGenre() == null) {
             song.setSubgenreId(null);
         } else {
-            Long mainGenreId = mainGenreEntity.getId();
-            String mainGenreName = mainGenreEntity.getName();
+            Long mainGenreId = genreEntity.getMainGenre().getId();
+            String mainGenreName = genreEntity.getMainGenre().getName();
 
             song.setSubgenreId(genreId);
             song.setGenreId(mainGenreId);
