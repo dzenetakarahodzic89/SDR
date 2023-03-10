@@ -23,14 +23,14 @@ public class DeezerIntegrationRequestValidation {
         return ValidationResponse.of(request, errors);
     }
 
-    public ValidationResponse validateExistsDeezerIntegrationRequest(final EntityRequest<Long> request) {
+    public ValidationResponse validateExistsDeezerIntegrationRequest(final EntityRequest<String> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(exists(request.getEntity()));
 
         return ValidationResponse.of(request, errors);
     }
 
-    private ValidationError exists(Long id) {
+    private ValidationError exists(String id) {
         if (!deezerIntegrationDAO.existsByPK(id)) {
             return ValidationError.of("DEEZER_INTEGRATION_NOT_FOUND", "Deezer integration with id: " + id + " does not exist!");
         }
