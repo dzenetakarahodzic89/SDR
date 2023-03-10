@@ -112,5 +112,4 @@ public class InstrumentRestService {
 		return instrumentService.findAllSongsInErasForInstruments(new EntityRequest<>(id));
 
 	}
-
 }
