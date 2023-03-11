@@ -74,7 +74,7 @@ public class LabelServiceImpl implements LabelService {
         LabelArtistResponse labelEntity = labelDAO.getById(request.getEntity());
         lookupservice.lookupCoverImage(Arrays.asList(labelEntity), LabelArtistResponse::getId, ObjectType.LABEL.getValue(),
                 LabelArtistResponse::setImageUrl, LabelArtistResponse::getImageUrl);
-        labelEntity.setArtists(artistDAO.getId(request.getEntity()));
+        labelEntity.setArtists(artistDAO.getLabelById(request.getEntity()));
 
         return new PayloadResponse<>(request, ResponseCode.OK, labelEntity);
     }

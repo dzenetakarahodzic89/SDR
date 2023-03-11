@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,12 +14,20 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.NoteSheetService;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.notesheet.NoteSheet;
 import ba.com.zira.sdr.api.model.notesheet.NoteSheetCreateRequest;
+import ba.com.zira.sdr.api.model.notesheet.NoteSheetSongResponse;
 import ba.com.zira.sdr.api.model.notesheet.NoteSheetUpdateRequest;
+import ba.com.zira.sdr.api.model.notesheet.SongInstrumentSheetResponse;
 import ba.com.zira.sdr.core.mapper.NoteSheetMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.NoteSheetRequestValidation;
+import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.CountryDAO;
+import ba.com.zira.sdr.dao.InstrumentDAO;
 import ba.com.zira.sdr.dao.NoteSheetDAO;
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.NoteSheetEntity;
 import lombok.AllArgsConstructor;
 
@@ -29,6 +38,11 @@ public class NoteSheetServiceImpl implements NoteSheetService {
     NoteSheetDAO notesheetDAO;
     NoteSheetMapper notesheetMapper;
     NoteSheetRequestValidation notesheetRequestValidation;
+    LookupService lookupService;
+    CountryDAO countryDAO;
+    ArtistDAO artistDAO;
+    SongDAO songDAO;
+    InstrumentDAO instrumentDAO;
 
     @Override
     public PagedPayloadResponse<NoteSheet> find(final FilterRequest request) {
@@ -37,15 +51,61 @@ public class NoteSheetServiceImpl implements NoteSheetService {
     }
 
     @Override
+    public PayloadResponse<NoteSheetSongResponse> findNoteSheetForSong(final EntityRequest<Long> request) {
+
+        NoteSheetSongResponse noteSheet = notesheetDAO.getNoteSheetById(request.getEntity());
+
+        lookupService.lookupCoverImage(Arrays.asList(noteSheet), NoteSheetSongResponse::getSongId, ObjectType.SONG.getValue(),
+                NoteSheetSongResponse::setImageUrl, NoteSheetSongResponse::getImageUrl);
+        lookupService.lookupAudio(Arrays.asList(noteSheet), NoteSheetSongResponse::getSongId, NoteSheetSongResponse::setAudioUrl);
+
+        return new PayloadResponse<>(request, ResponseCode.OK, noteSheet);
+    }
+
+    @Override
+    public PayloadResponse<NoteSheetSongResponse> findNoteSheetByInstrumentAndSong(
+            final EntityRequest<SongInstrumentSheetResponse> request) {
+        NoteSheetEntity noteSheetEntity = notesheetDAO.getNoteSheetByInstrumentAndSong(request.getEntity().getSongId(),
+                request.getEntity().getInstrumentId());
+
+        String sheetContentResponse = noteSheetEntity.getSheetContent();
+
+        NoteSheetSongResponse noteSheetSongResponse = new NoteSheetSongResponse(noteSheetEntity.getId(),
+                noteSheetEntity.getInstrument().getId(), noteSheetEntity.getSong().getId(), sheetContentResponse
+
+        );
+
+        noteSheetSongResponse.setArtists(artistDAO.getArt(noteSheetEntity.getId()));
+
+        lookupService.lookupCoverImage(Arrays.asList(noteSheetSongResponse), NoteSheetSongResponse::getSongId, ObjectType.SONG.getValue(),
+                NoteSheetSongResponse::setImageUrl, NoteSheetSongResponse::getImageUrl);
+        lookupService.lookupAudio(Arrays.asList(noteSheetSongResponse), NoteSheetSongResponse::getSongId,
+                NoteSheetSongResponse::setAudioUrl);
+        lookupService.lookupSongNames(Arrays.asList(noteSheetSongResponse), NoteSheetSongResponse::getSongId,
+                NoteSheetSongResponse::setSongName);
+
+        lookupService.lookupSongDateOfRelease(Arrays.asList(noteSheetSongResponse), NoteSheetSongResponse::getSongId,
+                NoteSheetSongResponse::setDateOfRelease);
+
+        lookupService.lookupInstrumentNames(Arrays.asList(noteSheetSongResponse), NoteSheetSongResponse::getInstrumentId,
+                NoteSheetSongResponse::setInstrumentName);
+
+        return new PayloadResponse<>(request, ResponseCode.OK, noteSheetSongResponse);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<NoteSheet> create(final EntityRequest<NoteSheetCreateRequest> request) {
-        notesheetRequestValidation.validateCreateNoteSheetRequest(request);
-        var noteSheetEntity = notesheetMapper.dtoToEntity(request.getEntity());
+        NoteSheetCreateRequest createRequest = request.getEntity();
+        String sheetContent = createRequest.getSheetContent();
+
+        NoteSheetEntity noteSheetEntity = notesheetMapper.dtoToEntity(createRequest);
         noteSheetEntity.setStatus(Status.ACTIVE.value());
         noteSheetEntity.setCreated(LocalDateTime.now());
         noteSheetEntity.setCreatedBy(request.getUserId());
         noteSheetEntity.setModified(LocalDateTime.now());
         noteSheetEntity.setModifiedBy(request.getUserId());
+        noteSheetEntity.setSheetContent(sheetContent);
 
         notesheetDAO.persist(noteSheetEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, notesheetMapper.entityToDto(noteSheetEntity));
@@ -56,14 +116,13 @@ public class NoteSheetServiceImpl implements NoteSheetService {
     public PayloadResponse<NoteSheet> update(final EntityRequest<NoteSheetUpdateRequest> request) {
         notesheetRequestValidation.validateUpdateNoteSheetRequest(request);
 
-        var noteSheetEntity = notesheetDAO.findByPK(request.getEntity().getId());
-        notesheetMapper.updateEntity(request.getEntity(), noteSheetEntity);
+        var NoteSheetEntity = notesheetDAO.findByPK(request.getEntity().getId());
+        notesheetMapper.updateEntity(request.getEntity(), NoteSheetEntity);
 
-        noteSheetEntity.setModified(LocalDateTime.now());
-        noteSheetEntity.setModifiedBy(request.getUserId());
-        notesheetDAO.merge(noteSheetEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, notesheetMapper.entityToDto(noteSheetEntity));
-
+        NoteSheetEntity.setModified(LocalDateTime.now());
+        NoteSheetEntity.setModifiedBy(request.getUserId());
+        notesheetDAO.merge(NoteSheetEntity);
+        return new PayloadResponse<>(request, ResponseCode.OK, notesheetMapper.entityToDto(NoteSheetEntity));
     }
 
     @Override
