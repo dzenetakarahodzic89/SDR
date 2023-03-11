@@ -40,4 +40,22 @@ public class SongArtistDAO extends AbstractDAO<SongArtistEntity, Long> {
         q.executeUpdate();
     }
 
+    public void removeDuplicateAlbums(List<Long> albumIds) {
+        var hql = "delete from SongArtistEntity s where s.album.id in (:albumIds)";
+        Query q = entityManager.createQuery(hql).setParameter("albumIds", albumIds);
+        q.executeUpdate();
+    }
+
+    public void removeDuplicateArtists(List<Long> artistIds) {
+        var hql = "delete from SongArtistEntity s where s.artist.id in (:artistIds)";
+        Query q = entityManager.createQuery(hql).setParameter("artistIds", artistIds);
+        q.executeUpdate();
+    }
+
+    public void removeDuplicateSongs(List<Long> songIds) {
+        var hql = "delete from SongArtistEntity s where s.song.id in (:songIds)";
+        Query q = entityManager.createQuery(hql).setParameter("songIds", songIds);
+        q.executeUpdate();
+    }
+
 }

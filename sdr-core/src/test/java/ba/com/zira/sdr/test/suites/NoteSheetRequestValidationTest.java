@@ -13,11 +13,9 @@ import ba.com.zira.commons.model.User;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.model.notesheet.NoteSheetUpdateRequest;
 import ba.com.zira.sdr.core.validation.NoteSheetRequestValidation;
-import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.InstrumentDAO;
 import ba.com.zira.sdr.dao.NoteSheetDAO;
-
-
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 
 public class NoteSheetRequestValidationTest extends BasicTestConfiguration {
@@ -30,7 +28,7 @@ public class NoteSheetRequestValidationTest extends BasicTestConfiguration {
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.noteSheetDAO = Mockito.mock(NoteSheetDAO.class);
-        this.validation = new NoteSheetRequestValidation(noteSheetDAO,songDAO,instrumentDAO);
+        this.validation = new NoteSheetRequestValidation(noteSheetDAO, songDAO, instrumentDAO);
     }
 
     @Test
@@ -43,8 +41,8 @@ public class NoteSheetRequestValidationTest extends BasicTestConfiguration {
         request.setEntity(respose);
         ValidationResponse validationResponse = validation.validateUpdateNoteSheetRequest(request);
 
-        assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-        assertEquals(validationResponse.getDescription(), "NoteSheet with id: 1 does not exist!");
+        assertEquals(ResponseCode.REQUEST_INVALID, validationResponse.getCode());
+        assertEquals("NoteSheet with id: 1 does not exist!", validationResponse.getDescription());
         Mockito.verify(noteSheetDAO).existsByPK(1L);
     }
 

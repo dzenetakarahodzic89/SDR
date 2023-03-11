@@ -1,16 +1,13 @@
 package ba.com.zira.sdr.dao.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,10 +29,8 @@ public class DeezerIntegrationEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name = "SAT_DEEZER_INT_ID_GENERATOR", sequenceName = "SAT_DEEZER_INT_SEQ")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_DEEZER_INT_ID_GENERATOR")
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @Column(name = "created")
     private LocalDateTime created;
@@ -61,4 +56,9 @@ public class DeezerIntegrationEntity implements Serializable {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "object_id")
+    private Long objectId;
+
+    @Column(name = "object_type")
+    private String objectType;
 }

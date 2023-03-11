@@ -10,10 +10,10 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
+import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
 
-// TODO: Auto-generated Javadoc
 /**
  * The interface Person service.
  */
@@ -73,4 +73,7 @@ public interface PersonService {
     PayloadResponse<PersonResponse> updatePersonCountry(EntityRequest<PersonCountryRequest> request);
 
     public ListPayloadResponse<LoV> getPersonLoVs(EmptyRequest req) throws ApiException;
+
+    PayloadResponse<PersonOverviewResponse> retrieveById(final EntityRequest<Long> request) throws ApiException;
+
 }

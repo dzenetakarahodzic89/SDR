@@ -49,4 +49,5 @@ public class AlbumResponse implements Serializable {
 
     private String imageUrl;
     private List<String> albumArtists;
+
 }

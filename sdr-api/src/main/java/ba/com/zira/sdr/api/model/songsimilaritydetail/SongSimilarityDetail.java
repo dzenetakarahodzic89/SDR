@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.api.model.songsimilaritydetail;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,7 +23,7 @@ public class SongSimilarityDetail implements Serializable {
     private String createdBy;
 
     @Schema(description = "Grade of the song")
-    private String grade;
+    private BigDecimal grade;
 
     @Schema(description = "Last modification date")
     private LocalDateTime modified;

@@ -12,7 +12,7 @@ public class DeezerIntegration implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "Unique identifier of the Deezer integration")
-    private Long id;
+    private String id;
     @Schema(description = "Name of the Deezer integration")
     private String name;
     @Schema(description = "Creation date of the Deezer integration")
@@ -25,9 +25,9 @@ public class DeezerIntegration implements Serializable {
     private String modifiedBy;
     @Schema(description = "The status of the engine", allowableValues = { "Inactive", "Active" })
     private String status;
-    @Schema(description ="Request of the Deezer integration")
+    @Schema(description = "Request of the Deezer integration")
     private String request;
-    @Schema(description="Response of the Deezer integration")
+    @Schema(description = "Response of the Deezer integration")
     private String response;
 
 }

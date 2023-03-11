@@ -171,6 +171,18 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi songSimilarityApi() {
+        return GroupedOpenApi.builder().group("songSimilarity-api").packagesToScan("ba.com.zira.sdr.songsimilarity.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi songSimilarityDetailApi() {
+        return GroupedOpenApi.builder().group("songSimilarityDetail-api").packagesToScan("ba.com.zira.sdr.songsimilaritydetail.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi deezerIntegrationApi() {
         return GroupedOpenApi.builder().group("deezer-integration-api").packagesToScan("ba.com.zira.sdr.deezerintegration.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -198,6 +210,14 @@ public class SwaggerConfiguration {
     public GroupedOpenApi playlistGenerateApi() {
         return GroupedOpenApi.builder().group("playlist-generate-api").packagesToScan("ba.com.zira.sdr.generateplaylist.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
+
+    }
+
+    @Bean
+    public GroupedOpenApi eraApi() {
+        return GroupedOpenApi.builder().group("era-api").packagesToScan("ba.com.zira.sdr.era.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+
     }
 
     @Bean

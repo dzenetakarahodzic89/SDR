@@ -18,14 +18,14 @@ public class SongSearchRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public String name;
-    public Long remixId;
-    public Long coverId;
-    public String sortBy;
-    public int page;
-    public int pageSize;
-    public List<Long> artistIds;
-    public List<Long> albumIds;
-    public List<Long> genreIds;
+    private String name;
+    private Long remixId;
+    private Long coverId;
+    private String sortBy;
+    private int page;
+    private int pageSize;
+    private List<Long> artistIds;
+    private List<Long> albumIds;
+    private List<Long> genreIds;
 
 }

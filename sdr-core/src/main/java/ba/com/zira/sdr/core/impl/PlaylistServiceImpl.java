@@ -1,9 +1,9 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.AbstractMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -38,6 +38,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     PlaylistMapper playlistMapper;
     PlaylistRequestValidation playlistRequestValidation;
     LookupService lookupService;
+    private static SecureRandom random = new SecureRandom();
 
     @Override
     public PagedPayloadResponse<Playlist> find(final FilterRequest request) {
@@ -57,10 +58,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         }
 
         playlistEntities.setRecords(data);
-        Random rand = new Random();
         Map<Object, Object> randomSongs = data.stream().map(p -> {
             var songPlaylists = p.getSongPlaylists();
-            return new AbstractMap.SimpleEntry<>(p.getId(), songPlaylists.get(rand.nextInt(songPlaylists.size())).getSong().getId());
+            return new AbstractMap.SimpleEntry<>(p.getId(), songPlaylists.get(random.nextInt(songPlaylists.size())).getSong().getId());
         }).collect(Collectors.toMap(AbstractMap.SimpleEntry<Long, Long>::getKey, AbstractMap.SimpleEntry<Long, Long>::getValue));
         PagedData<Playlist> response = new PagedData<>();
         response.setRecords(playlistMapper.entitiesToDtos(playlistEntities.getRecords()));

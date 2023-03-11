@@ -24,6 +24,7 @@ import ba.com.zira.sdr.api.PersonService;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
+import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,8 +47,15 @@ public class PersonRestService {
         return personService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
+    @Operation(summary = "Find person by id - Overview")
+    @GetMapping(value = "/overview/{id}")
+    public PayloadResponse<PersonOverviewResponse> retrieveById(
+            @Parameter(required = true, description = "ID of the song") @PathVariable final Long id) throws ApiException {
+        return personService.retrieveById(new EntityRequest<>(id));
+    }
+
     @Operation(summary = "Find person base on filter criteria")
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "/{id}")
     public PayloadResponse<PersonResponse> findById(@PathVariable Long id) {
         return personService.findById(new EntityRequest<>(id));
     }
@@ -78,7 +86,7 @@ public class PersonRestService {
 
     @Operation(summary = "Update Person")
     @PutMapping(value = "change-flag")
-    public PayloadResponse<PersonResponse> editPersonCountry(@RequestBody final PersonCountryRequest request) throws ApiException {
+    public PayloadResponse<PersonResponse> editPersonCountry(@RequestBody final PersonCountryRequest request) {
 
         return personService.updatePersonCountry(new EntityRequest<>(request));
     }

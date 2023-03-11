@@ -6,7 +6,6 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.ValidationError;
 import ba.com.zira.commons.model.ValidationErrors;
-import ba.com.zira.sdr.api.DeezerIntegrationService;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationUpdateRequest;
 import ba.com.zira.sdr.dao.DeezerIntegrationDAO;
 import lombok.AllArgsConstructor;
@@ -24,14 +23,14 @@ public class DeezerIntegrationRequestValidation {
         return ValidationResponse.of(request, errors);
     }
 
-    public ValidationResponse validateExistsDeezerIntegrationRequest(final EntityRequest<Long> request) {
+    public ValidationResponse validateExistsDeezerIntegrationRequest(final EntityRequest<String> request) {
         ValidationErrors errors = new ValidationErrors();
         errors.put(exists(request.getEntity()));
 
         return ValidationResponse.of(request, errors);
     }
 
-    private ValidationError exists(Long id) {
+    private ValidationError exists(String id) {
         if (!deezerIntegrationDAO.existsByPK(id)) {
             return ValidationError.of("DEEZER_INTEGRATION_NOT_FOUND", "Deezer integration with id: " + id + " does not exist!");
         }

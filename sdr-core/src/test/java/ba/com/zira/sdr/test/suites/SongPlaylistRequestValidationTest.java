@@ -28,6 +28,8 @@ public class SongPlaylistRequestValidationTest extends BasicTestConfiguration {
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
+        this.songDAO = Mockito.mock(SongDAO.class);
+        this.playlistDAO = Mockito.mock(PlaylistDAO.class);
         this.songPlaylistDAO = Mockito.mock(SongPlaylistDAO.class);
         this.validation = new SongPlaylistRequestValidation(songPlaylistDAO, songDAO, playlistDAO);
     }
@@ -35,6 +37,9 @@ public class SongPlaylistRequestValidationTest extends BasicTestConfiguration {
     @Test
     public void validateUpdateRequestSongPlaylistNotFound() {
         Mockito.when(songPlaylistDAO.existsByPK(1L)).thenReturn(false);
+        Mockito.when(songDAO.existsByPK(null)).thenReturn(true);
+        Mockito.when(playlistDAO.existsByPK(null)).thenReturn(true);
+
         EntityRequest<SongPlaylistUpdateRequest> request = new EntityRequest<>();
         request.setUser(new User("TEST"));
         var respose = new SongPlaylistUpdateRequest();

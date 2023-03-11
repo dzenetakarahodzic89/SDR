@@ -72,16 +72,4 @@ public class MoritsIntegrationServiceImpl implements MoritsIntegrationService {
         return new PayloadResponse<>(request, ResponseCode.OK, "Morits lyric integration removed successfully!");
     }
 
-    /*
-     * public PayloadResponse<MoritsIntegration> delete(final
-     * EntityRequest<Long> request) {
-     * moritsIntegrationRequestValidation.validateExistsMoritsIntegrationRequest
-     * (request);
-     * 
-     * var moritsIntegrationEntity =
-     * moritsIntegrationDAO.findByPK(request.getEntity());
-     * moritsIntegrationDAO.remove(moritsIntegrationEntity); return new
-     * PayloadResponse<>(request, ResponseCode.OK,
-     * moritsIntegrationMapper.entityToDto(moritsIntegrationEntity)); }
-     */
 }
