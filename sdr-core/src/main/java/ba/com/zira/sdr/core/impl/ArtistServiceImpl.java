@@ -197,10 +197,6 @@ public class ArtistServiceImpl implements ArtistService {
         Long groupArtistsCount = artistDAO.countGroupArtistsByEras(eraId);
 
         EraEntity era = eraDAO.findByPK(eraId);
-        if (era == null) {
-            throw new IllegalArgumentException("Era cannot be null.");
-        }
-
         ArtistByEras artistByEras = new ArtistByEras(era.getName(), soloArtistsCount, groupArtistsCount);
 
         return new PayloadResponse<>(request, ResponseCode.OK, artistByEras);
