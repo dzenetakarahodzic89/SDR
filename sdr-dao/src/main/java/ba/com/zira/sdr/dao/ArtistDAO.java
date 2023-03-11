@@ -157,8 +157,9 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         Query q = entityManager.createQuery(hql).setParameter("artistIds", artistIds);
         q.executeUpdate();
     }
+
     public List<LoV> getArtistsForDeezerSearch() {
-        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(sa.id,sa.name || ' ' || sa.surname) from ArtistEntity sa where not exists (select sdi from DeezerIntegrationEntity sdi where sdi.objectId = sa.id)";
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,''))) from ArtistEntity sa where not exists (select sdi from DeezerIntegrationEntity sdi where sdi.objectId = sa.id)";
         TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setMaxResults(10);
         return q.getResultList();
     }

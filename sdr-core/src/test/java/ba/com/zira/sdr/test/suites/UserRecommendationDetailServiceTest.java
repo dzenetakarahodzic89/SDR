@@ -146,15 +146,16 @@ public class UserRecommendationDetailServiceTest extends BasicTestConfiguration 
             userRecommendationDetailEntity
                     .setUserRecommendation(new UserRecommendationEntity(1L, null, null, null, null, null, null, null));
             userRecommendationDetailEntity.setSong(new SongEntity(1L, null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
 
             var newUserRecommendationDetail = new UserRecommendationDetailResponse();
             newUserRecommendationDetail.setUserRecommendationId(1L);
             newUserRecommendationDetail.setSongId(1L);
             Mockito.when(userRecommendationDAO.findByPK(1L))
                     .thenReturn(new UserRecommendationEntity(1L, null, null, null, null, null, null, null));
-            Mockito.when(songDAO.findByPK(1L)).thenReturn(new SongEntity(1L, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+            Mockito.when(songDAO.findByPK(1L))
+                    .thenReturn(new SongEntity(1L, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             Mockito.when(userRecommendationDetailDAO.persist(userRecommendationDetailEntity)).thenReturn(null);
 
             PayloadResponse<UserRecommendationDetailResponse> userRecommendationDetailCreateResponse = userRecommendationDetailService
