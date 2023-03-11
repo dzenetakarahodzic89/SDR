@@ -14,10 +14,10 @@ import ba.com.zira.sdr.dao.model.DeezerIntegrationEntity;
 @Repository
 public class DeezerIntegrationDAO extends AbstractDAO<DeezerIntegrationEntity, String> {
 
-    public List<DeezerIntegrationResponse> getForTableFill() {
-        var hql = "select new ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationResponse(die.id,die.name,die.status,die.response,die.objectType,die.objectId) from DeezerIntegrationEntity die where die.status = :status";
+    public List<DeezerIntegrationResponse> getForTableFill(String status, String objectType) {
+        var hql = "select new ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationResponse(die.id,die.name,die.status,die.response,die.objectType,die.objectId) from DeezerIntegrationEntity die where die.status = :status and die.objectType = :objectType";
         TypedQuery<DeezerIntegrationResponse> query = entityManager.createQuery(hql, DeezerIntegrationResponse.class)
-                .setParameter("status", "Active").setMaxResults(100);
+                .setParameter("status", status).setParameter("objectType", objectType).setMaxResults(100);
         return query.getResultList();
     }
 
