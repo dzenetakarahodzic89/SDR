@@ -1,17 +1,18 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.request.ListRequest;
+import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
@@ -27,12 +28,15 @@ import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.instrument.InsertSongInstrumentRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
+import ba.com.zira.sdr.api.instrument.InstrumentSearchRequest;
+import ba.com.zira.sdr.api.instrument.InstrumentSearchResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrumentEra;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.core.mapper.InstrumentMapper;
 import ba.com.zira.sdr.core.mapper.SongInstrumentMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.InstrumentRequestValidation;
 import ba.com.zira.sdr.dao.InstrumentDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
@@ -58,6 +62,7 @@ public class InstrumentServiceImpl implements InstrumentService {
     SongInstrumentMapper songInstrumentMapper;
     InstrumentRequestValidation instrumentRequestValidation;
     MediaService mediaService;
+    LookupService lookupService;
 
     @Override
     public PagedPayloadResponse<InstrumentResponse> find(final FilterRequest filterRequest) {
@@ -77,6 +82,34 @@ public class InstrumentServiceImpl implements InstrumentService {
 
         instrumentDAO.persist(instrumentEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
+    }
+
+    @Override
+    public PagedPayloadResponse<InstrumentSearchResponse> search(SearchRequest<InstrumentSearchRequest> request) {
+
+        PagedData<InstrumentEntity> instrumentEntities = new PagedData<>();
+        var data = instrumentDAO.findInstrumentsByNameAndPerson(request.getEntity().getName(), request.getEntity().getPersonId(),
+                request.getEntity().getSortBy());
+
+        if (request.getEntity().getPersonId() != null) {
+
+            List<InstrumentEntity> tempData = new ArrayList<InstrumentEntity>();
+
+            for (InstrumentEntity instrument : data) {
+                if (instrument.getId() == request.getEntity().getPersonId()) {
+                    tempData.add(instrument);
+                }
+                System.out.println(instrument);
+            }
+
+            instrumentEntities.setRecords(tempData);
+        }
+
+        PagedData<InstrumentSearchResponse> response = new PagedData<>();
+
+        lookupService.lookupCoverImage(response.getRecords(), InstrumentSearchResponse::getId, ObjectType.INSTRUMENT.getValue(),
+                InstrumentSearchResponse::setImageUrl, InstrumentSearchResponse::getImageUrl);
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, response);
     }
 
     @Override
