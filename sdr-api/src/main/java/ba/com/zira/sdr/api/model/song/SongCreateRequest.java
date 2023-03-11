@@ -52,9 +52,6 @@ public class SongCreateRequest implements Serializable {
     @Schema(description = "Id of song genre")
     private Long genreId;
 
-    @Schema(description = "Id of song subgenre")
-    private Long subgenreId;
-
     @Schema(description = "Id of song remix")
     private Long remixId;
 

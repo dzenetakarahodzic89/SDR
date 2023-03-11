@@ -23,7 +23,7 @@ public class ChordProgressionDAO extends AbstractDAO<ChordProgressionEntity, Lon
         return query.getResultList();
     }
 
-    public Map<Long, String> songsByChordProgression(Long chordProgressionId) {
+    public Map<Long, String> songsByChordProgression(final Long chordProgressionId) {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from SongEntity s where s.chordProgression.id = :id";
         TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setParameter("id", chordProgressionId);
 
@@ -40,6 +40,12 @@ public class ChordProgressionDAO extends AbstractDAO<ChordProgressionEntity, Lon
                 + "join SongArtistEntity ssa on ssa.song.id =ss.id join AlbumEntity sa on ssa.album.id =sa.id "
                 + "join EraEntity se on sa.era.id =se.id";
         TypedQuery<ChordSongAlbumEraResponse> query = entityManager.createQuery(hql, ChordSongAlbumEraResponse.class);
+        return query.getResultList();
+    }
+
+    public List<LoV> getChordProgressionLoV() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(c.id,c.name) from ChordProgressionEntity c";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);
         return query.getResultList();
     }
 }

@@ -234,20 +234,20 @@ public class GenreServiceImpl implements GenreService {
      *             the api exception
      */
     @Override
-    public ListPayloadResponse<LoV> getSubGenreMainGenreNames(EmptyRequest request) throws ApiException {
+    public ListPayloadResponse<LoV> getSubGenreMainGenreNames(final EmptyRequest request) throws ApiException {
         var subGenreMainGenreNames = genreDAO.getSubGenreMainGenreNames();
         return new ListPayloadResponse<>(request, ResponseCode.OK, subGenreMainGenreNames);
     }
-    
+
     @Override
-    public ListPayloadResponse<LoV> getMainGenresLoV(final EmptyRequest request) throws ApiException {
-        List<LoV> mainGenres = genreDAO.getMainGenresLoV();
+    public ListPayloadResponse<LoV> getMainGenreLoV(final EmptyRequest request) throws ApiException {
+        List<LoV> mainGenres = genreDAO.getMainGenreLoV();
         return new ListPayloadResponse<>(request, ResponseCode.OK, mainGenres);
     }
 
     @Override
-    public ListPayloadResponse<LoV> getSubgenresLoV(final EntityRequest<Long> request) throws ApiException {
-        List<LoV> subgenres = genreDAO.getSubgenresLoV(request.getEntity());
+    public ListPayloadResponse<LoV> getSubgenreLoV(final EntityRequest<Long> request) throws ApiException {
+        List<LoV> subgenres = genreDAO.getSubgenreLoV(request.getEntity());
         return new ListPayloadResponse<>(request, ResponseCode.OK, subgenres);
 
     }

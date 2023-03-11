@@ -81,7 +81,7 @@ public class GenreDAO extends AbstractDAO<GenreEntity, Long> {
 
     }
 
-    public GenreEntity findByName(String name) {
+    public GenreEntity findByName(final String name) {
         var hql = "select g from GenreEntity g where lower(g.name) like lower(:name)";
         try {
             return entityManager.createQuery(hql, GenreEntity.class).setParameter("name", name).getSingleResult();
@@ -95,17 +95,17 @@ public class GenreDAO extends AbstractDAO<GenreEntity, Long> {
                 + " else concat(g.name,' - ', gg.name) end) from GenreEntity g left join GenreEntity gg on g.mainGenre.id=gg.id";
         return entityManager.createQuery(hql, LoV.class).getResultList();
     }
-    
-    public List<LoV> getMainGenresLoV() {
+
+    public List<LoV> getMainGenreLoV() {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(g.id,g.name) from GenreEntity g where g.mainGenre.id is null";
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);
-        return query.getResultStream().collect(Collectors.toList());
+        return query.getResultList();
     }
 
-    public List<LoV> getSubgenresLoV(final Long genreId) {
+    public List<LoV> getSubgenreLoV(final Long mainGenreId) {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(g.id,g.name) from GenreEntity g where g.mainGenre.id = :id";
-        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("id", genreId);
-        return query.getResultStream().collect(Collectors.toList());
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("id", mainGenreId);
+        return query.getResultList();
     }
 
 }

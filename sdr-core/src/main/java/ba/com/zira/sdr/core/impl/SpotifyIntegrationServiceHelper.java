@@ -99,7 +99,7 @@ public class SpotifyIntegrationServiceHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyIntegrationServiceHelper.class);
     private static final String AUTHORIZATION = "Authorization";
 
-    private HttpEntity getHttpEntity(String token) {
+    private HttpEntity getHttpEntity(final String token) {
         var headers = new HttpHeaders();
         headers.set(AUTHORIZATION, "Bearer " + token);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -135,7 +135,7 @@ public class SpotifyIntegrationServiceHelper {
         return null;
     }
 
-    private void fetchAlbumsFromSpotify(String token) {
+    private void fetchAlbumsFromSpotify(final String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for albums on Spotify...");
         List<LoV> albums = albumDAO.findAlbumsToFetchFromSpotify(responseLimit);
         LOGGER.info("SPOTIFY INTEGRATION: Found {} albums to fetch from Spotify.", albums.size());
@@ -170,7 +170,7 @@ public class SpotifyIntegrationServiceHelper {
 
     }
 
-    private void fetchSongsFromSpotify(String token) {
+    private void fetchSongsFromSpotify(final String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for songs on Spotify...");
         List<LoV> songs = songDAO.findSongsToFetchFromSpotify(responseLimit);
         LOGGER.info("SPOTIFY INTEGRATION: Found {} songs to fetch from Spotify.", songs.size());
@@ -205,7 +205,7 @@ public class SpotifyIntegrationServiceHelper {
 
     }
 
-    private void fetchArtistsFromSpotify(String token) {
+    private void fetchArtistsFromSpotify(final String token) {
         LOGGER.info("SPOTIFY INTEGRATION: Searching for artists on Spotify...");
         List<LoV> artists = artistDAO.findArtistsToFetchFromSpotify(responseLimit);
         LOGGER.info("SPOTIFY INTEGRATION: Found {} artists to fetch from Spotify.", artists.size());
@@ -265,7 +265,7 @@ public class SpotifyIntegrationServiceHelper {
         LOGGER.info("SPOTIFY INTEGRATION: Updating Spotify ids done!");
     }
 
-    private void updateAlbumSpotifyId(String response, Long objectId) {
+    private void updateAlbumSpotifyId(final String response, final Long objectId) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             SpotifyAlbumSearch albums = mapper.readValue(response, SpotifyAlbumSearch.class);
@@ -287,7 +287,7 @@ public class SpotifyIntegrationServiceHelper {
         }
     }
 
-    private void updateSongSpotifyId(String response, Long objectId) {
+    private void updateSongSpotifyId(final String response, final Long objectId) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             SpotifyTrackSearch tracks = mapper.readValue(response, SpotifyTrackSearch.class);
@@ -309,7 +309,7 @@ public class SpotifyIntegrationServiceHelper {
         }
     }
 
-    private void updateArtistSpotifyId(String response, Long objectId) {
+    private void updateArtistSpotifyId(final String response, final Long objectId) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             SpotifyArtistSearch artists = mapper.readValue(response, SpotifyArtistSearch.class);
@@ -331,7 +331,7 @@ public class SpotifyIntegrationServiceHelper {
         }
     }
 
-    private LocalDateTime parseDate(String date) {
+    private LocalDateTime parseDate(final String date) {
         var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
             return LocalDate.parse(date, formatter).atStartOfDay();
@@ -340,7 +340,7 @@ public class SpotifyIntegrationServiceHelper {
         }
     }
 
-    private String fetchSongsOfAlbumFromSpotify(String albumSpotifyId) {
+    private String fetchSongsOfAlbumFromSpotify(final String albumSpotifyId) {
         var token = getAuthenticationToken();
         var url = spotifyApiUrl + "/albums/" + albumSpotifyId;
 
@@ -356,8 +356,8 @@ public class SpotifyIntegrationServiceHelper {
         return null;
     }
 
-    private void saveSongs(List<SpotifyAlbumsTrackItem> songs, AlbumEntity album, List<ArtistEntity> artists, LabelEntity label,
-            GenreEntity genre, LocalDateTime releaseDate) {
+    private void saveSongs(final List<SpotifyAlbumsTrackItem> songs, final AlbumEntity album, final List<ArtistEntity> artists,
+            final LabelEntity label, final GenreEntity genre, final LocalDateTime releaseDate) {
         songs.forEach(song -> {
             var durationInMs = song.getDurationMs();
             SongEntity songEntity = new SongEntity();
@@ -403,7 +403,7 @@ public class SpotifyIntegrationServiceHelper {
 
     }
 
-    private void addSongsFromSpotifyForAlbum(AlbumEntity album, List<ArtistEntity> artists, LabelEntity label) {
+    private void addSongsFromSpotifyForAlbum(final AlbumEntity album, final List<ArtistEntity> artists, final LabelEntity label) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             SpotifyGetAlbumsSongs response = mapper.readValue(fetchSongsOfAlbumFromSpotify(album.getSpotifyId()),
@@ -439,7 +439,7 @@ public class SpotifyIntegrationServiceHelper {
         });
     }
 
-    private String fetchAlbumsOfArtistFromSpotify(String artistSpotifyId) {
+    private String fetchAlbumsOfArtistFromSpotify(final String artistSpotifyId) {
         var token = getAuthenticationToken();
         var url = spotifyApiUrl + "/artists/" + artistSpotifyId + "/albums";
 
@@ -455,7 +455,7 @@ public class SpotifyIntegrationServiceHelper {
         return null;
     }
 
-    private void saveAlbums(List<SpotifyArtistsAlbumItem> albums, ArtistEntity artist, LabelEntity defaultLabel) {
+    private void saveAlbums(final List<SpotifyArtistsAlbumItem> albums, final ArtistEntity artist, final LabelEntity defaultLabel) {
         albums.forEach(album -> {
             List<ArtistEntity> artists = new ArrayList<>();
             artists.add(artist);

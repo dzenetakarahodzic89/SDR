@@ -152,6 +152,26 @@ public class SongServiceImpl implements SongService {
         var songEntity = songDAO.findByPK(request.getEntity().getId());
         songMapper.updateEntity(request.getEntity(), songEntity);
 
+        if (songUpdateRequest.getChordProgressionId() != null) {
+            songEntity.setChordProgression(chordProgressionDAO.findByPK(songUpdateRequest.getChordProgressionId()));
+        } else {
+            songEntity.setChordProgression(null);
+        }
+
+        if (songUpdateRequest.getRemixId() != null) {
+            songEntity.setRemix(songDAO.findByPK(songUpdateRequest.getRemixId()));
+        } else {
+            songEntity.setRemix(null);
+        }
+
+        if (songUpdateRequest.getCoverId() != null) {
+            songEntity.setCover(songDAO.findByPK(songUpdateRequest.getCoverId()));
+        } else {
+            songEntity.setCover(null);
+        }
+
+        songEntity.setGenre(genreDAO.findByPK(songUpdateRequest.getGenreId()));
+
         songEntity.setModified(LocalDateTime.now());
         songEntity.setModifiedBy(request.getUserId());
 
@@ -208,7 +228,7 @@ public class SongServiceImpl implements SongService {
      *             the api exception
      */
     @Override
-    public ListPayloadResponse<LoV> getSongTitlesArtistNames(EmptyRequest request) throws ApiException {
+    public ListPayloadResponse<LoV> getSongTitlesArtistNames(final EmptyRequest request) throws ApiException {
         var songTitlesArtistNames = songDAO.getSongTitlesArtistNames();
         return new ListPayloadResponse<>(request, ResponseCode.OK, songTitlesArtistNames);
     }

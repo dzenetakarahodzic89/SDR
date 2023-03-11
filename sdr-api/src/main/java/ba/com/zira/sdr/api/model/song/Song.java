@@ -65,9 +65,6 @@ public class Song implements Serializable {
     @Schema(description = "Id of song genre")
     private Long genreId;
 
-    @Schema(description = "Id of song subgenre")
-    private Long subgenreId;
-
     private String imageUrl;
 
     private String audioUrl;

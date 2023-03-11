@@ -59,19 +59,19 @@ public class GenreRestService {
         var request = new EmptyRequest();
         return genreService.getSubGenreMainGenreNames(request);
     }
-    
-    @Operation(summary = "Get main genres - LoV")
+
+    @Operation(summary = "Get main genre LoV")
     @GetMapping(value = "main-genre")
-    public ListPayloadResponse<LoV> getMainGenresLoV() throws ApiException {
+    public ListPayloadResponse<LoV> getMainGenreLoV() throws ApiException {
         var request = new EmptyRequest();
-        return genreService.getMainGenresLoV(request);
+        return genreService.getMainGenreLoV(request);
     }
 
-    @Operation(summary = "Get subgenres of genre - LoV")
+    @Operation(summary = "Get subgenre LoV")
     @GetMapping(value = "{id}/subgenres")
-    public ListPayloadResponse<LoV> getSubgenresLoV(
-            @Parameter(required = true, description = "Id of the genre") @PathVariable final Long id) throws ApiException {
-        return genreService.getSubgenresLoV(new EntityRequest<>(id));
+    public ListPayloadResponse<LoV> getSubgenreLoV(
+            @Parameter(required = true, description = "Id of the main genre") @PathVariable final Long id) throws ApiException {
+        return genreService.getSubgenreLoV(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Create a genre")
