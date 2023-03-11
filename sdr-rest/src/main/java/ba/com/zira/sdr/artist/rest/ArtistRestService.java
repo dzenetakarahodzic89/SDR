@@ -84,6 +84,13 @@ public class ArtistRestService {
         return artistService.getArtistsByEras(req);
     }
 
+    @Operation(summary = "Artists by eras count")
+    @GetMapping("/group-solo-count")
+    public PayloadResponse<ArtistByEras> getArtistsByErasCount(@RequestParam Long era) throws ApiException {
+        var req = new EntityRequest<>(era);
+        return artistService.countArtistsByEras(req);
+    }
+
     @Operation(summary = "All artist ids and names")
     @GetMapping("/lov")
     public ListPayloadResponse<LoV> getArtistNames() throws ApiException {

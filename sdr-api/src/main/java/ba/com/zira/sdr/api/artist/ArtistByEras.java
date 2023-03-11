@@ -13,4 +13,21 @@ import lombok.RequiredArgsConstructor;
 public class ArtistByEras implements Serializable {
     private List<Artist> artistGroup;
     private List<Artist> artistSolo;
+
+    private Long soloCount;
+    private Long groupCount;
+    private String eraName;
+
+    public ArtistByEras(String eraName, Long soloCount, Long groupCount) {
+        this.eraName = eraName;
+        this.soloCount = soloCount;
+        this.groupCount = groupCount;
+
+    }
+
+    public ArtistByEras(List<Artist> artistGroup, List<Artist> artistSolo) {
+        this.artistGroup = artistGroup;
+        this.artistSolo = artistSolo;
+
+    }
 }

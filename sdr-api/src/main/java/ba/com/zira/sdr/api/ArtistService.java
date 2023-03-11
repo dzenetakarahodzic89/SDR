@@ -77,4 +77,6 @@ public interface ArtistService {
 
     PayloadResponse<ArtistResponse> createFromPerson(EntityRequest<Long> request) throws ApiException;
 
+    PayloadResponse<ArtistByEras> countArtistsByEras(EntityRequest<Long> request);
+
 }
