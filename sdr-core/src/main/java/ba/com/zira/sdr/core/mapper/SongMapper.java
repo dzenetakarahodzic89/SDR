@@ -21,22 +21,15 @@ import ba.com.zira.sdr.dao.model.SongEntity;
 @Mapper(componentModel = "spring")
 public interface SongMapper {
 
-    @Mapping(source = "chordProgressionId", target = "chordProgression.id")
     @Mapping(source = "genreId", target = "genre.id")
-    @Mapping(source = "remixId", target = "remix.id")
-    @Mapping(source = "coverId", target = "cover.id")
     SongEntity dtoToEntity(SongCreateRequest song);
 
     @Mapping(source = "chordProgression.id", target = "chordProgressionId")
-    @Mapping(source = "genre.id", target = "genreId")
     @Mapping(source = "remix.id", target = "remixId")
     @Mapping(source = "cover.id", target = "coverId")
+    @Mapping(source = "genre.id", target = "genreId")
     Song entityToDto(SongEntity songEntity);
 
-    @Mapping(source = "chordProgressionId", target = "chordProgression.id")
-    @Mapping(source = "genreId", target = "genre.id")
-    @Mapping(source = "remixId", target = "remix.id")
-    @Mapping(source = "coverId", target = "cover.id")
     void updateEntity(SongUpdateRequest song, @MappingTarget SongEntity songEntity);
 
     List<Song> entitiesToDtos(List<SongEntity> songEntity);

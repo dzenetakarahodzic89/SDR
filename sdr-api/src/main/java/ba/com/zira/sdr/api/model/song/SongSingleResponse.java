@@ -28,14 +28,23 @@ public class SongSingleResponse implements Serializable {
     private String information;
     private int playlistCount;
     private LocalDateTime dateOfRelease;
+    private String playtime;
+    @Schema(description = "Song id for which the current song is a remix of")
+    private Long remixId;
+    @Schema(description = "Song id for which the current song is a cover of")
+    private Long coverId;
     @Schema(description = "Label name")
     private String label;
     @Schema(description = "Chord progression name")
     private String chordProgression;
+    @Schema(description = "Chord progression id")
+    private Long chordProgressionId;
     @Schema(description = "Genre Id")
     private Long genreId;
     @Schema(description = "Genre name")
     private String genre;
+    @Schema(description = "Subgenre id")
+    private Long subgenreId;
     @Schema(description = "Subgenres - format 1-rock")
     private Map<Long, String> subgenres;
     @Schema(description = "List of artists")
@@ -45,19 +54,25 @@ public class SongSingleResponse implements Serializable {
 
     private String audioUrl;
 
-    public SongSingleResponse(Long id, String songName, String outlineText, String information, LocalDateTime dateOfRelease,
-            String chordName, String genreName, Long genreId) {
+    public SongSingleResponse(final Long id, final String songName, final String outlineText, final String information,
+            final LocalDateTime dateOfRelease, final String playtime, final Long remixId, final Long coverId, final String chordName,
+            final Long chordProgressionId, final String genreName, final Long genreId) {
         this.id = id;
         this.name = songName;
         this.outlineText = outlineText;
         this.information = information;
         this.dateOfRelease = dateOfRelease;
+        this.playtime = playtime;
+        this.remixId = remixId;
+        this.coverId = coverId;
         this.chordProgression = chordName;
+        this.chordProgressionId = chordProgressionId;
         this.genre = genreName;
         this.genreId = genreId;
     }
 
-    public SongSingleResponse(Long id, String songName, String outlineText, String information, LocalDateTime dateOfRelease) {
+    public SongSingleResponse(final Long id, final String songName, final String outlineText, final String information,
+            final LocalDateTime dateOfRelease) {
         this.id = id;
         this.name = songName;
         this.outlineText = outlineText;

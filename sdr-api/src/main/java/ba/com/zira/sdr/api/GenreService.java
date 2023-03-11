@@ -41,6 +41,28 @@ public interface GenreService {
     public ListPayloadResponse<GenreEraOverview> getGenresOverEras(EmptyRequest request) throws ApiException;
 
     /**
+     * Gets the main genre LoV.
+     *
+     * @param request
+     *            the request
+     * @return main genre LoV
+     * @throws ApiException
+     *             the api exception
+     */
+    public ListPayloadResponse<LoV> getMainGenreLoV(EmptyRequest request) throws ApiException;
+
+    /**
+     * Gets the subgenre of main genre LoV.
+     *
+     * @param request
+     *            the request
+     * @return subgenre of main genre LoV
+     * @throws ApiException
+     *             the api exception
+     */
+    public ListPayloadResponse<LoV> getSubgenreLoV(EntityRequest<Long> request) throws ApiException;
+
+    /**
      * Create payload response.
      *
      * @param request
