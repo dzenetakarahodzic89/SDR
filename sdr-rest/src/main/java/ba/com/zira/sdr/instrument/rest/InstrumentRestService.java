@@ -1,7 +1,5 @@
 package ba.com.zira.sdr.instrument.rest;
 
-import java.util.Map;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,10 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.request.ListRequest;
+import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
@@ -24,6 +25,8 @@ import ba.com.zira.sdr.api.InstrumentService;
 import ba.com.zira.sdr.api.instrument.InsertSongInstrumentRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
+import ba.com.zira.sdr.api.instrument.InstrumentSearchRequest;
+import ba.com.zira.sdr.api.instrument.InstrumentSearchResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrumentEra;
@@ -53,6 +56,18 @@ public class InstrumentRestService {
     public PagedPayloadResponse<InstrumentResponse> find(@RequestParam Map<String, Object> filterCriteria,
             final QueryConditionPage queryCriteria) throws ApiException {
         return instrumentService.find(new FilterRequest(filterCriteria, queryCriteria));
+    }
+
+    @Operation(summary = "Find Instruments based on custom filter")
+    @GetMapping(value = "search")
+    public PagedPayloadResponse<InstrumentSearchResponse> findByNamePerson(
+            @Parameter(required = false, description = "Name of the instrument") @RequestParam(required = false) final String name,
+            @Parameter(required = false,
+                    description = "Id of a person playing instrument") @RequestParam(required = false) final Long personId,
+            @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy)
+            throws ApiException {
+        return instrumentService.search(new SearchRequest<>(new InstrumentSearchRequest(name, personId, sortBy)));
+
     }
 
     @Operation(summary = "Create instrument")
@@ -94,5 +109,4 @@ public class InstrumentRestService {
         return instrumentService.findAllSongsInErasForInstruments(new EntityRequest<>(id));
 
     }
-
 }
