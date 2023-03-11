@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -224,12 +225,24 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
     }
 
     public List<LoV> findSongsToFetchFromSpotify(int responseLimit) {
-        var cases = "case when sa.artist.surname is null then concat('track:',s.name,' ','artist:',sa.artist.name) else"
-                + " concat('track:',s.name,' ','artist:',sa.artist.name,' ',sa.artist.surname) end";
-        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id," + cases + ") from SongEntity s left join"
-                + " SpotifyIntegrationEntity si on s.id = si.objectId and si.objectType like :song join SongArtistEntity sa on s.id=sa.song.id where si.id = null";
+        var cases = "case when sa.album.id is not null and a.surname is not null then concat('track:',s.name,' ','artist:',a.name,' ',a.surname)"
+                + " when sa.album.id is not null and a.surname is null then concat('track:',s.name,' ','artist:',a.name) else"
+                + " concat('track:',s.name) end";
+        var subquery = "select si from SpotifyIntegrationEntity si where si.objectId=s.id and si.objectType like :song";
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id, " + cases
+                + ") from SongEntity s left join SongArtistEntity sa on s.id=sa.song.id left join ArtistEntity a on sa.album.id=a.id where not exists("
+                + subquery + ") " + "and (s.spotifyId is null or length(s.spotifyId)<1)";
         return entityManager.createQuery(hql, LoV.class).setParameter("song", "SONG").setMaxResults(responseLimit).getResultList();
 
+    }
+
+    public List<SongEntity> findSongsToFetchArtistsAndAlbumFromSpotify(int responseLimit) {
+        var hql = "select s from SongEntity s where s.spotifyId is not null and length(s.spotifyId)>0 and "
+                + "(s.spotifyStatus!=:status or s.spotifyStatus is null) and "
+                + "not exists(select sa from SongArtistEntity sa where sa.song.id=s.id) "
+                + "and exists(select si from SpotifyIntegrationEntity si where si.objectId=s.id and si.objectType like :song)";
+        return entityManager.createQuery(hql, SongEntity.class).setParameter("status", "Done").setParameter("song", "SONG")
+                .setMaxResults(responseLimit).getResultList();
     }
 
     public List<SongPersonResponse> findSongByPersonId(final Long personId) {
@@ -244,6 +257,19 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
                 + " concat(s.name,' - ',sa.artist.name) else concat(s.name,' - ',sa.artist.name,' ',sa.artist.surname) end) from SongEntity s join SongArtistEntity sa"
                 + " on s.id=sa.song.id group by s.id,sa.artist.name,sa.artist.surname";
         return entityManager.createQuery(hql, LoV.class).getResultList();
+    }
+
+    public List<SongEntity> getDuplicateSongs() {
+        var hql = "select s from SongEntity s where s.created > "
+                + "(select min(s2.created) from SongEntity s2 where s2.spotifyId = s.spotifyId group by s2.spotifyId )"
+                + " and s.spotifyId is not null and length(s.spotifyId)>0";
+        return entityManager.createQuery(hql, SongEntity.class).getResultList();
+    }
+
+    public void deleteSongs(List<Long> songIds) {
+        var hql = "delete from SongEntity s where s.id in (:songIds)";
+        Query q = entityManager.createQuery(hql).setParameter("songIds", songIds);
+        q.executeUpdate();
     }
 
 }
