@@ -46,7 +46,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ChordProgressionResponse> create(EntityRequest<ChordProgressionCreateRequest> request) {
+    public PayloadResponse<ChordProgressionResponse> create(final EntityRequest<ChordProgressionCreateRequest> request) {
         var chordProgressEntity = chordProgressionMapper.dtoToEntity(request.getEntity());
         chordProgressEntity.setStatus(Status.ACTIVE.value());
         chordProgressEntity.setCreated(LocalDateTime.now());
@@ -57,7 +57,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
     }
 
     @Override
-    public PayloadResponse<String> delete(EntityRequest<Long> request) {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         chordProgressionValidator.validateExistsChordProgressionRequest(request);
         chordProgressionDAO.removeByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, "successfully deleted record.");
@@ -65,7 +65,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ChordProgressionResponse> update(EntityRequest<ChordProgressionUpdateRequest> request) {
+    public PayloadResponse<ChordProgressionResponse> update(final EntityRequest<ChordProgressionUpdateRequest> request) {
         chordProgressionValidator.validateUpdateChordProgressionRequest(request);
 
         var chordProgressionEntity = chordProgressionDAO.findByPK(request.getEntity().getId());
@@ -88,7 +88,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
     }
 
     @Override
-    public ListPayloadResponse<ChordProgressionByEraResponse> getChordByEras(EmptyRequest req) throws ApiException {
+    public ListPayloadResponse<ChordProgressionByEraResponse> getChordByEras(final EmptyRequest req) throws ApiException {
         List<ChordSongAlbumEraResponse> listOfEraSongs = chordProgressionDAO.getAllChordProgressionSongNumberByEras();
         List<ChordProgressionByEraResponse> returnListOfValues = new ArrayList<>();
         Map<Long, Integer> eraMap = new HashMap<>();
@@ -107,6 +107,12 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
             }
         });
         return new ListPayloadResponse<>(req, ResponseCode.OK, returnListOfValues);
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> getChordProgressionLoV(final EmptyRequest request) throws ApiException {
+        List<LoV> chordProgressions = chordProgressionDAO.getChordProgressionLoV();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, chordProgressions);
     }
 
 }
