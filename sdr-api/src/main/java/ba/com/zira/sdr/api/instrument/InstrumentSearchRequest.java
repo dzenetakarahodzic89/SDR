@@ -10,15 +10,15 @@ import lombok.Data;
 @AllArgsConstructor
 @Schema(description = "Search filters for instrument")
 public class InstrumentSearchRequest implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Schema(description = "Name of the instrument")
-	private String name;
+    @Schema(description = "Name of the instrument")
+    private String name;
 
-	@Schema(description = "Name of the person playing instrument")
-	private Long personId;
+    @Schema(description = "Name of the person playing instrument")
+    private Long personId;
 
-	@Schema(description = "Sorting method", allowableValues = { "NoOfPersons", "Alphabetical", "LastEdit" })
-	private String sortBy;
+    @Schema(description = "Sorting method", allowableValues = { "NoOfPersons", "Alphabetical", "LastEdit" })
+    private String sortBy;
 
 }
