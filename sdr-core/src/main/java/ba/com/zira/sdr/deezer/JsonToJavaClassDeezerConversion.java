@@ -25,8 +25,8 @@ public class JsonToJavaClassDeezerConversion {
         String basePath = "src/main/resources/ba/com/zira/sdr/deezer";
         String baseClassPath = "src/main/java";
 
-        File artistSearchJson = new File(basePath + File.separator + "artistSearch.json");
-        File outputArtistSearchDirectory = new File(baseClassPath + File.separator + "deezerArtistSearchResponse");
+        File artistSearchJson = new File(basePath + File.separator + "tracklist.json");
+        File outputArtistSearchDirectory = new File(baseClassPath + File.separator + "deezerTrackListResponse");
         outputArtistSearchDirectory.mkdirs();
 
         try {

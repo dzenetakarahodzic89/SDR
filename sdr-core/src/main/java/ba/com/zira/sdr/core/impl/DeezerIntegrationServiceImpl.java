@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ba.com.zira.commons.exception.ApiException;
@@ -57,7 +58,7 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
     MediaStoreDAO mediaStoreDAO;
     private final RestTemplate restTemplate;
     private static final Logger LOGGER = LoggerFactory.getLogger(DeezerIntegrationServiceImpl.class);
-    private static final User systemUser = new User("System");
+    private static final User systemUser = new User("Deezer Integration");
 
     @Override
     public PagedPayloadResponse<DeezerIntegration> find(final FilterRequest request) throws ApiException {
@@ -103,8 +104,8 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
         return new PayloadResponse<>(request, ResponseCode.OK, "Deezer integration is removed.");
     }
 
-    @Scheduled(initialDelay = 100, fixedDelay = 300000L)
-    public void getArtistInformationFromDeezer() {
+    // @Scheduled(initialDelay = 100, fixedDelay = 300000L)
+    public void getArtistInformationFromDeezer() throws JsonMappingException, JsonProcessingException {
         List<LoV> artistsForSearch = artistDAO.getArtistsForDeezerSearch();
         for (var artist : artistsForSearch) {
             var artistDeezerInformation = new DeezerIntegrationEntity();
@@ -144,6 +145,8 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
 
                 if (entity.getName().equalsIgnoreCase(artistApiResponse.getName().substring(7))) {
                     artistDAO.updateDeezerFields(artistApiResponse.getObjectId(), (long) entity.getId(), (long) entity.getNbFan());
+                    getTrackListInformationFromDeezer(entity.getTracklist(), artistApiResponse.getName().substring(7),
+                            artistApiResponse.getObjectId());
                 }
                 if (entity.getName().contains(artistApiResponse.getName().substring(7))) {
                     var newMediaStore = new MediaStoreEntity();
@@ -174,6 +177,25 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
                 }
             }
             deezerIntegrationDAO.updateStatus(DeezerStatus.SAVED.getValue(), artistApiResponse.getId());
+        }
+    }
+
+    private void getTrackListInformationFromDeezer(String tracklistUrl, String artistFullName, Long artistId) {
+        var trackListDeezerInformation = new DeezerIntegrationEntity();
+        trackListDeezerInformation.setId(UUID.randomUUID().toString());
+        trackListDeezerInformation.setCreatedBy(systemUser.getUserId());
+        trackListDeezerInformation.setCreated(LocalDateTime.now());
+        trackListDeezerInformation.setObjectType("ARTIST_TOP");
+        trackListDeezerInformation.setStatus(Status.ACTIVE.getValue());
+        trackListDeezerInformation.setObjectId(artistId);
+        trackListDeezerInformation.setRequest(tracklistUrl);
+        trackListDeezerInformation.setName("artist:" + artistFullName);
+        ResponseEntity<String> response = restTemplate.exchange(tracklistUrl, HttpMethod.GET, null, String.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            trackListDeezerInformation.setResponse(response.getBody());
+            deezerIntegrationDAO.persist(trackListDeezerInformation);
+        } else {
+            LOGGER.error(response.getBody());
         }
     }
 }
