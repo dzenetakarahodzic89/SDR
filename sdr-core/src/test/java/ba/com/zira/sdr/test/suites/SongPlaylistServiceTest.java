@@ -29,6 +29,8 @@ import ba.com.zira.sdr.core.impl.SongPlaylistServiceImpl;
 import ba.com.zira.sdr.core.mapper.SongPlaylistMapper;
 import ba.com.zira.sdr.core.validation.SongPlaylistRequestValidation;
 import ba.com.zira.sdr.dao.SongPlaylistDAO;
+import ba.com.zira.sdr.dao.model.PlaylistEntity;
+import ba.com.zira.sdr.dao.model.SongEntity;
 import ba.com.zira.sdr.dao.model.SongPlaylistEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
@@ -59,18 +61,41 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             List<SongPlaylistEntity> entities = new ArrayList<>();
 
             SongPlaylistEntity firstSongPlaylistEntity = new SongPlaylistEntity();
-            firstSongPlaylistEntity.setPlaylistId(Long.valueOf(5));
-            firstSongPlaylistEntity.setSongId(10L);
+
+            SongEntity firstSongEntity = new SongEntity();
+            PlaylistEntity firstPlaylistEntity = new PlaylistEntity();
+
+            firstSongEntity.setId(10L);
+            firstSongPlaylistEntity.setSong(firstSongEntity);
+
+            firstPlaylistEntity.setId(5L);
+            firstSongPlaylistEntity.setPlaylist(firstPlaylistEntity);
+
             firstSongPlaylistEntity.setStatus(Status.ACTIVE.getValue());
 
             SongPlaylistEntity secondSongPlaylistEntity = new SongPlaylistEntity();
-            secondSongPlaylistEntity.setPlaylistId(Long.valueOf(5));
-            secondSongPlaylistEntity.setSongId(10L);
+
+            SongEntity secondSongEntity = new SongEntity();
+            PlaylistEntity secondPlaylistEntity = new PlaylistEntity();
+
+            secondSongEntity.setId(12L);
+            secondSongPlaylistEntity.setSong(secondSongEntity);
+
+            secondPlaylistEntity.setId(6L);
+            secondSongPlaylistEntity.setPlaylist(secondPlaylistEntity);
+
             secondSongPlaylistEntity.setStatus(Status.INACTIVE.getValue());
 
             SongPlaylistEntity thirdSongPlaylistEntity = new SongPlaylistEntity();
-            thirdSongPlaylistEntity.setPlaylistId(Long.valueOf(5));
-            thirdSongPlaylistEntity.setSongId(10L);
+            SongEntity thirdSongEntity = new SongEntity();
+            PlaylistEntity thirdPlaylistEntity = new PlaylistEntity();
+
+            thirdSongEntity.setId(14L);
+            thirdSongPlaylistEntity.setSong(thirdSongEntity);
+
+            thirdPlaylistEntity.setId(7L);
+            thirdSongPlaylistEntity.setPlaylist(thirdPlaylistEntity);
+
             thirdSongPlaylistEntity.setStatus(Status.ACTIVE.getValue());
 
             entities.add(firstSongPlaylistEntity);
@@ -88,13 +113,13 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             firstResponse.setStatus(Status.ACTIVE.getValue());
 
             SongPlaylist secondResponse = new SongPlaylist();
-            secondResponse.setPlaylistId(Long.valueOf(5));
-            secondResponse.setSongId(10L);
+            secondResponse.setPlaylistId(Long.valueOf(6));
+            secondResponse.setSongId(12L);
             secondResponse.setStatus(Status.INACTIVE.getValue());
 
             SongPlaylist thirdResponse = new SongPlaylist();
-            thirdResponse.setPlaylistId(Long.valueOf(5));
-            thirdResponse.setSongId(10L);
+            thirdResponse.setPlaylistId(Long.valueOf(7));
+            thirdResponse.setSongId(14L);
             thirdResponse.setStatus(Status.ACTIVE.getValue());
 
             response.add(firstResponse);
@@ -133,8 +158,15 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             req.setEntity(newSongPlaylistRequest);
 
             var songplaylistEntity = new SongPlaylistEntity();
-            songplaylistEntity.setPlaylistId(Long.valueOf(5));
-            songplaylistEntity.setSongId(10L);
+            var songEntity = new SongEntity();
+            var playlistEntity = new PlaylistEntity();
+
+            songEntity.setId(10L);
+            songplaylistEntity.setSong(songEntity);
+
+            playlistEntity.setId(Long.valueOf(5));
+            songplaylistEntity.setPlaylist(playlistEntity);
+
             songplaylistEntity.setStatus(Status.ACTIVE.getValue());
 
             var newSongPlaylist = new SongPlaylist();
@@ -161,16 +193,23 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             EntityRequest<SongPlaylistUpdateRequest> request = new EntityRequest<>();
 
             SongPlaylistEntity songPlaylistEntity = new SongPlaylistEntity();
-            songPlaylistEntity.setPlaylistId(Long.valueOf(5));
-            songPlaylistEntity.setSongId(10L);
+
+            SongEntity SongEntity = new SongEntity();
+            PlaylistEntity PlaylistEntity = new PlaylistEntity();
+
+            SongEntity.setId(12L);
+            songPlaylistEntity.setSong(SongEntity);
+
+            PlaylistEntity.setId(6L);
+            songPlaylistEntity.setPlaylist(PlaylistEntity);
 
             SongPlaylist songPlaylistResponse = new SongPlaylist();
-            songPlaylistResponse.setPlaylistId(Long.valueOf(5));
-            songPlaylistResponse.setSongId(10L);
+            songPlaylistResponse.setPlaylistId(Long.valueOf(2));
+            songPlaylistResponse.setSongId(15L);
 
             SongPlaylistUpdateRequest updateSongPlaylistRequest = new SongPlaylistUpdateRequest();
-            updateSongPlaylistRequest.setPlaylistId(Long.valueOf(5));
-            updateSongPlaylistRequest.setSongId(10L);
+            updateSongPlaylistRequest.setPlaylistId(Long.valueOf(2));
+            updateSongPlaylistRequest.setSongId(15L);
 
             request.setEntity(updateSongPlaylistRequest);
 
@@ -203,7 +242,7 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
 
             var songplaylistDeleteResponse = songplaylistService.delete(req);
 
-            Assertions.assertThat(songplaylistDeleteResponse.getPayload()).isEqualTo("Song Playlist successfully deleted.");
+            Assertions.assertThat(songplaylistDeleteResponse.getPayload()).isEqualTo("SongPlaylist successfully deleted.");
 
         } catch (Exception e) {
             Assert.fail();
