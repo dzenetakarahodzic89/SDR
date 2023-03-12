@@ -1,5 +1,9 @@
 package ba.com.zira.sdr.dao.model;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,10 +15,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -81,6 +81,15 @@ public class SongEntity implements Serializable {
 
     @Column(name = "spotify_status")
     private String spotifyStatus;
+
+    @Column(name = "deezer_status")
+    private String deezerStatus;
+
+    @Column(name = "deezer_id")
+    private String deezerId;
+
+    @Column(name = "musicmatch_status")
+    private String musicMatchStatus;
 
     // bi-directional many-to-one association to LyricEntity
     @OneToMany(mappedBy = "song")

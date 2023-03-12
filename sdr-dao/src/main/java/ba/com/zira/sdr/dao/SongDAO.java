@@ -275,4 +275,27 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         q.executeUpdate();
     }
 
+    public List<LoV> getAllSongsWithNameLike(String songName) {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from SongEntity s where lower(s.name) like lower(:songName)";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("songName", songName);
+        return query.getResultList();
+    }
+
+    public void updateDeezerFields(String songName, String deezerId, String deezerStatus, String information) {
+        var hql = "update SongEntity set deezerId = :deezerId, information = :information ,deezerStatus=:deezerStatus where lower(name) like lower(:songName)";
+        Query query = entityManager.createQuery(hql).setParameter("songName", songName).setParameter("deezerId", deezerId)
+                .setParameter("information", information).setParameter("deezerStatus", deezerStatus);
+        query.executeUpdate();
+    }
+
+    public List<SongEntity> getSongsForMusicMatch() {
+        var hql = "select distinct ss from SongEntity ss join fetch ss.songArtists sa left join fetch sa.artist where ss.musicMatchStatus is null or ss.musicMatchStatus != 'COMPLETED' order by ss.musicMatchStatus desc";
+
+        TypedQuery<SongEntity> query = entityManager.createQuery(hql, SongEntity.class);
+        query.toString();
+        query.setMaxResults(75);
+
+        return query.getResultList();
+    }
+
 }

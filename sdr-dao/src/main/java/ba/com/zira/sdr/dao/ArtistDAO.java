@@ -102,7 +102,7 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
     }
 
     public List<LoV> artistsByEras(Long eraId) {
-        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.name) from EraEntity e join AlbumEntity al on e.id=al.era.id "
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.name) from EraEntity e join AlbumEntity al on e.id=al.era.id "
                 + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id";
         TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setParameter("id", eraId);
         try {
@@ -157,8 +157,9 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         Query q = entityManager.createQuery(hql).setParameter("artistIds", artistIds);
         q.executeUpdate();
     }
+
     public List<LoV> getArtistsForDeezerSearch() {
-        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(sa.id,sa.name || ' ' || sa.surname) from ArtistEntity sa where not exists (select sdi from DeezerIntegrationEntity sdi where sdi.objectId = sa.id)";
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,''))) from ArtistEntity sa where not exists (select sdi from DeezerIntegrationEntity sdi where sdi.objectId = sa.id)";
         TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class).setMaxResults(10);
         return q.getResultList();
     }
@@ -168,6 +169,21 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         Query query = entityManager.createQuery(hql).setParameter("deezerId", deezerId).setParameter("deezerFanCount", deezerFanCount)
                 .setParameter("id", id);
         query.executeUpdate();
+        }
+    public Long countSoloArtistsByEras(Long era) {
+        var hql = "select count(distinct sa.artist.id) from EraEntity e join AlbumEntity al on e.id=al.era.id "
+                + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id "
+                + "and (select count(pa.person.id) from PersonArtistEntity pa where pa.artist.id=a.id) = 1";
+        TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", era);
+        return q.getSingleResult();
+    }
+
+    public Long countGroupArtistsByEras(Long era) {
+        var hql = "select count(distinct sa.artist.id) from EraEntity e join AlbumEntity al on e.id=al.era.id "
+                + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id "
+                + "and (select count(pa.person.id) from PersonArtistEntity pa where pa.artist.id=a.id) > 1";
+        TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", era);
+        return q.getSingleResult();
     }
 
 }

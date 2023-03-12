@@ -46,7 +46,7 @@ public class DeezerIntegrationServiceTest extends BasicTestConfiguration {
         this.deezerIntegrationDAO = Mockito.mock(DeezerIntegrationDAO.class);
         this.deezerIntegrationRequestValidation = Mockito.mock(DeezerIntegrationRequestValidation.class);
         this.deezerIntegrationService = new DeezerIntegrationServiceImpl(deezerIntegrationDAO, deezerIntegrationMapper,
-                deezerIntegrationRequestValidation, null, null, null, null, null);
+                deezerIntegrationRequestValidation, null, null, null, null, null, null, null);
     }
 
     @Test(enabled = true)

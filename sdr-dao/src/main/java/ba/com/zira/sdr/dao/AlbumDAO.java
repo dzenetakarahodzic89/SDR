@@ -232,4 +232,11 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         Query q = entityManager.createQuery(hql).setParameter("albumIds", albumIds);
         q.executeUpdate();
     }
+
+    public List<LoV> getAllAlbumsWithNameLike(String albumName) {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from AlbumEntity s where s.name like :albumName";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("albumName", albumName);
+        return query.getResultList();
+    }
+
 }
