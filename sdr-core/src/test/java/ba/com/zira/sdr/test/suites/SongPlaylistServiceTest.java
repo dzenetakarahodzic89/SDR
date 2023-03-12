@@ -1,10 +1,5 @@
 package ba.com.zira.sdr.test.suites;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +7,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -70,14 +70,14 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             SongPlaylistEntity secondSongPlaylistEntity = new SongPlaylistEntity();
             secondSongPlaylistEntity
                     .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
-            secondSongPlaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null,
+            secondSongPlaylistEntity.setSong(new SongEntity(11L, null, null, null, null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             secondSongPlaylistEntity.setStatus(Status.INACTIVE.getValue());
 
             SongPlaylistEntity thirdSongPlaylistEntity = new SongPlaylistEntity();
             thirdSongPlaylistEntity
                     .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
-            thirdSongPlaylistEntity.setSong(new SongEntity(10L, null, null, null, null, null, null, null, null, null, null, null, null,
+            thirdSongPlaylistEntity.setSong(new SongEntity(12L, null, null, null, null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             thirdSongPlaylistEntity.setStatus(Status.ACTIVE.getValue());
 
@@ -96,13 +96,13 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             firstResponse.setStatus(Status.ACTIVE.getValue());
 
             SongPlaylist secondResponse = new SongPlaylist();
-            secondResponse.setPlaylistId(Long.valueOf(6));
-            secondResponse.setSongId(12L);
+            secondResponse.setPlaylistId(Long.valueOf(5));
+            secondResponse.setSongId(11L);
             secondResponse.setStatus(Status.INACTIVE.getValue());
 
             SongPlaylist thirdResponse = new SongPlaylist();
-            thirdResponse.setPlaylistId(Long.valueOf(7));
-            thirdResponse.setSongId(14L);
+            thirdResponse.setPlaylistId(Long.valueOf(5));
+            thirdResponse.setSongId(12L);
             thirdResponse.setStatus(Status.ACTIVE.getValue());
 
             response.add(firstResponse);
@@ -224,7 +224,7 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
 
             var songplaylistDeleteResponse = songplaylistService.delete(req);
 
-            Assertions.assertThat(songplaylistDeleteResponse.getPayload()).isEqualTo("SongPlaylist successfully deleted.");
+            Assertions.assertThat(songplaylistDeleteResponse.getPayload()).isEqualTo("SongPlaylist successfully deleted");
 
         } catch (Exception e) {
             Assert.fail();

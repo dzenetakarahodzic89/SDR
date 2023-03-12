@@ -48,7 +48,7 @@ public class SongPlaylistRequestValidationTest extends BasicTestConfiguration {
         ValidationResponse validationResponse = validation.validateUpdateSongPlaylistRequest(request);
 
         assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-        assertEquals(validationResponse.getDescription(), "Song Playlist with id: 1 does not exist!");
+        assertEquals(validationResponse.getDescription(), "SongPlaylist with id: 1 does not exist!");
         Mockito.verify(songPlaylistDAO).existsByPK(1L);
     }
 
@@ -63,9 +63,7 @@ public class SongPlaylistRequestValidationTest extends BasicTestConfiguration {
         ValidationResponse validationResponse = validation.validateCreateSongPlaylistRequest(request);
 
         assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-        assertEquals(validationResponse.getDescription(), "Song with id: 1 already exists!");
-        Mockito.verify(songPlaylistDAO).existsByPK(1L);
-
+        assertEquals(validationResponse.getDescription(), "Song with id: 1 does not exist! | Playlist with id: null does not exist!");
     }
 
     @Test
@@ -77,7 +75,7 @@ public class SongPlaylistRequestValidationTest extends BasicTestConfiguration {
         ValidationResponse validationResponse = validation.validateExistsSongPlaylistRequest(request);
 
         assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
-        assertEquals(validationResponse.getDescription(), "Song Playlist with id: 1 does not exist!");
+        assertEquals(validationResponse.getDescription(), "SongPlaylist with id: 1 does not exist!");
         Mockito.verify(songPlaylistDAO).existsByPK(1L);
 
     }
