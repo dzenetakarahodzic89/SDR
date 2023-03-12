@@ -239,4 +239,9 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         return query.getResultList();
     }
 
+    public List<LoV> getAlbumLoVs() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from AlbumEntity s ";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);
+        return query.getResultList();
+    }
 }
