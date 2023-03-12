@@ -52,7 +52,7 @@ public class ChordProgressionServiceTest extends BasicTestConfiguration {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.chordProgressionValidation = Mockito.mock(ChordProgressionValidation.class);
         this.chordProgressionService = new ChordProgressionServiceImpl(chordProgressionDAO, chordProgressionMapper,
-                chordProgressionValidation,eraDAO);
+                chordProgressionValidation, eraDAO, null);
 
     }
 
