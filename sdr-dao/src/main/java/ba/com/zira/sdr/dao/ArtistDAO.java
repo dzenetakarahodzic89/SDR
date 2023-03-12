@@ -16,6 +16,7 @@ import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.artist.ArtistLabelResponse;
 import ba.com.zira.sdr.api.artist.ArtistPersonResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
 import ba.com.zira.sdr.api.artist.ArtistSheetResponse;
 import ba.com.zira.sdr.api.artist.ArtistSongResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -169,7 +170,8 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         Query query = entityManager.createQuery(hql).setParameter("deezerId", deezerId).setParameter("deezerFanCount", deezerFanCount)
                 .setParameter("id", id);
         query.executeUpdate();
-        }
+    }
+
     public Long countSoloArtistsByEras(Long era) {
         var hql = "select count(distinct sa.artist.id) from EraEntity e join AlbumEntity al on e.id=al.era.id "
                 + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id "
@@ -184,6 +186,43 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
                 + "and (select count(pa.person.id) from PersonArtistEntity pa where pa.artist.id=a.id) > 1";
         TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", era);
         return q.getSingleResult();
+    }
+
+    public List<ArtistSearchResponse> getArtistsBySearch(String artistName, String genreName, String albumName, Boolean isSolo,
+            String orderBy) {
+        var isSoloString = Boolean.TRUE.equals(isSolo) ? "< 2" : "> 1";
+        var orderString = "";
+        switch (orderBy) {
+        case "No of songs":
+            orderString = "count(sa.id) desc";
+            break;
+        case "Last edit":
+            orderString = "sa.modified";
+            break;
+        case "Alphabetical order":
+            orderString = "concat(coalesce(sa.name,''),' ', coalesce(sa.surname,''))";
+            break;
+        default:
+            orderString = "count(sa.id) desc";
+            break;
+        }
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(count(sa.id),concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from SongEntity ss join SongArtistEntity ssa on ssa.song.id =ss.id \r\n"
+                + "join ArtistEntity sa on ssa.artist.id = sa.id join AlbumEntity sa2 on ssa.album.id = sa2.id join GenreEntity sg on ss.genre.id = sg.id\r\n"
+                + "where lower(sa.name) like lower(CONCAT('%', :artistName, '%'))\r\n"
+                + "and lower(sa2.name) like lower(CONCAT('%', :albumName, '%')) and  lower(sg.name) like lower(CONCAT('%', :genreName, '%')) and(select count(pa.person.id)  from \r\n"
+                + "PersonArtistEntity pa where pa.artist.id = sa.id) " + isSoloString
+                + " group by concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.modified,sa.name,sa.outlineText  order by "
+                + orderString;
+        TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class)
+                .setParameter("artistName", artistName).setParameter("albumName", albumName).setParameter("genreName", genreName);
+
+        return q.getResultList();
+    }
+
+    public List<ArtistSearchResponse> getRandomArtistsForSearch() {
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from ArtistEntity sa ORDER BY random()";
+        TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class).setMaxResults(10);
+        return q.getResultList();
     }
 
 }

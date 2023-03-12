@@ -24,6 +24,8 @@ import ba.com.zira.sdr.api.artist.Artist;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
+import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
@@ -200,6 +202,20 @@ public class ArtistServiceImpl implements ArtistService {
         ArtistByEras artistByEras = new ArtistByEras(era.getName(), soloArtistsCount, groupArtistsCount);
 
         return new PayloadResponse<>(request, ResponseCode.OK, artistByEras);
+    }
+
+    @Override
+    public ListPayloadResponse<ArtistSearchResponse> getArtistsBySearch(EntityRequest<ArtistSearchRequest> request) throws ApiException {
+        var requestEntity = request.getEntity();
+        var artists = artistDAO.getArtistsBySearch(requestEntity.getName(), requestEntity.getGenre(), requestEntity.getAlbum(),
+                requestEntity.getIsSolo(), requestEntity.getSortBy());
+        return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
+    }
+
+    @Override
+    public ListPayloadResponse<ArtistSearchResponse> getRandomArtistsForSearch(EmptyRequest request) throws ApiException {
+        var artists = artistDAO.getRandomArtistsForSearch();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
     }
 
 }
