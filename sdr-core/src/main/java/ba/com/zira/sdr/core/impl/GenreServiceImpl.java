@@ -252,4 +252,10 @@ public class GenreServiceImpl implements GenreService {
 
     }
 
+    @Override
+    public ListPayloadResponse<LoV> getGenreLoVs(EmptyRequest request) throws ApiException {
+        var genres = genreDAO.getGenreLoV();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, genres);
+    }
+
 }
