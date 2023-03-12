@@ -206,12 +206,12 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
             orderString = "count(sa.id) desc";
             break;
         }
-        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(count(sa.id),concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from SongEntity ss join SongArtistEntity ssa on ssa.song.id =ss.id \r\n"
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(sa.id,count(sa.id),concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from SongEntity ss join SongArtistEntity ssa on ssa.song.id =ss.id \r\n"
                 + "join ArtistEntity sa on ssa.artist.id = sa.id join AlbumEntity sa2 on ssa.album.id = sa2.id join GenreEntity sg on ss.genre.id = sg.id\r\n"
                 + "where lower(sa.name) like lower(CONCAT('%', :artistName, '%'))\r\n"
                 + "and lower(sa2.name) like lower(CONCAT('%', :albumName, '%')) and  lower(sg.name) like lower(CONCAT('%', :genreName, '%')) and(select count(pa.person.id)  from \r\n"
                 + "PersonArtistEntity pa where pa.artist.id = sa.id) " + isSoloString
-                + " group by concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.modified,sa.name,sa.outlineText  order by "
+                + " group by sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.modified,sa.name,sa.outlineText  order by "
                 + orderString;
         TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class)
                 .setParameter("artistName", artistName).setParameter("albumName", albumName).setParameter("genreName", genreName);
@@ -220,7 +220,7 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
     }
 
     public List<ArtistSearchResponse> getRandomArtistsForSearch() {
-        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from ArtistEntity sa ORDER BY random()";
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from ArtistEntity sa ORDER BY random()";
         TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class).setMaxResults(10);
         return q.getResultList();
     }

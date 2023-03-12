@@ -2,6 +2,7 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -27,9 +28,11 @@ import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
 import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
@@ -53,6 +56,7 @@ public class ArtistServiceImpl implements ArtistService {
     PersonArtistDAO personArtistDAO;
     SongArtistDAO songArtistDAO;
     PersonRequestValidation personRequestValidation;
+    LookupService lookupService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -209,12 +213,21 @@ public class ArtistServiceImpl implements ArtistService {
         var requestEntity = request.getEntity();
         var artists = artistDAO.getArtistsBySearch(requestEntity.getName(), requestEntity.getGenre(), requestEntity.getAlbum(),
                 requestEntity.getIsSolo(), requestEntity.getSortBy());
+
+        for (var artist : artists) {
+            lookupService.lookupCoverImage(Arrays.asList(artist), ArtistSearchResponse::getId, ObjectType.ARTIST.getValue(),
+                    ArtistSearchResponse::setImageUrl, ArtistSearchResponse::getImageUrl);
+        }
         return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
     }
 
     @Override
     public ListPayloadResponse<ArtistSearchResponse> getRandomArtistsForSearch(EmptyRequest request) throws ApiException {
         var artists = artistDAO.getRandomArtistsForSearch();
+        for (var artist : artists) {
+            lookupService.lookupCoverImage(Arrays.asList(artist), ArtistSearchResponse::getId, ObjectType.ARTIST.getValue(),
+                    ArtistSearchResponse::setImageUrl, ArtistSearchResponse::getImageUrl);
+        }
         return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
     }
 
