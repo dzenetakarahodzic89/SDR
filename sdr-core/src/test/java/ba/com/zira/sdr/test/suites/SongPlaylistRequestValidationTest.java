@@ -11,6 +11,7 @@ import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.ValidationResponse;
 import ba.com.zira.commons.model.User;
 import ba.com.zira.commons.model.response.ResponseCode;
+import ba.com.zira.sdr.api.model.songplaylist.SongPlaylistCreateRequest;
 import ba.com.zira.sdr.api.model.songplaylist.SongPlaylistUpdateRequest;
 import ba.com.zira.sdr.core.validation.SongPlaylistRequestValidation;
 import ba.com.zira.sdr.dao.PlaylistDAO;
@@ -19,7 +20,6 @@ import ba.com.zira.sdr.dao.SongPlaylistDAO;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
 
 public class SongPlaylistRequestValidationTest extends BasicTestConfiguration {
-    private static final String TEMPLATE_CODE = "TEST_1";
 
     private SongPlaylistDAO songPlaylistDAO;
     private SongDAO songDAO;
@@ -50,6 +50,20 @@ public class SongPlaylistRequestValidationTest extends BasicTestConfiguration {
         assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
         assertEquals(validationResponse.getDescription(), "SongPlaylist with id: 1 does not exist!");
         Mockito.verify(songPlaylistDAO).existsByPK(1L);
+    }
+
+    @Test
+    public void validateCreateRequestNameExists() {
+        Mockito.when(songPlaylistDAO.existsByPK(1L)).thenReturn(true);
+        EntityRequest<SongPlaylistCreateRequest> request = new EntityRequest<>();
+        request.setUser(new User("TEST"));
+        var response = new SongPlaylistCreateRequest();
+        response.setSongId(1L);
+        request.setEntity(response);
+        ValidationResponse validationResponse = validation.validateCreateSongPlaylistRequest(request);
+
+        assertEquals(validationResponse.getCode(), ResponseCode.REQUEST_INVALID);
+        assertEquals(validationResponse.getDescription(), "Song with id: 1 does not exist! | Playlist with id: null does not exist!");
     }
 
     @Test
