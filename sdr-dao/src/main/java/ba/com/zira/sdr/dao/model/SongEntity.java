@@ -88,6 +88,9 @@ public class SongEntity implements Serializable {
     @Column(name = "deezer_id")
     private String deezerId;
 
+    @Column(name = "musicmatch_status")
+    private String musicMatchStatus;
+
     // bi-directional many-to-one association to LyricEntity
     @OneToMany(mappedBy = "song")
     private List<LyricEntity> lyrics;

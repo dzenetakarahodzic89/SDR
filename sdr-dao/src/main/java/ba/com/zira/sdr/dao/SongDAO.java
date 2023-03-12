@@ -288,4 +288,14 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         query.executeUpdate();
     }
 
+    public List<SongEntity> getSongsForMusicMatch() {
+        var hql = "select distinct ss from SongEntity ss join fetch ss.songArtists sa left join fetch sa.artist where ss.musicMatchStatus is null or ss.musicMatchStatus != 'COMPLETED' order by ss.musicMatchStatus desc";
+
+        TypedQuery<SongEntity> query = entityManager.createQuery(hql, SongEntity.class);
+        query.toString();
+        query.setMaxResults(75);
+
+        return query.getResultList();
+    }
+
 }
