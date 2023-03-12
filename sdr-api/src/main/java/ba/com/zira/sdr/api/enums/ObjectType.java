@@ -14,7 +14,9 @@ public enum ObjectType {
     /** LABEL */
     LABEL("LABEL"),
     /** ERA */
-    ERA("ERA");
+    ERA("ERA"),
+    /** CHORDPROGRESSION */
+    CHORDPROGRESSION("CHORDPROGRESSION");
 
     private final String value;
 

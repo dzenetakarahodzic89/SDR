@@ -10,6 +10,8 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionByEraResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionCreateRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchRequest;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 
@@ -80,4 +82,8 @@ public interface ChordProgressionService {
      *             the api exception
      */
     public ListPayloadResponse<LoV> getChordProgressionLoV(EmptyRequest request) throws ApiException;
+
+    ListPayloadResponse<ChordProgressionSearchResponse> searchChordProgression(final EntityRequest<ChordProgressionSearchRequest> request)
+            throws ApiException;
+
 }

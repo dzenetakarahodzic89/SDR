@@ -25,6 +25,8 @@ import ba.com.zira.sdr.api.ChordProgressionService;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionByEraResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionCreateRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchRequest;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,5 +83,12 @@ public class ChordProgressionRestService {
     public ListPayloadResponse<LoV> getChordProgressionLoV() throws ApiException {
         var request = new EmptyRequest();
         return chordProgressionService.getChordProgressionLoV(request);
+    }
+
+    @Operation(summary = "Chord progression search")
+    @PostMapping(value = "/search")
+    public ListPayloadResponse<ChordProgressionSearchResponse> find(@RequestBody final ChordProgressionSearchRequest request)
+            throws ApiException {
+        return chordProgressionService.searchChordProgression(new EntityRequest<>(request));
     }
 }
