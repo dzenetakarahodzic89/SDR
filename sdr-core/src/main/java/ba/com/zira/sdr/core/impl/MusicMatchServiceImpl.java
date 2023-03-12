@@ -50,8 +50,7 @@ public class MusicMatchServiceImpl implements MusicMatchService {
         this.musixMatch = new MusixMatch(apiKey);
     }
 
-    // @Scheduled(cron = "0 0 * * * *")
-    @Scheduled(cron = "0 27 10 * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void createLyricsScheduled() throws MusixMatchException {
         var request = new EmptyRequest();
         var response = insertLyric(request);
