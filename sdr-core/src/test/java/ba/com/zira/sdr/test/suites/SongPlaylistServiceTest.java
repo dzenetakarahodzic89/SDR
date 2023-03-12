@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -71,14 +71,14 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
             secondSongPlaylistEntity
                     .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
             secondSongPlaylistEntity.setSong(new SongEntity(11L, null, null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             secondSongPlaylistEntity.setStatus(Status.INACTIVE.getValue());
 
             SongPlaylistEntity thirdSongPlaylistEntity = new SongPlaylistEntity();
             thirdSongPlaylistEntity
                     .setPlaylist(new PlaylistEntity(5L, null, null, null, null, null, null, null, null, null, null, null, null, null));
             thirdSongPlaylistEntity.setSong(new SongEntity(12L, null, null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
             thirdSongPlaylistEntity.setStatus(Status.ACTIVE.getValue());
 
             entities.add(firstSongPlaylistEntity);
