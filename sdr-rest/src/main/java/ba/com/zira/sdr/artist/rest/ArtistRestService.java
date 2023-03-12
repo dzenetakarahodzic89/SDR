@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.artist.rest;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +26,8 @@ import ba.com.zira.sdr.api.ArtistService;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
+import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
@@ -96,6 +99,23 @@ public class ArtistRestService {
     public ListPayloadResponse<LoV> getArtistNames() throws ApiException {
         var req = new EmptyRequest();
         return artistService.getArtistNames(req);
+    }
+
+    @Operation(summary = "Get artists by search")
+    @GetMapping("search")
+    public ListPayloadResponse<ArtistSearchResponse> getArtistsBySearch(@RequestParam("name") Optional<String> name,
+            @RequestParam("album") Optional<Long> album, @RequestParam("genre") Optional<Long> genre,
+            @RequestParam("isSolo") Optional<Boolean> isSolo, @RequestParam("sortBy") Optional<String> sortBy) throws ApiException {
+        var newSearchRequest = new ArtistSearchRequest(name.orElse(""), album.orElse(null), genre.orElse(null), isSolo.orElse(true),
+                sortBy.orElse(""));
+        return artistService.getArtistsBySearch(new EntityRequest<>(newSearchRequest));
+    }
+
+    @Operation(summary = "10 random artists for default search page")
+    @GetMapping("/random-for-search")
+    public ListPayloadResponse<ArtistSearchResponse> getRandomArtistsForSearch() throws ApiException {
+        var req = new EmptyRequest();
+        return artistService.getRandomArtistsForSearch(req);
     }
 
 }
