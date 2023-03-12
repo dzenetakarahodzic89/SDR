@@ -104,9 +104,10 @@ public class ArtistRestService {
     @Operation(summary = "Get artists by search")
     @GetMapping("search")
     public ListPayloadResponse<ArtistSearchResponse> getArtistsBySearch(@RequestParam("name") Optional<String> name,
-            @RequestParam("album") Optional<String> album, @RequestParam("genre") Optional<String> genre,
-            @RequestParam("isSolo") Boolean isSolo, @RequestParam("sortBy") Optional<String> sortBy) throws ApiException {
-        var newSearchRequest = new ArtistSearchRequest(name.orElse(""), album.orElse(""), genre.orElse(""), isSolo, sortBy.orElse(""));
+            @RequestParam("album") Optional<Long> album, @RequestParam("genre") Optional<Long> genre,
+            @RequestParam("isSolo") Optional<Boolean> isSolo, @RequestParam("sortBy") Optional<String> sortBy) throws ApiException {
+        var newSearchRequest = new ArtistSearchRequest(name.orElse(""), album.orElse(null), genre.orElse(null), isSolo.orElse(true),
+                sortBy.orElse(""));
         return artistService.getArtistsBySearch(new EntityRequest<>(newSearchRequest));
     }
 

@@ -188,33 +188,39 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return q.getSingleResult();
     }
 
-    public List<ArtistSearchResponse> getArtistsBySearch(String artistName, String genreName, String albumName, Boolean isSolo,
-            String orderBy) {
+    public List<ArtistSearchResponse> getArtistsBySearch(String artistName, Long genreId, Long albumId, Boolean isSolo, String orderBy) {
         var isSoloString = Boolean.TRUE.equals(isSolo) ? "< 2" : "> 1";
         var orderString = "";
+        var genreString = " ";
+        var albumString = "";
         switch (orderBy) {
-        case "No of songs":
+        case "NoOfSongs":
             orderString = "count(sa.id) desc";
             break;
-        case "Last edit":
+        case "LastEdit":
             orderString = "sa.modified";
             break;
-        case "Alphabetical order":
+        case "Alphabetical":
             orderString = "concat(coalesce(sa.name,''),' ', coalesce(sa.surname,''))";
             break;
         default:
             orderString = "count(sa.id) desc";
             break;
         }
-        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(sa.id,count(sa.id),concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from SongEntity ss join SongArtistEntity ssa on ssa.song.id =ss.id \r\n"
+        if (genreId != null) {
+            genreString = "and sg.id = " + genreId;
+        }
+        if (albumId != null) {
+            albumString = "and sa2.id = " + albumId;
+        }
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from SongEntity ss join SongArtistEntity ssa on ssa.song.id =ss.id \r\n"
                 + "join ArtistEntity sa on ssa.artist.id = sa.id join AlbumEntity sa2 on ssa.album.id = sa2.id join GenreEntity sg on ss.genre.id = sg.id\r\n"
-                + "where lower(sa.name) like lower(CONCAT('%', :artistName, '%'))\r\n"
-                + "and lower(sa2.name) like lower(CONCAT('%', :albumName, '%')) and  lower(sg.name) like lower(CONCAT('%', :genreName, '%')) and(select count(pa.person.id)  from \r\n"
-                + "PersonArtistEntity pa where pa.artist.id = sa.id) " + isSoloString
+                + "where lower(concat(coalesce(sa.name,''),' ', coalesce(sa.surname,''))) like lower(CONCAT('%', :artistName, '%'))\r\n" + albumString + genreString
+                + " and(select count(pa.person.id)  from \r\n" + "PersonArtistEntity pa where pa.artist.id = sa.id) " + isSoloString
                 + " group by sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.modified,sa.name,sa.outlineText  order by "
                 + orderString;
-        TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class)
-                .setParameter("artistName", artistName).setParameter("albumName", albumName).setParameter("genreName", genreName);
+        TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class).setParameter("artistName",
+                artistName);
 
         return q.getResultList();
     }
