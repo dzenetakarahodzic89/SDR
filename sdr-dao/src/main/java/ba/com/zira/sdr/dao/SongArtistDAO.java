@@ -7,12 +7,18 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.ArtistEntity_;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
+import ba.com.zira.sdr.dao.model.SongArtistEntity_;
 
 @Repository
 public class SongArtistDAO extends AbstractDAO<SongArtistEntity, Long> {
@@ -39,6 +45,14 @@ public class SongArtistDAO extends AbstractDAO<SongArtistEntity, Long> {
         Query q = entityManager.createQuery(hql).setParameter("albumId", albumId);
         q.executeUpdate();
     }
+
+    public Long countAllByArtistId(Long artistId) {
+        final CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        final Root<SongArtistEntity> root = criteriaQuery.from(SongArtistEntity.class);
+        Join<SongArtistEntity, ArtistEntity> artists = root.join(SongArtistEntity_.artist);
+        criteriaQuery.where(builder.equal(artists.get(ArtistEntity_.id), artistId));
+        criteriaQuery.select(builder.count(root)).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
 
     public void removeDuplicateAlbums(List<Long> albumIds) {
         var hql = "delete from SongArtistEntity s where s.album.id in (:albumIds)";
