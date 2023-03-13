@@ -68,6 +68,8 @@ public class ArtistServiceTest extends BasicTestConfiguration {
 
         this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, null, personDAO, artistMapper, null, null, null, null,
                 artistValidation, personArtistDAO, songArtistDAO, null, personRequestValidation);
+        this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, personDAO, artistMapper, artistValidation, personArtistDAO,
+                songArtistDAO, personRequestValidation, null);
     }
 
     @Test(enabled = true)

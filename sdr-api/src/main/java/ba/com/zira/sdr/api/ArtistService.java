@@ -11,6 +11,8 @@ import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
+import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
+import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 
@@ -80,4 +82,9 @@ public interface ArtistService {
 
     PayloadResponse<ArtistResponse> createFromPerson(EntityRequest<Long> request) throws ApiException;
 
+    PayloadResponse<ArtistByEras> countArtistsByEras(EntityRequest<Long> request);
+
+    ListPayloadResponse<ArtistSearchResponse> getArtistsBySearch(EntityRequest<ArtistSearchRequest> request) throws ApiException;
+
+    ListPayloadResponse<ArtistSearchResponse> getRandomArtistsForSearch(EmptyRequest request) throws ApiException;
 }

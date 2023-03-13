@@ -1,8 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +10,11 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.request.SearchRequest;
@@ -37,6 +38,7 @@ import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
 import ba.com.zira.sdr.api.model.album.SongAudio;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongResponse;
@@ -215,6 +217,12 @@ public class AlbumServiceImpl implements AlbumService {
 
         return new PayloadResponse<>(request, ResponseCode.OK, songMapper.entityToDto(newSongEntity));
 
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> getAlbumLoVs(EmptyRequest request) throws ApiException {
+        var albums = albumDAO.getAlbumLoVs();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, albums);
     }
 
 }

@@ -2,6 +2,7 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -25,7 +26,10 @@ import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
+import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
+import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.person.PersonArtistSingleResponse;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
@@ -34,6 +38,7 @@ import ba.com.zira.sdr.core.mapper.ArtistMapper;
 import ba.com.zira.sdr.core.mapper.LabelMapper;
 import ba.com.zira.sdr.core.mapper.PersonMapper;
 import ba.com.zira.sdr.core.mapper.SongMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.AlbumDAO;
@@ -45,6 +50,7 @@ import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.EraEntity;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
 import ba.com.zira.sdr.dao.model.PersonEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
@@ -67,6 +73,7 @@ public class ArtistServiceImpl implements ArtistService {
     SongArtistDAO songArtistDAO;
     SongDAO songDAO;
     PersonRequestValidation personRequestValidation;
+    LookupService lookupService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -225,19 +232,41 @@ public class ArtistServiceImpl implements ArtistService {
             personDTOs.add(personDTO);
         }
         artistSingleResponse.setPersons(personDTOs);
-
-        /*
-         * //artistSingleRespone.setId(artist.getId());
-         * artistSingleRespone.setName(artist.getName());
-         * //artistSingleRespone.setPersonName(artist.getPersonArtists());//
-         * artistSingleRespone.setBiography(artist.getInformation());
-         * artistSingleRespone.setDescription(artist.getOutlineText());
-         *
-         *
-         *
-         */
+        
         return new PayloadResponse<>(request, ResponseCode.OK, artistSingleResponse);
 
+    public PayloadResponse<ArtistByEras> countArtistsByEras(EntityRequest<Long> request) {
+        Long eraId = request.getEntity();
+        Long soloArtistsCount = artistDAO.countSoloArtistsByEras(eraId);
+        Long groupArtistsCount = artistDAO.countGroupArtistsByEras(eraId);
+
+        EraEntity era = eraDAO.findByPK(eraId);
+        ArtistByEras artistByEras = new ArtistByEras(era.getName(), soloArtistsCount, groupArtistsCount);
+
+        return new PayloadResponse<>(request, ResponseCode.OK, artistByEras);
+    }
+
+    @Override
+    public ListPayloadResponse<ArtistSearchResponse> getArtistsBySearch(EntityRequest<ArtistSearchRequest> request) throws ApiException {
+        var requestEntity = request.getEntity();
+        var artists = artistDAO.getArtistsBySearch(requestEntity.getName(), requestEntity.getGenre(), requestEntity.getAlbum(),
+                requestEntity.getIsSolo(), requestEntity.getSortBy());
+
+        for (var artist : artists) {
+            lookupService.lookupCoverImage(Arrays.asList(artist), ArtistSearchResponse::getId, ObjectType.ARTIST.getValue(),
+                    ArtistSearchResponse::setImageUrl, ArtistSearchResponse::getImageUrl);
+        }
+        return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
+    }
+
+    @Override
+    public ListPayloadResponse<ArtistSearchResponse> getRandomArtistsForSearch(EmptyRequest request) throws ApiException {
+        var artists = artistDAO.getRandomArtistsForSearch();
+        for (var artist : artists) {
+            lookupService.lookupCoverImage(Arrays.asList(artist), ArtistSearchResponse::getId, ObjectType.ARTIST.getValue(),
+                    ArtistSearchResponse::setImageUrl, ArtistSearchResponse::getImageUrl);
+        }
+        return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
     }
 
 }

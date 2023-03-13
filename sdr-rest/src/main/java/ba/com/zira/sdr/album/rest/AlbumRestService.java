@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.request.SearchRequest;
@@ -32,6 +33,7 @@ import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.Song;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -115,6 +117,13 @@ public class AlbumRestService {
     public PayloadResponse<Song> addSongToAlbum(@RequestBody final SongOfAlbumUpdateRequest request) throws ApiException {
 
         return albumService.addSongToAlbum(new EntityRequest<>(request));
+    }
+
+    @Operation(summary = "Album LoVs")
+    @GetMapping("lov")
+    public ListPayloadResponse<LoV> getAlbumLoVs() throws ApiException {
+        var req = new EmptyRequest();
+        return albumService.getAlbumLoVs(req);
     }
 
 }

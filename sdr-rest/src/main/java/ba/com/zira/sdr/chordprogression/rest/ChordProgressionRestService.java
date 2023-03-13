@@ -25,7 +25,10 @@ import ba.com.zira.sdr.api.ChordProgressionService;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionByEraResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionCreateRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchRequest;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,7 +42,7 @@ public class ChordProgressionRestService {
 
     @Operation(summary = "Get all chord progressions")
     @GetMapping
-    public PagedPayloadResponse<ChordProgressionResponse> find(@RequestParam Map<String, Object> filterCriteria,
+    public PagedPayloadResponse<ChordProgressionResponse> find(@RequestParam final Map<String, Object> filterCriteria,
             final QueryConditionPage queryCriteria) throws ApiException {
         return chordProgressionService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
@@ -73,5 +76,19 @@ public class ChordProgressionRestService {
     public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the chord") @PathVariable final Long id)
             throws ApiException {
         return chordProgressionService.delete(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Get chord progression LoV")
+    @GetMapping(value = "/lov")
+    public ListPayloadResponse<LoV> getChordProgressionLoV() throws ApiException {
+        var request = new EmptyRequest();
+        return chordProgressionService.getChordProgressionLoV(request);
+    }
+
+    @Operation(summary = "Chord progression search")
+    @PostMapping(value = "/search")
+    public ListPayloadResponse<ChordProgressionSearchResponse> find(@RequestBody final ChordProgressionSearchRequest request)
+            throws ApiException {
+        return chordProgressionService.searchChordProgression(new EntityRequest<>(request));
     }
 }
