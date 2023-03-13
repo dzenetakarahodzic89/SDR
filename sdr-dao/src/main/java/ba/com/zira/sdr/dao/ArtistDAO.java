@@ -154,9 +154,12 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
     }
 
     public void deleteArtists(List<Long> artistIds) {
-        var hql = "delete from ArtistEntity a where a.id in (:artistIds)";
-        Query q = entityManager.createQuery(hql).setParameter("artistIds", artistIds);
-        q.executeUpdate();
+        var personArtistHql = "delete from PersonArtistEntity pa where pa.artist.id in (:artistIds)";
+        Query q1 = entityManager.createQuery(personArtistHql).setParameter("artistIds", artistIds);
+        q1.executeUpdate();
+        var artistHql = "delete from ArtistEntity a where a.id in (:artistIds)";
+        Query q2 = entityManager.createQuery(artistHql).setParameter("artistIds", artistIds);
+        q2.executeUpdate();
     }
 
     public List<LoV> getArtistsForDeezerSearch() {
@@ -215,8 +218,9 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         }
         var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from SongEntity ss join SongArtistEntity ssa on ssa.song.id =ss.id \r\n"
                 + "join ArtistEntity sa on ssa.artist.id = sa.id join AlbumEntity sa2 on ssa.album.id = sa2.id join GenreEntity sg on ss.genre.id = sg.id\r\n"
-                + "where lower(concat(coalesce(sa.name,''),' ', coalesce(sa.surname,''))) like lower(CONCAT('%', :artistName, '%'))\r\n" + albumString + genreString
-                + " and(select count(pa.person.id)  from \r\n" + "PersonArtistEntity pa where pa.artist.id = sa.id) " + isSoloString
+                + "where lower(concat(coalesce(sa.name,''),' ', coalesce(sa.surname,''))) like lower(CONCAT('%', :artistName, '%'))\r\n"
+                + albumString + genreString + " and(select count(pa.person.id)  from \r\n"
+                + "PersonArtistEntity pa where pa.artist.id = sa.id) " + isSoloString
                 + " group by sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.modified,sa.name,sa.outlineText  order by "
                 + orderString;
         TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class).setParameter("artistName",
