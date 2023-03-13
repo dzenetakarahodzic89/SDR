@@ -113,7 +113,7 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
 
     private static final String ARTIST_CONST = "ARTIST";
     private static final String COVER_IMAGE_CONST = "COVER_IMAGE";
-    private static final Boolean INTEGRATION_DISABLED_CONST = false;
+    private static final Boolean INTEGRATION_DISABLED_CONST = true;
 
     @Scheduled(initialDelay = 100, fixedDelay = 300000L)
     public void getArtistInformationFromDeezer() {
