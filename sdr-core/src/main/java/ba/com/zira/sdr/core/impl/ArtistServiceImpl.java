@@ -24,19 +24,30 @@ import ba.com.zira.sdr.api.artist.Artist;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.person.PersonArtistSingleResponse;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
+import ba.com.zira.sdr.core.mapper.AlbumMapper;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
+import ba.com.zira.sdr.core.mapper.LabelMapper;
+import ba.com.zira.sdr.core.mapper.PersonMapper;
+import ba.com.zira.sdr.core.mapper.SongMapper;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
+import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.EraDAO;
 import ba.com.zira.sdr.dao.PersonArtistDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
+import ba.com.zira.sdr.dao.SongDAO;
+import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
+import ba.com.zira.sdr.dao.model.PersonEntity;
+import ba.com.zira.sdr.dao.model.SongEntity;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -44,11 +55,17 @@ import lombok.AllArgsConstructor;
 public class ArtistServiceImpl implements ArtistService {
     ArtistDAO artistDAO;
     EraDAO eraDAO;
+    AlbumDAO albumDAO;
     PersonDAO personDAO;
     ArtistMapper artistMapper;
+    AlbumMapper albumMapper;
+    SongMapper songMapper;
+    LabelMapper labelMapper;
+    PersonMapper personMapper;
     ArtistValidation artistRequestValidation;
     PersonArtistDAO personArtistDAO;
     SongArtistDAO songArtistDAO;
+    SongDAO songDAO;
     PersonRequestValidation personRequestValidation;
 
     @Override
@@ -187,6 +204,40 @@ public class ArtistServiceImpl implements ArtistService {
     public ListPayloadResponse<LoV> getArtistNames(EmptyRequest request) throws ApiException {
         var artists = artistDAO.getArtistLoVs();
         return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
+    }
+
+    @Override
+    public PayloadResponse<ArtistSingleResponse> findById(EntityRequest<Long> request) throws ApiException {
+        Long artistId = request.getEntity();
+        var artist = artistDAO.findByPK(artistId);
+        var artistSingleResponse = artistMapper.entityToSingleArtistDto(artist);
+        List<SongEntity> recentSongs = songDAO.findByArtistId(artistId);
+        artistSingleResponse.setRecentsSong(songMapper.entitiesToDtos(recentSongs));
+        List<AlbumEntity> albums = albumDAO.findByArtistId(artistId);
+        artistSingleResponse.setAlbums(albumMapper.entitiesToAlbumArtistSingleResponseDtos(albums));
+        Long numberOfSongs = songArtistDAO.countAllByArtistId(artistId);
+        artistSingleResponse.setNumberOfSongs(numberOfSongs);
+        List<PersonEntity> persons = personDAO.findAllByArtistId(artistId);
+        List<PersonArtistSingleResponse> personDTOs = new ArrayList<>();
+        for (PersonEntity person : persons) {
+            var personDTO = personMapper.entityToArtistSingleDtos(person);
+            personDTO.setLabels(labelMapper.entitiesToDtos(person.getLabels()));
+            personDTOs.add(personDTO);
+        }
+        artistSingleResponse.setPersons(personDTOs);
+
+        /*
+         * //artistSingleRespone.setId(artist.getId());
+         * artistSingleRespone.setName(artist.getName());
+         * //artistSingleRespone.setPersonName(artist.getPersonArtists());//
+         * artistSingleRespone.setBiography(artist.getInformation());
+         * artistSingleRespone.setDescription(artist.getOutlineText());
+         *
+         *
+         *
+         */
+        return new PayloadResponse<>(request, ResponseCode.OK, artistSingleResponse);
+
     }
 
 }

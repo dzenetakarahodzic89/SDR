@@ -115,6 +115,18 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         return query.getResultList();
     }
 
+    public List<AlbumEntity> findByArtistId(Long artistId) {
+
+        final CriteriaQuery<AlbumEntity> criteriaQuery = builder.createQuery(AlbumEntity.class);
+        final Root<AlbumEntity> root = criteriaQuery.from(AlbumEntity.class);
+
+        Join<AlbumEntity, SongArtistEntity> songArtists = root.join(AlbumEntity_.songArtists);
+        Join<SongArtistEntity, ArtistEntity> artists = songArtists.join(SongArtistEntity_.artist);
+        criteriaQuery.where(builder.equal(artists.get(ArtistEntity_.id), artistId));
+        criteriaQuery.select(root).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
     public List<AlbumPersonResponse> findAlbumByPersonId(Long personId) {
         var hql = "select distinct new ba.com.zira.sdr.api.model.album.AlbumPersonResponse(al.id, al.dateOfRelease, al.information, al.name, al.status) from PersonEntity sp "
                 + " inner join PersonArtistEntity spa on sp.id = spa.person.id inner join ArtistEntity sa on spa.artist.id =sa.id inner join SongArtistEntity ssa on sa.id =ssa.artist.id inner join AlbumEntity al on ssa.album.id =al.id where sp.id = :personId";

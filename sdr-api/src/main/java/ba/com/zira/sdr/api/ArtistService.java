@@ -10,6 +10,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 
@@ -39,6 +40,8 @@ public interface ArtistService {
      *             the api exception
      */
     PayloadResponse<ArtistResponse> create(EntityRequest<ArtistCreateRequest> request) throws ApiException;
+
+    PayloadResponse<ArtistSingleResponse> findById(EntityRequest<Long> request) throws ApiException;
 
     /**
      * Delete payload response.

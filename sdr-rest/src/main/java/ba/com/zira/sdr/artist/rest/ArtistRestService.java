@@ -25,6 +25,7 @@ import ba.com.zira.sdr.api.ArtistService;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,6 +45,13 @@ public class ArtistRestService {
     public PagedPayloadResponse<ArtistResponse> find(@RequestParam Map<String, Object> filterCriteria,
             final QueryConditionPage queryCriteria) throws ApiException {
         return artistService.find(new FilterRequest(filterCriteria, queryCriteria));
+    }
+
+    @Operation(summary = "Find artist by id")
+    @GetMapping(value = "{id}")
+    public PayloadResponse<ArtistSingleResponse> findById(
+            @Parameter(required = true, description = "Id of the artist") @PathVariable final Long id) throws ApiException {
+        return artistService.findById(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Create artist")
