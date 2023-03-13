@@ -6,13 +6,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
+import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.ArtistEntity_;
+import ba.com.zira.sdr.dao.model.PersonArtistEntity;
+import ba.com.zira.sdr.dao.model.PersonArtistEntity_;
 import ba.com.zira.sdr.dao.model.PersonEntity;
+import ba.com.zira.sdr.dao.model.PersonEntity_;
 
 @Repository
 public class PersonDAO extends AbstractDAO<PersonEntity, Long> {
@@ -32,6 +40,17 @@ public class PersonDAO extends AbstractDAO<PersonEntity, Long> {
         } catch (Exception e) {
             return new ArrayList<>();
         }
+    }
+
+    public List<PersonEntity> findAllByArtistId(Long artistId) {
+        CriteriaQuery<PersonEntity> criteriaQuery = builder.createQuery(PersonEntity.class);
+        final Root<PersonEntity> root = criteriaQuery.from(PersonEntity.class);
+        final Join<PersonEntity, PersonArtistEntity> personArtists = root.join(PersonEntity_.personArtists);
+        final Join<PersonArtistEntity, ArtistEntity> artists = personArtists.join(PersonArtistEntity_.artist);
+        criteriaQuery.where(builder.equal(artists.get(ArtistEntity_.id), artistId));
+        criteriaQuery.select(root).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+
     }
 
     public List<LoV> getAllPersonsLoV() {

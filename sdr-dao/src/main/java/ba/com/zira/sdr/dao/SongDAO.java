@@ -30,6 +30,8 @@ import ba.com.zira.sdr.api.model.song.SongSearchResponse;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.dao.model.AlbumEntity_;
+import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.ArtistEntity_;
 import ba.com.zira.sdr.dao.model.EraEntity;
 import ba.com.zira.sdr.dao.model.EraEntity_;
 import ba.com.zira.sdr.dao.model.GeneratedSongViewEntity;
@@ -149,6 +151,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         Join<SongEntity, SongArtistEntity> songArtists = root.join(SongEntity_.songArtists);
         Join<SongArtistEntity, AlbumEntity> albumArtist = songArtists.join(SongArtistEntity_.album);
         criteriaQuery.where(builder.equal(albumArtist.get(AlbumEntity_.id), id));
+        criteriaQuery.orderBy(builder.desc(root.get(SongEntity_.dateOfRelease)));
         criteriaQuery.select(root).distinct(true);
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
@@ -261,6 +264,16 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
                 + " on s.id=sa.song.id group by s.id,sa.artist.name,sa.artist.surname";
         return entityManager.createQuery(hql, LoV.class).getResultList();
     }
+
+    public List<SongEntity> findByArtistId(final Long artistId) {
+        final CriteriaQuery<SongEntity> criteriaQuery = builder.createQuery(SongEntity.class);
+        final Root<SongEntity> root = criteriaQuery.from(SongEntity.class);
+        Join<SongEntity, SongArtistEntity> songArtists = root.join(SongEntity_.songArtists);
+        Join<SongArtistEntity, ArtistEntity> artists = songArtists.join(SongArtistEntity_.artist);
+        criteriaQuery.where(builder.equal(artists.get(ArtistEntity_.id), artistId));
+
+        criteriaQuery.select(root).distinct(true);
+        return entityManager.createQuery(criteriaQuery).setFirstResult(0).setMaxResults(10).getResultList();
 
     public List<SongEntity> getDuplicateSongs() {
         var hql = "select s from SongEntity s where s.created > "
