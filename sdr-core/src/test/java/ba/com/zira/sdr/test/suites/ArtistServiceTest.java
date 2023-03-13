@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.test.suites;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +7,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -26,14 +26,21 @@ import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.core.impl.ArtistServiceImpl;
+import ba.com.zira.sdr.core.mapper.AlbumMapper;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
+import ba.com.zira.sdr.core.mapper.LabelMapper;
+import ba.com.zira.sdr.core.mapper.PersonMapper;
+import ba.com.zira.sdr.core.mapper.SongMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
+import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.EraDAO;
 import ba.com.zira.sdr.dao.PersonArtistDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
@@ -45,31 +52,47 @@ public class ArtistServiceTest extends BasicTestConfiguration {
 
     @Autowired
     private ArtistMapper artistMapper;
+
+    @Autowired
+    private AlbumMapper albumMapper;
+
+    @Autowired
+    private SongMapper songMapper;
+
+    @Autowired
+    private PersonMapper personMapper;
+
+    @Autowired
+    private LabelMapper labelMapper;
+
     private ArtistDAO artistDAO;
     EraDAO eraDAO;
     PersonDAO personDAO;
+    SongDAO songDAO;
     private PersonArtistDAO personArtistDAO;
     private SongArtistDAO songArtistDAO;
     private RequestValidator requestValidator;
     private ArtistValidation artistValidation;
     private ArtistService artistService;
     private PersonRequestValidation personRequestValidation;
-
     ArtistValidation artistRequestValidation;
+    LookupService lookupService;
+    AlbumDAO albumDAO;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.artistDAO = Mockito.mock(ArtistDAO.class);
+        this.songDAO = Mockito.mock(SongDAO.class);
         this.songArtistDAO = Mockito.mock(SongArtistDAO.class);
         this.personArtistDAO = Mockito.mock(PersonArtistDAO.class);
         this.artistValidation = Mockito.mock(ArtistValidation.class);
         this.personRequestValidation = Mockito.mock(PersonRequestValidation.class);
+        this.lookupService = Mockito.mock(LookupService.class);
 
-        this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, null, personDAO, artistMapper, null, null, null, null,
-                artistValidation, personArtistDAO, songArtistDAO, null, personRequestValidation);
-        this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, personDAO, artistMapper, artistValidation, personArtistDAO,
-                songArtistDAO, personRequestValidation, null);
+        this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, albumDAO, personDAO, artistMapper, albumMapper, songMapper,
+                labelMapper, personMapper, artistValidation, personArtistDAO, songArtistDAO, songDAO, personRequestValidation,
+                lookupService);
     }
 
     @Test(enabled = true)

@@ -1,12 +1,5 @@
 package ba.com.zira.sdr.dao;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
@@ -17,6 +10,13 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbResponse;
@@ -274,6 +274,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
         criteriaQuery.select(root).distinct(true);
         return entityManager.createQuery(criteriaQuery).setFirstResult(0).setMaxResults(10).getResultList();
+    }
 
     public List<SongEntity> getDuplicateSongs() {
         var hql = "select s from SongEntity s where s.created > "

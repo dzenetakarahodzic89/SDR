@@ -1,10 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -17,6 +12,11 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -113,7 +113,7 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
 
     private static final String ARTIST_CONST = "ARTIST";
     private static final String COVER_IMAGE_CONST = "COVER_IMAGE";
-    private static final Boolean INTEGRATION_DISABLED_CONST = true;
+    private static final Boolean INTEGRATION_DISABLED_CONST = false;
 
     @Scheduled(initialDelay = 100, fixedDelay = 300000L)
     public void getArtistInformationFromDeezer() {

@@ -1,10 +1,5 @@
 package ba.com.zira.sdr.dao;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
@@ -12,6 +7,11 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -53,6 +53,7 @@ public class SongArtistDAO extends AbstractDAO<SongArtistEntity, Long> {
         criteriaQuery.where(builder.equal(artists.get(ArtistEntity_.id), artistId));
         criteriaQuery.select(builder.count(root)).distinct(true);
         return entityManager.createQuery(criteriaQuery).getSingleResult();
+    }
 
     public void removeDuplicateAlbums(List<Long> albumIds) {
         var hql = "delete from SongArtistEntity s where s.album.id in (:albumIds)";
