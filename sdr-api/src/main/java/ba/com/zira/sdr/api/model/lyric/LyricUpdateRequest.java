@@ -12,11 +12,11 @@ import lombok.Data;
 public class LyricUpdateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Min(1)
+    @Min(0)
     @Schema(description = "Unique identifier of the lyric")
     private Long id;
     @Schema(description = "Language used in the lyric")
-    private String language;
+    private Long languageId;
     @Schema(description = "The text of the song")
     private String text;
     @Schema(description = "ID of the song")

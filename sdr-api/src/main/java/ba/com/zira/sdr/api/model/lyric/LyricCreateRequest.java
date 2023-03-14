@@ -11,7 +11,7 @@ public class LyricCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "Language used in the lyric")
-    private String language;
+    private Long languageId;
     @Schema(description = "The text of the song")
     private String text;
     @Schema(description = "ID of the song")
