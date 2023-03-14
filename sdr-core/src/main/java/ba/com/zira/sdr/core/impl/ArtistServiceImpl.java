@@ -1,12 +1,12 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -126,13 +126,13 @@ public class ArtistServiceImpl implements ArtistService {
         Long id = request.getEntity();
 
         if (artistDAO.personArtistExist(id).booleanValue()) {
-            ValidationErrors errors = new ValidationErrors();
+            var errors = new ValidationErrors();
             errors.put(ValidationError.of("PERSON_ARTIST_EXISTS", "Not allowed to be deleted."));
             return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, "Artist delete validation error");
         }
 
         if (artistDAO.songArtistExist(id).booleanValue()) {
-            ValidationErrors errors = new ValidationErrors();
+            var errors = new ValidationErrors();
             errors.put(ValidationError.of("SONG_ARTIST_EXISTS", "Not allowed to be deleted."));
             return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, "Artist delete validation error");
         }
@@ -200,7 +200,7 @@ public class ArtistServiceImpl implements ArtistService {
             }
         }
 
-        ArtistByEras artistByEras = new ArtistByEras(artistGroup, artistSolo);
+        var artistByEras = new ArtistByEras(artistGroup, artistSolo);
         List<ArtistByEras> artistByEras1 = new ArrayList<>();
         artistByEras1.add(artistByEras);
 
@@ -245,7 +245,7 @@ public class ArtistServiceImpl implements ArtistService {
         Long groupArtistsCount = artistDAO.countGroupArtistsByEras(eraId);
 
         EraEntity era = eraDAO.findByPK(eraId);
-        ArtistByEras artistByEras = new ArtistByEras(era.getName(), soloArtistsCount, groupArtistsCount);
+        var artistByEras = new ArtistByEras(era.getName(), soloArtistsCount, groupArtistsCount);
 
         return new PayloadResponse<>(request, ResponseCode.OK, artistByEras);
     }

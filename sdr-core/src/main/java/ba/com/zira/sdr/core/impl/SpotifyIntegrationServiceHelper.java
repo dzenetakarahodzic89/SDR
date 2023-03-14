@@ -1,17 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +18,18 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -190,7 +190,7 @@ public class SpotifyIntegrationServiceHelper {
     @Value("${spring.security.oauth2.client.registration.spotify.responseLimit}")
     private int responseLimit;
 
-    @Value("${spring.security.oauth2.client.registration.spotify.disabled}")
+    @Value("${spring.security.oauth2.client.registration.spotify.disabled:true}")
     private Boolean integrationDisabled;
 
     /** The Constant systemUser. */
