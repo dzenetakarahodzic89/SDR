@@ -1,12 +1,12 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -44,6 +44,7 @@ import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.EraDAO;
+import ba.com.zira.sdr.dao.LabelDAO;
 import ba.com.zira.sdr.dao.PersonArtistDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
@@ -51,6 +52,7 @@ import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
 import ba.com.zira.sdr.dao.model.EraEntity;
+import ba.com.zira.sdr.dao.model.LabelEntity;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
 import ba.com.zira.sdr.dao.model.PersonEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
@@ -62,6 +64,7 @@ public class ArtistServiceImpl implements ArtistService {
     ArtistDAO artistDAO;
     EraDAO eraDAO;
     AlbumDAO albumDAO;
+    LabelDAO labelDAO;
     PersonDAO personDAO;
     ArtistMapper artistMapper;
     AlbumMapper albumMapper;
@@ -220,6 +223,8 @@ public class ArtistServiceImpl implements ArtistService {
         var artistSingleResponse = artistMapper.entityToSingleArtistDto(artist);
         List<SongEntity> recentSongs = songDAO.findByArtistId(artistId);
         artistSingleResponse.setRecentsSong(songMapper.entitiesToDtos(recentSongs));
+        List<LabelEntity> labelSongs = labelDAO.findByArtistId(artistId);
+        artistSingleResponse.setLabels(labelMapper.entitiesToDtos(labelSongs));
         List<AlbumEntity> albums = albumDAO.findByArtistId(artistId);
         artistSingleResponse.setAlbums(albumMapper.entitiesToAlbumArtistSingleResponseDtos(albums));
         Long numberOfSongs = songArtistDAO.countAllByArtistId(artistId);
