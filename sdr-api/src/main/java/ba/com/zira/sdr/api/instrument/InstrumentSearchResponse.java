@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class InstrumentSearchResponse implements Serializable {
     private static final long serialVersionUID = 1L;
 
+<<<<<<< Updated upstream
     @NotBlank
     @Schema(description = "Unique identifier of the instrument")
     private Long id;
@@ -67,5 +68,22 @@ public class InstrumentSearchResponse implements Serializable {
         this.status = status;
         this.outlineText = outlineText;
     }
+=======
+	@NotBlank
+
+	private Long id;
+	private String name;
+	private LocalDateTime modified;
+	private String outlineText;
+	private String imageUrl;
+
+	public InstrumentSearchResponse(Long id, String name, LocalDateTime modified, String outlineText) {
+		this.id = id;
+		this.name = name;
+		this.modified = modified;
+		this.outlineText = outlineText;
+
+	}
+>>>>>>> Stashed changes
 
 }

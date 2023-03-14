@@ -16,7 +16,6 @@ import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.request.ListRequest;
-import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
@@ -58,6 +57,7 @@ public class InstrumentRestService {
         return instrumentService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
+<<<<<<< Updated upstream
     @Operation(summary = "Find Instruments based on custom filter")
     @GetMapping(value = "search")
     public PagedPayloadResponse<InstrumentSearchResponse> findByNamePerson(
@@ -69,6 +69,17 @@ public class InstrumentRestService {
         return instrumentService.search(new SearchRequest<>(new InstrumentSearchRequest(name, personId, sortBy)));
 
     }
+=======
+	@Operation(summary = "Instrument Search")
+	@GetMapping(value = "search")
+	public PagedPayloadResponse<InstrumentSearchResponse> search(
+			@Parameter(required = false, description = "Name of the instrument") @RequestParam(required = false) final String name,
+			@Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy)
+			throws ApiException {
+		return instrumentService
+				.search(new EntityRequest<InstrumentSearchRequest>(new InstrumentSearchRequest(name, sortBy)));
+	}
+>>>>>>> Stashed changes
 
     @Operation(summary = "Create instrument")
     @PostMapping

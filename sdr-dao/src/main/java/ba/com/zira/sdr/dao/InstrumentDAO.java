@@ -7,7 +7,6 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
 
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +22,6 @@ import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.dao.model.InstrumentEntity;
 import ba.com.zira.sdr.dao.model.InstrumentEntity_;
 import ba.com.zira.sdr.dao.model.PersonEntity;
-import ba.com.zira.sdr.dao.model.PersonEntity_;
 import ba.com.zira.sdr.dao.model.SongInstrumentEntity;
 import ba.com.zira.sdr.dao.model.SongInstrumentEntity_;
 
@@ -42,6 +40,7 @@ public class InstrumentDAO extends AbstractDAO<InstrumentEntity, Long> {
         return query.getResultList();
     }
 
+<<<<<<< Updated upstream
     public Map<Long, String> getInstrumentNames(List<Long> ids) {
         var hql = new StringBuilder(
                 "select new ba.com.zira.sdr.api.model.lov.LoV(m.id, m.name) from InstrumentEntity m where m.id in :ids");
@@ -64,11 +63,39 @@ public class InstrumentDAO extends AbstractDAO<InstrumentEntity, Long> {
         Join<SongInstrumentEntity, PersonEntity> persons = songInstruments.join(SongInstrumentEntity_.person);
 
         List<Predicate> predicates = new ArrayList<>();
+=======
+	public List<InstrumentSongResponse> getInstrumentsForSong(Long songId) {
+		var hql = "select new ba.com.zira.sdr.api.instrument.InstrumentSongResponse(si.id,si.name) from SongInstrumentEntity ssi join SongEntity ss on ss.id = ssi.song.id join InstrumentEntity si on si.id = ssi.instrument.id where ss.id = :songId";
+		TypedQuery<InstrumentSongResponse> q = entityManager.createQuery(hql, InstrumentSongResponse.class)
+				.setParameter("songId", songId);
+		return q.getResultList();
+	}
+
+	public Map<Long, String> getInstrumentNames(List<Long> ids) {
+		var hql = new StringBuilder(
+				"select new ba.com.zira.sdr.api.model.lov.LoV(m.id, m.name) from InstrumentEntity m where m.id in :ids");
+		TypedQuery<LoV> query = entityManager.createQuery(hql.toString(), LoV.class).setParameter("ids", ids);
+		return query.getResultList().stream().collect(Collectors.toMap(LoV::getId, LoV::getName));
+	}
+
+	public List<InstrumentEntity> find(String name, String sortBy) {
+
+		final CriteriaQuery<Tuple> criteriaQuery = builder.createQuery(Tuple.class);
+
+		final Root<InstrumentEntity> root = criteriaQuery.from(InstrumentEntity.class);
+		Join<InstrumentEntity, SongInstrumentEntity> songInstruments = root.join(InstrumentEntity_.songInstruments);
+		Join<SongInstrumentEntity, PersonEntity> persons = songInstruments.join(SongInstrumentEntity_.person);
+
+		List<Predicate> predicates = new ArrayList<>();
+		Predicate[] predicateArray = predicates.toArray(new Predicate[predicates.size()]);
+		Order order = null;
+>>>>>>> Stashed changes
 
         if (name != null) {
             predicates.add(builder.like(root.get("name"), name));
         }
 
+<<<<<<< Updated upstream
         if (personId != null) {
             Predicate[] subqueryPredicates = new Predicate[2];
 
@@ -106,5 +133,33 @@ public class InstrumentDAO extends AbstractDAO<InstrumentEntity, Long> {
         return entityManager.createQuery(criteriaQuery).getResultStream().map(r -> (InstrumentEntity) r.get(0))
                 .collect(Collectors.toList());
     }
+=======
+		if (sortBy != null) {
+			switch (sortBy) {
+
+			case "LastEdit":
+				order = builder.desc(root.get("modified"));
+				break;
+			case "Alphabetical":
+				order = builder.asc(root.get("name"));
+				break;
+			case "NoOfPersons":
+				order = builder.desc(builder.count(persons));
+				break;
+
+			}
+		}
+		if (order != null) {
+			criteriaQuery.multiselect(root, builder.count(persons)).where(predicateArray).groupBy(root.get("id"))
+					.orderBy(order);
+		} else {
+			criteriaQuery.multiselect(root, builder.count(persons)).where(predicateArray).groupBy(root.get("id"));
+		}
+
+		return entityManager.createQuery(criteriaQuery).getResultStream().map(r -> (InstrumentEntity) r.get(0))
+				.collect(Collectors.toList());
+
+	}
+>>>>>>> Stashed changes
 
 }

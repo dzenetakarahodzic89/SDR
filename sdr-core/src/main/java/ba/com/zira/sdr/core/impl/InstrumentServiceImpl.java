@@ -12,7 +12,6 @@ import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.request.ListRequest;
-import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
@@ -34,6 +33,7 @@ import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrumentEra;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
+import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.InstrumentMapper;
 import ba.com.zira.sdr.core.mapper.SongInstrumentMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
@@ -84,6 +84,7 @@ public class InstrumentServiceImpl implements InstrumentService {
         return new PayloadResponse<>(request, ResponseCode.OK, instrumentMapper.entityToDto(instrumentEntity));
     }
 
+<<<<<<< Updated upstream
     @Override
     public PagedPayloadResponse<InstrumentSearchResponse> search(SearchRequest<InstrumentSearchRequest> request) {
 
@@ -104,9 +105,20 @@ public class InstrumentServiceImpl implements InstrumentService {
 
             instrumentEntities.setRecords(tempData);
         }
+=======
+	@Override
+	public PagedPayloadResponse<InstrumentSearchResponse> search(final EntityRequest<InstrumentSearchRequest> request) {
+
+		PagedData<InstrumentEntity> instrumentEntities = new PagedData<>();
+
+		var data = instrumentDAO.find(request.getEntity().getName(), request.getEntity().getSortBy());
+
+		instrumentEntities.setRecords(data);
+>>>>>>> Stashed changes
 
         PagedData<InstrumentSearchResponse> response = new PagedData<>();
 
+<<<<<<< Updated upstream
         lookupService.lookupCoverImage(response.getRecords(), InstrumentSearchResponse::getId, ObjectType.INSTRUMENT.getValue(),
                 InstrumentSearchResponse::setImageUrl, InstrumentSearchResponse::getImageUrl);
         return new PagedPayloadResponse<>(request, ResponseCode.OK, response);
@@ -118,6 +130,39 @@ public class InstrumentServiceImpl implements InstrumentService {
         instrumentRequestValidation.validateUpdateInstrumentRequest(request);
         InstrumentEntity instrumentEntity = instrumentDAO.findByPK(request.getEntity().getId());
         instrumentMapper.updateEntity(request.getEntity(), instrumentEntity);
+=======
+		// response.setRecords(instrumentMapper.searchEntitiesToDtos(data.getRecords()))
+		response.setRecords(instrumentMapper.searchEntitiesToDtos(instrumentEntities.getRecords()));
+		PagedDataMetadataMapper.remapMetadata(instrumentEntities, response);
+		lookupService.lookupCoverImage(response.getRecords(), InstrumentSearchResponse::getId,
+				ObjectType.INSTRUMENT.getValue(), InstrumentSearchResponse::setImageUrl,
+				InstrumentSearchResponse::getImageUrl);
+		return new PagedPayloadResponse<>(request, ResponseCode.OK, response);
+	}
+
+	/*
+	 * @Override public ListPayloadResponse<InstrumentSearchResponse> search(final
+	 * EntityRequest<InstrumentSearchRequest> request) throws ApiException {
+	 *
+	 * List<InstrumentSearchResponse> instruments =
+	 * instrumentDAO.find(request.getEntity().getName(),
+	 * request.getEntity().getSortBy(), request.getEntity().getPage(),
+	 * request.getEntity().getPageSize());
+	 *
+	 * lookupService.lookupCoverImage(instruments, InstrumentSearchResponse::getId,
+	 * ObjectType.INSTRUMENT.getValue(), InstrumentSearchResponse::setImageUrl,
+	 * InstrumentSearchResponse::getImageUrl);
+	 *
+	 * return new ListPayloadResponse<>(request, ResponseCode.OK, instruments); }
+	 */
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> request)
+			throws ApiException {
+		instrumentRequestValidation.validateUpdateInstrumentRequest(request);
+		InstrumentEntity instrumentEntity = instrumentDAO.findByPK(request.getEntity().getId());
+		instrumentMapper.updateEntity(request.getEntity(), instrumentEntity);
+>>>>>>> Stashed changes
 
         instrumentEntity.setModified(LocalDateTime.now());
         instrumentEntity.setModifiedBy(request.getUserId());
