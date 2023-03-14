@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,7 @@ import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.SongInstrumentDAO;
+import ba.com.zira.sdr.dao.model.CountryEntity;
 import ba.com.zira.sdr.dao.model.PersonEntity;
 import lombok.AllArgsConstructor;
 
@@ -111,8 +114,19 @@ public class PersonServiceImpl implements PersonService {
     public PayloadResponse<PersonResponse> update(final EntityRequest<PersonUpdateRequest> entityRequest) {
         personRequestValidation.validateUpdatePersonRequest(entityRequest);
         var personEntity = personDAO.findByPK(entityRequest.getEntity().getId());
-        personMapper.updateEntity(entityRequest.getEntity(), personEntity);
 
+        // Make sure that the country entity exists in the database
+        CountryEntity countryEntity = countryDAO.findByPK(entityRequest.getEntity().getCountryId());
+        if (countryEntity == null) {
+            throw new EntityNotFoundException("Country not found with ID: " + entityRequest.getEntity().getCountryId());
+        }
+
+        // Update the person entity with the new values
+        personEntity.setName(entityRequest.getEntity().getName());
+        personEntity.setSurname(entityRequest.getEntity().getSurname());
+        personEntity.setOutlineText(entityRequest.getEntity().getOutlineText());
+        personEntity.setGender(entityRequest.getEntity().getGender());
+        personEntity.setCountry(countryEntity);
         personEntity.setModified(LocalDateTime.now());
         personEntity.setModifiedBy(entityRequest.getUserId());
 
