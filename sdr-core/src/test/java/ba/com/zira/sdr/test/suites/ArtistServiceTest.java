@@ -67,9 +67,8 @@ public class ArtistServiceTest extends BasicTestConfiguration {
         this.personRequestValidation = Mockito.mock(PersonRequestValidation.class);
 
         this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, null, personDAO, artistMapper, null, null, null, null,
-                artistValidation, personArtistDAO, songArtistDAO, null, personRequestValidation);
-        this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, personDAO, artistMapper, artistValidation, personArtistDAO,
-                songArtistDAO, personRequestValidation, null);
+                artistValidation, personArtistDAO, songArtistDAO, null, personRequestValidation, null);
+
     }
 
     @Test(enabled = true)

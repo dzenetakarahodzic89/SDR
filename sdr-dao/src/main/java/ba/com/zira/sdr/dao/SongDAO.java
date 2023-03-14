@@ -274,6 +274,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
         criteriaQuery.select(root).distinct(true);
         return entityManager.createQuery(criteriaQuery).setFirstResult(0).setMaxResults(10).getResultList();
+    }
 
     public List<SongEntity> getDuplicateSongs() {
         var hql = "select s from SongEntity s where s.created > "

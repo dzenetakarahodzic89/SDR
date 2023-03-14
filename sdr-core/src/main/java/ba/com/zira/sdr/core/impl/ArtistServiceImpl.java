@@ -25,9 +25,9 @@ import ba.com.zira.sdr.api.artist.Artist;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
-import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
 import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
+import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -232,9 +232,13 @@ public class ArtistServiceImpl implements ArtistService {
             personDTOs.add(personDTO);
         }
         artistSingleResponse.setPersons(personDTOs);
-        
-        return new PayloadResponse<>(request, ResponseCode.OK, artistSingleResponse);
+        lookupService.lookupCoverImage(Arrays.asList(artistSingleResponse), ArtistSingleResponse::getId, ObjectType.PERSON.getValue(),
+                ArtistSingleResponse::setImageUrl, ArtistSingleResponse::getImageUrl);
 
+        return new PayloadResponse<>(request, ResponseCode.OK, artistSingleResponse);
+    }
+
+    @Override
     public PayloadResponse<ArtistByEras> countArtistsByEras(EntityRequest<Long> request) {
         Long eraId = request.getEntity();
         Long soloArtistsCount = artistDAO.countSoloArtistsByEras(eraId);

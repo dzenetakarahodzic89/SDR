@@ -53,6 +53,7 @@ public class SongArtistDAO extends AbstractDAO<SongArtistEntity, Long> {
         criteriaQuery.where(builder.equal(artists.get(ArtistEntity_.id), artistId));
         criteriaQuery.select(builder.count(root)).distinct(true);
         return entityManager.createQuery(criteriaQuery).getSingleResult();
+    }
 
     public void removeDuplicateAlbums(List<Long> albumIds) {
         var hql = "delete from SongArtistEntity s where s.album.id in (:albumIds)";
