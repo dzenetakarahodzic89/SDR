@@ -26,6 +26,8 @@ import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
+import ba.com.zira.sdr.api.model.person.PersonSearchRequest;
+import ba.com.zira.sdr.api.model.person.PersonSearchResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.PersonMapper;
@@ -165,5 +167,16 @@ public class PersonServiceImpl implements PersonService {
 
         return new PayloadResponse<>(request, ResponseCode.OK, person);
 
+    }
+
+    @Override
+    public ListPayloadResponse<PersonSearchResponse> search(EntityRequest<PersonSearchRequest> req) throws ApiException {
+        List<PersonSearchResponse> persons = personDAO.personSearch(req.getEntity().getName(), req.getEntity().getSortBy(),
+                req.getEntity().getPersonGender(), req.getEntity().getPage(), req.getEntity().getPageSize());
+
+        lookupService.lookupCoverImage(persons, PersonSearchResponse::getId, ObjectType.SONG.getValue(), PersonSearchResponse::setImageUrl,
+                PersonSearchResponse::getImageUrl);
+
+        return new ListPayloadResponse<>(req, ResponseCode.OK, persons);
     }
 }
