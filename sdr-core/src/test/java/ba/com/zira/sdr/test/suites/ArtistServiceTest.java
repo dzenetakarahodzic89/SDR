@@ -1,5 +1,11 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -37,6 +37,7 @@ import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.EraDAO;
+import ba.com.zira.sdr.dao.LabelDAO;
 import ba.com.zira.sdr.dao.PersonArtistDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
@@ -69,6 +70,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
     EraDAO eraDAO;
     PersonDAO personDAO;
     SongDAO songDAO;
+    LabelDAO labelDAO;
     private PersonArtistDAO personArtistDAO;
     private SongArtistDAO songArtistDAO;
     private RequestValidator requestValidator;
@@ -89,8 +91,9 @@ public class ArtistServiceTest extends BasicTestConfiguration {
         this.artistValidation = Mockito.mock(ArtistValidation.class);
         this.personRequestValidation = Mockito.mock(PersonRequestValidation.class);
         this.lookupService = Mockito.mock(LookupService.class);
+        this.labelDAO = Mockito.mock(LabelDAO.class);
 
-        this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, albumDAO, personDAO, artistMapper, albumMapper, songMapper,
+        this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, albumDAO, labelDAO, personDAO, artistMapper, albumMapper, songMapper,
                 labelMapper, personMapper, artistValidation, personArtistDAO, songArtistDAO, songDAO, personRequestValidation,
                 lookupService);
     }
