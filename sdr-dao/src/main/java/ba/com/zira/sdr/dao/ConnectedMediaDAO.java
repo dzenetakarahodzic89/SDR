@@ -15,8 +15,8 @@ public class ConnectedMediaDAO extends AbstractDAO<ConnectedMediaEntity, Long> {
 
     public List<ConnectedMediaPersonResponse> getConnectedMediaByPersonId(Long personId) {
 
-        var hql = "select new ba.com.zira.sdr.api.model.connectedmedia.ConnectedMediaPersonResponse(scm.id, scm.created, scm.createdBy , scm.modified, scm.modifiedBy, scm.objectId, scm.objectType, scm.status) from PersonEntity sp inner join ConnectedMediaEntity scm on sp.id = scm.objectId  "
-                + " where scm.objectType = 'PERSON' and sp.id = :id";
+        var hql = "select new ba.com.zira.sdr.api.model.connectedmedia.ConnectedMediaPersonResponse(scm.id, scm.created, scm.createdBy , scm.modified, scm.modifiedBy, scm.objectId, scm.objectType, scm.status) from ConnectedMediaEntity scm inner join ConnectedMediaDetailEntity scmd on scm.id = scmd.connectedMedia.id   "
+                + " where scm.objectType = 'PERSON' and scm.objectId= :id";
         TypedQuery<ConnectedMediaPersonResponse> q = entityManager.createQuery(hql, ConnectedMediaPersonResponse.class).setParameter("id",
                 personId);
         return q.getResultList();
