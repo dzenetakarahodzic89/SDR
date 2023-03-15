@@ -125,6 +125,7 @@ public class PersonServiceImpl implements PersonService {
         personEntity.setName(entityRequest.getEntity().getName());
         personEntity.setSurname(entityRequest.getEntity().getSurname());
         personEntity.setOutlineText(entityRequest.getEntity().getOutlineText());
+        personEntity.setInformation(entityRequest.getEntity().getInformation());
         personEntity.setGender(entityRequest.getEntity().getGender());
         personEntity.setCountry(countryEntity);
         personEntity.setModified(LocalDateTime.now());
