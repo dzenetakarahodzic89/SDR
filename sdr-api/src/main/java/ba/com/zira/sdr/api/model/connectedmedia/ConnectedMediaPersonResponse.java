@@ -2,6 +2,7 @@ package ba.com.zira.sdr.api.model.connectedmedia;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import ba.com.zira.sdr.api.model.connectedmediadetail.ConnectedMediaDetailInfo;
@@ -16,7 +17,7 @@ public class ConnectedMediaPersonResponse implements Serializable {
     @Schema(description = "Unique identifier of the connected media")
     private Long id;
     @Schema(description = "Creation date")
-    private LocalDateTime created;
+    private String created;
     @Schema(description = "User that created the connected media")
     private String createdBy;
     @Schema(description = "Last modification date")
@@ -32,11 +33,11 @@ public class ConnectedMediaPersonResponse implements Serializable {
     @Schema(description = "Details")
     private List<ConnectedMediaDetailInfo> connectedMediaDetails;
 
-    public ConnectedMediaPersonResponse(Long id, LocalDateTime created, String createdBy, LocalDateTime modified, String modifiedBy,
-            Long objectId, String objectType, String status) {
+    public ConnectedMediaPersonResponse(final Long id, final LocalDateTime created, final String createdBy, final LocalDateTime modified,
+            final String modifiedBy, final Long objectId, final String objectType, final String status) {
         super();
         this.id = id;
-        this.created = created;
+        this.created = created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.createdBy = createdBy;
         this.modified = modified;
         this.modifiedBy = modifiedBy;
