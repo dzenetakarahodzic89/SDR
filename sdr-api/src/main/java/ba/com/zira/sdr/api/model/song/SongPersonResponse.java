@@ -2,6 +2,7 @@ package ba.com.zira.sdr.api.model.song;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -19,13 +20,13 @@ public class SongPersonResponse implements Serializable {
     private Long id;
 
     @Schema(description = "created")
-    private LocalDateTime created;
+    private String created;
 
     @Schema(description = "created_by")
     private String createdBy;
 
     @Schema(description = "date_of_release")
-    private LocalDateTime dateOfRelease;
+    private String dateOfRelease;
 
     @Schema(description = "information")
     private String information;
@@ -51,14 +52,15 @@ public class SongPersonResponse implements Serializable {
     @Schema(description = "spotify_id")
     private Long spotifyId;
 
-    public SongPersonResponse(Long id, LocalDateTime created, String name, String status, String playtime, LocalDateTime dateOfRelease) {
+    public SongPersonResponse(final Long id, final LocalDateTime created, final String name, final String status, final String playtime,
+            final LocalDateTime dateOfRelease) {
         super();
         this.id = id;
-        this.created = created;
+        this.created = created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.name = name;
         this.status = status;
         this.playtime = playtime;
-        this.dateOfRelease = dateOfRelease;
+        this.dateOfRelease = dateOfRelease.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
     }
 }
