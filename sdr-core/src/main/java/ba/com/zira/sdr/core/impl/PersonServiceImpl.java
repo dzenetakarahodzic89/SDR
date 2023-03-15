@@ -173,8 +173,8 @@ public class PersonServiceImpl implements PersonService {
         person.setArtists(artistDAO.getArtistByPersonId(request.getEntity()));
         person.setAlbums(albumDAO.findAlbumByPersonId(request.getEntity()));
         person.setSongs(songDAO.findSongByPersonId(request.getEntity()));
-
         person.setConnectedMedia(connectedMediaDAO.getConnectedMediaByPersonId(request.getEntity()));
+
         lookupService.lookupCoverImage(Arrays.asList(person), PersonOverviewResponse::getId, ObjectType.PERSON.getValue(),
                 PersonOverviewResponse::setImageUrl, PersonOverviewResponse::getImageUrl);
         lookupService.lookupCountryAbbriviation(Arrays.asList(person), PersonOverviewResponse::getCountryId,
