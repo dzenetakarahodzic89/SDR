@@ -1,11 +1,11 @@
 package ba.com.zira.sdr.core.mapper;
 
-import java.util.List;
-
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+
+import java.util.List;
 
 import ba.com.zira.sdr.api.model.person.PersonArtistSingleResponse;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
@@ -21,7 +21,6 @@ public interface PersonMapper {
     PersonEntity dtoToEntity(PersonCreateRequest personCreateRequest);
 
     @Mapping(source = "countryId", target = "country.id")
-    @Mapping(source = "outlineText", target = "outline_text")
     void updateEntity(PersonUpdateRequest personUpdateRequest, @MappingTarget PersonEntity personEntity);
 
     @Mapping(source = "country.id", target = "countryId")
