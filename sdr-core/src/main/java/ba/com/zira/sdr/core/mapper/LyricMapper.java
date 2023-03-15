@@ -15,15 +15,15 @@ import ba.com.zira.sdr.dao.model.LyricEntity;
 public interface LyricMapper {
 
     @Mapping(source = "songId", target = "song.id")
-    // @Mapping(source = "songName", target = "song.name")
+    @Mapping(source = "languageId", target = "language.id")
     LyricEntity dtoToEntity(LyricCreateRequest lyric);
 
     @Mapping(source = "song.id", target = "songId")
-    @Mapping(source = "song.name", target = "songName")
+    @Mapping(source = "language.id", target = "languageId")
     Lyric entityToDto(LyricEntity lyricEntity);
 
     @Mapping(source = "songId", target = "song.id")
-    // @Mapping(source = "songName", target = "song.name")
+    @Mapping(source = "languageId", target = "language.id")
     void updateEntity(LyricUpdateRequest lyric, @MappingTarget LyricEntity lyricEntity);
 
     List<Lyric> entitiesToDtos(List<LyricEntity> lyricEntity);
