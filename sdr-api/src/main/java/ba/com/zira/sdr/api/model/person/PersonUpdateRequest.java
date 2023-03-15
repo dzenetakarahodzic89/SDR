@@ -31,10 +31,13 @@ public class PersonUpdateRequest implements Serializable {
 
     @Schema(description = "Date of death")
     private LocalDateTime dateOfDeath;
-
+    @Schema(description = "outline text")
     private String outlineText;
+    @Schema(description = "country id")
     private Long countryId;
+    @Schema(description = "cover image data")
     private String coverImageData;
+    @Schema(description = "cover image")
     private String coverImage;
 
 }
