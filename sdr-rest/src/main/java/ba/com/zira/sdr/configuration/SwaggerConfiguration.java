@@ -27,6 +27,12 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi languageApi() {
+        return GroupedOpenApi.builder().group("language-api").packagesToScan("ba.com.zira.sdr.language.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi instrumentApi() {
         return GroupedOpenApi.builder().group("instrument-api").packagesToScan("ba.com.zira.sdr.instrument.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();

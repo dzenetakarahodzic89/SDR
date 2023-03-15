@@ -4,21 +4,22 @@ import java.io.Serializable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Schema(description = "Search filters for instrument")
 public class InstrumentSearchRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "Name of the instrument")
     private String name;
-
-    @Schema(description = "Name of the person playing instrument")
-    private Long personId;
-
     @Schema(description = "Sorting method", allowableValues = { "NoOfPersons", "Alphabetical", "LastEdit" })
-    private String sortBy;
+    public String sortBy;
 
 }

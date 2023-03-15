@@ -20,6 +20,8 @@ public interface PersonMapper {
     @Mapping(source = "countryId", target = "country.id")
     PersonEntity dtoToEntity(PersonCreateRequest personCreateRequest);
 
+    @Mapping(source = "countryId", target = "country.id")
+    @Mapping(source = "outlineText", target = "outline_text")
     void updateEntity(PersonUpdateRequest personUpdateRequest, @MappingTarget PersonEntity personEntity);
 
     @Mapping(source = "country.id", target = "countryId")

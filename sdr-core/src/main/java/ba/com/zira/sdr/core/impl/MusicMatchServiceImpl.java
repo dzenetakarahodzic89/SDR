@@ -27,6 +27,7 @@ import ba.com.zira.sdr.core.mapper.LyricMapper;
 import ba.com.zira.sdr.dao.LyricDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.LanguageEntity;
 import ba.com.zira.sdr.dao.model.LyricEntity;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
@@ -82,7 +83,10 @@ public class MusicMatchServiceImpl implements MusicMatchService {
                 lyricEntity.setCreatedBy("AutoInserted");
                 lyricEntity.setModified(LocalDateTime.now());
                 lyricEntity.setText(lyrics.getLyricsBody());
-                lyricEntity.setLanguage(lyrics.getLyricsLang());
+                var language = new LanguageEntity();
+                language.setName(lyrics.getLyricsLang());
+                language.setId(1L);
+                lyricEntity.setLanguage(language);
                 lyricEntity.setSong(song);
 
                 SongEntity songEntity = songDAO.findByPK(song.getId());

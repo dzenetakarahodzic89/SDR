@@ -1,6 +1,4 @@
-package ba.com.zira.sdr.api.instrument;
-
-import javax.validation.constraints.NotBlank;
+package ba.com.zira.sdr.api.model.person;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -13,23 +11,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @AllArgsConstructor
-@Schema(description = "Properties of a instrument search response")
-public class InstrumentSearchResponse implements Serializable {
+@Schema(description = "Properties of a person response")
+public class PersonSearchResponse implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    @NotBlank
     private Long id;
     private String name;
-    private LocalDateTime modified;
+    private String surname;
     private String outlineText;
+    private String gender;
+    private LocalDateTime modified;
     private String imageUrl;
 
-    public InstrumentSearchResponse(Long id, String name, LocalDateTime modified, String outlineText) {
+    public PersonSearchResponse(Long id, String name, String surname, String outlineText, String gender, LocalDateTime modified) {
+        super();
         this.id = id;
         this.name = name;
-        this.modified = modified;
+        this.surname = surname;
         this.outlineText = outlineText;
-
+        this.gender = gender;
+        this.modified = modified;
     }
 
 }
