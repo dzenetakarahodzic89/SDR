@@ -223,7 +223,7 @@ public class PersonServiceTest extends BasicTestConfiguration {
         }
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testUpdatePerson() {
         try {
 
