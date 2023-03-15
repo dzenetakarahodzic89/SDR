@@ -113,12 +113,23 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<AlbumResponse> update(final EntityRequest<AlbumUpdateRequest> request) {
+    public PayloadResponse<AlbumResponse> update(final EntityRequest<AlbumUpdateRequest> request) throws ApiException {
         albumRequestValidation.validateUpdateAlbumRequest(request);
         var albumEntity = albumDAO.findByPK(request.getEntity().getId());
         albumMapper.updateEntity(request.getEntity(), albumEntity);
         albumEntity.setModifiedBy(request.getUserId());
         albumEntity.setModified(LocalDateTime.now());
+
+        if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
+            var mediaRequest = new MediaCreateRequest();
+            mediaRequest.setObjectType(ObjectType.ALBUM.getValue());
+            mediaRequest.setObjectId(albumEntity.getId());
+            mediaRequest.setMediaObjectData(request.getEntity().getCoverImageData());
+            mediaRequest.setMediaObjectName(request.getEntity().getCoverImage());
+            mediaRequest.setMediaStoreType("COVER_IMAGE");
+            mediaRequest.setMediaObjectType("IMAGE");
+            mediaService.save(new EntityRequest<>(mediaRequest, request));
+        }
 
         albumDAO.merge(albumEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, albumMapper.entityToDto(albumEntity));
