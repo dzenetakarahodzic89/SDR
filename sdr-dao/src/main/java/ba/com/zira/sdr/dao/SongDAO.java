@@ -1,12 +1,5 @@
 package ba.com.zira.sdr.dao;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
@@ -17,6 +10,13 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbResponse;
@@ -297,7 +297,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
     public void updateDeezerFields(String songName, String deezerId, String deezerStatus, String information) {
         var hql = "update SongEntity set deezerId = :deezerId, information = :information ,deezerStatus=:deezerStatus where lower(name) like lower(:songName)";
-        Query query = entityManager.createQuery(hql).setParameter("songName", songName).setParameter("deezerId", deezerId)
+        var query = entityManager.createQuery(hql).setParameter("songName", songName).setParameter("deezerId", deezerId)
                 .setParameter("information", information).setParameter("deezerStatus", deezerStatus);
         query.executeUpdate();
     }
@@ -308,6 +308,14 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         TypedQuery<SongEntity> query = entityManager.createQuery(hql, SongEntity.class);
         query.toString();
         query.setMaxResults(75);
+
+        return query.getResultList();
+    }
+
+    public List<Long> getIds() {
+        var hql = "select ss.id from SongEntity ss";
+
+        TypedQuery<Long> query = entityManager.createQuery(hql, Long.class);
 
         return query.getResultList();
     }

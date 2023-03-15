@@ -109,6 +109,7 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
         List<SongEntity> songs = songDAO.findAll();
         userRecommendationDetailDAO.cleanTableForGA();
         userRecommendationDAO.cleanTableForGA();
+        userRecommendationIntegrationDetailDAO.cleanTableForGA();
 
         List<UserRecommendationEntity> entsForGA = createUserRecommendationsForGA();
         userRecommendationDAO.persistCollection(entsForGA);
@@ -130,6 +131,7 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
             detail.setStatus(Status.ACTIVE.getValue());
             detail.setName("GA Entry");
             detail.setGenreId(song.getGenre().getId());
+            detail.setPlaytimeInSeconds(song.getPlaytimeInSeconds());
 
             var sdrGrade = BigDecimal.valueOf(Math.random() * 10);
             var spotifyGrade = BigDecimal.valueOf(Math.random() * 10);

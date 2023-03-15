@@ -77,6 +77,9 @@ public class UserRecommendationIntegrationDetailEntity implements Serializable {
     @Column(name = "genreId")
     private Long genreId;
 
+    @Column(name = "playtimeInSeconds")
+    private Long playtimeInSeconds;
+
     // bi-directional many-to-one association to UserRecommendationEntity
     @ManyToOne
     @JoinColumn(name = "song_id")
