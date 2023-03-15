@@ -1,12 +1,14 @@
 package ba.com.zira.sdr.api;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegration;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationCreateRequest;
+import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationStatisticsResponse;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationUpdateRequest;
 
 public interface DeezerIntegrationService {
@@ -18,4 +20,6 @@ public interface DeezerIntegrationService {
     public PayloadResponse<DeezerIntegration> update(final EntityRequest<DeezerIntegrationUpdateRequest> request) throws ApiException;
 
     public PayloadResponse<String> delete(final EntityRequest<String> request) throws ApiException;
+
+    public PayloadResponse<DeezerIntegrationStatisticsResponse> getDataForStatistics(EmptyRequest request);
 }
