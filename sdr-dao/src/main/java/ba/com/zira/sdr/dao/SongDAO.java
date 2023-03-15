@@ -19,6 +19,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationTypesData;
 import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbResponse;
 import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
 import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
@@ -312,4 +313,23 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         return query.getResultList();
     }
 
+    public Long countAllDeezerFields() {
+        var hql = "select count(*) from SongEntity s where s.deezerId is not null";
+        TypedQuery<Long> query = entityManager.createQuery(hql, Long.class);
+        return query.getSingleResult();
+    }
+
+    public LocalDateTime getLastModified() {
+        var hql = "select sa.modified from SongEntity sa where sa.deezerId is not null and sa.modified is not null order by sa.modified desc";
+        TypedQuery<LocalDateTime> query = entityManager.createQuery(hql, LocalDateTime.class).setMaxResults(1);
+        return query.getSingleResult();
+    }
+
+    public List<DeezerIntegrationTypesData> getLastUpdatedDeezerFields() {
+        var hql = "select distinct new ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationTypesData(case when ss.modified > sa.modified and ss.deezerId is not null then 'SONG' else 'ARTIST' end,case when ss.modified > sa.modified) and ss.deezerId  is not null then ss.modified else sa.modified end, case when (case when ss.modified > sa.modified and ss.deezerId is not null then 'SONG' else 'ARTIST' end) = 'SONG' then ss.name else sa.name end, case when (case when ss.modified > sa.modified and ss.deezerId is not null then 'SONG' else 'ARTIST' end) = 'SONG' then ss.deezerId else sa.deezerId::varchar end\r\n"
+                + "from SongEntity ss join SongArtistEntity ssa on ss.id = ssa.song.id join ArtistEntity sa on ssa.artist.id = sa.id\r\n"
+                + "where ss.modified is not null and sa.modified is not null and (ss.deezerId is not null or sa.deezerId is not null) order by modification desc";
+        TypedQuery<DeezerIntegrationTypesData> query = entityManager.createQuery(hql, DeezerIntegrationTypesData.class).setMaxResults(10);
+        return query.getResultList();
+    }
 }
