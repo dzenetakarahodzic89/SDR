@@ -23,7 +23,6 @@ import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.PersonService;
 import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.lov.LoV;
-import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
@@ -89,21 +88,18 @@ public class PersonServiceImpl implements PersonService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<PersonResponse> create(final EntityRequest<PersonCreateRequest> request) throws ApiException {
-        var personEntity = personMapper.dtoToEntity(request.getEntity());
-        personEntity.setCreated(LocalDateTime.now());
-        personEntity.setStatus(Status.ACTIVE.value());
-        personEntity.setCreatedBy(request.getUserId());
-
-        if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
-            var mediaRequest = new MediaCreateRequest();
-            mediaRequest.setObjectType(ObjectType.PERSON.getValue());
-            mediaRequest.setObjectId(personEntity.getId());
-            mediaRequest.setMediaObjectData(request.getEntity().getCoverImageData());
-            mediaRequest.setMediaObjectName(request.getEntity().getCoverImage());
-            mediaRequest.setMediaStoreType("COVER_IMAGE");
-            mediaRequest.setMediaObjectType("IMAGE");
-            mediaService.save(new EntityRequest<>(mediaRequest, request));
+        var personCreateRequest = request.getEntity();
+        var personEntity = personMapper.dtoToEntity(personCreateRequest);
+        CountryEntity countryEntity = countryDAO.findByPK(request.getEntity().getCountryId());
+        if (countryEntity == null) {
+            throw new EntityNotFoundException("Country not found with ID: " + request.getEntity().getCountryId());
         }
+
+        personEntity.setCreated(LocalDateTime.now());
+        personEntity.setCreatedBy(request.getUserId());
+        personEntity.setModified(LocalDateTime.now());
+        personEntity.setModifiedBy(request.getUserId());
+        personEntity.setStatus(Status.ACTIVE.value());
 
         personDAO.persist(personEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, personMapper.entityToDto(personEntity));
