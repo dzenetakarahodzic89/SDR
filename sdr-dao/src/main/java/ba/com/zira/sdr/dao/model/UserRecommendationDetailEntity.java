@@ -35,7 +35,8 @@ public class UserRecommendationDetailEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name = "SAT_USER_RECOMMENDATION_DETAIL_ID_GENERATOR", sequenceName = "SAT_USER_RECOMMENDATION_DETAIL_SEQ")
+    @SequenceGenerator(name = "SAT_USER_RECOMMENDATION_DETAIL_ID_GENERATOR", sequenceName = "SAT_USER_RECOMMENDATION_DETAIL_SEQ",
+            allocationSize = 50)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_USER_RECOMMENDATION_DETAIL_ID_GENERATOR")
     @Column(name = "id")
     private Long id;

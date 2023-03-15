@@ -1,12 +1,13 @@
 package ba.com.zira.sdr.dao;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -26,6 +27,12 @@ public class UserRecommendationDetailDAO extends AbstractDAO<UserRecommendationD
             return new HashMap<>();
         }
 
+    }
+
+    public void cleanTableForGA() {
+        var hql = "delete from UserRecommendationDetailEntity d where d.createdBy = :ga";
+        Query q = entityManager.createQuery(hql).setParameter("ga", "GA");
+        q.executeUpdate();
     }
 
 }
