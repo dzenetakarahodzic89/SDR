@@ -16,10 +16,10 @@ import lombok.Setter;
 @Builder
 @Schema(description = "Search filters for instrument")
 public class InstrumentSearchRequest implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String name;
-	@Schema(description = "Sorting method", allowableValues = { "NoOfPersons", "Alphabetical", "LastEdit" })
-	public String sortBy;
+    private String name;
+    @Schema(description = "Sorting method", allowableValues = { "NoOfPersons", "Alphabetical", "LastEdit" })
+    public String sortBy;
 
 }

@@ -21,52 +21,55 @@ import ba.com.zira.sdr.api.instrument.ResponseSongInstrumentEra;
  */
 public interface InstrumentService {
 
-	/**
-	 * Get paged payload response.
-	 *
-	 * @param filterRequest the filter request
-	 * @return the paged payload response
-	 * @throws ApiException the api exception
-	 */
-	PagedPayloadResponse<InstrumentResponse> find(final FilterRequest filterRequest) throws ApiException;
+    /**
+     * Get paged payload response.
+     *
+     * @param filterRequest
+     *            the filter request
+     * @return the paged payload response
+     * @throws ApiException
+     *             the api exception
+     */
+    PagedPayloadResponse<InstrumentResponse> find(final FilterRequest filterRequest) throws ApiException;
 
-	PayloadResponse<InstrumentResponse> get(final EntityRequest<Long> request) throws ApiException;
+    PayloadResponse<InstrumentResponse> get(final EntityRequest<Long> request) throws ApiException;
 
-	/**
-	 * Create payload response.
-	 *
-	 * @param entityRequest the entity request
-	 * @return the payload response
-	 * @throws ApiException the api exception
-	 */
-	PayloadResponse<InstrumentResponse> create(final EntityRequest<InstrumentCreateRequest> entityRequest)
-			throws ApiException;
+    /**
+     * Create payload response.
+     *
+     * @param entityRequest
+     *            the entity request
+     * @return the payload response
+     * @throws ApiException
+     *             the api exception
+     */
+    PayloadResponse<InstrumentResponse> create(final EntityRequest<InstrumentCreateRequest> entityRequest) throws ApiException;
 
-	/**
-	 * Update payload response.
-	 *
-	 * @param entityRequest the entity request
-	 * @return the payload response
-	 * @throws ApiException the api exception
-	 */
-	PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> entityRequest)
-			throws ApiException;
+    /**
+     * Update payload response.
+     *
+     * @param entityRequest
+     *            the entity request
+     * @return the payload response
+     * @throws ApiException
+     *             the api exception
+     */
+    PayloadResponse<InstrumentResponse> update(final EntityRequest<InstrumentUpdateRequest> entityRequest) throws ApiException;
 
-	/**
-	 * Delete payload response.
-	 *
-	 * @param entityRequest the entity request
-	 * @return the payload response
-	 */
-	PayloadResponse<String> delete(final EntityRequest<Long> entityRequest);
+    /**
+     * Delete payload response.
+     *
+     * @param entityRequest
+     *            the entity request
+     * @return the payload response
+     */
+    PayloadResponse<String> delete(final EntityRequest<Long> entityRequest);
 
-	ListPayloadResponse<ResponseSongInstrument> insertInstrumentsToSong(
-			ListRequest<InsertSongInstrumentRequest> entityRequest) throws ApiException;
+    ListPayloadResponse<ResponseSongInstrument> insertInstrumentsToSong(ListRequest<InsertSongInstrumentRequest> entityRequest)
+            throws ApiException;
 
-	ListPayloadResponse<ResponseSongInstrumentEra> findAllSongsInErasForInstruments(EntityRequest<Long> request)
-			throws ApiException;
+    ListPayloadResponse<ResponseSongInstrumentEra> findAllSongsInErasForInstruments(EntityRequest<Long> request) throws ApiException;
 
-	PagedPayloadResponse<InstrumentSearchResponse> search(final EntityRequest<InstrumentSearchRequest> request)
-			throws ApiException;
+    PagedPayloadResponse<InstrumentSearchResponse> search(final EntityRequest<InstrumentSearchRequest> request) throws ApiException;
 
 }
