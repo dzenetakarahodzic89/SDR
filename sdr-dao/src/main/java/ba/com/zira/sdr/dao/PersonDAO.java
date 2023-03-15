@@ -73,12 +73,16 @@ public class PersonDAO extends AbstractDAO<PersonEntity, Long> {
 
         var query = "select new ba.com.zira.sdr.api.model.person.PersonSearchResponse(sp.id, sp.name, sp.surname, sp.outlineText, sp.gender, sp.modified) "
                 + " from PersonEntity sp where (sp.name like :personName or :personName is null or :personName = '') and (sp.gender like :personGender or :personGender is null or :personGender = '') ";
-        if ("last_date".equals(sortBy)) {
-            query += " order by sp.modified desc";
+
+        if ("alphabetical".equals(sortBy)) {
+            query += " order by sp.name asc";
+
+        } else if ("alphabetical_reverse".equals(sortBy)) {
+            query += " order by sp.name desc";
         }
 
-        else {
-            query += " order by sp.name";
+        else if ("last_edit".equals(sortBy)) {
+            query += " order by sp.modified desc";
         }
 
         var q = entityManager.createQuery(query, PersonSearchResponse.class);
