@@ -1,9 +1,5 @@
 package ba.com.zira.sdr.core.utils;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
-
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,8 +10,13 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
+
 import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.media.CoverImageHelper;
+import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.InstrumentDAO;
@@ -23,7 +24,6 @@ import ba.com.zira.sdr.dao.LabelDAO;
 import ba.com.zira.sdr.dao.MediaStoreDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongDAO;
-import ba.com.zira.sdr.dao.model.InstrumentEntity;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -53,6 +53,9 @@ public class LookupService {
 
     @NonNull
     InstrumentDAO instrumentDAO;
+
+    @NonNull
+    AlbumDAO albumDAO;
 
     private static SecureRandom random = new SecureRandom();
 
@@ -181,6 +184,10 @@ public class LookupService {
             lookupLabelNames(values, getter, setter);
         }
 
+        if (ObjectType.ALBUM.getValue().equalsIgnoreCase(objectType)) {
+            lookupAlbumNames(values, getter, setter);
+        }
+
     }
 
     public <E> void lookupPersonNames(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {
@@ -188,6 +195,16 @@ public class LookupService {
 
         if (!(ids == null || ids.isEmpty())) {
             Map<Long, String> lookup = new ConcurrentHashMap<>(personDAO.getPersonNames(ids));
+            values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
+        }
+
+    }
+
+    public <E> void lookupAlbumNames(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {
+        List<Long> ids = values.parallelStream().map(getter).distinct().collect(Collectors.toList());
+
+        if (!(ids == null || ids.isEmpty())) {
+            Map<Long, String> lookup = new ConcurrentHashMap<>(albumDAO.getAlbumNames(ids));
             values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
         }
 
@@ -219,11 +236,6 @@ public class LookupService {
             Map<Long, String> lookup = new ConcurrentHashMap<>(labelDAO.getLabelNames(ids));
             values.parallelStream().forEach(r -> setter.accept(r, get(getter.apply(r), lookup)));
         }
-
-    }
-
-    public void lookupCoverImage(List<InstrumentEntity> asList, Object getter, String value, Object setter, Object getterForImage) {
-        // TODO Auto-generated method stub
 
     }
 
