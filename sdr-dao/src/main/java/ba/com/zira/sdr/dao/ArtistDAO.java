@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.dao;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -233,6 +234,18 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from ArtistEntity sa ORDER BY random()";
         TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class).setMaxResults(10);
         return q.getResultList();
+    }
+
+    public Long countAllDeezerFields() {
+        var hql = "select count(*) from ArtistEntity s where s.deezerId is not null";
+        TypedQuery<Long> query = entityManager.createQuery(hql, Long.class);
+        return query.getSingleResult();
+    }
+
+    public LocalDateTime getLastModified() {
+        var hql = "select sa.modified from ArtistEntity sa where sa.deezerId is not null and sa.modified is not null order by sa.modified desc";
+        TypedQuery<LocalDateTime> query = entityManager.createQuery(hql, LocalDateTime.class).setMaxResults(1);
+        return query.getSingleResult();
     }
 
 }
