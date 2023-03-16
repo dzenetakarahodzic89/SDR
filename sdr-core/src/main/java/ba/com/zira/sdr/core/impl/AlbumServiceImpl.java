@@ -96,7 +96,7 @@ public class AlbumServiceImpl implements AlbumService {
         albumEntity.setCreated(LocalDateTime.now());
         albumEntity.setStatus(Status.ACTIVE.value());
         albumEntity.setCreatedBy(request.getUserId());
-
+        albumDAO.persist(albumEntity);
         if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
             var mediaRequest = new MediaCreateRequest();
             mediaRequest.setObjectType(ObjectType.ALBUM.getValue());
@@ -107,7 +107,7 @@ public class AlbumServiceImpl implements AlbumService {
             mediaRequest.setMediaObjectType("IMAGE");
             mediaService.save(new EntityRequest<>(mediaRequest, request));
         }
-        albumDAO.persist(albumEntity);
+
         return new PayloadResponse<>(request, ResponseCode.OK, albumMapper.entityToDto(albumEntity));
     }
 
