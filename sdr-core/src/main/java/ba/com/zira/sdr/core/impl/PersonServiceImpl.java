@@ -156,7 +156,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public ListPayloadResponse<LoV> getPersonLoVs(EmptyRequest req) throws ApiException {
+    public ListPayloadResponse<LoV> getPersonLoVs(final EmptyRequest req) throws ApiException {
         List<LoV> eras = personDAO.getAllPersonsLoV();
         return new ListPayloadResponse<>(req, ResponseCode.OK, eras);
     }
@@ -170,6 +170,7 @@ public class PersonServiceImpl implements PersonService {
         person.setAlbums(albumDAO.findAlbumByPersonId(request.getEntity()));
         person.setSongs(songDAO.findSongByPersonId(request.getEntity()));
         person.setConnectedMedia(connectedMediaDAO.getConnectedMediaByPersonId(request.getEntity()));
+        person.setInstruments(songInstrumentDAO.getSongInstrumentByPersonId(request.getEntity()));
 
         lookupService.lookupCoverImage(Arrays.asList(person), PersonOverviewResponse::getId, ObjectType.PERSON.getValue(),
                 PersonOverviewResponse::setImageUrl, PersonOverviewResponse::getImageUrl);
@@ -181,12 +182,12 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public ListPayloadResponse<PersonSearchResponse> search(EntityRequest<PersonSearchRequest> req) throws ApiException {
+    public ListPayloadResponse<PersonSearchResponse> search(final EntityRequest<PersonSearchRequest> req) throws ApiException {
         List<PersonSearchResponse> persons = personDAO.personSearch(req.getEntity().getName(), req.getEntity().getSortBy(),
                 req.getEntity().getPersonGender(), req.getEntity().getPage(), req.getEntity().getPageSize());
 
-        lookupService.lookupCoverImage(persons, PersonSearchResponse::getId, ObjectType.SONG.getValue(), PersonSearchResponse::setImageUrl,
-                PersonSearchResponse::getImageUrl);
+        lookupService.lookupCoverImage(persons, PersonSearchResponse::getId, ObjectType.PERSON.getValue(),
+                PersonSearchResponse::setImageUrl, PersonSearchResponse::getImageUrl);
 
         return new ListPayloadResponse<>(req, ResponseCode.OK, persons);
     }

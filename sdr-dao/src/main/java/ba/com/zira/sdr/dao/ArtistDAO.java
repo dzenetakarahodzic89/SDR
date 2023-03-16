@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.dao;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,12 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return query.getResultList().stream().collect(Collectors.toMap(LoV::getId, LoV::getName));
     }
 
+    public List<LoV> getArtistNamesAndSurnames() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(m.id, case when m.surname "
+                + "is null then m.name else concat(m.name,' ', m.surname) end) from ArtistEntity m";
+        return entityManager.createQuery(hql, LoV.class).getResultList();
+    }
+
     public Boolean songArtistExist(Long id) {
         var hql = "select s from SongArtistEntity s where s.artist.id = :id";
         TypedQuery<SongArtistEntity> q = entityManager.createQuery(hql, SongArtistEntity.class).setParameter("id", id);
@@ -111,12 +118,6 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         } catch (Exception e) {
             return new ArrayList<>();
         }
-    }
-
-    public List<LoV> getArtistLoVs() {
-        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.name || ' ' || a.surname) from ArtistEntity a";
-        TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class);
-        return q.getResultList();
     }
 
     public List<LoV> findArtistsToFetchFromSpotify(int responseLimit) {
@@ -233,6 +234,18 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from ArtistEntity sa ORDER BY random()";
         TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class).setMaxResults(10);
         return q.getResultList();
+    }
+
+    public Long countAllDeezerFields() {
+        var hql = "select count(*) from ArtistEntity s where s.deezerId is not null";
+        TypedQuery<Long> query = entityManager.createQuery(hql, Long.class);
+        return query.getSingleResult();
+    }
+
+    public LocalDateTime getLastModified() {
+        var hql = "select sa.modified from ArtistEntity sa where sa.deezerId is not null and sa.modified is not null order by sa.modified desc";
+        TypedQuery<LocalDateTime> query = entityManager.createQuery(hql, LocalDateTime.class).setMaxResults(1);
+        return query.getSingleResult();
     }
 
 }

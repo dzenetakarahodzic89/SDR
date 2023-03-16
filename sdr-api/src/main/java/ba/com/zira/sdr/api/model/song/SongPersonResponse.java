@@ -56,11 +56,11 @@ public class SongPersonResponse implements Serializable {
             final LocalDateTime dateOfRelease) {
         super();
         this.id = id;
-        this.created = created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        this.created = created != null ? created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
         this.name = name;
         this.status = status;
         this.playtime = playtime;
-        this.dateOfRelease = dateOfRelease.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        this.dateOfRelease = dateOfRelease != null ? dateOfRelease.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
 
     }
 }

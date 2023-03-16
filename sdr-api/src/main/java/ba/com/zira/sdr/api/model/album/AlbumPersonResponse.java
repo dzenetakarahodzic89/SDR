@@ -42,7 +42,7 @@ public class AlbumPersonResponse implements Serializable {
             final String status) {
         super();
         this.id = id;
-        this.dateOfRelease = dateOfRelease.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        this.dateOfRelease = dateOfRelease != null ? dateOfRelease.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
         this.information = information;
         this.name = name;
         this.status = status;
