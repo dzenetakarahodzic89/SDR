@@ -2,6 +2,8 @@ package ba.com.zira.sdr.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -263,5 +265,11 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from AlbumEntity s ";
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);
         return query.getResultList();
+    }
+
+    public Map<Long, String> getAlbumNames(List<Long> ids) {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from AlbumEntity s where s.id in (:ids)";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("ids", ids);
+        return query.getResultStream().collect(Collectors.toMap(LoV::getId, LoV::getName));
     }
 }
