@@ -1,15 +1,14 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -32,8 +31,10 @@ import ba.com.zira.sdr.core.mapper.MediaMapper;
 import ba.com.zira.sdr.core.mapper.MediaStoreMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.MediaRequestValidation;
+import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.MediaDAO;
 import ba.com.zira.sdr.dao.MediaStoreDAO;
+import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.dao.model.MediaEntity;
 import ba.com.zira.sdr.dao.model.MediaStoreEntity;
 import lombok.AllArgsConstructor;
@@ -49,6 +50,7 @@ public class MediaServiceImpl implements MediaService {
     MediaStoreMapper mediaStoreMapper;
     FileUploadService fileUploadService;
     LookupService lookupService;
+    AlbumDAO albumDAO;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MediaServiceImpl.class);
 
@@ -139,15 +141,14 @@ public class MediaServiceImpl implements MediaService {
             var media = new MediaObjectResponse();
             media.setObjectType(request.getEntity().getObjectType());
             media.setObjectId(request.getEntity().getObjectId());
-            lookupService.lookupObjectNamesByIdAndType(media.getObjectType(), Arrays.asList(media), MediaObjectResponse::getObjectId,
-                    MediaObjectResponse::setObjectName);
+            AlbumEntity name = albumDAO.findByPK(request.getEntity().getObjectId());
+            media.setObjectName(name.getName());
             return new PayloadResponse<>(request, ResponseCode.OK, media);
         }
 
         MediaObjectResponse media = mediaMapper.entitiesToDto(mediaEntity);
-
-        lookupService.lookupObjectNamesByIdAndType(media.getObjectType(), Arrays.asList(media), MediaObjectResponse::getObjectId,
-                MediaObjectResponse::setObjectName);
+        AlbumEntity name = albumDAO.findByPK(request.getEntity().getObjectId());
+        media.setObjectName(name.getName());
 
         List<MediaStoreResponse> mediaStores = media.getMediaStores();
 
