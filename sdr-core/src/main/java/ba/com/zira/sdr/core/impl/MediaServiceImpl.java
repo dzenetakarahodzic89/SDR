@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -147,8 +148,8 @@ public class MediaServiceImpl implements MediaService {
         }
 
         MediaObjectResponse media = mediaMapper.entitiesToDto(mediaEntity);
-        AlbumEntity name = albumDAO.findByPK(request.getEntity().getObjectId());
-        media.setObjectName(name.getName());
+        lookupService.lookupObjectNamesByIdAndType(media.getObjectType(), Arrays.asList(media), MediaObjectResponse::getObjectId,
+                MediaObjectResponse::setObjectName);
 
         List<MediaStoreResponse> mediaStores = media.getMediaStores();
 
