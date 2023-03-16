@@ -185,8 +185,8 @@ public class PersonServiceImpl implements PersonService {
         List<PersonSearchResponse> persons = personDAO.personSearch(req.getEntity().getName(), req.getEntity().getSortBy(),
                 req.getEntity().getPersonGender(), req.getEntity().getPage(), req.getEntity().getPageSize());
 
-        lookupService.lookupCoverImage(persons, PersonSearchResponse::getId, ObjectType.SONG.getValue(), PersonSearchResponse::setImageUrl,
-                PersonSearchResponse::getImageUrl);
+        lookupService.lookupCoverImage(persons, PersonSearchResponse::getId, ObjectType.PERSON.getValue(),
+                PersonSearchResponse::setImageUrl, PersonSearchResponse::getImageUrl);
 
         return new ListPayloadResponse<>(req, ResponseCode.OK, persons);
     }
