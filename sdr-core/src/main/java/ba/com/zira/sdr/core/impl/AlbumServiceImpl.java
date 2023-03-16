@@ -37,10 +37,10 @@ import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
 import ba.com.zira.sdr.api.model.album.SongAudio;
+import ba.com.zira.sdr.api.model.album.SongOfAlbum;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
-import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.core.mapper.AlbumMapper;
@@ -207,7 +207,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Song> addSongToAlbum(EntityRequest<SongOfAlbumUpdateRequest> request) throws ApiException {
+    public PayloadResponse<SongOfAlbum> addSongToAlbum(EntityRequest<SongOfAlbumUpdateRequest> request) throws ApiException {
         var existingEntriesForAlbum = songArtistDAO.songArtistByAlbum(request.getEntity().getAlbumId());
 
         songArtistDAO.deleteByAlbumId(request.getEntity().getAlbumId());
@@ -226,7 +226,7 @@ public class AlbumServiceImpl implements AlbumService {
 
         var newSongEntity = songDAO.findByPK(request.getEntity().getSongId());
 
-        return new PayloadResponse<>(request, ResponseCode.OK, songMapper.entityToDto(newSongEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, songMapper.entityToSongOfAlbumDto(newSongEntity));
 
     }
 
