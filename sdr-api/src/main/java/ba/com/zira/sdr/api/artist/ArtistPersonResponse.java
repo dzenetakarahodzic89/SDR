@@ -48,7 +48,7 @@ public class ArtistPersonResponse implements Serializable {
         super();
         this.id = id;
         this.name = name;
-        this.created = created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        this.created = created != null ? created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
         this.createdBy = createdBy;
         this.dateOfBirth = dateOfBirth;
         this.dateOfDeath = dateOfDeath;

@@ -37,7 +37,7 @@ public class ConnectedMediaPersonResponse implements Serializable {
             final String modifiedBy, final Long objectId, final String objectType, final String status) {
         super();
         this.id = id;
-        this.created = created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        this.created = created != null ? created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
         this.createdBy = createdBy;
         this.modified = modified;
         this.modifiedBy = modifiedBy;
