@@ -8,6 +8,7 @@ import ba.com.zira.sdr.api.artist.ArtistPersonResponse;
 import ba.com.zira.sdr.api.model.album.AlbumPersonResponse;
 import ba.com.zira.sdr.api.model.connectedmedia.ConnectedMediaPersonResponse;
 import ba.com.zira.sdr.api.model.song.SongPersonResponse;
+import ba.com.zira.sdr.api.model.songinstrument.SongInstrumentPersonResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -76,9 +77,13 @@ public class PersonOverviewResponse implements Serializable {
     @Schema(description = "List of songs")
     private List<ConnectedMediaPersonResponse> connectedMedia;
 
-    public PersonOverviewResponse(Long id, LocalDateTime created, String createdBy, LocalDateTime dateOfBirth, LocalDateTime dateOfDeath,
-            String gender, String information, LocalDateTime modified, String modifiedBy, String name, String surname, String outlineText,
-            Long countryId, String flagAbbreviation) {
+    @Schema(description = "List of song instruments")
+    private List<SongInstrumentPersonResponse> instruments;
+
+    public PersonOverviewResponse(final Long id, final LocalDateTime created, final String createdBy, final LocalDateTime dateOfBirth,
+            final LocalDateTime dateOfDeath, final String gender, final String information, final LocalDateTime modified,
+            final String modifiedBy, final String name, final String surname, final String outlineText, final Long countryId,
+            final String flagAbbreviation) {
         super();
         this.id = id;
         this.created = created;
