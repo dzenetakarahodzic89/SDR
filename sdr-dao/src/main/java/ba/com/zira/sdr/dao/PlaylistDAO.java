@@ -36,7 +36,7 @@ public class PlaylistDAO extends AbstractDAO<PlaylistEntity, Long> {
         List<Predicate> predicates = new ArrayList<>();
 
         if (name != null) {
-            predicates.add(builder.like(root.get("name"), name));
+            predicates.add(builder.like(builder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
         }
 
         if (genreId != null) {
