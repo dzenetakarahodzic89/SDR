@@ -50,7 +50,7 @@ public class MoritsIntegrationServiceTest extends BasicTestConfiguration {
         this.moritsIntegrationDAO = Mockito.mock(MoritsIntegrationDAO.class);
         this.moritsIntegrationRequestValidation = Mockito.mock(MoritsIntegrationRequestValidation.class);
         this.moritsIntegrationService = new MoritsIntegrationServiceImpl(moritsIntegrationDAO, moritsIntegrationMapper,
-                moritsIntegrationRequestValidation);
+                moritsIntegrationRequestValidation, null);
     }
 
     @Test(enabled = true)

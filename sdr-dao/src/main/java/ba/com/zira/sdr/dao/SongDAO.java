@@ -19,12 +19,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationTypesData;
 import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbResponse;
 import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
 import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
 import ba.com.zira.sdr.api.model.lov.DateLoV;
+import ba.com.zira.sdr.api.model.lov.DoubleStringLoV;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.moritsintegration.MusicMatchIntegrationStatus;
+import ba.com.zira.sdr.api.model.moritsintegration.SongLyricData;
 import ba.com.zira.sdr.api.model.song.SongInstrumentResponse;
 import ba.com.zira.sdr.api.model.song.SongPersonResponse;
 import ba.com.zira.sdr.api.model.song.SongSearchResponse;
@@ -326,4 +330,26 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
                 .setParameter("song", "SONG").setMaxResults(10);
         return query.getResultList();
     }
+
+    public List<SongLyricData> getSongLyricData() {
+        var hql = "select new ba.com.zira.sdr.api.model.moritsintegration.SongLyricData(s.id,s.name,lan.name,s.playtime)"
+                + "from SongEntity s join LyricEntity l on s.id=l.song join LanguageEntity lan on l.language=lan.id order by s.id";
+        TypedQuery<SongLyricData> query = entityManager.createQuery(hql, SongLyricData.class);
+        return query.getResultList();
+    }
+
+    public List<MusicMatchIntegrationStatus> getMusicMatchIntegrationStatus() {
+
+        var hql = "select new ba.com.zira.sdr.api.model.moritsintegration.MusicMatchIntegrationStatus('" + ObjectType.SONG.getValue()
+                + "',s.id,s.name,s.modified,s.musicMatchStatus)" + "from SongEntity s";
+        TypedQuery<MusicMatchIntegrationStatus> query = entityManager.createQuery(hql, MusicMatchIntegrationStatus.class);
+        return query.getResultList();
+    }
+
+    public List<DoubleStringLoV> getMusicMatchStatusDistribution() {
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.DoubleStringLoV(s.musicMatchStatus, count(s)+0.0) from SongEntity s group by s.musicMatchStatus";
+        TypedQuery<DoubleStringLoV> query = entityManager.createQuery(hql, DoubleStringLoV.class);
+        return query.getResultList();
+    }
+
 }
