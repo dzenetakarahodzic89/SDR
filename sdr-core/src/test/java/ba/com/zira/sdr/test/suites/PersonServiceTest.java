@@ -213,6 +213,7 @@ public class PersonServiceTest extends BasicTestConfiguration {
             newPerson.setStatus(Status.ACTIVE.getValue());
 
             Mockito.when(personDAO.persist(newPersonEnt)).thenReturn(null);
+            Mockito.when(countryDAO.findByPK(req.getEntity().getCountryId())).thenReturn(new CountryEntity());
 
             PayloadResponse<PersonResponse> personFindResponse = personService.create(req);
 
