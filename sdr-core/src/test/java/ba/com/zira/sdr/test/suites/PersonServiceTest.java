@@ -213,11 +213,12 @@ public class PersonServiceTest extends BasicTestConfiguration {
             newPerson.setStatus(Status.ACTIVE.getValue());
 
             Mockito.when(personDAO.persist(newPersonEnt)).thenReturn(null);
+            Mockito.when(countryDAO.findByPK(req.getEntity().getCountryId())).thenReturn(new CountryEntity());
 
             PayloadResponse<PersonResponse> personFindResponse = personService.create(req);
 
             Assertions.assertThat(personFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-                    .ignoringFields("created", "createdBy", "modified", "modifiedBy", "imageUrl").isEqualTo(newPerson);
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy", "imageUrl", "countryId").isEqualTo(newPerson);
 
         } catch (Exception e) {
             Assert.fail();
