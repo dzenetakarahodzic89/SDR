@@ -42,6 +42,7 @@ public class AlbumResponse implements Serializable {
     @Schema(description = "Artist name")
     private String artistName;
 
+    private String spotifyId;
     @Schema(description = "Album songs")
     private List<SongResponse> songs;
 
