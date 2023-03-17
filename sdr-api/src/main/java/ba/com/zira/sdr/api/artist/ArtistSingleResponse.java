@@ -45,4 +45,6 @@ public class ArtistSingleResponse implements Serializable {
     private String labelName;
     @Schema(description = "Type")
     private String type;
+
+    private String spotifyId;
 }
