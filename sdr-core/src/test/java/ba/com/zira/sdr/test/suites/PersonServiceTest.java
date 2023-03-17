@@ -218,7 +218,7 @@ public class PersonServiceTest extends BasicTestConfiguration {
             PayloadResponse<PersonResponse> personFindResponse = personService.create(req);
 
             Assertions.assertThat(personFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-                    .ignoringFields("created", "createdBy", "modified", "modifiedBy", "imageUrl", "countryId").isEqualTo(newPerson);
+                    .ignoringFields("created", "createdBy", "modified", "modifiedBy", "imageUrl").isEqualTo(newPerson);
 
         } catch (Exception e) {
             Assert.fail();
