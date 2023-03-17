@@ -121,7 +121,6 @@ public class NoteSheetServiceTest extends BasicTestConfiguration {
 
             var newNoteSheetRequest = new NoteSheetCreateRequest();
             // newNoteSheetRequest.setSheetContent("Test note sheet");
-            newNoteSheetRequest.setNotationType("Some type");
 
             Mockito.when(noteSheetRequestValidation.validateCreateNoteSheetRequest(req)).thenReturn(null);
 

@@ -103,8 +103,7 @@ public class NoteSheetServiceImpl implements NoteSheetService {
         noteSheetEntity.setStatus(Status.ACTIVE.value());
         noteSheetEntity.setCreated(LocalDateTime.now());
         noteSheetEntity.setCreatedBy(request.getUserId());
-        noteSheetEntity.setModified(LocalDateTime.now());
-        noteSheetEntity.setModifiedBy(request.getUserId());
+        noteSheetEntity.setNotationType("Standard");
         noteSheetEntity.setSheetContent(sheetContent);
 
         notesheetDAO.persist(noteSheetEntity);
@@ -118,7 +117,7 @@ public class NoteSheetServiceImpl implements NoteSheetService {
 
         var NoteSheetEntity = notesheetDAO.findByPK(request.getEntity().getId());
         notesheetMapper.updateEntity(request.getEntity(), NoteSheetEntity);
-
+        NoteSheetEntity.setNotationType("Standard");
         NoteSheetEntity.setModified(LocalDateTime.now());
         NoteSheetEntity.setModifiedBy(request.getUserId());
         notesheetDAO.merge(NoteSheetEntity);

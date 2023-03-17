@@ -39,4 +39,5 @@ public class NoteSheetDAO extends AbstractDAO<NoteSheetEntity, Long> {
 
         return query.getSingleResult();
     }
+
 }

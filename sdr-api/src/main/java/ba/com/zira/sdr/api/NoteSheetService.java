@@ -70,5 +70,6 @@ public interface NoteSheetService {
 
     PayloadResponse<NoteSheetSongResponse> findNoteSheetForSong(EntityRequest<Long> request) throws ApiException;
 
-    PayloadResponse<NoteSheetSongResponse> findNoteSheetByInstrumentAndSong(EntityRequest<SongInstrumentSheetResponse> request);
+    PayloadResponse<NoteSheetSongResponse> findNoteSheetByInstrumentAndSong(EntityRequest<SongInstrumentSheetResponse> request)
+            throws ApiException;
 }

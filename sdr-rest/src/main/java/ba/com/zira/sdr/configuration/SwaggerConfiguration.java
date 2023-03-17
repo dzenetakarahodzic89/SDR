@@ -64,7 +64,7 @@ public class SwaggerConfiguration {
 
     @Bean
     public GroupedOpenApi noteSheetApi() {
-        return GroupedOpenApi.builder().group("noteSheet-api").packagesToScan("ba.com.zira.sdr.notesheet.rest")
+        return GroupedOpenApi.builder().group("notesheet-api").packagesToScan("ba.com.zira.sdr.notesheet.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 

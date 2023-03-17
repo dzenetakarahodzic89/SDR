@@ -2,8 +2,6 @@ package ba.com.zira.sdr.api.model.notesheet;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotBlank;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
@@ -15,11 +13,8 @@ import lombok.Data;
 public class NoteSheetCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @NotBlank
     @Schema(description = "Content of notesheet")
     private NoteSheetContentResponse sheetContent;
-    @Schema(description = "notation type")
-    private String notationType;
     @Schema(description = " Id of the instrument")
     private Long instrumentId;
     @Schema(description = " Id of the song")
