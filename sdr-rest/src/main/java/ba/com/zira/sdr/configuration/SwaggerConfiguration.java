@@ -21,6 +21,18 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi eventApi() {
+        return GroupedOpenApi.builder().group("event-api").packagesToScan("ba.com.zira.sdr.event.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi languageApi() {
+        return GroupedOpenApi.builder().group("language-api").packagesToScan("ba.com.zira.sdr.language.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi instrumentApi() {
         return GroupedOpenApi.builder().group("instrument-api").packagesToScan("ba.com.zira.sdr.instrument.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -149,6 +161,12 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi connectedMediaApi() {
         return GroupedOpenApi.builder().group("connectedmedia-api").packagesToScan("ba.com.zira.sdr.connectedmedia.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi mediaApi() {
+        return GroupedOpenApi.builder().group("media-api").packagesToScan("ba.com.zira.sdr.media.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 

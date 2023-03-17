@@ -18,12 +18,20 @@ public class MultiSearchResponse implements Serializable {
 
     private String imageUrl;
 
+    private String spotifyId;
+
     public MultiSearchResponse(Long id, String name, String type) {
         super();
         this.id = id;
         this.name = name;
         this.type = type;
+    }
 
+    public MultiSearchResponse(String name, String type, String spotifyId) {
+        super();
+        this.name = name;
+        this.type = type;
+        this.spotifyId = spotifyId;
     }
 
 }

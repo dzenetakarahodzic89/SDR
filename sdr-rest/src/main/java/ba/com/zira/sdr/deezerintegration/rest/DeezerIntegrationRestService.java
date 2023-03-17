@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -21,6 +22,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.DeezerIntegrationService;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegration;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationCreateRequest;
+import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationStatisticsResponse;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -65,5 +67,11 @@ public class DeezerIntegrationRestService {
     public PayloadResponse<String> delete(
             @Parameter(required = true, description = "ID of the deezer integration") @PathVariable final String id) throws ApiException {
         return deezerIntegrationService.delete(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Get data for statistics")
+    @GetMapping(value = "get-statistics")
+    public PayloadResponse<DeezerIntegrationStatisticsResponse> getDataForStatistics() throws ApiException {
+        return deezerIntegrationService.getDataForStatistics(new EmptyRequest());
     }
 }

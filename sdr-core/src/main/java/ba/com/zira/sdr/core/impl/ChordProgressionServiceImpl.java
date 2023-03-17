@@ -21,14 +21,18 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.ChordProgressionService;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionByEraResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionCreateRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchRequest;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordSongAlbumEraResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.ChordProgressionMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.ChordProgressionValidation;
 import ba.com.zira.sdr.dao.ChordProgressionDAO;
 import ba.com.zira.sdr.dao.EraDAO;
@@ -43,10 +47,11 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
     ChordProgressionMapper chordProgressionMapper;
     ChordProgressionValidation chordProgressionValidator;
     EraDAO eraDAO;
+    LookupService lookupService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ChordProgressionResponse> create(EntityRequest<ChordProgressionCreateRequest> request) {
+    public PayloadResponse<ChordProgressionResponse> create(final EntityRequest<ChordProgressionCreateRequest> request) {
         var chordProgressEntity = chordProgressionMapper.dtoToEntity(request.getEntity());
         chordProgressEntity.setStatus(Status.ACTIVE.value());
         chordProgressEntity.setCreated(LocalDateTime.now());
@@ -57,7 +62,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
     }
 
     @Override
-    public PayloadResponse<String> delete(EntityRequest<Long> request) {
+    public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         chordProgressionValidator.validateExistsChordProgressionRequest(request);
         chordProgressionDAO.removeByPK(request.getEntity());
         return new PayloadResponse<>(request, ResponseCode.OK, "successfully deleted record.");
@@ -65,7 +70,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<ChordProgressionResponse> update(EntityRequest<ChordProgressionUpdateRequest> request) {
+    public PayloadResponse<ChordProgressionResponse> update(final EntityRequest<ChordProgressionUpdateRequest> request) {
         chordProgressionValidator.validateUpdateChordProgressionRequest(request);
 
         var chordProgressionEntity = chordProgressionDAO.findByPK(request.getEntity().getId());
@@ -88,7 +93,7 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
     }
 
     @Override
-    public ListPayloadResponse<ChordProgressionByEraResponse> getChordByEras(EmptyRequest req) throws ApiException {
+    public ListPayloadResponse<ChordProgressionByEraResponse> getChordByEras(final EmptyRequest req) throws ApiException {
         List<ChordSongAlbumEraResponse> listOfEraSongs = chordProgressionDAO.getAllChordProgressionSongNumberByEras();
         List<ChordProgressionByEraResponse> returnListOfValues = new ArrayList<>();
         Map<Long, Integer> eraMap = new HashMap<>();
@@ -107,6 +112,26 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
             }
         });
         return new ListPayloadResponse<>(req, ResponseCode.OK, returnListOfValues);
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> getChordProgressionLoV(final EmptyRequest request) throws ApiException {
+        List<LoV> chordProgressions = chordProgressionDAO.getChordProgressionLoV();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, chordProgressions);
+    }
+
+    @Override
+    public ListPayloadResponse<ChordProgressionSearchResponse> searchChordProgression(
+            EntityRequest<ChordProgressionSearchRequest> request) {
+
+        List<ChordProgressionSearchResponse> chordProgressions = chordProgressionDAO.searchChordProgression(request.getEntity().getName(),
+                request.getEntity().getSortBy(), request.getEntity().getEraIds(), request.getEntity().getGenreIds(),
+                request.getEntity().getPage(), request.getEntity().getPageSize());
+
+        lookupService.lookupCoverImage(chordProgressions, ChordProgressionSearchResponse::getId, ObjectType.CHORDPROGRESSION.getValue(),
+                ChordProgressionSearchResponse::setImageUrl, ChordProgressionSearchResponse::getImageUrl);
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, chordProgressions);
     }
 
 }

@@ -11,14 +11,14 @@ import lombok.Data;
 public class PersonCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "Information about user")
-    private String information;
-
     @Schema(description = "User name")
     private String name;
 
     @Schema(description = "User surname")
     private String surname;
+
+    @Schema(description = "Information about user")
+    private String information;
 
     @Schema(description = "User's gender")
     private String gender;
@@ -29,9 +29,16 @@ public class PersonCreateRequest implements Serializable {
     @Schema(description = "Date of death")
     private LocalDateTime dateOfDeath;
 
+    @Schema(description = "Outline text")
     private String outlineText;
+
+    @Schema(description = "Country id")
     private Long countryId;
+
+    @Schema(description = "Cover image data")
     private String coverImageData;
+
+    @Schema(description = "Cover Image")
     private String coverImage;
 
 }

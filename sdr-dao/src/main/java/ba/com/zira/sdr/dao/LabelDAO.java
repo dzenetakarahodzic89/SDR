@@ -5,13 +5,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.label.LabelArtistResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.ArtistEntity_;
 import ba.com.zira.sdr.dao.model.LabelEntity;
+import ba.com.zira.sdr.dao.model.LabelEntity_;
+import ba.com.zira.sdr.dao.model.SongArtistEntity;
+import ba.com.zira.sdr.dao.model.SongArtistEntity_;
 
 @Repository
 public class LabelDAO extends AbstractDAO<LabelEntity, Long> {
@@ -32,6 +40,17 @@ public class LabelDAO extends AbstractDAO<LabelEntity, Long> {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(l.id,l.name) from LabelEntity l";
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);
         return query.getResultList();
+    }
+
+    public List<LabelEntity> findByArtistId(final Long artistId) {
+        final CriteriaQuery<LabelEntity> criteriaQuery = builder.createQuery(LabelEntity.class);
+        final Root<LabelEntity> root = criteriaQuery.from(LabelEntity.class);
+        Join<LabelEntity, SongArtistEntity> songArtists = root.join(LabelEntity_.songArtists);
+        Join<SongArtistEntity, ArtistEntity> artists = songArtists.join(SongArtistEntity_.artist);
+        criteriaQuery.where(builder.equal(artists.get(ArtistEntity_.id), artistId));
+
+        criteriaQuery.select(root).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
 }
