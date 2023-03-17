@@ -22,8 +22,8 @@ public class SongSearchRequest implements Serializable {
     private Long remixId;
     private Long coverId;
     private String sortBy;
-    private int page;
-    private int pageSize;
+    private Integer page;
+    private Integer pageSize;
     private List<Long> artistIds;
     private List<Long> albumIds;
     private List<Long> genreIds;
