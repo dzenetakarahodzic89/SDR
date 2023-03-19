@@ -1,8 +1,9 @@
-package ba.com.zira.sdr.api.playlistga;
+package ba.com.zira.sdr.api.model.playlistga;
 
 import java.io.Serializable;
 import java.util.Map;
 
+import ba.com.zira.sdr.api.enums.ServiceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,8 +21,8 @@ public class PlaylistResponseGA implements Serializable {
     @Schema(description = "Song name")
     private String songName;
 
-    @Schema(description = "Scores")
-    private Map<String, Long> scores;
+    @Schema(description = "Service scores")
+    private Map<ServiceType, Double> serviceScores;
 
     @Schema(description = "Genre id")
     private Long genreId;
@@ -30,5 +31,5 @@ public class PlaylistResponseGA implements Serializable {
     private String genreName;
 
     @Schema(description = "Playtime in seconds")
-    private Long playtime;
+    private Long playtimeInSeconds;
 }

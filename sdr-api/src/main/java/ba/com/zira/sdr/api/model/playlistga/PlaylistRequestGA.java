@@ -1,9 +1,10 @@
-package ba.com.zira.sdr.api.playlistga;
+package ba.com.zira.sdr.api.model.playlistga;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.List;
 
 import ba.com.zira.sdr.api.enums.SelectionType;
+import ba.com.zira.sdr.api.enums.ServiceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -28,10 +29,10 @@ public class PlaylistRequestGA implements Serializable {
     private Long numberOfCrossPoints;
 
     @Schema(description = "Children rate")
-    private Long childrenRate;
+    private Double childrenRate;
 
     @Schema(description = "Mutation rate")
-    private Long mutationRate;
+    private Double mutationRate;
 
     @Schema(description = "Number of genes")
     private Long numberOfGenes;
@@ -43,13 +44,13 @@ public class PlaylistRequestGA implements Serializable {
     private Long tournamentSize;
 
     @Schema(description = "Tournament rate")
-    private Long tournamentRate;
+    private Double tournamentRate;
 
     @Schema(description = "Service priorities")
-    private Map<String, Long> servicePriorities;
+    private List<ServiceType> servicePriorities;
 
     @Schema(description = "Genre priorities")
-    private Map<String, Long> genrePriorities;
+    private List<Long> genrePriorities;
 
     @Schema(description = "Total playtime")
     private Long totalPlaytime;

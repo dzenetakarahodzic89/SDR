@@ -3,7 +3,6 @@ package ba.com.zira.sdr.dao.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -49,9 +47,8 @@ public class SongScoresEntity implements Serializable {
     @Column(name = "status")
     private String status;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "song_id", referencedColumnName = "id")
-    private SongEntity song;
+    @Column(name = "song_id")
+    private Long songId;
 
     @Column(name = "sdr_score")
     private Long sdrScore;
