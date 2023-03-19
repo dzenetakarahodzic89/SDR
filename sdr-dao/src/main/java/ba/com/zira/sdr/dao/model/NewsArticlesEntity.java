@@ -17,6 +17,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The persistent class for the "sat_news_articles" database table.
+ *
+ */
 @Entity
 @Table(name = "sat_news_articles")
 @Data
