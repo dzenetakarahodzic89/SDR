@@ -1,15 +1,15 @@
 #DO NOT MODIFY THIS FILE!!!
 #Use application-override.properties instead.
 server:
-  port: "8123"
+  port: '8123'
 spring:
   application:
     name: ${application.name}
   profiles:
-    active: "default"
+    active: 'default'
   datasource:
     driver-class-name: org.postgresql.Driver
-    password: "!n2bvigor!"
+    password: '!n2bvigor!'
     username: n2bvigor
     url: jdbc:postgresql://172.20.20.45:5432/test
   jersey:
