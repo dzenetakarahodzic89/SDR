@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "Properties for instrument create request")
-public class InstrumentRequestSuperclass implements Serializable {
+public class InstrumentRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "instrument name")

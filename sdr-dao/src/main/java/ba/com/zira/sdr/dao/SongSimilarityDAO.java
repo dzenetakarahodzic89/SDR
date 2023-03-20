@@ -1,7 +1,7 @@
 package ba.com.zira.sdr.dao;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
@@ -49,7 +49,7 @@ public class SongSimilarityDAO extends AbstractDAO<SongSimilarityEntity, Long> {
 
     }
 
-    private static final Random random = new Random();
+    private static final SecureRandom random = new SecureRandom();
 
     public SongSimilarityResponse getRandomSongSimilarity() {
         var hql = "select new ba.com.zira.sdr.api.model.songsimilarity.SongSimilarityResponse "

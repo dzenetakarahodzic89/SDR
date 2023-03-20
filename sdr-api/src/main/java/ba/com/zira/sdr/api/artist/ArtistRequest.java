@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "Properties for creation of a artist")
-public class ArtistRequestSuperclass implements Serializable {
+public class ArtistRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank

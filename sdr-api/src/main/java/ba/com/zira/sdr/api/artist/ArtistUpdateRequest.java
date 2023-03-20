@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "Properties for update a artist")
-public class ArtistUpdateRequest extends ArtistRequestSuperclass {
+public class ArtistUpdateRequest extends ArtistRequest {
     private static final long serialVersionUID = 1L;
 
     @Min(1)

@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Schema(description = "Properties of instrument update request")
 
-public class InstrumentUpdateRequest extends InstrumentRequestSuperclass {
+public class InstrumentUpdateRequest extends InstrumentRequest {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "Id of record for update")
