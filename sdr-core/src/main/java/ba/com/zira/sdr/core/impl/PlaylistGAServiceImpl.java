@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +102,7 @@ public class PlaylistGAServiceImpl implements PlaylistGAService {
         // save playlist to the database
         var savePlaylistRequest = new SavePlaylistRequest();
 
-        savePlaylistRequest.setName("GA Playlist");
+        savePlaylistRequest.setName("GA Playlist: " + LocalDateTime.now().toString());
         savePlaylistRequest.setSongIds(((PlaylistChromosome) population.findFittestChromosome()).getGenes().stream()
                 .map(SongGene::getSongId).collect(Collectors.toList()));
 
