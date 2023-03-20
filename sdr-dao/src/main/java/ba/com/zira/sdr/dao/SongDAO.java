@@ -19,8 +19,10 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbResponse;
 import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
+import ba.com.zira.sdr.api.model.genre.EraRequest;
 import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
 import ba.com.zira.sdr.api.model.lov.DateLoV;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -117,7 +119,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         return q.getSingleResult();
     }
 
-    public List<SongGenreEraLink> findSongGenreEraLinks() {
+    public List<SongGenreEraLink> findSongGenreEraLinks(SearchRequest<EraRequest> id) {
         final CriteriaQuery<SongGenreEraLink> criteriaQuery = builder.createQuery(SongGenreEraLink.class);
         final Root<SongEntity> root = criteriaQuery.from(SongEntity.class);
         Join<SongEntity, SongArtistEntity> songArtists = root.join(SongEntity_.songArtists);
@@ -126,13 +128,17 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         Join<AlbumEntity, EraEntity> eraAlbum = albumArtist.join(AlbumEntity_.era);
         Join<GenreEntity, GenreEntity> genres = sgenres.join(GenreEntity_.mainGenre, JoinType.LEFT);
 
+        List<Predicate> predicates = new ArrayList<>();
+        var eraRequest = id.getEntity();
+        if (eraRequest.getEra() != null && !eraRequest.getEra().isEmpty()) {
+            predicates.add(eraAlbum.get(EraEntity_.id).in(eraRequest.getEra()));
+        }
         Expression<Long> idSelectCase = builder.<Long> selectCase()
                 .when(genres.get(GenreEntity_.id).isNotNull(), genres.get(GenreEntity_.id)).otherwise(sgenres.get(GenreEntity_.id));
         Expression<String> nameSelectCase = builder.<String> selectCase()
                 .when(genres.get(GenreEntity_.name).isNotNull(), genres.get(GenreEntity_.name)).otherwise(sgenres.get(GenreEntity_.name));
-
         criteriaQuery.multiselect(root.get(SongEntity_.id), root.get(SongEntity_.name), idSelectCase, nameSelectCase,
-                eraAlbum.get(EraEntity_.id), eraAlbum.get(EraEntity_.name));
+                eraAlbum.get(EraEntity_.id), eraAlbum.get(EraEntity_.name)).where(predicates.toArray(new Predicate[0]));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
