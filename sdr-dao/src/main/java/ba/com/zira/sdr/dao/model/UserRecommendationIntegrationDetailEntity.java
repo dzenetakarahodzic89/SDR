@@ -74,7 +74,7 @@ public class UserRecommendationIntegrationDetailEntity implements Serializable {
     @Column(name = "youtube_music_score")
     private BigDecimal youtubeMusicScore;
 
-    @Column(name = "genreId")
+    @Column(name = "genre_id")
     private Long genreId;
 
     @Column(name = "playtime_in_seconds")
