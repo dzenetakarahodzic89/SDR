@@ -21,6 +21,7 @@ public class DXAdapter implements RssReader {
             newArticleEntry.setSource(url);
             newArticleEntry.setLink(entry.getLink());
             newArticleEntry.setContent(entry.getTitle());
+            newArticleEntry.setImageUrl("http://172.20.20.45:82//vigor//img/mario.jpg");
             newsArticleList.add(newArticleEntry);
         }
         return newsArticleList;
