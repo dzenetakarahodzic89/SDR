@@ -75,4 +75,9 @@ public class SongGene implements Rankable {
         return text;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        var song = (SongGene) obj;
+        return this.songId == song.getSongId();
+    }
 }

@@ -2,6 +2,7 @@ package ba.com.zira.sdr.ga.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import ba.com.zira.sdr.api.enums.SelectionType;
@@ -14,7 +15,7 @@ import lombok.Data;
 
 @Data
 public class GeneticAlgorithmImpl implements GeneticAlgorithm {
-    private final Double SUPER_MUTATION_THRESHOLD = 14.0;
+    private final Double SUPER_MUTATION_THRESHOLD = 1400.0;
     private Long elitismSize;
     private Long numberOfParentChromosomes;
     private Long numberOfCrossPoints;
@@ -58,6 +59,17 @@ public class GeneticAlgorithmImpl implements GeneticAlgorithm {
             }
 
             listOfGenes.add(((PlaylistChromosome) parents.get(currentParentIndex)).getGenes().get(i));
+        }
+
+        // get rid of duplicates & add new chromosomes
+        var genesWithoutDuplicate = new ArrayList<SongGene>();
+        genesWithoutDuplicate.addAll(new HashSet<>(listOfGenes));
+
+        while (genesWithoutDuplicate.size() < numberOfGenes) {
+            var randomIndex = Randomizer.getRandomNumber(0, allValidGenes.size());
+            if (!genesWithoutDuplicate.contains(allValidGenes.get(randomIndex))) {
+                genesWithoutDuplicate.add(allValidGenes.get(randomIndex));
+            }
         }
 
         mixup.setGenes(listOfGenes);
