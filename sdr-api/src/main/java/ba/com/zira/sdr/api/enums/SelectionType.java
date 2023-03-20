@@ -1,7 +1,10 @@
 package ba.com.zira.sdr.api.enums;
 
 public enum SelectionType {
-    TOURNAMENT("Tournament"), SUS("Stohastic unversal sampling");
+    /** Tournament **/
+    TOURNAMENT("Tournament"),
+    /** Stohastic universal sampling */
+    SUS("Stohastic unversal sampling");
 
     private final String value;
 
