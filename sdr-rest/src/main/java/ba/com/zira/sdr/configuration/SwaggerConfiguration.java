@@ -33,6 +33,12 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi languageApi() {
+        return GroupedOpenApi.builder().group("language-api").packagesToScan("ba.com.zira.sdr.language.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi instrumentApi() {
         return GroupedOpenApi.builder().group("instrument-api").packagesToScan("ba.com.zira.sdr.instrument.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -64,7 +70,7 @@ public class SwaggerConfiguration {
 
     @Bean
     public GroupedOpenApi noteSheetApi() {
-        return GroupedOpenApi.builder().group("noteSheet-api").packagesToScan("ba.com.zira.sdr.notesheet.rest")
+        return GroupedOpenApi.builder().group("notesheet-api").packagesToScan("ba.com.zira.sdr.notesheet.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
@@ -165,6 +171,12 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi mediaApi() {
+        return GroupedOpenApi.builder().group("media-api").packagesToScan("ba.com.zira.sdr.media.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi artistApi() {
         return GroupedOpenApi.builder().group("artist-api").packagesToScan("ba.com.zira.sdr.artist.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -241,6 +253,12 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi songPlaylistApi() {
         return GroupedOpenApi.builder().group("songplaylist-api").packagesToScan("ba.com.zira.sdr.songplaylist.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi newsArticlesApi() {
+        return GroupedOpenApi.builder().group("newsarticles-api").packagesToScan("ba.com.zira.sdr.newsarticles.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 

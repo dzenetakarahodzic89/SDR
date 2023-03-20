@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.UserRecommendationService;
+import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,6 +63,19 @@ public class UserRecommendationRestService {
     public PayloadResponse<String> delete(
             @Parameter(required = true, description = "ID of the user recommendation") @PathVariable final Long id) throws ApiException {
         return userRecommendationService.delete(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "find all users")
+    @GetMapping(value = "/all")
+    public ListPayloadResponse<UserRecommendationResponse> findByName() throws ApiException {
+        var req = new EmptyRequest();
+        return userRecommendationService.findAllUsers(req);
+    }
+
+    @Operation(summary = "Compare user score")
+    @PostMapping(value = "/compare")
+    public ListPayloadResponse<UserRecommendationResponse> find(@RequestBody final ScoreCompareRequest request) throws ApiException {
+        return userRecommendationService.scoreCompare(new EntityRequest<>(request));
     }
 
 }

@@ -18,4 +18,6 @@ public class StaveNoteResponse implements Serializable {
     private String accidental;
     @Schema(description = "Is dotted")
     private Boolean dotted;
+    @Schema(description = "stave")
+    private Long stave;
 }

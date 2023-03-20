@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.dao;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.artist.ArtistLabelResponse;
-import ba.com.zira.sdr.api.artist.ArtistPersonResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
 import ba.com.zira.sdr.api.artist.ArtistSheetResponse;
@@ -47,11 +47,11 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return q.getResultList();
     }
 
-    public List<ArtistPersonResponse> getArtistByPersonId(Long personId) {
+    public List<ArtistResponse> getArtistByPersonId(Long personId) {
 
-        var hql = "select new ba.com.zira.sdr.api.artist.ArtistPersonResponse(sa.id, sa.name, sa.created, sa.createdBy, sa.dateOfBirth, sa.dateOfDeath, sa.information, sa.modified, sa.modifiedBy, sa.status, sa.surname, sa.type) from PersonEntity sp inner join PersonArtistEntity spa on sp.id = spa.person.id  "
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistResponse(sa.id, sa.name, sa.created, sa.createdBy, sa.dateOfBirth, sa.dateOfDeath, sa.information, sa.modified, sa.modifiedBy, sa.status, sa.surname, sa.type) from PersonEntity sp inner join PersonArtistEntity spa on sp.id = spa.person.id  "
                 + "inner join ArtistEntity sa on spa.artist.id = sa.id where sp.id = :id";
-        TypedQuery<ArtistPersonResponse> q = entityManager.createQuery(hql, ArtistPersonResponse.class).setParameter("id", personId);
+        TypedQuery<ArtistResponse> q = entityManager.createQuery(hql, ArtistResponse.class).setParameter("id", personId);
         return q.getResultList();
     }
 
@@ -73,6 +73,12 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         var hql = new StringBuilder("select new ba.com.zira.sdr.api.model.lov.LoV(m.id, m.name) from ArtistEntity m where m.id in :ids");
         TypedQuery<LoV> query = entityManager.createQuery(hql.toString(), LoV.class).setParameter("ids", ids);
         return query.getResultList().stream().collect(Collectors.toMap(LoV::getId, LoV::getName));
+    }
+
+    public List<LoV> getArtistNamesAndSurnames() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(m.id, case when m.surname "
+                + "is null then m.name else concat(m.name,' ', m.surname) end) from ArtistEntity m";
+        return entityManager.createQuery(hql, LoV.class).getResultList();
     }
 
     public Boolean songArtistExist(Long id) {
@@ -111,12 +117,6 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         } catch (Exception e) {
             return new ArrayList<>();
         }
-    }
-
-    public List<LoV> getArtistLoVs() {
-        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.name || ' ' || a.surname) from ArtistEntity a";
-        TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class);
-        return q.getResultList();
     }
 
     public List<LoV> findArtistsToFetchFromSpotify(int responseLimit) {
@@ -233,6 +233,18 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from ArtistEntity sa ORDER BY random()";
         TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class).setMaxResults(10);
         return q.getResultList();
+    }
+
+    public Long countAllDeezerFields() {
+        var hql = "select count(*) from ArtistEntity s where s.deezerId is not null";
+        TypedQuery<Long> query = entityManager.createQuery(hql, Long.class);
+        return query.getSingleResult();
+    }
+
+    public LocalDateTime getLastModified() {
+        var hql = "select sa.modified from ArtistEntity sa where sa.deezerId is not null and sa.modified is not null order by sa.modified desc";
+        TypedQuery<LocalDateTime> query = entityManager.createQuery(hql, LocalDateTime.class).setMaxResults(1);
+        return query.getSingleResult();
     }
 
 }

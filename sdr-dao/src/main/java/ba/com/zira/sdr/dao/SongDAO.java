@@ -19,11 +19,16 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationTypesData;
 import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbResponse;
 import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
 import ba.com.zira.sdr.api.model.genre.SongGenreEraLink;
 import ba.com.zira.sdr.api.model.lov.DateLoV;
+import ba.com.zira.sdr.api.model.lov.DoubleStringLoV;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.moritsintegration.MusicMatchIntegrationStatus;
+import ba.com.zira.sdr.api.model.moritsintegration.SongLyricData;
 import ba.com.zira.sdr.api.model.song.SongInstrumentResponse;
 import ba.com.zira.sdr.api.model.song.SongPersonResponse;
 import ba.com.zira.sdr.api.model.song.SongSearchResponse;
@@ -47,6 +52,10 @@ import ba.com.zira.sdr.dao.model.SongEntity_;
 public class SongDAO extends AbstractDAO<SongEntity, Long> {
     private static final String REMIX_ID = "remixId";
     private static final String COVER_ID = "coverId";
+    private static final String SONG_NAME = "songName";
+    private static final String ARTIST_ID = "artistIds";
+    private static final String ALBUM_ID = "albumIds";
+    private static final String GENRE_ID = "genreIds";
 
     public List<SongEntity> findSongsByIdArray(final List<Long> songIds) {
         final CriteriaQuery<SongEntity> cQuery = builder.createQuery(SongEntity.class);
@@ -112,7 +121,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
     public SongSingleResponse getById(final Long songId) {
         var hql = "select new ba.com.zira.sdr.api.model.song.SongSingleResponse(ss.id, ss.name, ss.outlineText,ss.information,ss.dateOfRelease,ss.playtime,"
-                + "ss.remix.id,ss.cover.id,scp.name,scp.id,sg.name,sg.id) from SongEntity ss left join SongEntity on ss.remix.id=ss.id "
+                + "ss.remix.id,ss.cover.id,scp.name,scp.id,sg.name,sg.id,ss.spotifyId) from SongEntity ss left join SongEntity on ss.remix.id=ss.id "
                 + "left join SongEntity on ss.cover.id=ss.id left join ChordProgressionEntity scp on ss.chordProgression.id =scp.id "
                 + "left join GenreEntity sg on ss.genre.id = sg.id where ss.id =:id";
         TypedQuery<SongSingleResponse> q = entityManager.createQuery(hql, SongSingleResponse.class).setParameter("id", songId);
@@ -157,16 +166,36 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
     }
 
     public List<LoV> getSongsNotInAlbum(final Long albumId) {
-        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from SongEntity s left join SongArtistEntity sa on s.id=sa.song.id where sa.album.id!=:albumId or sa.id=null";
+        var cases = "case when s.dateOfRelease is not null then concat(s.name, ' (', s.dateOfRelease,')')" + " else s.name end";
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id," + cases + ") from SongEntity s "
+                + "left join SongArtistEntity sa on s.id=sa.song.id " + "where sa.song.id is null or sa.album.id!=:albumId " + "order by "
+                + cases;
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("albumId", albumId);
         return query.getResultList();
+
     }
 
     public List<SongSearchResponse> find(final String songName, final String sortBy, final Long remixId, final Long coverId,
             final List<Long> artistIds, final List<Long> albumIds, final List<Long> genreIds, final int page, final int pageSize) {
-        var query = "select new ba.com.zira.sdr.api.model.song.SongSearchResponse(ss.id, ss.name, ss.outlineText, ss.modified) from SongEntity ss left join SongArtistEntity ssa on ss.id = ssa.song.id "
-                + "left join AlbumEntity sa on sa.id = ssa.album.id join GenreEntity sg on ss.genre.id = sg.id "
-                + "where (ss.name like :songName or :songName is null or :songName = '') and (:remixId is null or ss.remix.id is not null) and (:coverId is null or ss.cover.id is not null) and (coalesce(:artistIds, null) is null or ssa.artist.id in :artistIds) and (coalesce(:albumIds, null) is null or ssa.album.id in :albumIds) and (coalesce(:genreIds, null) is null or ss.genre.id in :genreIds)";
+        var query = "select distinct new ba.com.zira.sdr.api.model.song.SongSearchResponse(ss.id, ss.name, ss.outlineText, ss.modified) from SongEntity ss left join SongArtistEntity ssa on ss.id = ssa.artist.id  left join AlbumEntity sa on sa.id = ssa.album.id \r\n"
+                + "left join GenreEntity sg on ss.genre.id = sg.id where lower(ss.name) like lower(CONCAT('%', :songName, '%')) ";
+
+        if (remixId != null) {
+            query += "and ss.remix.id = :remixId ";
+        }
+        if (coverId != null) {
+            query += "and ss.cover.id = :coverId ";
+        }
+        if (artistIds != null && !artistIds.isEmpty()) {
+            query += "and ssa.artist.id in :artistIds ";
+        }
+        if (albumIds != null && !albumIds.isEmpty()) {
+            query += "and sa.id in :albumIds ";
+        }
+        if (genreIds != null && !genreIds.isEmpty()) {
+            query += "and sg.id in :genreIds ";
+        }
+
         if ("last_date".equals(sortBy)) {
             query += " order by ss.modified desc";
         }
@@ -174,53 +203,23 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         else {
             query += " order by ss.name";
         }
-
         var q = entityManager.createQuery(query, SongSearchResponse.class);
-
+        q.setParameter(SONG_NAME, songName != null ? songName : "");
         if (remixId != null) {
-            q.setParameter(REMIX_ID, true);
-            if (remixId == 0) {
-                q.setParameter(REMIX_ID, null);
-            }
+            q.setParameter(REMIX_ID, remixId);
         }
-
-        else {
-            q.setParameter(REMIX_ID, null);
-        }
-
         if (coverId != null) {
-            q.setParameter(COVER_ID, true);
-            if (coverId == 0) {
-                q.setParameter(COVER_ID, null);
-            }
-        } else {
-            q.setParameter(COVER_ID, null);
+            q.setParameter(COVER_ID, coverId);
         }
-
-        if (songName != null && !songName.isEmpty()) {
-            q.setParameter("songName", "%" + songName + "%");
-        } else {
-            q.setParameter("songName", null);
+        if (artistIds != null && !artistIds.isEmpty()) {
+            q.setParameter(ARTIST_ID, artistIds);
         }
-
-        if (artistIds != null) {
-            q.setParameter("artistIds", artistIds);
-        } else {
-            q.setParameter("artistIds", null);
+        if (albumIds != null && !albumIds.isEmpty()) {
+            q.setParameter(ALBUM_ID, albumIds);
         }
-
-        if (albumIds != null) {
-            q.setParameter("albumIds", albumIds);
-        } else {
-            q.setParameter("albumIds", null);
+        if (genreIds != null && !genreIds.isEmpty()) {
+            q.setParameter(GENRE_ID, genreIds);
         }
-
-        if (genreIds != null) {
-            q.setParameter("genreIds", genreIds);
-        } else {
-            q.setParameter("genreIds", null);
-        }
-
         // Apply pagination
         int firstResult = (page - 1) * pageSize;
         int maxResults = pageSize;
@@ -291,13 +290,13 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
     public List<LoV> getAllSongsWithNameLike(String songName) {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from SongEntity s where lower(s.name) like lower(:songName)";
-        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("songName", songName);
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter(SONG_NAME, songName);
         return query.getResultList();
     }
 
     public void updateDeezerFields(String songName, String deezerId, String deezerStatus, String information) {
         var hql = "update SongEntity set deezerId = :deezerId, information = :information ,deezerStatus=:deezerStatus where lower(name) like lower(:songName)";
-        Query query = entityManager.createQuery(hql).setParameter("songName", songName).setParameter("deezerId", deezerId)
+        Query query = entityManager.createQuery(hql).setParameter(SONG_NAME, songName).setParameter("deezerId", deezerId)
                 .setParameter("information", information).setParameter("deezerStatus", deezerStatus);
         query.executeUpdate();
     }
@@ -309,6 +308,51 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         query.toString();
         query.setMaxResults(75);
 
+        return query.getResultList();
+    }
+
+    public Long countAllDeezerFields() {
+        var hql = "select count(*) from SongEntity s where s.deezerId is not null";
+        TypedQuery<Long> query = entityManager.createQuery(hql, Long.class);
+        return query.getSingleResult();
+    }
+
+    public LocalDateTime getLastModified() {
+        var hql = "select sa.modified from SongEntity sa where sa.deezerId is not null and sa.modified is not null order by sa.modified desc";
+        TypedQuery<LocalDateTime> query = entityManager.createQuery(hql, LocalDateTime.class).setMaxResults(1);
+        return query.getSingleResult();
+    }
+
+    public List<DeezerIntegrationTypesData> getLastUpdatedDeezerFields() {
+        var hql = "select distinct new ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationTypesData(case when ss.modified > sa.modified and ss.deezerId is not null then 'SONG' else 'ARTIST' end ,"
+                + "case when ss.modified > sa.modified and ss.deezerId  is not null then ss.modified else sa.modified end as modification, "
+                + "case when (case when ss.modified > sa.modified and ss.deezerId is not null then 'SONG' else 'ARTIST' end) = :song then ss.name else sa.name end, "
+                + "case when (case when ss.modified > sa.modified and ss.deezerId is not null then 'SONG' else 'ARTIST' end) = :song then ss.deezerId else cast(sa.deezerId as string) end) "
+                + "from SongEntity ss join SongArtistEntity ssa on ss.id = ssa.song.id join ArtistEntity sa on ssa.artist.id = sa.id\r\n"
+                + "where ss.modified is not null and sa.modified is not null and (ss.deezerId is not null or sa.deezerId is not null) order by modification desc";
+        TypedQuery<DeezerIntegrationTypesData> query = entityManager.createQuery(hql, DeezerIntegrationTypesData.class)
+                .setParameter("song", "SONG").setMaxResults(10);
+        return query.getResultList();
+    }
+
+    public List<SongLyricData> getSongLyricData() {
+        var hql = "select new ba.com.zira.sdr.api.model.moritsintegration.SongLyricData(s.id,s.name,lan.name,s.playtime)"
+                + "from SongEntity s join LyricEntity l on s.id=l.song join LanguageEntity lan on l.language=lan.id order by s.id";
+        TypedQuery<SongLyricData> query = entityManager.createQuery(hql, SongLyricData.class);
+        return query.getResultList();
+    }
+
+    public List<MusicMatchIntegrationStatus> getMusicMatchIntegrationStatus() {
+
+        var hql = "select new ba.com.zira.sdr.api.model.moritsintegration.MusicMatchIntegrationStatus('" + ObjectType.SONG.getValue()
+                + "',s.id,s.name,s.modified,s.musicMatchStatus)" + "from SongEntity s";
+        TypedQuery<MusicMatchIntegrationStatus> query = entityManager.createQuery(hql, MusicMatchIntegrationStatus.class);
+        return query.getResultList();
+    }
+
+    public List<DoubleStringLoV> getMusicMatchStatusDistribution() {
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.DoubleStringLoV(s.musicMatchStatus, count(s)+0.0) from SongEntity s group by s.musicMatchStatus";
+        TypedQuery<DoubleStringLoV> query = entityManager.createQuery(hql, DoubleStringLoV.class);
         return query.getResultList();
     }
 

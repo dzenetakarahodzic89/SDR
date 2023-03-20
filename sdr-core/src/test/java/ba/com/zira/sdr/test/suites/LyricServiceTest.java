@@ -1,5 +1,18 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.assertj.core.api.Assertions;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -17,22 +30,11 @@ import ba.com.zira.sdr.core.mapper.LyricMapper;
 import ba.com.zira.sdr.core.validation.LyricRequestValidation;
 import ba.com.zira.sdr.dao.LyricDAO;
 import ba.com.zira.sdr.dao.SongDAO;
+import ba.com.zira.sdr.dao.model.LanguageEntity;
 import ba.com.zira.sdr.dao.model.LyricEntity;
 import ba.com.zira.sdr.dao.model.SongEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
-import org.assertj.core.api.Assertions;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @ContextConfiguration(classes = ApplicationTestConfiguration.class)
 public class LyricServiceTest extends BasicTestConfiguration {
@@ -64,7 +66,10 @@ public class LyricServiceTest extends BasicTestConfiguration {
             firstsongEnt.setId(1L);
             LyricEntity firstLyricEntity = new LyricEntity();
             firstLyricEntity.setId(1L);
-            firstLyricEntity.setLanguage("Test Language");
+            var language = new LanguageEntity();
+            language.setName("Test Language");
+            language.setId(1L);
+            firstLyricEntity.setLanguage(language);
             firstLyricEntity.setText("Test Type 1");
             firstLyricEntity.setSong(firstsongEnt);
             firstLyricEntity.setStatus(Status.ACTIVE.getValue());
@@ -73,7 +78,7 @@ public class LyricServiceTest extends BasicTestConfiguration {
             secondSongEnt.setId(2L);
             LyricEntity secondLyricEntity = new LyricEntity();
             secondLyricEntity.setId(2L);
-            secondLyricEntity.setLanguage("Test Language");
+            secondLyricEntity.setLanguage(language);
             secondLyricEntity.setText("Test Type 2");
             secondLyricEntity.setSong(secondSongEnt);
             secondLyricEntity.setStatus(Status.ACTIVE.getValue());
@@ -82,7 +87,7 @@ public class LyricServiceTest extends BasicTestConfiguration {
             thirdSongEnt.setId(3L);
             LyricEntity thirdLyricEntity = new LyricEntity();
             thirdLyricEntity.setId(3L);
-            thirdLyricEntity.setLanguage("Test Language");
+            thirdLyricEntity.setLanguage(language);
             thirdLyricEntity.setText("Test Type 3");
             thirdLyricEntity.setSong(thirdSongEnt);
             thirdLyricEntity.setStatus(Status.ACTIVE.getValue());
@@ -98,21 +103,21 @@ public class LyricServiceTest extends BasicTestConfiguration {
 
             Lyric firstResponse = new Lyric();
             firstResponse.setId(1L);
-            firstResponse.setLanguage("Test Language");
+            firstResponse.setLanguageId(1L);
             firstResponse.setText("Test Type 1");
             firstResponse.setSongId(1L);
             firstResponse.setStatus(Status.ACTIVE.getValue());
 
             Lyric secondResponse = new Lyric();
             secondResponse.setId(2L);
-            secondResponse.setLanguage("Test Language");
+            secondResponse.setLanguageId(1L);
             secondResponse.setText("Test Type 2");
             secondResponse.setSongId(2L);
             secondResponse.setStatus(Status.ACTIVE.getValue());
 
             Lyric thirdResponse = new Lyric();
             thirdResponse.setId(3L);
-            thirdResponse.setLanguage("Test Language");
+            thirdResponse.setLanguageId(1L);
             thirdResponse.setText("Test Type 3");
             thirdResponse.setSongId(3L);
             thirdResponse.setStatus(Status.ACTIVE.getValue());
@@ -151,7 +156,7 @@ public class LyricServiceTest extends BasicTestConfiguration {
             EntityRequest<LyricCreateRequest> req = new EntityRequest<>();
 
             var newLyricRequest = new LyricCreateRequest();
-            newLyricRequest.setLanguage("Test Language");
+            newLyricRequest.setLanguageId(1L);
             newLyricRequest.setText("Test Type 1");
             newLyricRequest.setSongId(1L);
 
@@ -161,14 +166,20 @@ public class LyricServiceTest extends BasicTestConfiguration {
             songEnt.setId(1L);
             var newLyricEnt = new LyricEntity();
             newLyricEnt.setId(1L);
-            newLyricEnt.setLanguage("Test Language");
+
+            LyricEntity thirdLyricEntity = new LyricEntity();
+            thirdLyricEntity.setId(3L);
+            var language = new LanguageEntity();
+            language.setName("Test Language");
+            language.setId(1L);
+            newLyricEnt.setLanguage(language);
             newLyricEnt.setText("Test Type 1");
             newLyricEnt.setSong(songEnt);
             newLyricEnt.setStatus(Status.ACTIVE.getValue());
 
             var newLyric = new Lyric();
             // newLyric.setId(1L);
-            newLyric.setLanguage("Test Language");
+            newLyric.setLanguageId(language.getId());
             newLyric.setText("Test Type 1");
             newLyric.setSongId(1L);
             newLyric.setStatus(Status.ACTIVE.getValue());
@@ -194,28 +205,29 @@ public class LyricServiceTest extends BasicTestConfiguration {
 
             LyricUpdateRequest updateLyricRequest = new LyricUpdateRequest(); //
             updateLyricRequest.setId(1L);
-            updateLyricRequest.setLanguage("Test Language");
+            updateLyricRequest.setLanguageId(1L);
             updateLyricRequest.setText("Test Type 1");
             updateLyricRequest.setSongId(1L);
             req.setEntity(updateLyricRequest);
-
+            var language = new LanguageEntity();
+            language.setName("Test Language");
+            language.setId(1L);
             var lyricEnt = new LyricEntity(); // lyricEnt.setId(1L);
-            lyricEnt.setLanguage("Test Language");
+            lyricEnt.setLanguage(language);
             lyricEnt.setText("Test Type 1");
             // newLyricEnt.setSongId(1L);
             lyricEnt.setStatus(Status.ACTIVE.getValue());
 
             var lyric = new Lyric();
             lyric.setId(1L);
-            lyric.setLanguage("Test Language");
+            lyric.setLanguageId(language.getId());
             lyric.setText("Test Type 1");
             lyric.setSongId(1L);
             lyric.setStatus(Status.ACTIVE.getValue());
 
             Mockito.when(lyricRequestValidation.validateUpdateLyricRequest(req)).thenReturn(null);
 
-            Mockito.when(lyricDAO.findByPK(req.getEntity().getId()))
-                    .thenReturn(lyricEnt); // Mockito.when(songDAO.findByPK(1L)).thenReturn(songEnt);
+            Mockito.when(lyricDAO.findByPK(req.getEntity().getId())).thenReturn(lyricEnt); // Mockito.when(songDAO.findByPK(1L)).thenReturn(songEnt);
 
             Mockito.doNothing().when(lyricDAO).merge(lyricEnt);
 

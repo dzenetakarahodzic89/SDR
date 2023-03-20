@@ -4,7 +4,6 @@ import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.request.ListRequest;
-import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
@@ -71,6 +70,6 @@ public interface InstrumentService {
 
     ListPayloadResponse<ResponseSongInstrumentEra> findAllSongsInErasForInstruments(EntityRequest<Long> request) throws ApiException;
 
-    PagedPayloadResponse<InstrumentSearchResponse> search(SearchRequest<InstrumentSearchRequest> request) throws ApiException;
+    PagedPayloadResponse<InstrumentSearchResponse> search(final EntityRequest<InstrumentSearchRequest> request) throws ApiException;
 
 }

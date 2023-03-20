@@ -21,11 +21,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class ArtistSearch {
 
     @JsonProperty("data")
-    private List<Datum> data = new ArrayList<Datum>();
+    private List<Datum> data = new ArrayList<>();
     @JsonProperty("total")
     private Integer total;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonProperty("data")
     public List<Datum> getData() {
@@ -74,19 +74,20 @@ public class ArtistSearch {
 
     @Override
     public String toString() {
+        String nullValue = "<null>";
         StringBuilder sb = new StringBuilder();
         sb.append(ArtistSearch.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("data");
         sb.append('=');
-        sb.append(((this.data == null) ? "<null>" : this.data));
+        sb.append(((this.data == null) ? nullValue : this.data));
         sb.append(',');
         sb.append("total");
         sb.append('=');
-        sb.append(((this.total == null) ? "<null>" : this.total));
+        sb.append(((this.total == null) ? nullValue : this.total));
         sb.append(',');
         sb.append("additionalProperties");
         sb.append('=');
-        sb.append(((this.additionalProperties == null) ? "<null>" : this.additionalProperties));
+        sb.append(((this.additionalProperties == null) ? nullValue : this.additionalProperties));
         sb.append(',');
         if (sb.charAt((sb.length() - 1)) == ',') {
             sb.setCharAt((sb.length() - 1), ']');
@@ -110,7 +111,7 @@ public class ArtistSearch {
         if (other == this) {
             return true;
         }
-        if ((other instanceof ArtistSearch) == false) {
+        if (!(other instanceof ArtistSearch)) {
             return false;
         }
         ArtistSearch rhs = ((ArtistSearch) other);

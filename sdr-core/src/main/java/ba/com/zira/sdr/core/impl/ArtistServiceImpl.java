@@ -212,7 +212,7 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     public ListPayloadResponse<LoV> getArtistNames(EmptyRequest request) throws ApiException {
-        var artists = artistDAO.getArtistLoVs();
+        var artists = artistDAO.getArtistNamesAndSurnames();
         return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
     }
 

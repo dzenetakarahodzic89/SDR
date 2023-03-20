@@ -1,12 +1,16 @@
 package ba.com.zira.sdr.api.model.person;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
 @Data
+@AllArgsConstructor
+@RequiredArgsConstructor
 @Schema(description = "Properties of an Sample response")
 public class PersonResponse implements Serializable {
     private static final long serialVersionUID = 1L;

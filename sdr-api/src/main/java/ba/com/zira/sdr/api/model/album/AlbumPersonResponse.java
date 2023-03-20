@@ -2,6 +2,7 @@ package ba.com.zira.sdr.api.model.album;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import ba.com.zira.sdr.api.model.song.SongResponse;
@@ -17,7 +18,7 @@ public class AlbumPersonResponse implements Serializable {
     private Long id;
 
     @Schema(description = "Release date of album")
-    private LocalDateTime dateOfRelease;
+    private String dateOfRelease;
 
     @Schema(description = "Informations about album")
     private String information;
@@ -37,10 +38,11 @@ public class AlbumPersonResponse implements Serializable {
     @Schema(description = "Album songs")
     private List<SongResponse> songs;
 
-    public AlbumPersonResponse(Long id, LocalDateTime dateOfRelease, String information, String name, String status) {
+    public AlbumPersonResponse(final Long id, final LocalDateTime dateOfRelease, final String information, final String name,
+            final String status) {
         super();
         this.id = id;
-        this.dateOfRelease = dateOfRelease;
+        this.dateOfRelease = dateOfRelease != null ? dateOfRelease.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
         this.information = information;
         this.name = name;
         this.status = status;

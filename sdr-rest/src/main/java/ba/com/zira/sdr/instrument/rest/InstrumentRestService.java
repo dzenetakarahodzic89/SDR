@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.instrument.rest;
 
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,13 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.request.ListRequest;
-import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
@@ -58,16 +57,13 @@ public class InstrumentRestService {
         return instrumentService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
-    @Operation(summary = "Find Instruments based on custom filter")
+    @Operation(summary = "Instrument Search")
     @GetMapping(value = "search")
-    public PagedPayloadResponse<InstrumentSearchResponse> findByNamePerson(
+    public PagedPayloadResponse<InstrumentSearchResponse> search(
             @Parameter(required = false, description = "Name of the instrument") @RequestParam(required = false) final String name,
-            @Parameter(required = false,
-                    description = "Id of a person playing instrument") @RequestParam(required = false) final Long personId,
             @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy)
             throws ApiException {
-        return instrumentService.search(new SearchRequest<>(new InstrumentSearchRequest(name, personId, sortBy)));
-
+        return instrumentService.search(new EntityRequest<>(new InstrumentSearchRequest(name, sortBy)));
     }
 
     @Operation(summary = "Create instrument")
