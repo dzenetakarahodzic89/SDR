@@ -3,6 +3,7 @@ package ba.com.zira.sdr.core.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.UserRecommendationService;
+import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
 import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
@@ -87,6 +89,14 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
         List<UserRecommendationResponse> userSearch = userRecommendationDAO.averageScoreByGenre(request.getEntity().getUserIds());
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, userSearch);
+    }
+
+    @Override
+    public ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountry(EntityRequest<Pair<String, String>> request) {
+        userRecommendationRequestValidation.validateAverageScorePerCountryRequest(request);
+        var results = userRecommendationDAO.getAverageScorePerCountryForUser(request.getEntity().getKey(), request.getEntity().getValue());
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, results);
     }
 
 }

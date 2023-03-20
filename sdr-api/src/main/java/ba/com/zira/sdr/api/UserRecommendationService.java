@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.api;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -7,6 +9,7 @@ import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
+import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
 import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
@@ -73,9 +76,30 @@ public interface UserRecommendationService {
      * Find all users.
      *
      * Empty request
+     *
+     * @param req
+     *            the req
+     * @return the list payload response
      */
 
     ListPayloadResponse<UserRecommendationResponse> findAllUsers(EmptyRequest req);
 
+    /**
+     * Score compare.
+     *
+     * @param request
+     *            the request
+     * @return the list payload response
+     */
     ListPayloadResponse<UserRecommendationResponse> scoreCompare(EntityRequest<ScoreCompareRequest> request);
+
+    /**
+     * Gets the average score per country.
+     *
+     * @param request
+     *            the request
+     * @return the average score per country
+     */
+    ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountry(EntityRequest<Pair<String, String>> request);
+
 }
