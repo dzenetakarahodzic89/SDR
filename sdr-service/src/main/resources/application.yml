@@ -1,40 +1,41 @@
 #DO NOT MODIFY THIS FILE!!!
 #Use application-override.properties instead.
 server:
-  port: '8123'
+  port: "8123"
 spring:
   application:
     name: ${application.name}
   profiles:
-    active: 'default'
+    active: "default"
   datasource:
     driver-class-name: org.postgresql.Driver
-    password: '!n2bvigor!'
+    password: "!n2bvigor!"
     username: n2bvigor
     url: jdbc:postgresql://172.20.20.45:5432/test
   jersey:
     application-path: sdr
   config:
     import: optional:configserver:http://172.20.20.45:8888/
-  cloud:   
-   config:
+  cloud:
+    config:
       enabled: true
-   discovery:
+    discovery:
       service-id: configuration
       enabled: true
   security:
-      oauth2:
-        client:
-          registration:
-            spotify:
-              clientId: caf3c29120f748f3a736de3ed12a336d
-              clientSecret: d33253e0ec8b4e348249b876ca18fdfc
-              accessTokenUri: https://accounts.spotify.com/api/token
-              apiUrl: https://api.spotify.com/v1
-              responseLimit: 5
-              taskDelay: 600000
-              disabled: false
-              
+    oauth2:
+      client:
+        registration:
+          spotify:
+            clientId: caf3c29120f748f3a736de3ed12a336d
+            clientSecret: d33253e0ec8b4e348249b876ca18fdfc
+            accessTokenUri: https://accounts.spotify.com/api/token
+            apiUrl: https://api.spotify.com/v1
+            responseLimit: 5
+            taskDelay: 600000
+            disabled: false
+rss:
+  taskDelay: 3600000
 
 uaa:
   service:
@@ -45,16 +46,15 @@ root:
 zira:
   logging:
     level: debug
-    
+
 management:
   endpoints:
     web:
       exposure:
         include: health,info,prometheus,loggers
 image:
-  default:
-    url:http://172.20.20.45:82//vigor//img/mario.jpg
-     
+  default: url:http://172.20.20.45:82//vigor//img/mario.jpg
+
 eureka:
   instance:
     preferIpAddress: true
@@ -62,10 +62,10 @@ eureka:
     registerWithEureka: true
     serviceUrl:
       defaultZone: http://172.20.20.45:8081/eureka
-  
+
 feign:
   client:
     config:
-     default:
-      connectTimeout: 160000000
-      readTimeout: 160000000
+      default:
+        connectTimeout: 160000000
+        readTimeout: 160000000

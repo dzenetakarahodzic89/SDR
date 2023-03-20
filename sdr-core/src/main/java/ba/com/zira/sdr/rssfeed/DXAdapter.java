@@ -1,20 +1,18 @@
 package ba.com.zira.sdr.rssfeed;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.io.FeedException;
 
 import ba.com.zira.sdr.dao.model.NewsArticlesEntity;
 
 public class DXAdapter implements RssReader {
 
     @Override
-    public List<NewsArticlesEntity> read(SyndFeed feed, String url, String userId) throws IOException, FeedException {
+    public List<NewsArticlesEntity> read(SyndFeed feed, String url, String userId) {
         var newsArticleList = new ArrayList<NewsArticlesEntity>();
         for (SyndEntry entry : feed.getEntries()) {
             var newArticleEntry = new NewsArticlesEntity();
