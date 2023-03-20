@@ -21,5 +21,5 @@ public interface DeezerIntegrationService {
 
     public PayloadResponse<String> delete(final EntityRequest<String> request) throws ApiException;
 
-    public PayloadResponse<DeezerIntegrationStatisticsResponse> getDataForStatistics(EmptyRequest request);
+    public PayloadResponse<DeezerIntegrationStatisticsResponse> getDataForStatistics(EmptyRequest request) throws ApiException;
 }

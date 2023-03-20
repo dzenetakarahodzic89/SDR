@@ -271,8 +271,7 @@ public class PersonServiceTest extends BasicTestConfiguration {
 
             var personUpdateResponse = personService.update(request);
             Assertions.assertThat(personUpdateResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
-                    .ignoringFields("information", "dateOfBirth", "dateOfDeath", "created",
-                            "createdBy", "modified", "modifiedBy")
+                    .ignoringFields("information", "dateOfBirth", "dateOfDeath", "created", "createdBy", "modified", "modifiedBy")
                     .isEqualTo(personResponse);
 
         } catch (Exception e) {
