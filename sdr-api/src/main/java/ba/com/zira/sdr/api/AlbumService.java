@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.api;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.request.SearchRequest;
@@ -14,8 +15,9 @@ import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
+import ba.com.zira.sdr.api.model.album.SongOfAlbum;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
-import ba.com.zira.sdr.api.model.song.Song;
+import ba.com.zira.sdr.api.model.lov.LoV;
 
 /**
  * The Interface AlbumService.
@@ -119,6 +121,8 @@ public interface AlbumService {
      * @throws ApiException
      *             the api exception
      */
-    PayloadResponse<Song> addSongToAlbum(EntityRequest<SongOfAlbumUpdateRequest> request) throws ApiException;
+    PayloadResponse<SongOfAlbum> addSongToAlbum(EntityRequest<SongOfAlbumUpdateRequest> request) throws ApiException;
+
+    ListPayloadResponse<LoV> getAlbumLoVs(EmptyRequest request) throws ApiException;
 
 }

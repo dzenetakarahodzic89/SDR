@@ -99,4 +99,10 @@ public class GenreRestService {
         return genreService.delete(new EntityRequest<>(id));
     }
 
+    @GetMapping(value = "lov")
+    public ListPayloadResponse<LoV> getGenreLoVs() throws ApiException {
+        var req = new EmptyRequest();
+        return genreService.getGenreLoVs(req);
+    }
+
 }

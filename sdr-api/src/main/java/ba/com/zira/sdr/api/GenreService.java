@@ -111,4 +111,5 @@ public interface GenreService {
      */
     ListPayloadResponse<LoV> getSubGenreMainGenreNames(final EmptyRequest request) throws ApiException;
 
+    ListPayloadResponse<LoV> getGenreLoVs(final EmptyRequest request) throws ApiException;
 }

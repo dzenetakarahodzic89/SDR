@@ -12,6 +12,8 @@ import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
+import ba.com.zira.sdr.api.model.person.PersonSearchRequest;
+import ba.com.zira.sdr.api.model.person.PersonSearchResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
 
 /**
@@ -75,5 +77,7 @@ public interface PersonService {
     public ListPayloadResponse<LoV> getPersonLoVs(EmptyRequest req) throws ApiException;
 
     PayloadResponse<PersonOverviewResponse> retrieveById(final EntityRequest<Long> request) throws ApiException;
+
+    ListPayloadResponse<PersonSearchResponse> search(final EntityRequest<PersonSearchRequest> request) throws ApiException;
 
 }

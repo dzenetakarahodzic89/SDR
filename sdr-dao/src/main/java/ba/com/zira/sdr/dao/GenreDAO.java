@@ -108,4 +108,10 @@ public class GenreDAO extends AbstractDAO<GenreEntity, Long> {
         return query.getResultList();
     }
 
+    public List<LoV> getGenreLoV() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(g.id,g.name) from GenreEntity g";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);
+        return query.getResultList();
+    }
+
 }

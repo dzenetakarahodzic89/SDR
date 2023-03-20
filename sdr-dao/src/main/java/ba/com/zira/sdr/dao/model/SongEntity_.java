@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.dao.model;
 
+import java.time.LocalDateTime;
+
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
@@ -15,5 +17,8 @@ public abstract class SongEntity_ {
     public static volatile SingularAttribute<SongEntity, String> name;
     public static volatile SingularAttribute<SongEntity, GenreEntity> genre;
     public static volatile SingularAttribute<SongEntity, Long> playtimeInSeconds;
+    public static volatile SingularAttribute<SongEntity, LocalDateTime> dateOfRelease;
+    public static SingularAttribute<SongEntity, LocalDateTime> modified;
+    public static SingularAttribute<SongEntity, String> musicMatchStatus;
 
 }

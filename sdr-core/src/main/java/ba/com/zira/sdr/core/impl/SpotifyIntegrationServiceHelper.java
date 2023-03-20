@@ -190,7 +190,7 @@ public class SpotifyIntegrationServiceHelper {
     @Value("${spring.security.oauth2.client.registration.spotify.responseLimit}")
     private int responseLimit;
 
-    @Value("${spring.security.oauth2.client.registration.spotify.disabled}")
+    @Value("${spring.security.oauth2.client.registration.spotify.disabled:true}")
     private Boolean integrationDisabled;
 
     /** The Constant systemUser. */
@@ -998,9 +998,9 @@ public class SpotifyIntegrationServiceHelper {
      * Removes the duplicates.
      */
     private void removeDuplicates() {
-        var duplicateAlbums = albumDAO.getDuplicateAlbums().stream().map(a -> a.getId()).collect(Collectors.toList());
-        var duplicateArtists = artistDAO.getDuplicateArtists().stream().map(a -> a.getId()).collect(Collectors.toList());
-        var duplicateSongs = songDAO.getDuplicateSongs().stream().map(s -> s.getId()).collect(Collectors.toList());
+        var duplicateAlbums = albumDAO.getDuplicateAlbums().stream().map(AlbumEntity::getId).collect(Collectors.toList());
+        var duplicateArtists = artistDAO.getDuplicateArtists().stream().map(ArtistEntity::getId).collect(Collectors.toList());
+        var duplicateSongs = songDAO.getDuplicateSongs().stream().map(SongEntity::getId).collect(Collectors.toList());
 
         LOGGER.info("SPOTIFY INTEGRATION: Found {} duplicate albums, {} duplicate songs and {} duplicate artists. Removing duplicates...",
                 duplicateAlbums.size(), duplicateSongs.size(), duplicateArtists.size());

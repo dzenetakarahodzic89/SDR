@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -31,6 +33,8 @@ import ba.com.zira.sdr.api.DeezerIntegrationService;
 import ba.com.zira.sdr.api.enums.DeezerStatus;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegration;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationCreateRequest;
+import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationStatisticsResponse;
+import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationTypes;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.core.mapper.DeezerIntegrationMapper;
@@ -272,5 +276,30 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
             }
             deezerIntegrationDAO.updateStatus(DeezerStatus.SAVED.getValue(), trackList.getId());
         }
+    }
+
+    @Override
+    public PayloadResponse<DeezerIntegrationStatisticsResponse> getDataForStatistics(EmptyRequest request) {
+        var countSongTotal = songDAO.countAll();
+        var countSongDeezer = songDAO.countAllDeezerFields();
+        var countArtistTotal = artistDAO.countAll();
+        var countArtistDeezer = artistDAO.countAllDeezerFields();
+        var songType = new DeezerIntegrationTypes();
+        songType.setTableName("SONG");
+        songType.setIsFinished(countSongTotal == countSongDeezer);
+        songType.setLastModified(songDAO.getLastModified());
+        songType.setSequence(1L);
+        var artistType = new DeezerIntegrationTypes();
+        artistType.setTableName(ARTIST_CONST);
+        artistType.setIsFinished(countArtistTotal == countArtistDeezer);
+        artistType.setLastModified(artistDAO.getLastModified());
+        artistType.setSequence(2L);
+        var deezerTypes = new ArrayList<DeezerIntegrationTypes>();
+        deezerTypes.add(songType);
+        deezerTypes.add(artistType);
+        var lastDeezerDoneFields = songDAO.getLastUpdatedDeezerFields();
+        var responseStatistics = new DeezerIntegrationStatisticsResponse((long) countSongTotal, countSongDeezer, (long) countArtistTotal,
+                countArtistDeezer, deezerTypes, lastDeezerDoneFields);
+        return new PayloadResponse<>(request, ResponseCode.OK, responseStatistics);
     }
 }
