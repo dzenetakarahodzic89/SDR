@@ -84,6 +84,8 @@ public interface ArtistService {
 
     PayloadResponse<ArtistByEras> countArtistsByEras(EntityRequest<Long> request);
 
+    PayloadResponse<String> copyImageToPersons(final EntityRequest<Long> request) throws ApiException;
+
     ListPayloadResponse<ArtistSearchResponse> getArtistsBySearch(EntityRequest<ArtistSearchRequest> request) throws ApiException;
 
     ListPayloadResponse<ArtistSearchResponse> getRandomArtistsForSearch(EmptyRequest request) throws ApiException;
