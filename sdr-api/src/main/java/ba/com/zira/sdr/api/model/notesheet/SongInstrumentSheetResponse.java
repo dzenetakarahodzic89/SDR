@@ -10,6 +10,6 @@ public class SongInstrumentSheetResponse implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long songId;
-    private Long InstrumentId;
+    private Long instrumentId;
 
 }

@@ -49,6 +49,8 @@ public class SongSimilarityDAO extends AbstractDAO<SongSimilarityEntity, Long> {
 
     }
 
+    private static final Random random = new Random();
+
     public SongSimilarityResponse getRandomSongSimilarity() {
         var hql = "select new ba.com.zira.sdr.api.model.songsimilarity.SongSimilarityResponse "
                 + "(ss.id, MAX(ss.songA.id), MAX(sA.name), MAX(aA.name), MAX(aA.dateOfRelease), MAX(ss.songB.id), MAX(sB.name), MAX(aB.name), MAX(aB.dateOfRelease)) "
@@ -58,10 +60,9 @@ public class SongSimilarityDAO extends AbstractDAO<SongSimilarityEntity, Long> {
                 + "join AlbumEntity aB on saB.album.id=aB.id group by ss.id";
         var countHql = "select count (s) from SongSimilarityEntity s";
         TypedQuery<Long> countQuery = entityManager.createQuery(countHql, Long.class);
-        int randomIndex = new Random().nextInt(countQuery.getSingleResult().intValue());
+        int randomIndex = random.nextInt(countQuery.getSingleResult().intValue());
         TypedQuery<SongSimilarityResponse> query = entityManager.createQuery(hql, SongSimilarityResponse.class);
         return query.setFirstResult(randomIndex).setMaxResults(1).getSingleResult();
-
     }
 
 }

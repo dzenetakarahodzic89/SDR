@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.instrument.rest;
 
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -63,7 +63,7 @@ public class InstrumentRestService {
             @Parameter(required = false, description = "Name of the instrument") @RequestParam(required = false) final String name,
             @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy)
             throws ApiException {
-        return instrumentService.search(new EntityRequest<InstrumentSearchRequest>(new InstrumentSearchRequest(name, sortBy)));
+        return instrumentService.search(new EntityRequest<>(new InstrumentSearchRequest(name, sortBy)));
     }
 
     @Operation(summary = "Create instrument")

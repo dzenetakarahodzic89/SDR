@@ -298,8 +298,8 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
         deezerTypes.add(songType);
         deezerTypes.add(artistType);
         var lastDeezerDoneFields = songDAO.getLastUpdatedDeezerFields();
-        var responseStatistics = new DeezerIntegrationStatisticsResponse((long) countSongTotal, (long) countSongDeezer,
-                (long) countArtistTotal, (long) countArtistDeezer, deezerTypes, lastDeezerDoneFields);
+        var responseStatistics = new DeezerIntegrationStatisticsResponse((long) countSongTotal, countSongDeezer, (long) countArtistTotal,
+                countArtistDeezer, deezerTypes, lastDeezerDoneFields);
         return new PayloadResponse<>(request, ResponseCode.OK, responseStatistics);
     }
 }

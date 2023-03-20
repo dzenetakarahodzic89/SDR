@@ -3,7 +3,9 @@ package ba.com.zira.sdr.deezer.tracklist;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.processing.Generated;
+
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,18 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "id",
-    "title",
-    "cover",
-    "cover_small",
-    "cover_medium",
-    "cover_big",
-    "cover_xl",
-    "md5_image",
-    "tracklist",
-    "type"
-})
+@JsonPropertyOrder({ "id", "title", "cover", "cover_small", "cover_medium", "cover_big", "cover_xl", "md5_image", "tracklist", "type" })
 @Generated("jsonschema2pojo")
 public class Album {
 
@@ -48,7 +39,7 @@ public class Album {
     @JsonProperty("type")
     private String type;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonProperty("id")
     public String getId() {
@@ -217,54 +208,55 @@ public class Album {
 
     @Override
     public String toString() {
+        String nullValue = "<null>";
         StringBuilder sb = new StringBuilder();
         sb.append(Album.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("id");
         sb.append('=');
-        sb.append(((this.id == null)?"<null>":this.id));
+        sb.append(((this.id == null) ? nullValue : this.id));
         sb.append(',');
         sb.append("title");
         sb.append('=');
-        sb.append(((this.title == null)?"<null>":this.title));
+        sb.append(((this.title == null) ? nullValue : this.title));
         sb.append(',');
         sb.append("cover");
         sb.append('=');
-        sb.append(((this.cover == null)?"<null>":this.cover));
+        sb.append(((this.cover == null) ? nullValue : this.cover));
         sb.append(',');
         sb.append("coverSmall");
         sb.append('=');
-        sb.append(((this.coverSmall == null)?"<null>":this.coverSmall));
+        sb.append(((this.coverSmall == null) ? nullValue : this.coverSmall));
         sb.append(',');
         sb.append("coverMedium");
         sb.append('=');
-        sb.append(((this.coverMedium == null)?"<null>":this.coverMedium));
+        sb.append(((this.coverMedium == null) ? nullValue : this.coverMedium));
         sb.append(',');
         sb.append("coverBig");
         sb.append('=');
-        sb.append(((this.coverBig == null)?"<null>":this.coverBig));
+        sb.append(((this.coverBig == null) ? nullValue : this.coverBig));
         sb.append(',');
         sb.append("coverXl");
         sb.append('=');
-        sb.append(((this.coverXl == null)?"<null>":this.coverXl));
+        sb.append(((this.coverXl == null) ? nullValue : this.coverXl));
         sb.append(',');
         sb.append("md5Image");
         sb.append('=');
-        sb.append(((this.md5Image == null)?"<null>":this.md5Image));
+        sb.append(((this.md5Image == null) ? nullValue : this.md5Image));
         sb.append(',');
         sb.append("tracklist");
         sb.append('=');
-        sb.append(((this.tracklist == null)?"<null>":this.tracklist));
+        sb.append(((this.tracklist == null) ? nullValue : this.tracklist));
         sb.append(',');
         sb.append("type");
         sb.append('=');
-        sb.append(((this.type == null)?"<null>":this.type));
+        sb.append(((this.type == null) ? nullValue : this.type));
         sb.append(',');
         sb.append("additionalProperties");
         sb.append('=');
-        sb.append(((this.additionalProperties == null)?"<null>":this.additionalProperties));
+        sb.append(((this.additionalProperties == null) ? nullValue : this.additionalProperties));
         sb.append(',');
-        if (sb.charAt((sb.length()- 1)) == ',') {
-            sb.setCharAt((sb.length()- 1), ']');
+        if (sb.charAt((sb.length() - 1)) == ',') {
+            sb.setCharAt((sb.length() - 1), ']');
         } else {
             sb.append(']');
         }
@@ -274,17 +266,17 @@ public class Album {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.cover == null)? 0 :this.cover.hashCode()));
-        result = ((result* 31)+((this.coverSmall == null)? 0 :this.coverSmall.hashCode()));
-        result = ((result* 31)+((this.coverBig == null)? 0 :this.coverBig.hashCode()));
-        result = ((result* 31)+((this.tracklist == null)? 0 :this.tracklist.hashCode()));
-        result = ((result* 31)+((this.coverMedium == null)? 0 :this.coverMedium.hashCode()));
-        result = ((result* 31)+((this.coverXl == null)? 0 :this.coverXl.hashCode()));
-        result = ((result* 31)+((this.md5Image == null)? 0 :this.md5Image.hashCode()));
-        result = ((result* 31)+((this.id == null)? 0 :this.id.hashCode()));
-        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));
-        result = ((result* 31)+((this.title == null)? 0 :this.title.hashCode()));
-        result = ((result* 31)+((this.type == null)? 0 :this.type.hashCode()));
+        result = ((result * 31) + ((this.cover == null) ? 0 : this.cover.hashCode()));
+        result = ((result * 31) + ((this.coverSmall == null) ? 0 : this.coverSmall.hashCode()));
+        result = ((result * 31) + ((this.coverBig == null) ? 0 : this.coverBig.hashCode()));
+        result = ((result * 31) + ((this.tracklist == null) ? 0 : this.tracklist.hashCode()));
+        result = ((result * 31) + ((this.coverMedium == null) ? 0 : this.coverMedium.hashCode()));
+        result = ((result * 31) + ((this.coverXl == null) ? 0 : this.coverXl.hashCode()));
+        result = ((result * 31) + ((this.md5Image == null) ? 0 : this.md5Image.hashCode()));
+        result = ((result * 31) + ((this.id == null) ? 0 : this.id.hashCode()));
+        result = ((result * 31) + ((this.additionalProperties == null) ? 0 : this.additionalProperties.hashCode()));
+        result = ((result * 31) + ((this.title == null) ? 0 : this.title.hashCode()));
+        result = ((result * 31) + ((this.type == null) ? 0 : this.type.hashCode()));
         return result;
     }
 
@@ -293,11 +285,22 @@ public class Album {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Album) == false) {
+        if (!(other instanceof Album)) {
             return false;
         }
         Album rhs = ((Album) other);
-        return ((((((((((((this.cover == rhs.cover)||((this.cover!= null)&&this.cover.equals(rhs.cover)))&&((this.coverSmall == rhs.coverSmall)||((this.coverSmall!= null)&&this.coverSmall.equals(rhs.coverSmall))))&&((this.coverBig == rhs.coverBig)||((this.coverBig!= null)&&this.coverBig.equals(rhs.coverBig))))&&((this.tracklist == rhs.tracklist)||((this.tracklist!= null)&&this.tracklist.equals(rhs.tracklist))))&&((this.coverMedium == rhs.coverMedium)||((this.coverMedium!= null)&&this.coverMedium.equals(rhs.coverMedium))))&&((this.coverXl == rhs.coverXl)||((this.coverXl!= null)&&this.coverXl.equals(rhs.coverXl))))&&((this.md5Image == rhs.md5Image)||((this.md5Image!= null)&&this.md5Image.equals(rhs.md5Image))))&&((this.id == rhs.id)||((this.id!= null)&&this.id.equals(rhs.id))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.title == rhs.title)||((this.title!= null)&&this.title.equals(rhs.title))))&&((this.type == rhs.type)||((this.type!= null)&&this.type.equals(rhs.type))));
+        return ((((((((((((this.cover == rhs.cover) || ((this.cover != null) && this.cover.equals(rhs.cover)))
+                && ((this.coverSmall == rhs.coverSmall) || ((this.coverSmall != null) && this.coverSmall.equals(rhs.coverSmall))))
+                && ((this.coverBig == rhs.coverBig) || ((this.coverBig != null) && this.coverBig.equals(rhs.coverBig))))
+                && ((this.tracklist == rhs.tracklist) || ((this.tracklist != null) && this.tracklist.equals(rhs.tracklist))))
+                && ((this.coverMedium == rhs.coverMedium) || ((this.coverMedium != null) && this.coverMedium.equals(rhs.coverMedium))))
+                && ((this.coverXl == rhs.coverXl) || ((this.coverXl != null) && this.coverXl.equals(rhs.coverXl))))
+                && ((this.md5Image == rhs.md5Image) || ((this.md5Image != null) && this.md5Image.equals(rhs.md5Image))))
+                && ((this.id == rhs.id) || ((this.id != null) && this.id.equals(rhs.id))))
+                && ((this.additionalProperties == rhs.additionalProperties)
+                        || ((this.additionalProperties != null) && this.additionalProperties.equals(rhs.additionalProperties))))
+                && ((this.title == rhs.title) || ((this.title != null) && this.title.equals(rhs.title))))
+                && ((this.type == rhs.type) || ((this.type != null) && this.type.equals(rhs.type))));
     }
 
 }

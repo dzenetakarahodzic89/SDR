@@ -3,7 +3,9 @@ package ba.com.zira.sdr.deezer.tracklist;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.processing.Generated;
+
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,12 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "id",
-    "name",
-    "tracklist",
-    "type"
-})
+@JsonPropertyOrder({ "id", "name", "tracklist", "type" })
 @Generated("jsonschema2pojo")
 public class Artist {
 
@@ -30,7 +27,7 @@ public class Artist {
     @JsonProperty("type")
     private String type;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonProperty("id")
     public String getId() {
@@ -109,30 +106,31 @@ public class Artist {
 
     @Override
     public String toString() {
+        String nullValue = "<null>";
         StringBuilder sb = new StringBuilder();
         sb.append(Artist.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("id");
         sb.append('=');
-        sb.append(((this.id == null)?"<null>":this.id));
+        sb.append(((this.id == null) ? nullValue : this.id));
         sb.append(',');
         sb.append("name");
         sb.append('=');
-        sb.append(((this.name == null)?"<null>":this.name));
+        sb.append(((this.name == null) ? nullValue : this.name));
         sb.append(',');
         sb.append("tracklist");
         sb.append('=');
-        sb.append(((this.tracklist == null)?"<null>":this.tracklist));
+        sb.append(((this.tracklist == null) ? nullValue : this.tracklist));
         sb.append(',');
         sb.append("type");
         sb.append('=');
-        sb.append(((this.type == null)?"<null>":this.type));
+        sb.append(((this.type == null) ? nullValue : this.type));
         sb.append(',');
         sb.append("additionalProperties");
         sb.append('=');
-        sb.append(((this.additionalProperties == null)?"<null>":this.additionalProperties));
+        sb.append(((this.additionalProperties == null) ? nullValue : this.additionalProperties));
         sb.append(',');
-        if (sb.charAt((sb.length()- 1)) == ',') {
-            sb.setCharAt((sb.length()- 1), ']');
+        if (sb.charAt((sb.length() - 1)) == ',') {
+            sb.setCharAt((sb.length() - 1), ']');
         } else {
             sb.append(']');
         }
@@ -142,11 +140,11 @@ public class Artist {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));
-        result = ((result* 31)+((this.tracklist == null)? 0 :this.tracklist.hashCode()));
-        result = ((result* 31)+((this.id == null)? 0 :this.id.hashCode()));
-        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));
-        result = ((result* 31)+((this.type == null)? 0 :this.type.hashCode()));
+        result = ((result * 31) + ((this.name == null) ? 0 : this.name.hashCode()));
+        result = ((result * 31) + ((this.tracklist == null) ? 0 : this.tracklist.hashCode()));
+        result = ((result * 31) + ((this.id == null) ? 0 : this.id.hashCode()));
+        result = ((result * 31) + ((this.additionalProperties == null) ? 0 : this.additionalProperties.hashCode()));
+        result = ((result * 31) + ((this.type == null) ? 0 : this.type.hashCode()));
         return result;
     }
 
@@ -155,11 +153,16 @@ public class Artist {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Artist) == false) {
+        if (!(other instanceof Artist)) {
             return false;
         }
         Artist rhs = ((Artist) other);
-        return ((((((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name)))&&((this.tracklist == rhs.tracklist)||((this.tracklist!= null)&&this.tracklist.equals(rhs.tracklist))))&&((this.id == rhs.id)||((this.id!= null)&&this.id.equals(rhs.id))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.type == rhs.type)||((this.type!= null)&&this.type.equals(rhs.type))));
+        return ((((((this.name == rhs.name) || ((this.name != null) && this.name.equals(rhs.name)))
+                && ((this.tracklist == rhs.tracklist) || ((this.tracklist != null) && this.tracklist.equals(rhs.tracklist))))
+                && ((this.id == rhs.id) || ((this.id != null) && this.id.equals(rhs.id))))
+                && ((this.additionalProperties == rhs.additionalProperties)
+                        || ((this.additionalProperties != null) && this.additionalProperties.equals(rhs.additionalProperties))))
+                && ((this.type == rhs.type) || ((this.type != null) && this.type.equals(rhs.type))));
     }
 
 }

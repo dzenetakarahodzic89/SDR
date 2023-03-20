@@ -24,7 +24,6 @@ public class EraSearchResponse implements Serializable {
     @Schema(description = "Genre Id")
     private Long genreId;
     private String imageUrl;
-    // private String outlineText;
     @Schema(description = "Album name")
     private String album;
     private String information;
@@ -37,23 +36,11 @@ public class EraSearchResponse implements Serializable {
 
     private List<ArtistSongResponse> artists;
 
-    public EraSearchResponse(Long id, String name, String scope, LocalDateTime modified
-    /*
-     * String information, LocalDateTime startDate, LocalDateTime endDate,
-     * String genreName, Long genreId
-     */) {
+    public EraSearchResponse(Long id, String name, String scope, LocalDateTime modified) {
         this.id = id;
         this.name = name;
         this.scope = scope;
         this.modified = modified;
-
-        // this.outlineText = outlineText;
-        // this.information = information;
-        // this.startDate = startDate;
-        // this.endDate = endDate;
-        // this.genre = genreName;
-        // this.genreId = genreId;
-
     }
 
 }
