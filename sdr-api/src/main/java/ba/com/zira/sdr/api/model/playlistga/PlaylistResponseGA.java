@@ -16,7 +16,7 @@ public class PlaylistResponseGA implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "Song id")
-    private Long songid;
+    private Long songId;
 
     @Schema(description = "Song name")
     private String songName;

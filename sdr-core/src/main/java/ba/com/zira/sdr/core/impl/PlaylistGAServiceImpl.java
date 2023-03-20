@@ -95,7 +95,8 @@ public class PlaylistGAServiceImpl implements PlaylistGAService {
 
         for (var i = 0; i < params.getNumberOfGenes(); i++) {
             var validSongGenesIndex = Randomizer.getRandomNumber(0, allValidSongGenes.size());
-            while (PlaylistChromosome.geneExistsInChromosome(randomPlaylistChromosome, allValidSongGenes.get(validSongGenesIndex))) {
+            while (Boolean.TRUE.equals(
+                    PlaylistChromosome.geneExistsInChromosome(randomPlaylistChromosome, allValidSongGenes.get(validSongGenesIndex)))) {
                 validSongGenesIndex = Randomizer.getRandomNumber(0, allValidSongGenes.size());
             }
             var songGene = allValidSongGenes.get(validSongGenesIndex);

@@ -45,8 +45,8 @@ public class PopulationImpl implements Population {
     }
 
     public static List<Rankable> sortChromosomes(List<Rankable> chromosomes) {
-        Collections.sort(chromosomes, (ch1,
-                ch2) -> (int) Math.round((((PlaylistChromosome) ch2).getFitness() - ((PlaylistChromosome) ch1).getFitness()) * 100.0));
+        Collections.sort(chromosomes, (ch1, ch2) -> (int) Math.round(
+                (((PlaylistChromosome) ch2).getFitness().longValue() - ((PlaylistChromosome) ch1).getFitness().longValue()) * 100.0));
         return chromosomes;
     }
 

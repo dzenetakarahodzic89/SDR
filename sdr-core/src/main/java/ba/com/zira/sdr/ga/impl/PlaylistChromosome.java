@@ -15,7 +15,7 @@ public class PlaylistChromosome implements Rankable {
     private Double fitnessPercentage;
 
     public static Boolean geneExistsInChromosome(PlaylistChromosome chromosome, SongGene gene) {
-        return chromosome.getGenes().stream().anyMatch(elGene -> gene.getSongId().equals(elGene.getSongId()));
+        return chromosome.getGenes().contains(gene);
     }
 
     public PlaylistChromosome() {
@@ -34,7 +34,7 @@ public class PlaylistChromosome implements Rankable {
 
     public Long worstGenePosition() {
         Long position = 0L;
-        Double currentFitness = 1000.0;
+        Double currentFitness = 100000.0;
 
         for (var i = 0; i < genes.size(); i++) {
             if (currentFitness > genes.get(i).getFitness()) {

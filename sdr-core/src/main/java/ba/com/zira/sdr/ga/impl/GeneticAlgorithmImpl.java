@@ -72,7 +72,7 @@ public class GeneticAlgorithmImpl implements GeneticAlgorithm {
             }
         }
 
-        mixup.setGenes(listOfGenes);
+        mixup.setGenes(genesWithoutDuplicate);
         return mixup;
     }
 
