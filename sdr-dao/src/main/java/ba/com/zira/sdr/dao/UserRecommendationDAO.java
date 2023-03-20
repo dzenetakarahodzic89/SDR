@@ -21,7 +21,7 @@ public class UserRecommendationDAO extends AbstractDAO<UserRecommendationEntity,
 
     public List<UserRecommendationResponse> averageScoreByGenre(final List<Long> userIds) {
 
-        var hql = "select new ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse(r.id, sg.name, r.userCode,  avg(surd.userScore), "
+        var hql = "select new ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse(r.id, sg.name, r.userCode,  round(avg(surd.userScore), 2), "
                 + "MAX(ss.name)) " + "from UserRecommendationEntity r "
                 + "inner join UserRecommendationDetailEntity surd on r.id = surd.userRecommendation.id "
                 + "inner join SongEntity ss on surd.song.id=ss.id " + "inner join GenreEntity sg on ss.genre.id = sg.id "
@@ -34,6 +34,7 @@ public class UserRecommendationDAO extends AbstractDAO<UserRecommendationEntity,
         var results = q.getResultList();
 
         return results;
+
     }
 
 }
