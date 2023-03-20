@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.artist.ArtistLabelResponse;
-import ba.com.zira.sdr.api.artist.ArtistPersonResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
 import ba.com.zira.sdr.api.artist.ArtistSheetResponse;
@@ -48,11 +47,11 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return q.getResultList();
     }
 
-    public List<ArtistPersonResponse> getArtistByPersonId(Long personId) {
+    public List<ArtistResponse> getArtistByPersonId(Long personId) {
 
-        var hql = "select new ba.com.zira.sdr.api.artist.ArtistPersonResponse(sa.id, sa.name, sa.created, sa.createdBy, sa.dateOfBirth, sa.dateOfDeath, sa.information, sa.modified, sa.modifiedBy, sa.status, sa.surname, sa.type) from PersonEntity sp inner join PersonArtistEntity spa on sp.id = spa.person.id  "
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistResponse(sa.id, sa.name, sa.created, sa.createdBy, sa.dateOfBirth, sa.dateOfDeath, sa.information, sa.modified, sa.modifiedBy, sa.status, sa.surname, sa.type) from PersonEntity sp inner join PersonArtistEntity spa on sp.id = spa.person.id  "
                 + "inner join ArtistEntity sa on spa.artist.id = sa.id where sp.id = :id";
-        TypedQuery<ArtistPersonResponse> q = entityManager.createQuery(hql, ArtistPersonResponse.class).setParameter("id", personId);
+        TypedQuery<ArtistResponse> q = entityManager.createQuery(hql, ArtistResponse.class).setParameter("id", personId);
         return q.getResultList();
     }
 

@@ -19,12 +19,14 @@ public class SpotifyIntegrationDAO extends AbstractDAO<SpotifyIntegrationEntity,
         var songHql = "select si from SpotifyIntegrationEntity si join SongEntity s on si.objectId=s.id and si.objectType like :type"
                 + " where (s.spotifyId is null or length(s.spotifyId)<1) and (s.spotifyStatus!=:status or s.spotifyStatus is null)";
 
+        String status = "status";
+        String done = "Done";
         List<SpotifyIntegrationEntity> list1 = entityManager.createQuery(albumHql, SpotifyIntegrationEntity.class)
-                .setParameter("type", "ALBUM").setParameter("status", "Done").setMaxResults(responseLimit).getResultList();
+                .setParameter("type", "ALBUM").setParameter(status, done).setMaxResults(responseLimit).getResultList();
         List<SpotifyIntegrationEntity> list2 = entityManager.createQuery(artistHql, SpotifyIntegrationEntity.class)
-                .setParameter("type", "ARTIST").setParameter("status", "Done").setMaxResults(responseLimit).getResultList();
+                .setParameter("type", "ARTIST").setParameter(status, done).setMaxResults(responseLimit).getResultList();
         List<SpotifyIntegrationEntity> list3 = entityManager.createQuery(songHql, SpotifyIntegrationEntity.class)
-                .setParameter("type", "SONG").setParameter("status", "Done").setMaxResults(responseLimit).getResultList();
+                .setParameter("type", "SONG").setParameter(status, done).setMaxResults(responseLimit).getResultList();
         list1.addAll(list2);
         list1.addAll(list3);
         if (list1.size() > 15) {

@@ -86,9 +86,8 @@ public class AlbumRestService {
             @RequestParam(required = false) String name, final QueryConditionPage queryCriteria
 
     ) throws ApiException {
-        // Map<String, Object> filterCriteria = new HashMap<>();
-        return albumService.search(
-                new SearchRequest<>(new AlbumSearchRequest(eras, genres, artists, name), new HashMap<String, Object>(), queryCriteria));
+        return albumService
+                .search(new SearchRequest<>(new AlbumSearchRequest(eras, genres, artists, name), new HashMap<>(), queryCriteria));
     }
 
     @Operation(summary = "Get all songs from album")

@@ -60,9 +60,9 @@ public class EraDAO extends AbstractDAO<EraEntity, Long> {
         int maxResults = pageSize;
         q.setFirstResult(firstResult);
         q.setMaxResults(maxResults);
-        List<EraSearchResponse> eras = q.getResultList();
 
-        return eras;
+        return q.getResultList();
+
     }
 
 }

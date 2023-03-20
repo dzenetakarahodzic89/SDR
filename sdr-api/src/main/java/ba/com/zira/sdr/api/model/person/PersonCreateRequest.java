@@ -4,9 +4,13 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@RequiredArgsConstructor
 @Schema(description = "Properties for  create request")
 public class PersonCreateRequest implements Serializable {
     private static final long serialVersionUID = 1L;
