@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
@@ -9,11 +14,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.instrument.InstrumentSongResponse;
@@ -71,7 +71,6 @@ public class InstrumentDAO extends AbstractDAO<InstrumentEntity, Long> {
 
         if (sortBy != null) {
             switch (sortBy) {
-
             case "LastEdit":
                 order = builder.desc(root.get("modified"));
                 break;
@@ -80,6 +79,8 @@ public class InstrumentDAO extends AbstractDAO<InstrumentEntity, Long> {
                 break;
             case "NoOfPersons":
                 order = builder.desc(builder.count(persons));
+                break;
+            default:
                 break;
             }
         }

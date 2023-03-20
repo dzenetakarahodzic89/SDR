@@ -52,6 +52,10 @@ import ba.com.zira.sdr.dao.model.SongEntity_;
 public class SongDAO extends AbstractDAO<SongEntity, Long> {
     private static final String REMIX_ID = "remixId";
     private static final String COVER_ID = "coverId";
+    private static final String SONG_NAME = "songName";
+    private static final String ARTIST_ID = "artistIds";
+    private static final String ALBUM_ID = "albumIds";
+    private static final String GENRE_ID = "genreIds";
 
     public List<SongEntity> findSongsByIdArray(final List<Long> songIds) {
         final CriteriaQuery<SongEntity> cQuery = builder.createQuery(SongEntity.class);
@@ -200,21 +204,21 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
             query += " order by ss.name";
         }
         var q = entityManager.createQuery(query, SongSearchResponse.class);
-        q.setParameter("songName", songName != null ? songName : "");
+        q.setParameter(SONG_NAME, songName != null ? songName : "");
         if (remixId != null) {
-            q.setParameter("remixId", remixId);
+            q.setParameter(REMIX_ID, remixId);
         }
         if (coverId != null) {
-            q.setParameter("coverId", coverId);
+            q.setParameter(COVER_ID, coverId);
         }
         if (artistIds != null && !artistIds.isEmpty()) {
-            q.setParameter("artistIds", artistIds);
+            q.setParameter(ARTIST_ID, artistIds);
         }
         if (albumIds != null && !albumIds.isEmpty()) {
-            q.setParameter("albumIds", albumIds);
+            q.setParameter(ALBUM_ID, albumIds);
         }
         if (genreIds != null && !genreIds.isEmpty()) {
-            q.setParameter("genreIds", genreIds);
+            q.setParameter(GENRE_ID, genreIds);
         }
         // Apply pagination
         int firstResult = (page - 1) * pageSize;
@@ -286,13 +290,13 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
     public List<LoV> getAllSongsWithNameLike(String songName) {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from SongEntity s where lower(s.name) like lower(:songName)";
-        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("songName", songName);
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter(SONG_NAME, songName);
         return query.getResultList();
     }
 
     public void updateDeezerFields(String songName, String deezerId, String deezerStatus, String information) {
         var hql = "update SongEntity set deezerId = :deezerId, information = :information ,deezerStatus=:deezerStatus where lower(name) like lower(:songName)";
-        var query = entityManager.createQuery(hql).setParameter("songName", songName).setParameter("deezerId", deezerId)
+        Query query = entityManager.createQuery(hql).setParameter(SONG_NAME, songName).setParameter("deezerId", deezerId)
                 .setParameter("information", information).setParameter("deezerStatus", deezerStatus);
         query.executeUpdate();
     }

@@ -1,12 +1,12 @@
 package ba.com.zira.sdr.dao;
 
-import javax.persistence.TypedQuery;
-
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.persistence.TypedQuery;
+
+import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.multisearch.MultiSearchResponse;
@@ -61,9 +61,7 @@ public class MultiSearchDAO extends AbstractDAO<MultiSearchEntity, Long> {
         var hql = "select new ba.com.zira.sdr.api.model.multisearch.MultiSearchResponse(r.name, r.type, r.spotifyId) from MultiSearchEntity r";
         TypedQuery<MultiSearchResponse> query = entityManager.createQuery(hql, MultiSearchResponse.class);
         return query.getResultList().stream().filter(a -> a.getSpotifyId() != null)
-                .collect(Collectors.toMap(MultiSearchResponse::getSpotifyId, a -> a, (a1, a2) -> {
-                    return a1;
-                }));
+                .collect(Collectors.toMap(MultiSearchResponse::getSpotifyId, a -> a, (a1, a2) -> a1));
     }
 
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import ba.com.zira.sdr.api.artist.ArtistPersonResponse;
+import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.model.album.AlbumPersonResponse;
 import ba.com.zira.sdr.api.model.connectedmedia.ConnectedMediaPersonResponse;
 import ba.com.zira.sdr.api.model.song.SongPersonResponse;
@@ -67,7 +67,7 @@ public class PersonOverviewResponse implements Serializable {
     private String flagAbbreviation;
 
     @Schema(description = "List of artists")
-    private List<ArtistPersonResponse> artists;
+    private List<ArtistResponse> artists;
 
     @Schema(description = "List of albums")
     private List<AlbumPersonResponse> albums;

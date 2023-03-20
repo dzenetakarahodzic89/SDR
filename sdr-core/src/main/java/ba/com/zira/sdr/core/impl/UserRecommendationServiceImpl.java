@@ -12,14 +12,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ba.com.zira.commons.message.request.EmptyRequest;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.UserRecommendationService;
+import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
 import ba.com.zira.sdr.core.mapper.UserRecommendationMapper;
@@ -34,6 +43,7 @@ import ba.com.zira.sdr.dao.model.UserRecommendationEntity;
 import ba.com.zira.sdr.dao.model.UserRecommendationIntegrationDetailEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +97,13 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
         userRecommendationEntity.setUserCode(request.getUserId());
         userRecommendationDAO.persist(userRecommendationEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, userRecommendationMapper.entityToDto(userRecommendationEntity));
+    }
+
+    @Override
+    public ListPayloadResponse<UserRecommendationResponse> findAllUsers(EmptyRequest req) {
+
+        List<UserRecommendationResponse> userList = userRecommendationDAO.findAllUsers();
+        return new ListPayloadResponse<>(req, ResponseCode.OK, userList);
     }
 
     @Override
@@ -191,6 +208,14 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
             list.add(ent);
         }
         return list;
+    }
+
+    @Override
+    public ListPayloadResponse<UserRecommendationResponse> scoreCompare(final EntityRequest<ScoreCompareRequest> request) {
+
+        List<UserRecommendationResponse> userSearch = userRecommendationDAO.averageScoreByGenre(request.getEntity().getUserIds());
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, userSearch);
     }
 
 }
