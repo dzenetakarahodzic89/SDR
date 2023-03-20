@@ -16,11 +16,17 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.PlaylistGAService;
 import ba.com.zira.sdr.api.enums.ServiceType;
+import ba.com.zira.sdr.api.model.generateplaylist.SavePlaylistRequest;
 import ba.com.zira.sdr.api.model.playlistga.PlaylistRequestGA;
 import ba.com.zira.sdr.api.model.playlistga.PlaylistResponseGA;
 import ba.com.zira.sdr.api.model.playlistga.WeightGenerator;
+import ba.com.zira.sdr.core.mapper.PlaylistMapper;
+import ba.com.zira.sdr.core.mapper.SongMapper;
 import ba.com.zira.sdr.core.mapper.SongScoreMapper;
+import ba.com.zira.sdr.core.validation.SongRequestValidation;
+import ba.com.zira.sdr.dao.PlaylistDAO;
 import ba.com.zira.sdr.dao.SongDAO;
+import ba.com.zira.sdr.dao.SongPlaylistDAO;
 import ba.com.zira.sdr.dao.SongScoreDAO;
 import ba.com.zira.sdr.dao.model.SongScoresEntity;
 import ba.com.zira.sdr.ga.impl.GeneticAlgorithmImpl;
@@ -39,6 +45,12 @@ public class PlaylistGAServiceImpl implements PlaylistGAService {
     SongScoreDAO songScoreDAO;
     SongDAO songDAO;
     SongScoreMapper songScoreMapper;
+    SongPlaylistDAO songPlaylistDAO;
+    SongMapper songMapper;
+    PlaylistDAO playlistDAO;
+    PlaylistMapper playlistMapper;
+    SongRequestValidation songRequestValidation;
+    GeneratePlaylistServiceHelper generatePlaylistServiceHelper;
 
     @Override
     public PagedPayloadResponse<PlaylistResponseGA> generatePlaylist(final EntityRequest<PlaylistRequestGA> request) throws ApiException {
@@ -67,9 +79,9 @@ public class PlaylistGAServiceImpl implements PlaylistGAService {
         for (var i = 0; i < parameters.getNumberOfGenerations(); i++) {
             population.calculateFitnessForAllChromosomes();
 
-            LOGGER.info("Iteracija: ");
+            LOGGER.info("Iteration: ");
             LOGGER.info(String.valueOf(i));
-            LOGGER.info("Fitness optimalnog elementa za ovu iteraciju:");
+            LOGGER.info("Fitness of the optimal chromosome for this iteration: ");
 
             var currentOptimalChromosome = (PlaylistChromosome) population.findFittestChromosome();
 
@@ -83,8 +95,36 @@ public class PlaylistGAServiceImpl implements PlaylistGAService {
         PagedData<SongGene> responseData = new PagedData<>();
         responseData.setRecords(((PlaylistChromosome) population.findFittestChromosome()).getGenes());
 
-        LOGGER.info("Naj-fit kromosom je: ");
+        LOGGER.info("Fittest chromosome is: ");
         LOGGER.info(((PlaylistChromosome) population.findFittestChromosome()).toString());
+
+        // save playlist to the database
+        var savePlaylistRequest = new SavePlaylistRequest();
+
+        savePlaylistRequest.setName("GA Playlist");
+        savePlaylistRequest.setSongIds(((PlaylistChromosome) population.findFittestChromosome()).getGenes().stream()
+                .map(SongGene::getSongId).collect(Collectors.toList()));
+
+        PlaylistGenerateServiceImpl savingPlaylistService = new PlaylistGenerateServiceImpl(songDAO, songPlaylistDAO, songMapper,
+                playlistDAO, playlistMapper, songRequestValidation, generatePlaylistServiceHelper);
+
+        var entityRequest = new EntityRequest<>(savePlaylistRequest);
+        entityRequest.setUser(request.getUser());
+        entityRequest.setChannel(request.getChannel());
+        entityRequest.setLanguageId(request.getLanguageId());
+        entityRequest.setSessionId(request.getSessionId());
+        entityRequest.setClassName(request.getClassName());
+        entityRequest.setTransactionId(request.getTransactionId());
+        entityRequest.setTransactionData(request.getTransactionData());
+
+        var response = savingPlaylistService.saveGeneratedPlaylist(entityRequest);
+
+        LOGGER.info("Playlist saved by the id of: ");
+        LOGGER.info(response.getPayload().getId().toString());
+
+        LOGGER.info("Playlist playtime in seconds: ");
+        LOGGER.info(response.getPayload().getTotalPlaytime().toString());
+
         return new PagedPayloadResponse<>(request, ResponseCode.OK, responseData, songScoreMapper::entitiesToDtos);
     }
 
