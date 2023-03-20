@@ -251,6 +251,12 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi newsArticlesApi() {
+        return GroupedOpenApi.builder().group("newsarticles-api").packagesToScan("ba.com.zira.sdr.newsarticles.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public OpenAPI ziraOpenAPI() {
         return new OpenAPI().info(new Info().title("ZIRA API").description("ZIRA API").version("0.0.1-SNAPSHOT")
                 .contact(new Contact().name("ZIRA").url("http://www.zira.com.ba").email("info@zira.com.ba"))
