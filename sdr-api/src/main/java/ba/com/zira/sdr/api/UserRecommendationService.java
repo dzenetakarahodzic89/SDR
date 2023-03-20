@@ -1,15 +1,19 @@
 package ba.com.zira.sdr.api;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
+import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
 
 /**
- * * Methods used to manipulate {@link UserRecommendationResponse} data. <br> List of APIs implemented in this class with links:
+ * * Methods used to manipulate {@link UserRecommendationResponse} data. <br>
+ * List of APIs implemented in this class with links:
  * <ul>
  * <li>{@link #find}</li>
  * <li>{@link #findById}</li>
@@ -25,10 +29,10 @@ public interface UserRecommendationService {
      * Find paged payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the paged payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PagedPayloadResponse<UserRecommendationResponse> find(final FilterRequest request) throws ApiException;
 
@@ -36,10 +40,10 @@ public interface UserRecommendationService {
      * Find by id payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<UserRecommendationResponse> findById(final EntityRequest<Long> request) throws ApiException;
 
@@ -47,10 +51,10 @@ public interface UserRecommendationService {
      * Create payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<UserRecommendationResponse> create(EntityRequest<UserRecommendationCreateRequest> request) throws ApiException;
 
@@ -58,10 +62,20 @@ public interface UserRecommendationService {
      * Delete payload response.
      *
      * @param request
-     *         the request
+     *            the request
      * @return the payload response
      * @throws ApiException
-     *         the api exception
+     *             the api exception
      */
     PayloadResponse<String> delete(final EntityRequest<Long> request) throws ApiException;
+
+    /**
+     * Find all users.
+     *
+     * Empty request
+     */
+
+    ListPayloadResponse<UserRecommendationResponse> findAllUsers(EmptyRequest req);
+
+    ListPayloadResponse<UserRecommendationResponse> scoreCompare(EntityRequest<ScoreCompareRequest> request);
 }

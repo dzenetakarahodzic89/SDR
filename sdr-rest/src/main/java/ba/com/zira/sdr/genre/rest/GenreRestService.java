@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.genre.rest;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,11 +17,13 @@ import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.GenreService;
+import ba.com.zira.sdr.api.model.genre.EraRequest;
 import ba.com.zira.sdr.api.model.genre.Genre;
 import ba.com.zira.sdr.api.model.genre.GenreCreateRequest;
 import ba.com.zira.sdr.api.model.genre.GenreEraOverview;
@@ -47,10 +50,9 @@ public class GenreRestService {
     }
 
     @Operation(summary = "Get genre comparison over eras")
-    @GetMapping(value = "era-percentage-overview")
-    public ListPayloadResponse<GenreEraOverview> getGenresOverEras() throws ApiException {
-        var request = new EmptyRequest();
-        return genreService.getGenresOverEras(request);
+    @GetMapping(value = "/era-percentage-overview")
+    public ListPayloadResponse<GenreEraOverview> getGenresOverEras(@RequestParam(required = false) List<Long> eras) throws ApiException {
+        return genreService.getGenresOverEras(new SearchRequest<>(new EraRequest(eras)));
     }
 
     @Operation(summary = "Get subgenre and main genre names")
