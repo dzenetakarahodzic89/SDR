@@ -21,6 +21,12 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi playlistGAApi() {
+        return GroupedOpenApi.builder().group("playlistga-api").packagesToScan("ba.com.zira.sdr.playlistga.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi eventApi() {
         return GroupedOpenApi.builder().group("event-api").packagesToScan("ba.com.zira.sdr.event.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
