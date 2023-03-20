@@ -13,7 +13,7 @@ public class LinearGenerator implements WeightGenerator {
         var den = numberOfPriorities * (numberOfPriorities + 1L) / 2L;
 
         for (var i = 1; i <= numberOfPriorities; i++) {
-            weights.add(Double.valueOf(i) / den);
+            weights.add(Double.valueOf(i * 100.0) / den);
         }
 
         return weights;

@@ -14,7 +14,7 @@ public class PowerOfTwoGenerator implements WeightGenerator {
         var den = Math.pow(2L, numberOfPriorities) - 1L;
 
         for (var i = 0; i < numberOfPriorities; i++) {
-            weights.add(num / den);
+            weights.add((num * 100.0) / den);
             num *= 2;
         }
 
