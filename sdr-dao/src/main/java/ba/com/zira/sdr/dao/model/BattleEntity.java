@@ -57,12 +57,11 @@ public class BattleEntity implements Serializable {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "last_turn")
+    private Long lastTurn;
+
     @ManyToOne
     @JoinColumn(name = "winner_country_id")
     private CountryEntity country;
-
-    @ManyToOne
-    @JoinColumn(name = "last_turn")
-    private BattleTurnEntity lastTurn;
 
 }
