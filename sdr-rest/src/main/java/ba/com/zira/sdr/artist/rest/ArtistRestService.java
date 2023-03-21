@@ -77,6 +77,13 @@ public class ArtistRestService {
         return artistService.delete(new EntityRequest<>(id));
     }
 
+    @Operation(summary = "Copy images to persons")
+    @PostMapping(value = "{id}/copy-images-to-persons")
+    public PayloadResponse<String> copy(@Parameter(required = true, description = "Id of the artist") @PathVariable final Long id)
+            throws ApiException {
+        return artistService.copyImageToPersons(new EntityRequest<>(id));
+    }
+
     @Operation(summary = "Update Artist")
     @PutMapping(value = "{id}")
     public PayloadResponse<ArtistResponse> edit(@Parameter(required = true, description = "ID of the artist") @PathVariable final Long id,
