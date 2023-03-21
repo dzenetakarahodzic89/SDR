@@ -38,6 +38,8 @@ import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.EraDAO;
 import ba.com.zira.sdr.dao.LabelDAO;
+import ba.com.zira.sdr.dao.MediaDAO;
+import ba.com.zira.sdr.dao.MediaStoreDAO;
 import ba.com.zira.sdr.dao.PersonArtistDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
@@ -80,6 +82,8 @@ public class ArtistServiceTest extends BasicTestConfiguration {
     ArtistValidation artistRequestValidation;
     LookupService lookupService;
     AlbumDAO albumDAO;
+    MediaDAO mediaDAO;
+    MediaStoreDAO mediaStoreDAO;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
@@ -92,10 +96,12 @@ public class ArtistServiceTest extends BasicTestConfiguration {
         this.personRequestValidation = Mockito.mock(PersonRequestValidation.class);
         this.lookupService = Mockito.mock(LookupService.class);
         this.labelDAO = Mockito.mock(LabelDAO.class);
+        this.mediaDAO = Mockito.mock(MediaDAO.class);
+        this.mediaStoreDAO = Mockito.mock(MediaStoreDAO.class);
 
         this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, albumDAO, labelDAO, personDAO, artistMapper, albumMapper, songMapper,
                 labelMapper, personMapper, artistValidation, personArtistDAO, songArtistDAO, songDAO, personRequestValidation,
-                lookupService);
+                lookupService, mediaDAO, mediaStoreDAO);
     }
 
     @Test(enabled = true)
