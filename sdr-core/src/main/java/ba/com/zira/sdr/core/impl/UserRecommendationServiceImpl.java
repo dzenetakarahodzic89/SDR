@@ -1,7 +1,9 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +18,12 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.UserRecommendationService;
+import ba.com.zira.sdr.api.model.user.UserCodeDisplay;
 import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
+import ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse;
+import ba.com.zira.sdr.core.client.feign.RemoteApiFeignClient;
 import ba.com.zira.sdr.core.mapper.UserRecommendationMapper;
 import ba.com.zira.sdr.core.validation.UserRecommendationRequestValidation;
 import ba.com.zira.sdr.dao.UserRecommendationDAO;
@@ -32,6 +37,7 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
     UserRecommendationDAO userRecommendationDAO;
     UserRecommendationMapper userRecommendationMapper;
     UserRecommendationRequestValidation userRecommendationRequestValidation;
+    RemoteApiFeignClient remoteApiFeignClient;
 
     @Override
     public PagedPayloadResponse<UserRecommendationResponse> find(final FilterRequest request) {
@@ -61,10 +67,23 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
     }
 
     @Override
-    public ListPayloadResponse<UserRecommendationResponse> findAllUsers(EmptyRequest req) {
+    public ListPayloadResponse<UserScoreResponse> findAllUsers(EmptyRequest request) {
+        List<UserScoreResponse> userList = userRecommendationDAO.findAllUsers();
+        PagedPayloadResponse<UserCodeDisplay> usersFullName = remoteApiFeignClient.findAllUsers();
 
-        List<UserRecommendationResponse> userList = userRecommendationDAO.findAllUsers();
-        return new ListPayloadResponse<>(req, ResponseCode.OK, userList);
+        Map<String, String> userCodeToName = new HashMap<>();
+        for (UserCodeDisplay user : usersFullName.getPayload()) {
+            userCodeToName.put(user.getUsercode(), user.getDisplayname());
+        }
+
+        for (UserScoreResponse user : userList) {
+            String userName = userCodeToName.get(user.getUserCode());
+            if (userName != null) {
+                user.setUserCode(userName);
+            }
+        }
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, userList);
     }
 
     @Override
@@ -82,11 +101,25 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
     }
 
     @Override
-    public ListPayloadResponse<UserRecommendationResponse> scoreCompare(final EntityRequest<ScoreCompareRequest> request) {
+    public ListPayloadResponse<UserScoreResponse> scoreCompare(final EntityRequest<ScoreCompareRequest> request) {
 
-        List<UserRecommendationResponse> userSearch = userRecommendationDAO.averageScoreByGenre(request.getEntity().getUserIds());
+        List<UserScoreResponse> usersList = userRecommendationDAO.averageScoreByGenre(request.getEntity().getUserIds());
 
-        return new ListPayloadResponse<>(request, ResponseCode.OK, userSearch);
+        PagedPayloadResponse<UserCodeDisplay> usersFullName = remoteApiFeignClient.findAllUsers();
+
+        Map<String, String> userCodeToName = new HashMap<>();
+        for (UserCodeDisplay user : usersFullName.getPayload()) {
+            userCodeToName.put(user.getUsercode(), user.getDisplayname());
+        }
+
+        for (UserScoreResponse user : usersList) {
+            String userName = userCodeToName.get(user.getUserCode());
+            if (userName != null) {
+                user.setUserCode(userName);
+            }
+        }
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, usersList);
     }
 
 }

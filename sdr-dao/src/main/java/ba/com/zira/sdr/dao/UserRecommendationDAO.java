@@ -7,29 +7,26 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
-import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
+import ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse;
 import ba.com.zira.sdr.dao.model.UserRecommendationEntity;
 
 @Repository
 public class UserRecommendationDAO extends AbstractDAO<UserRecommendationEntity, Long> {
 
-    public List<UserRecommendationResponse> findAllUsers() {
-        var hql = "select new ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse(r.id, r.userCode) from UserRecommendationEntity r ";
-        TypedQuery<UserRecommendationResponse> query = entityManager.createQuery(hql, UserRecommendationResponse.class);
+    public List<UserScoreResponse> findAllUsers() {
+        var hql = "select new ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse(r.id,r.name, r.userCode) from UserRecommendationEntity r ";
+        TypedQuery<UserScoreResponse> query = entityManager.createQuery(hql, UserScoreResponse.class);
         return query.getResultList();
     }
 
-    public List<UserRecommendationResponse> averageScoreByGenre(final List<Long> userIds) {
+    public List<UserScoreResponse> averageScoreByGenre(final List<Long> userIds) {
 
-        var hql = "select new ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse(r.id, sg.name, r.userCode,  round(avg(surd.userScore), 2), "
-                + "MAX(ss.name)) " + "from UserRecommendationEntity r "
-                + "inner join UserRecommendationDetailEntity surd on r.id = surd.userRecommendation.id "
-                + "inner join SongEntity ss on surd.song.id=ss.id " + "inner join GenreEntity sg on ss.genre.id = sg.id "
-                + "where r.id in :userIds " + "group by r.id, sg.name order by sg.name, r.userCode asc";
+        var hql = "select new ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse(r.id, r.name, r.userCode, round(avg(surd.userScore), 2), MAX(ss.name), sg.name) "
+                + "from UserRecommendationEntity r " + "inner join r.userRecommendationDetails surd " + "inner join surd.song ss "
+                + "inner join ss.genre sg " + "where r.id in :userIds " + "group by r.id, sg.name " + "order by sg.name, r.userCode asc";
 
-        var q = entityManager.createQuery(hql, UserRecommendationResponse.class);
+        var q = entityManager.createQuery(hql, UserScoreResponse.class);
         q.setParameter("userIds", userIds);
-        q.setMaxResults(100);
 
         var results = q.getResultList();
 
