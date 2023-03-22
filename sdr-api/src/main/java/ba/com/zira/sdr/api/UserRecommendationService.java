@@ -78,7 +78,7 @@ public interface UserRecommendationService {
 
     ListPayloadResponse<UserScoreResponse> findAllUsers(EmptyRequest req);
 
-    ListPayloadResponse<UserRecommendationResponse> scoreCompare(EntityRequest<ScoreCompareRequest> request);
+    ListPayloadResponse<UserScoreResponse> scoreCompare(EntityRequest<ScoreCompareRequest> request);
 
     PayloadResponse<String> generateUserRecommendationsForGA(final EmptyRequest request);
 }

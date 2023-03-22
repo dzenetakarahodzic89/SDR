@@ -8,17 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import ba.com.zira.commons.message.request.EmptyRequest;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -48,7 +41,6 @@ import ba.com.zira.sdr.dao.model.UserRecommendationEntity;
 import ba.com.zira.sdr.dao.model.UserRecommendationIntegrationDetailEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -230,7 +222,7 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
     }
 
     @Override
-    public ListPayloadResponse<UserRecommendationResponse> scoreCompare(final EntityRequest<ScoreCompareRequest> request) {
+    public ListPayloadResponse<UserScoreResponse> scoreCompare(final EntityRequest<ScoreCompareRequest> request) {
 
         List<UserScoreResponse> usersList = userRecommendationDAO.averageScoreByGenre(request.getEntity().getUserIds());
 
