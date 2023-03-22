@@ -10,6 +10,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
+import ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse;
 
 /**
  * * Methods used to manipulate {@link UserRecommendationResponse} data. <br>
@@ -75,7 +76,7 @@ public interface UserRecommendationService {
      * Empty request
      */
 
-    ListPayloadResponse<UserRecommendationResponse> findAllUsers(EmptyRequest req);
+    ListPayloadResponse<UserScoreResponse> findAllUsers(EmptyRequest req);
 
     ListPayloadResponse<UserRecommendationResponse> scoreCompare(EntityRequest<ScoreCompareRequest> request);
 
