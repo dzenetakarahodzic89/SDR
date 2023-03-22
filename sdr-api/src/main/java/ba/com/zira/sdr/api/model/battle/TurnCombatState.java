@@ -6,10 +6,9 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class TurnState implements Serializable {
+public class TurnCombatState implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    TeamsState teams;
     String status;
-    List<BattleLog> battleLogs;
+    private List<BattleLog> battleLogs;
 }
