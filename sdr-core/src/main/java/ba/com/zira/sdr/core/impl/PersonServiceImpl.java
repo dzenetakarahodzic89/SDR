@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,7 +24,9 @@ import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.PersonService;
 import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.person.PersonCountResponse;
 import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
+import ba.com.zira.sdr.api.model.person.PersonCountryResponse;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
@@ -191,4 +194,21 @@ public class PersonServiceImpl implements PersonService {
 
         return new ListPayloadResponse<>(req, ResponseCode.OK, persons);
     }
+
+    @Override
+    public PayloadResponse<PersonCountResponse> getPersonsByCountry(final EmptyRequest req) throws ApiException {
+
+        Long totalPersons = personDAO.getPersonsNumb();
+        List<PersonCountryResponse> results = personDAO.getPersonsAll();
+        List<PersonCountryResponse> responseList = new ArrayList<>();
+        for (PersonCountryResponse result : results) {
+            double ratio = ((double) result.getCount() / totalPersons);
+            responseList.add(new PersonCountryResponse(result.getName(), ratio));
+        }
+
+        var resp = new PersonCountResponse(responseList);
+
+        return new PayloadResponse<PersonCountResponse>(req, ResponseCode.OK, resp);
+    }
+
 }
