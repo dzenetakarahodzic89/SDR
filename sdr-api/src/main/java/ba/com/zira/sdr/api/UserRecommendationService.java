@@ -11,6 +11,7 @@ import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
 import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
+import ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse;
 
 /**
  * * Methods used to manipulate {@link UserRecommendationResponse} data. <br>
@@ -80,7 +81,7 @@ public interface UserRecommendationService {
      * @return the list payload response
      */
 
-    ListPayloadResponse<UserRecommendationResponse> findAllUsers(EmptyRequest req);
+    ListPayloadResponse<UserScoreResponse> findAllUsers(EmptyRequest req);
 
     /**
      * Score compare.
