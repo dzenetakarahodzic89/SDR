@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.person.PersonCountryResponse;
 import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
 import ba.com.zira.sdr.api.model.person.PersonSearchResponse;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
@@ -52,6 +53,21 @@ public class PersonDAO extends AbstractDAO<PersonEntity, Long> {
         criteriaQuery.select(root).distinct(true);
         return entityManager.createQuery(criteriaQuery).getResultList();
 
+    }
+
+    public Long getPersonsNumb() {
+        var hql = "select count(sp.id) from PersonEntity sp";
+
+        TypedQuery<Long> q = entityManager.createQuery(hql, Long.class);
+        return q.getSingleResult();
+
+    }
+
+    public List<PersonCountryResponse> getPersonsAll() {
+        var hql = "SELECT new ba.com.zira.sdr.api.model.person.PersonCountryResponse(sc.name, COUNT(sp.country.id)) FROM PersonEntity sp INNER JOIN CountryEntity sc ON sp.country.id = sc.id GROUP BY sp.country.id, sc.name";
+
+        TypedQuery<PersonCountryResponse> q = entityManager.createQuery(hql, PersonCountryResponse.class);
+        return q.getResultList();
     }
 
     public List<LoV> getAllPersonsLoV() {

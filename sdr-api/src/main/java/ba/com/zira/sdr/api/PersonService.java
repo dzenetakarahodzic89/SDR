@@ -8,6 +8,7 @@ import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.person.PersonCountResponse;
 import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
@@ -79,5 +80,7 @@ public interface PersonService {
     PayloadResponse<PersonOverviewResponse> retrieveById(final EntityRequest<Long> request) throws ApiException;
 
     ListPayloadResponse<PersonSearchResponse> search(final EntityRequest<PersonSearchRequest> request) throws ApiException;
+
+    PayloadResponse<PersonCountResponse> getPersonsByCountry(EmptyRequest req) throws ApiException;
 
 }
