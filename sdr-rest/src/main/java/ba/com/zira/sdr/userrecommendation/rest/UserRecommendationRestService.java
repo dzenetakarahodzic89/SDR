@@ -23,6 +23,7 @@ import ba.com.zira.sdr.api.UserRecommendationService;
 import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
+import ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -67,14 +68,14 @@ public class UserRecommendationRestService {
 
     @Operation(summary = "find all users")
     @GetMapping(value = "/all")
-    public ListPayloadResponse<UserRecommendationResponse> findByName() throws ApiException {
+    public ListPayloadResponse<UserScoreResponse> findAllUsers() throws ApiException {
         var req = new EmptyRequest();
         return userRecommendationService.findAllUsers(req);
     }
 
     @Operation(summary = "Compare user score")
     @PostMapping(value = "/compare")
-    public ListPayloadResponse<UserRecommendationResponse> find(@RequestBody final ScoreCompareRequest request) throws ApiException {
+    public ListPayloadResponse<UserScoreResponse> find(@RequestBody final ScoreCompareRequest request) throws ApiException {
         return userRecommendationService.scoreCompare(new EntityRequest<>(request));
     }
 

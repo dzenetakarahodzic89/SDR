@@ -49,7 +49,7 @@ public class UserRecommendationServiceTest extends BasicTestConfiguration {
         this.userRecommendationDAO = Mockito.mock(UserRecommendationDAO.class);
         this.userRecommendationRequestValidation = Mockito.mock(UserRecommendationRequestValidation.class);
         this.userRecommendationService = new UserRecommendationServiceImpl(userRecommendationDAO, userRecommendationMapper,
-                userRecommendationRequestValidation);
+                userRecommendationRequestValidation, null);
 
     }
 
