@@ -2,8 +2,6 @@ package ba.com.zira.sdr.userrecommendation.rest;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -84,10 +82,9 @@ public class UserRecommendationRestService {
     @Operation(summary = "Get average user recommendation score per country from a specified recommendation service")
     @GetMapping(value = "/avg-per-country")
     public ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountryForUser(
-            @Parameter(required = true, description = "User code") @RequestParam String user,
             @Parameter(required = true, description = "Recommendation service") @RequestParam String service) throws ApiException {
 
-        var req = new EntityRequest<Pair<String, String>>(new ImmutablePair<>(user, service));
+        var req = new EntityRequest<String>(service);
         return userRecommendationService.getAverageScorePerCountry(req);
     }
 

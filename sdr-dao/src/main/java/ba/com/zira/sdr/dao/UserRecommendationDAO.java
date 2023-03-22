@@ -58,17 +58,4 @@ public class UserRecommendationDAO extends AbstractDAO<UserRecommendationEntity,
         return q.getResultList();
     }
 
-    public Boolean existsUserCode(String userCode) {
-        var hql = "select u from UserRecommendationEntity u where u.userCode=:userCode";
-        var q = entityManager.createQuery(hql, UserRecommendationEntity.class).setParameter("userCode", userCode).setMaxResults(1);
-
-        try {
-            q.getSingleResult();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-
-    }
-
 }

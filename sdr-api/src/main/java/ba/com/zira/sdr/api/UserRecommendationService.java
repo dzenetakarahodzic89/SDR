@@ -1,7 +1,5 @@
 package ba.com.zira.sdr.api;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -100,6 +98,6 @@ public interface UserRecommendationService {
      *            the request
      * @return the average score per country
      */
-    ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountry(EntityRequest<Pair<String, String>> request);
+    ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountry(EntityRequest<String> request);
 
 }

@@ -3,7 +3,6 @@ package ba.com.zira.sdr.core.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,9 +91,9 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
     }
 
     @Override
-    public ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountry(EntityRequest<Pair<String, String>> request) {
+    public ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountry(EntityRequest<String> request) {
         userRecommendationRequestValidation.validateAverageScorePerCountryRequest(request);
-        var results = userRecommendationDAO.getAverageScorePerCountryForUser(request.getEntity().getKey(), request.getEntity().getValue());
+        var results = userRecommendationDAO.getAverageScorePerCountryForUser(request.getUserId(), request.getEntity());
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, results);
     }
