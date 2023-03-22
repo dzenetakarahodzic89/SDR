@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ba.com.zira.commons.configuration.BaseApplicationConfiguration;
+import ba.com.zira.commons.configuration.N2bObjectMapper;
 
 @EnableEurekaClient
 @EnableScheduling
@@ -23,7 +24,7 @@ public class ApplicationConfiguration extends BaseApplicationConfiguration {
     @Override
     @Bean
     public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
+        var objectMapper = new N2bObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
     }
