@@ -60,6 +60,12 @@ public class BattleEntity implements Serializable {
     @Column(name = "last_turn")
     private Long lastTurn;
 
+    @Column(name = "team_size")
+    private Long teamSize;
+
+    @Column(name = "song_size")
+    private Long songSize;
+
     @ManyToOne
     @JoinColumn(name = "winner_country_id")
     private CountryEntity country;
