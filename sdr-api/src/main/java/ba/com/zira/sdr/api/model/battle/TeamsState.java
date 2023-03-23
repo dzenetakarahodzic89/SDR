@@ -9,8 +9,7 @@ import lombok.Data;
 public class TeamsState implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private List<TeamStructure> activePlayerTeams;
+    private TeamStructure activePlayerTeam;
     private List<TeamStructure> activeNpcTeams;
-    private List<TeamStructure> inactivePlayerTeams;
     private List<TeamStructure> inactiveNpcTeams;
 }
