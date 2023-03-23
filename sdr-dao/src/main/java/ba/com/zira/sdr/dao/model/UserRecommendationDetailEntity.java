@@ -12,7 +12,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -54,7 +53,7 @@ public class UserRecommendationDetailEntity implements Serializable {
     private String status;
 
     @Column(name = "user_score")
-    private BigDecimal userScore;
+    private Double userScore;
 
     // bi-directional many-to-one association to UserRecommendationEntity
     @ManyToOne

@@ -1,16 +1,14 @@
 package ba.com.zira.sdr.dao;
 
-import java.util.List;
-
-import javax.persistence.TypedQuery;
-
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
-import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
 import ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse;
 import ba.com.zira.sdr.dao.model.UserRecommendationEntity;
 
@@ -32,9 +30,7 @@ public class UserRecommendationDAO extends AbstractDAO<UserRecommendationEntity,
         var q = entityManager.createQuery(hql, UserScoreResponse.class);
         q.setParameter("userIds", userIds);
 
-        var results = q.getResultList();
-
-        return results;
+        return q.getResultList();
 
     }
 

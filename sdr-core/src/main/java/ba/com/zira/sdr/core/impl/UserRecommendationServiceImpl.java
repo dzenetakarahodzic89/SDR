@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +22,8 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.UserRecommendationService;
-import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
 import ba.com.zira.sdr.api.model.user.UserCodeDisplay;
+import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
 import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
@@ -162,21 +161,21 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
             detail.setGenreId(song.getGenre().getId());
             detail.setPlaytimeInSeconds(song.getPlaytimeInSeconds());
 
-            var sdrGrade = BigDecimal.valueOf(Math.random() * 10);
-            var spotifyGrade = BigDecimal.valueOf(Math.random() * 10);
-            var deezerGrade = BigDecimal.valueOf(Math.random() * 10);
-            var tidalGrade = BigDecimal.valueOf(Math.random() * 10);
-            var ytGrade = BigDecimal.valueOf(Math.random() * 10);
-            var iTunesGrade = BigDecimal.valueOf(Math.random() * 10);
-            var gpGrade = BigDecimal.valueOf(Math.random() * 10);
+            var sdrGrade = Math.random() * 10;
+            var spotifyGrade = Math.random() * 10;
+            var deezerGrade = Math.random() * 10;
+            var tidalGrade = Math.random() * 10;
+            var ytGrade = Math.random() * 10;
+            var iTunesGrade = Math.random() * 10;
+            var gpGrade = Math.random() * 10;
 
-            detail.setSdrScore(sdrGrade.longValue() < 1 ? BigDecimal.valueOf(1) : sdrGrade);
-            detail.setSpotifyScore(spotifyGrade.longValue() < 1 ? BigDecimal.valueOf(1) : spotifyGrade);
-            detail.setDeezerScore(deezerGrade.longValue() < 1 ? BigDecimal.valueOf(1) : deezerGrade);
-            detail.setTidalScore(tidalGrade.longValue() < 1 ? BigDecimal.valueOf(1) : tidalGrade);
-            detail.setYoutubeMusicScore(ytGrade.longValue() < 1 ? BigDecimal.valueOf(1) : ytGrade);
-            detail.setITunesScore(iTunesGrade.longValue() < 1 ? BigDecimal.valueOf(1) : iTunesGrade);
-            detail.setGooglePlayScore(gpGrade.longValue() < 1 ? BigDecimal.valueOf(1) : gpGrade);
+            detail.setSdrScore(sdrGrade < 1 ? 1 : sdrGrade);
+            detail.setSpotifyScore(spotifyGrade < 1 ? 1 : spotifyGrade);
+            detail.setDeezerScore(deezerGrade < 1 ? 1 : deezerGrade);
+            detail.setTidalScore(tidalGrade < 1 ? 1 : tidalGrade);
+            detail.setYoutubeMusicScore(ytGrade < 1 ? 1 : ytGrade);
+            detail.setItunesScore(iTunesGrade < 1 ? 1 : iTunesGrade);
+            detail.setGooglePlayScore(gpGrade < 1 ? 1 : gpGrade);
 
             LOGGER.info("Creating recommendation integration for {} ", song.getName());
             list.add(detail);
@@ -197,8 +196,8 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
                 detail.setCreatedBy("GA");
                 detail.setStatus(Status.ACTIVE.getValue());
                 detail.setName("GA Entry");
-                var grade = BigDecimal.valueOf(Math.random() * 10);
-                detail.setUserScore(grade.longValue() < 1 ? BigDecimal.valueOf(1) : grade);
+                var grade = Math.random() * 10;
+                detail.setUserScore(grade < 1 ? 1 : grade);
                 LOGGER.info("Creating recommendation by {} for {} : {}", urEnt.getUserCode(), song.getName(), detail.getUserScore());
                 list.add(detail);
             }

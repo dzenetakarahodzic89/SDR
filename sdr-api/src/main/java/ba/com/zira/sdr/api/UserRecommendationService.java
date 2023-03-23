@@ -90,7 +90,7 @@ public interface UserRecommendationService {
      *            the request
      * @return the list payload response
      */
-    ListPayloadResponse<UserRecommendationResponse> scoreCompare(EntityRequest<ScoreCompareRequest> request);
+    ListPayloadResponse<UserScoreResponse> scoreCompare(EntityRequest<ScoreCompareRequest> request);
 
     /**
      * Gets the average score per country.
@@ -101,5 +101,12 @@ public interface UserRecommendationService {
      */
     ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountry(EntityRequest<String> request);
 
+    /**
+     * Generate user recommendations for GA.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     */
     PayloadResponse<String> generateUserRecommendationsForGA(final EmptyRequest request);
 }
