@@ -17,4 +17,5 @@ public class TeamStructure implements Serializable {
     Long numberOfWins;
     Long numberOfLoses;
     Long lastActiveTurn;
+    private List<Long> eligibleCountryIds;
 }
