@@ -23,6 +23,7 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.UserRecommendationService;
+import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
 import ba.com.zira.sdr.api.model.user.UserCodeDisplay;
 import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
@@ -241,6 +242,14 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
         }
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, usersList);
+    }
+
+    @Override
+    public ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountry(EntityRequest<String> request) {
+        userRecommendationRequestValidation.validateAverageScorePerCountryRequest(request);
+        var results = userRecommendationDAO.getAverageScorePerCountryForUser(request.getUserId(), request.getEntity());
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, results);
     }
 
 }
