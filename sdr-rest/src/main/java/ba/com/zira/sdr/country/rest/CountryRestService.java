@@ -21,9 +21,11 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.CountryService;
+import ba.com.zira.sdr.api.model.country.CountryArtistSongResponse;
 import ba.com.zira.sdr.api.model.country.CountryCreateRequest;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.country.CountryUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -75,5 +77,20 @@ public class CountryRestService {
         var request = new EmptyRequest();
         return countryService.getAll(request);
 
+    }
+
+    @Operation(summary = "Get all")
+    @GetMapping(value = "all-countries")
+    public ListPayloadResponse<LoV> getAllCountries() throws ApiException {
+        var request = new EmptyRequest();
+        return countryService.getAllCountries(request);
+
+    }
+
+    @Operation(summary = "Artists and songs by countryId")
+    @GetMapping("/artists-songs")
+    public PayloadResponse<CountryArtistSongResponse> getArtistsAndSongs(@RequestParam Long id) throws ApiException {
+        var req = new EntityRequest<>(id);
+        return countryService.getArtistsSongs(req);
     }
 }

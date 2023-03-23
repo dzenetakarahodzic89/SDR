@@ -7,9 +7,11 @@ import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
+import ba.com.zira.sdr.api.model.country.CountryArtistSongResponse;
 import ba.com.zira.sdr.api.model.country.CountryCreateRequest;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.country.CountryUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 
 /**
  * The interface Country service.
@@ -60,4 +62,8 @@ public interface CountryService {
     PayloadResponse<CountryResponse> update(final EntityRequest<CountryUpdateRequest> request) throws ApiException;
 
     ListPayloadResponse<CountryResponse> getAll(EmptyRequest req) throws ApiException;
+
+    PayloadResponse<CountryArtistSongResponse> getArtistsSongs(EntityRequest<Long> request) throws ApiException;
+
+    ListPayloadResponse<LoV> getAllCountries(EmptyRequest req) throws ApiException;
 }
