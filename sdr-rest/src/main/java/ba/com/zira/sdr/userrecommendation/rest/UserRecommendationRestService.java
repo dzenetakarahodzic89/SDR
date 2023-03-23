@@ -20,6 +20,7 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.UserRecommendationService;
+import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
 import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
@@ -77,6 +78,15 @@ public class UserRecommendationRestService {
     @PostMapping(value = "/compare")
     public ListPayloadResponse<UserScoreResponse> find(@RequestBody final ScoreCompareRequest request) throws ApiException {
         return userRecommendationService.scoreCompare(new EntityRequest<>(request));
+    }
+
+    @Operation(summary = "Get average user recommendation score per country from a specified recommendation service")
+    @GetMapping(value = "/avg-per-country")
+    public ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountryForUser(
+            @Parameter(required = true, description = "Recommendation service") @RequestParam String service) throws ApiException {
+
+        var req = new EntityRequest<String>(service);
+        return userRecommendationService.getAverageScorePerCountry(req);
     }
 
 }
