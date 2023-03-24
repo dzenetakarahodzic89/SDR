@@ -28,7 +28,7 @@ public class BattleRestService {
     @Autowired
     private BattleService battleService;
 
-    @Operation(summary = "Find batlle")
+    @Operation(summary = "Find battle")
     @GetMapping
     public PagedPayloadResponse<BattleResponse> find(@RequestParam Map<String, Object> filterCriteria,
             final QueryConditionPage queryCriteria) throws ApiException {
