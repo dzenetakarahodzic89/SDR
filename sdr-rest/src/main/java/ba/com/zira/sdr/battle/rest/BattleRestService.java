@@ -13,7 +13,7 @@ import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.BattleService;
-import ba.com.zira.sdr.api.battle.BattleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;

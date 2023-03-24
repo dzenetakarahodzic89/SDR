@@ -8,7 +8,7 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.BattleService;
-import ba.com.zira.sdr.api.battle.BattleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleResponse;
 import ba.com.zira.sdr.core.mapper.BattleMapper;
 import ba.com.zira.sdr.dao.BattleDAO;
 import ba.com.zira.sdr.dao.model.BattleEntity;
