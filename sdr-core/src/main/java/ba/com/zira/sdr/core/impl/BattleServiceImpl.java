@@ -4,8 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -29,7 +28,7 @@ public class BattleServiceImpl implements BattleService {
 
     BattleDAO battleDAO;
     BattleMapper battleMapper;
-    ObjectMapper objectMapper;
+    N2bObjectMapper objectMapper;
     private static final Logger LOGGER = LoggerFactory.getLogger(BattleServiceImpl.class);
 
     @Override
