@@ -1,25 +1,22 @@
 package ba.com.zira.sdr.api.model.battle;
 
 import java.io.Serializable;
-import java.util.List;
+import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
 @Schema(description = "Battle generation properties")
-public class BattleGenerateRequest implements Serializable {
+public class BattleGenerateResponse implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    @Schema(description = "Name of the battle")
+    private Long id;
     private String name;
-
-    @Schema(description = "Number of songs for battle")
+    private LocalDateTime created;
+    private String createdBy;
+    private String status;
+    private Long lastTurn;
     private Long songSize;
-
-    @Schema(description = "Size of team")
     private Long teamSize;
 
-    @Schema(description = "Player countries")
-    private List<Long> countries;
 }
