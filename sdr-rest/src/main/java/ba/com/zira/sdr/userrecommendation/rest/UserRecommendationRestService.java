@@ -1,7 +1,5 @@
 package ba.com.zira.sdr.userrecommendation.rest;
 
-import java.util.Map;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -58,6 +58,12 @@ public class UserRecommendationRestService {
     public PayloadResponse<UserRecommendationResponse> create(@RequestBody final UserRecommendationCreateRequest comment)
             throws ApiException {
         return userRecommendationService.create(new EntityRequest<>(comment));
+    }
+
+    @Operation(summary = "Create user recommendations for GA")
+    @PostMapping(value = "/ga")
+    public PayloadResponse<String> create(EmptyRequest request) {
+        return userRecommendationService.generateUserRecommendationsForGA(request);
     }
 
     @Operation(summary = "Delete user recommendation")

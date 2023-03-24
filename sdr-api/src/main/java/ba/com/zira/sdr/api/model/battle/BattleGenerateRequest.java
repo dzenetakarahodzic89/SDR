@@ -4,9 +4,13 @@ import java.io.Serializable;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@RequiredArgsConstructor
+@AllArgsConstructor
 @Schema(description = "Battle generation properties")
 public class BattleGenerateRequest implements Serializable {
     private static final long serialVersionUID = 1L;

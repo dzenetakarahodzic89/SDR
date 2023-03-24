@@ -7,13 +7,18 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
+import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
+import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.BattleService;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
+import ba.com.zira.sdr.api.model.battle.BattleResponse;
 import ba.com.zira.sdr.api.model.battle.MapState;
 import ba.com.zira.sdr.api.model.battle.TeamStructure;
 import ba.com.zira.sdr.api.model.battle.TeamsState;
@@ -21,6 +26,7 @@ import ba.com.zira.sdr.api.model.battle.TurnCombatState;
 import ba.com.zira.sdr.core.mapper.BattleMapper;
 import ba.com.zira.sdr.dao.BattleDAO;
 import ba.com.zira.sdr.dao.BattleTurnDAO;
+import ba.com.zira.sdr.dao.model.BattleEntity;
 import ba.com.zira.sdr.dao.model.BattleTurnEntity;
 import lombok.AllArgsConstructor;
 
@@ -34,9 +40,16 @@ public class BattleServiceImpl implements BattleService {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
+    public PagedPayloadResponse<BattleResponse> find(FilterRequest request) throws ApiException {
+        PagedData<BattleEntity> battleEntities = battleDAO.findAll(request.getFilter());
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, battleEntities, battleMapper::entityToDTOs);
+    }
+
+    @Override
     public PayloadResponse<BattleGenerateResponse> create(final EntityRequest<BattleGenerateRequest> request)
             throws JsonProcessingException {
         var battleGenerateRequest = request.getEntity();
+        System.out.println("BattleGenerateRequest  " + battleGenerateRequest);
         var battleEntity = battleMapper.dtoToEntity(battleGenerateRequest);
 
         battleEntity.setCreated(LocalDateTime.now());
@@ -72,7 +85,7 @@ public class BattleServiceImpl implements BattleService {
 
         battleTurnDAO.persist(battleTurnEntity);
 
-        return new PayloadResponse<>(request, ResponseCode.OK, battleMapper.entityToDto(battleEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, battleMapper.entityToDtoOne(battleEntity));
     }
 
 }

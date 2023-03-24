@@ -27,6 +27,12 @@ public class SwaggerConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi battleApi() {
+        return GroupedOpenApi.builder().group("battle-api").packagesToScan("ba.com.zira.sdr.battle.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
     public GroupedOpenApi eventApi() {
         return GroupedOpenApi.builder().group("event-api").packagesToScan("ba.com.zira.sdr.event.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -47,12 +53,6 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi audioDBIntegrationApi() {
         return GroupedOpenApi.builder().group("audioDBIntegration-api").packagesToScan("ba.com.zira.sdr.audiodbintegration.rest")
-                .addOperationCustomizer(ziraOperationCustomizer).build();
-    }
-
-    @Bean
-    public GroupedOpenApi battleApi() {
-        return GroupedOpenApi.builder().group("battle-api").packagesToScan("ba.com.zira.sdr.battle.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
