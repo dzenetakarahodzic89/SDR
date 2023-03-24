@@ -90,7 +90,7 @@ public interface UserRecommendationService {
      *            the request
      * @return the list payload response
      */
-    ListPayloadResponse<UserRecommendationResponse> scoreCompare(EntityRequest<ScoreCompareRequest> request);
+    ListPayloadResponse<UserScoreResponse> scoreCompare(EntityRequest<ScoreCompareRequest> request);
 
     /**
      * Gets the average score per country.
