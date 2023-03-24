@@ -10,9 +10,9 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 
 public interface BattleService {
-
     /**
      * Find paged payload response.
      *
@@ -26,4 +26,6 @@ public interface BattleService {
 
     PayloadResponse<BattleGenerateResponse> create(EntityRequest<BattleGenerateRequest> request) throws JsonProcessingException;
 
+
+    PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException;
 }

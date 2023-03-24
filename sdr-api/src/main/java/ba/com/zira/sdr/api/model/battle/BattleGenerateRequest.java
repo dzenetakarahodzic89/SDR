@@ -9,8 +9,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Schema(description = "Battle generation properties")
 public class BattleGenerateRequest implements Serializable {
     private static final long serialVersionUID = 1L;

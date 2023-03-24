@@ -1,12 +1,14 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.time.LocalDateTime;
+
+import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -19,6 +21,7 @@ import ba.com.zira.sdr.api.BattleService;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 import ba.com.zira.sdr.api.model.battle.MapState;
 import ba.com.zira.sdr.api.model.battle.TeamStructure;
 import ba.com.zira.sdr.api.model.battle.TeamsState;
@@ -28,16 +31,25 @@ import ba.com.zira.sdr.dao.BattleDAO;
 import ba.com.zira.sdr.dao.BattleTurnDAO;
 import ba.com.zira.sdr.dao.model.BattleEntity;
 import ba.com.zira.sdr.dao.model.BattleTurnEntity;
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BattleServiceImpl implements BattleService {
 
-    BattleMapper battleMapper;
+    @NonNull
     BattleDAO battleDAO;
+
+    @NonNull
+    BattleMapper battleMapper;
+
+    @NonNull
     BattleTurnDAO battleTurnDAO;
-    ObjectMapper objectMapper = new ObjectMapper();
+
+    private N2bObjectMapper objectMapper = new N2bObjectMapper();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BattleServiceImpl.class);
 
     @Override
     public PagedPayloadResponse<BattleResponse> find(FilterRequest request) throws ApiException {
@@ -49,7 +61,6 @@ public class BattleServiceImpl implements BattleService {
     public PayloadResponse<BattleGenerateResponse> create(final EntityRequest<BattleGenerateRequest> request)
             throws JsonProcessingException {
         var battleGenerateRequest = request.getEntity();
-        System.out.println("BattleGenerateRequest  " + battleGenerateRequest);
         var battleEntity = battleMapper.dtoToEntity(battleGenerateRequest);
 
         battleEntity.setCreated(LocalDateTime.now());
@@ -59,20 +70,20 @@ public class BattleServiceImpl implements BattleService {
 
         battleDAO.persist(battleEntity);
 
-        String mapStateJson = objectMapper.writeValueAsString(new MapState());
+        var mapStateJson = objectMapper.writeValueAsString(new MapState());
 
-        TurnCombatState turnCombatState = new TurnCombatState();
+        var turnCombatState = new TurnCombatState();
         turnCombatState.setStatus(Status.DRAFT.value());
-        String turnCombatStateJson = objectMapper.writeValueAsString(turnCombatState);
+        var turnCombatStateJson = objectMapper.writeValueAsString(turnCombatState);
 
-        TeamStructure teamStructure = new TeamStructure();
+        var teamStructure = new TeamStructure();
         teamStructure.setEligibleCountryIds(battleGenerateRequest.getCountries());
 
-        TeamsState teamsState = new TeamsState();
+        var teamsState = new TeamsState();
         teamsState.setActivePlayerTeam(teamStructure);
-        String teamStateJson = objectMapper.writeValueAsString(teamsState);
+        var teamStateJson = objectMapper.writeValueAsString(teamsState);
 
-        BattleTurnEntity battleTurnEntity = new BattleTurnEntity();
+        var battleTurnEntity = new BattleTurnEntity();
         battleTurnEntity.setName(battleEntity.getName() + " - Turn " + battleEntity.getLastTurn());
         battleTurnEntity.setCreated(LocalDateTime.now());
         battleTurnEntity.setCreatedBy(battleEntity.getCreatedBy());
@@ -86,6 +97,20 @@ public class BattleServiceImpl implements BattleService {
         battleTurnDAO.persist(battleTurnEntity);
 
         return new PayloadResponse<>(request, ResponseCode.OK, battleMapper.entityToDtoOne(battleEntity));
+    }
+
+    @Override
+    public PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException {
+        var battleTurn = battleDAO.findLastBattleTurn(request.getEntity());
+        try {
+            var mapState = objectMapper.readValue(battleTurn.getMapStateJson(), MapState.class);
+            battleTurn.setMapState(mapState);
+            var teamState = objectMapper.readValue(battleTurn.getTeamStateJson(), TeamsState.class);
+            battleTurn.setTeamState(teamState);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+        }
+        return new PayloadResponse<>(request, ResponseCode.OK, battleTurn);
     }
 
 }
