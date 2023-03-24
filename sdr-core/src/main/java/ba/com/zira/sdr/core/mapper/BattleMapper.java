@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 
-import ba.com.zira.sdr.api.battle.BattleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleResponse;
 import ba.com.zira.sdr.dao.model.BattleEntity;
 
 @Component

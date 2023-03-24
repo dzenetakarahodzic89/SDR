@@ -1,4 +1,4 @@
-package ba.com.zira.sdr.api.battle;
+package ba.com.zira.sdr.api.model.battle;
 
 import java.io.Serializable;
 
