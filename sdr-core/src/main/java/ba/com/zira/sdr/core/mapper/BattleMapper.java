@@ -6,17 +6,18 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 
-import ba.com.zira.sdr.api.model.battle.Battle;
+import ba.com.zira.sdr.api.model.battle.BattleResponse;
 import ba.com.zira.sdr.dao.model.BattleEntity;
 
 @Component
 @Mapper(componentModel = "spring")
+
 public interface BattleMapper {
 
-    @Mapping(source = "country.id", target = "winnerCountryId")
-    @Mapping(source = "country.name", target = "winnerCountryName")
-    Battle entityToDto(BattleEntity battleEntity);
+    @Mapping(target = "countryName", source = "country.name")
+    BattleResponse entityToDto(BattleEntity battleEntity);
 
-    List<Battle> entitiesToDtos(List<BattleEntity> battleEntities);
+    @Mapping(target = "countryName", source = "country.name")
+    List<BattleResponse> entityToDTOs(List<BattleEntity> battleEntities);
 
 }

@@ -1,10 +1,5 @@
 package ba.com.zira.sdr.test.suites;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +7,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -24,10 +24,14 @@ import ba.com.zira.commons.validation.RequestValidator;
 import ba.com.zira.sdr.api.UserRecommendationService;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
+import ba.com.zira.sdr.core.client.feign.RemoteApiFeignClient;
 import ba.com.zira.sdr.core.impl.UserRecommendationServiceImpl;
 import ba.com.zira.sdr.core.mapper.UserRecommendationMapper;
 import ba.com.zira.sdr.core.validation.UserRecommendationRequestValidation;
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.UserRecommendationDAO;
+import ba.com.zira.sdr.dao.UserRecommendationDetailDAO;
+import ba.com.zira.sdr.dao.UserRecommendationIntegrationDetailDAO;
 import ba.com.zira.sdr.dao.model.UserRecommendationEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
@@ -41,6 +45,10 @@ public class UserRecommendationServiceTest extends BasicTestConfiguration {
     private UserRecommendationDAO userRecommendationDAO;
     private UserRecommendationRequestValidation userRecommendationRequestValidation;
     private UserRecommendationService userRecommendationService;
+    private SongDAO songDAO;
+    private UserRecommendationDetailDAO userRecommendationDetailDAO;
+    private UserRecommendationIntegrationDetailDAO userRecommendationIntegrationDetailDAO;
+    private RemoteApiFeignClient remoteApiFeignClient;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
@@ -48,8 +56,13 @@ public class UserRecommendationServiceTest extends BasicTestConfiguration {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.userRecommendationDAO = Mockito.mock(UserRecommendationDAO.class);
         this.userRecommendationRequestValidation = Mockito.mock(UserRecommendationRequestValidation.class);
-        this.userRecommendationService = new UserRecommendationServiceImpl(userRecommendationDAO, userRecommendationMapper,
-                userRecommendationRequestValidation, null);
+        this.songDAO = Mockito.mock(SongDAO.class);
+        this.userRecommendationDetailDAO = Mockito.mock(UserRecommendationDetailDAO.class);
+        this.userRecommendationIntegrationDetailDAO = Mockito.mock(UserRecommendationIntegrationDetailDAO.class);
+        this.remoteApiFeignClient = Mockito.mock(RemoteApiFeignClient.class);
+        this.userRecommendationService = new UserRecommendationServiceImpl(userRecommendationDAO, userRecommendationDetailDAO,
+                userRecommendationMapper, userRecommendationRequestValidation, remoteApiFeignClient, songDAO,
+                userRecommendationIntegrationDetailDAO);
 
     }
 
