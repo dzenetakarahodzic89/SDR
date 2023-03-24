@@ -28,7 +28,7 @@ public class BattleServiceImpl implements BattleService {
 
     BattleDAO battleDAO;
     BattleMapper battleMapper;
-    N2bObjectMapper objectMapper;
+    private N2bObjectMapper objectMapper = new N2bObjectMapper();
     private static final Logger LOGGER = LoggerFactory.getLogger(BattleServiceImpl.class);
 
     @Override
