@@ -98,10 +98,11 @@
 		    <artifactId>codemodel</artifactId>
 		    <version>2.6</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.rometools/rome -->
 		<dependency>
-		    <groupId>org.jsonschema2pojo</groupId>
-		    <artifactId>jsonschema2pojo-core</artifactId>
-		    <version>1.1.1</version>
+		    <groupId>com.rometools</groupId>
+		    <artifactId>rome</artifactId>
+		    <version>2.1.0</version>
 		</dependency>
 	</dependencies>
 

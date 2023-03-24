@@ -2,7 +2,9 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +17,6 @@ import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
-import ba.com.zira.commons.model.ValidationError;
-import ba.com.zira.commons.model.ValidationErrors;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.ArtistService;
@@ -24,19 +24,41 @@ import ba.com.zira.sdr.api.artist.Artist;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
+import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
+import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.person.PersonArtistSingleResponse;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
+import ba.com.zira.sdr.core.mapper.AlbumMapper;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
+import ba.com.zira.sdr.core.mapper.LabelMapper;
+import ba.com.zira.sdr.core.mapper.PersonMapper;
+import ba.com.zira.sdr.core.mapper.SongMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
+import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.EraDAO;
+import ba.com.zira.sdr.dao.LabelDAO;
+import ba.com.zira.sdr.dao.MediaDAO;
+import ba.com.zira.sdr.dao.MediaStoreDAO;
 import ba.com.zira.sdr.dao.PersonArtistDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
+import ba.com.zira.sdr.dao.SongDAO;
+import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.EraEntity;
+import ba.com.zira.sdr.dao.model.LabelEntity;
+import ba.com.zira.sdr.dao.model.MediaEntity;
+import ba.com.zira.sdr.dao.model.MediaStoreEntity;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
+import ba.com.zira.sdr.dao.model.PersonEntity;
+import ba.com.zira.sdr.dao.model.SongEntity;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -44,12 +66,22 @@ import lombok.AllArgsConstructor;
 public class ArtistServiceImpl implements ArtistService {
     ArtistDAO artistDAO;
     EraDAO eraDAO;
+    AlbumDAO albumDAO;
+    LabelDAO labelDAO;
     PersonDAO personDAO;
     ArtistMapper artistMapper;
+    AlbumMapper albumMapper;
+    SongMapper songMapper;
+    LabelMapper labelMapper;
+    PersonMapper personMapper;
     ArtistValidation artistRequestValidation;
     PersonArtistDAO personArtistDAO;
     SongArtistDAO songArtistDAO;
+    SongDAO songDAO;
     PersonRequestValidation personRequestValidation;
+    LookupService lookupService;
+    MediaDAO mediaDAO;
+    MediaStoreDAO mediaStoreDAO;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -101,18 +133,6 @@ public class ArtistServiceImpl implements ArtistService {
         artistRequestValidation.validateExistsArtistRequest(request);
         Long id = request.getEntity();
 
-        if (artistDAO.personArtistExist(id).booleanValue()) {
-            ValidationErrors errors = new ValidationErrors();
-            errors.put(ValidationError.of("PERSON_ARTIST_EXISTS", "Not allowed to be deleted."));
-            return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, "Artist delete validation error");
-        }
-
-        if (artistDAO.songArtistExist(id).booleanValue()) {
-            ValidationErrors errors = new ValidationErrors();
-            errors.put(ValidationError.of("SONG_ARTIST_EXISTS", "Not allowed to be deleted."));
-            return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, "Artist delete validation error");
-        }
-
         artistDAO.remove(artistDAO.findByPK(id));
         return new PayloadResponse<>(request, ResponseCode.OK, "Artist successfully deleted!");
     }
@@ -148,6 +168,48 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<String> copyImageToPersons(final EntityRequest<Long> request) {
+        artistRequestValidation.validateExistsArtistRequest(request);
+        Long id = request.getEntity();
+        var artist = artistDAO.findByPK(id);
+        var media = mediaDAO.findByTypeAndId(ObjectType.ARTIST.getValue(), id);
+        if (media == null || media.getMediaStores().size() == 0) {
+            return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, "Artist doesn't have image!");
+        }
+        for (var personArtist : artist.getPersonArtists()) {
+            var existingPersonMedia = mediaDAO.findByTypeAndId(ObjectType.PERSON.getValue(), id);
+            if (existingPersonMedia == null) {
+                existingPersonMedia = new MediaEntity();
+                existingPersonMedia.setCreated(LocalDateTime.now());
+                existingPersonMedia.setCreatedBy(request.getUserId());
+                existingPersonMedia.setModified(LocalDateTime.now());
+                existingPersonMedia.setModifiedBy(request.getUserId());
+                existingPersonMedia.setObjectId(personArtist.getPerson().getId());
+                existingPersonMedia.setObjectType(ObjectType.PERSON.getValue());
+                existingPersonMedia = mediaDAO.persist(existingPersonMedia);
+            }
+            var artistMediaStore = media.getMediaStores().get(0);
+            var newMediaStore = new MediaStoreEntity();
+            newMediaStore.setId(UUID.randomUUID().toString());
+            newMediaStore.setCreated(LocalDateTime.now());
+            newMediaStore.setCreatedBy(request.getUserId());
+            newMediaStore.setModified(LocalDateTime.now());
+            newMediaStore.setModifiedBy(request.getUserId());
+            newMediaStore.setData(artistMediaStore.getData());
+            newMediaStore.setExtension(artistMediaStore.getExtension());
+            newMediaStore.setName(artistMediaStore.getName());
+            newMediaStore.setUrl(artistMediaStore.getUrl());
+            newMediaStore.setMedia(existingPersonMedia);
+            newMediaStore.setType("COVER_IMAGE");
+            mediaStoreDAO.persist(newMediaStore);
+
+        }
+
+        return new PayloadResponse<>(request, ResponseCode.OK, "Images Copied!");
+    }
+
+    @Override
     public ListPayloadResponse<ArtistByEras> getArtistsByEras(final EntityRequest<Long> request) throws ApiException {
         Long eraId = request.getEntity();
         List<Artist> artistGroup = new ArrayList<>();
@@ -176,7 +238,7 @@ public class ArtistServiceImpl implements ArtistService {
             }
         }
 
-        ArtistByEras artistByEras = new ArtistByEras(artistGroup, artistSolo);
+        var artistByEras = new ArtistByEras(artistGroup, artistSolo);
         List<ArtistByEras> artistByEras1 = new ArrayList<>();
         artistByEras1.add(artistByEras);
 
@@ -185,7 +247,69 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     public ListPayloadResponse<LoV> getArtistNames(EmptyRequest request) throws ApiException {
-        var artists = artistDAO.getArtistLoVs();
+        var artists = artistDAO.getArtistNamesAndSurnames();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
+    }
+
+    @Override
+    public PayloadResponse<ArtistSingleResponse> findById(EntityRequest<Long> request) throws ApiException {
+        Long artistId = request.getEntity();
+        var artist = artistDAO.findByPK(artistId);
+        var artistSingleResponse = artistMapper.entityToSingleArtistDto(artist);
+        List<SongEntity> recentSongs = songDAO.findByArtistId(artistId);
+        artistSingleResponse.setRecentsSong(songMapper.entitiesToDtos(recentSongs));
+        List<LabelEntity> labelSongs = labelDAO.findByArtistId(artistId);
+        artistSingleResponse.setLabels(labelMapper.entitiesToDtos(labelSongs));
+        List<AlbumEntity> albums = albumDAO.findByArtistId(artistId);
+        artistSingleResponse.setAlbums(albumMapper.entitiesToAlbumArtistSingleResponseDtos(albums));
+        Long numberOfSongs = songArtistDAO.countAllByArtistId(artistId);
+        artistSingleResponse.setNumberOfSongs(numberOfSongs);
+        List<PersonEntity> persons = personDAO.findAllByArtistId(artistId);
+        List<PersonArtistSingleResponse> personDTOs = new ArrayList<>();
+        for (PersonEntity person : persons) {
+            var personDTO = personMapper.entityToArtistSingleDtos(person);
+            personDTO.setLabels(labelMapper.entitiesToDtos(person.getLabels()));
+            personDTOs.add(personDTO);
+        }
+        artistSingleResponse.setPersons(personDTOs);
+        lookupService.lookupCoverImage(Arrays.asList(artistSingleResponse), ArtistSingleResponse::getId, ObjectType.ARTIST.getValue(),
+                ArtistSingleResponse::setImageUrl, ArtistSingleResponse::getImageUrl);
+
+        return new PayloadResponse<>(request, ResponseCode.OK, artistSingleResponse);
+    }
+
+    @Override
+    public PayloadResponse<ArtistByEras> countArtistsByEras(EntityRequest<Long> request) {
+        Long eraId = request.getEntity();
+        Long soloArtistsCount = artistDAO.countSoloArtistsByEras(eraId);
+        Long groupArtistsCount = artistDAO.countGroupArtistsByEras(eraId);
+
+        EraEntity era = eraDAO.findByPK(eraId);
+        var artistByEras = new ArtistByEras(era.getName(), soloArtistsCount, groupArtistsCount);
+
+        return new PayloadResponse<>(request, ResponseCode.OK, artistByEras);
+    }
+
+    @Override
+    public ListPayloadResponse<ArtistSearchResponse> getArtistsBySearch(EntityRequest<ArtistSearchRequest> request) throws ApiException {
+        var requestEntity = request.getEntity();
+        var artists = artistDAO.getArtistsBySearch(requestEntity.getName(), requestEntity.getGenre(), requestEntity.getAlbum(),
+                requestEntity.getIsSolo(), requestEntity.getSortBy());
+
+        for (var artist : artists) {
+            lookupService.lookupCoverImage(Arrays.asList(artist), ArtistSearchResponse::getId, ObjectType.ARTIST.getValue(),
+                    ArtistSearchResponse::setImageUrl, ArtistSearchResponse::getImageUrl);
+        }
+        return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
+    }
+
+    @Override
+    public ListPayloadResponse<ArtistSearchResponse> getRandomArtistsForSearch(EmptyRequest request) throws ApiException {
+        var artists = artistDAO.getRandomArtistsForSearch();
+        for (var artist : artists) {
+            lookupService.lookupCoverImage(Arrays.asList(artist), ArtistSearchResponse::getId, ObjectType.ARTIST.getValue(),
+                    ArtistSearchResponse::setImageUrl, ArtistSearchResponse::getImageUrl);
+        }
         return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
     }
 

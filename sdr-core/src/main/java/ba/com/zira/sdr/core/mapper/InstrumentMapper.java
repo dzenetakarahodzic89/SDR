@@ -1,12 +1,13 @@
 package ba.com.zira.sdr.core.mapper;
 
-import java.util.List;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
+
 import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
+import ba.com.zira.sdr.api.instrument.InstrumentSearchResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.dao.model.InstrumentEntity;
 
@@ -21,4 +22,5 @@ public interface InstrumentMapper {
 
     List<InstrumentResponse> entitiesToDtos(List<InstrumentEntity> instrumentEntity);
 
+    List<InstrumentSearchResponse> searchEntitiesToDtos(List<InstrumentEntity> instrumentEntity);
 }

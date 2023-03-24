@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -16,9 +18,11 @@ import ba.com.zira.sdr.api.MoritsIntegrationService;
 import ba.com.zira.sdr.api.model.moritsintegration.MoritsIntegration;
 import ba.com.zira.sdr.api.model.moritsintegration.MoritsIntegrationCreateRequest;
 import ba.com.zira.sdr.api.model.moritsintegration.MoritsIntegrationUpdateRequest;
+import ba.com.zira.sdr.api.model.moritsintegration.MusicMatchIntegrationStatistics;
 import ba.com.zira.sdr.core.mapper.MoritsIntegrationMapper;
 import ba.com.zira.sdr.core.validation.MoritsIntegrationRequestValidation;
 import ba.com.zira.sdr.dao.MoritsIntegrationDAO;
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.MoritsIntegrationEntity;
 import lombok.AllArgsConstructor;
 
@@ -29,6 +33,7 @@ public class MoritsIntegrationServiceImpl implements MoritsIntegrationService {
     MoritsIntegrationDAO moritsIntegrationDAO;
     MoritsIntegrationMapper moritsIntegrationMapper;
     MoritsIntegrationRequestValidation moritsIntegrationRequestValidation;
+    SongDAO songDAO;
 
     @Override
     public PagedPayloadResponse<MoritsIntegration> find(final FilterRequest request) {
@@ -72,4 +77,12 @@ public class MoritsIntegrationServiceImpl implements MoritsIntegrationService {
         return new PayloadResponse<>(request, ResponseCode.OK, "Morits lyric integration removed successfully!");
     }
 
+    @Override
+    public PayloadResponse<MusicMatchIntegrationStatistics> getMusicMatchStatistics(EmptyRequest request) throws ApiException {
+        var songLyricData = songDAO.getSongLyricData();
+        var songStatusData = songDAO.getMusicMatchIntegrationStatus();
+        var statusDistribution = songDAO.getMusicMatchStatusDistribution();
+        MusicMatchIntegrationStatistics statistics = new MusicMatchIntegrationStatistics(songLyricData, songStatusData, statusDistribution);
+        return new PayloadResponse<>(request, ResponseCode.OK, statistics);
+    }
 }

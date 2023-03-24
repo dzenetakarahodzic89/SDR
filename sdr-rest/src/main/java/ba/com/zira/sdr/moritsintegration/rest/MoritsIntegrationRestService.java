@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -22,6 +23,7 @@ import ba.com.zira.sdr.api.MoritsIntegrationService;
 import ba.com.zira.sdr.api.model.moritsintegration.MoritsIntegration;
 import ba.com.zira.sdr.api.model.moritsintegration.MoritsIntegrationCreateRequest;
 import ba.com.zira.sdr.api.model.moritsintegration.MoritsIntegrationUpdateRequest;
+import ba.com.zira.sdr.api.model.moritsintegration.MusicMatchIntegrationStatistics;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,5 +68,12 @@ public class MoritsIntegrationRestService {
             @Parameter(required = true, description = "ID of the morits lyric integration") @PathVariable final Long id)
             throws ApiException {
         return moritsIntegrationService.delete(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Get Music Match statistics")
+    @GetMapping(value = "statistics")
+    public PayloadResponse<MusicMatchIntegrationStatistics> getMusicMatchStatistics() throws ApiException {
+        EmptyRequest request = new EmptyRequest();
+        return moritsIntegrationService.getMusicMatchStatistics(request);
     }
 }

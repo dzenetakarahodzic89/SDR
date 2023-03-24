@@ -22,10 +22,13 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.PersonService;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.person.PersonCountResponse;
 import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
 import ba.com.zira.sdr.api.model.person.PersonResponse;
+import ba.com.zira.sdr.api.model.person.PersonSearchRequest;
+import ba.com.zira.sdr.api.model.person.PersonSearchResponse;
 import ba.com.zira.sdr.api.model.person.PersonUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -96,6 +99,19 @@ public class PersonRestService {
     public ListPayloadResponse<LoV> getPersonsLoV() throws ApiException {
         var req = new EmptyRequest();
         return personService.getPersonLoVs(req);
+    }
+
+    @Operation(summary = "Person search")
+    @PostMapping(value = "/search")
+    public ListPayloadResponse<PersonSearchResponse> find(@RequestBody final PersonSearchRequest request) throws ApiException {
+        return personService.search(new EntityRequest<>(request));
+    }
+
+    @Operation(summary = "Get all Person - Country")
+    @GetMapping(value = "/person-statistics")
+    public PayloadResponse<PersonCountResponse> getPersonsByCountry() throws ApiException {
+        var req = new EmptyRequest();
+        return personService.getPersonsByCountry(req);
     }
 
 }

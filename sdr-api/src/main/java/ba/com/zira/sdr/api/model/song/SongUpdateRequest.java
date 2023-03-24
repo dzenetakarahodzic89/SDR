@@ -37,7 +37,7 @@ public class SongUpdateRequest implements Serializable {
 
     @Schema(description = "Information about the song")
     private String information;
-    
+
     @Schema(description = "Outline text")
     private String outlineText;
 
@@ -62,5 +62,11 @@ public class SongUpdateRequest implements Serializable {
 
     @Schema(description = "Id of song cover")
     private Long coverId;
+
+    @Schema(description = "Cover image")
+    private String coverImage;
+
+    @Schema(description = "Cover image data")
+    private String coverImageData;
 
 }

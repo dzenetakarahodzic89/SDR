@@ -27,7 +27,7 @@ public class SongSimilarityRequestValidation {
             return ValidationError.of("IDENTICAL_SONGS", "Cannot set song similarity to itself!");
         }
 
-        if (songSimilarityDAO.existsSimilarity(songA, songB)) {
+        if (Boolean.TRUE.equals(songSimilarityDAO.existsSimilarity(songA, songB))) {
             return ValidationError.of("SONG_SIMILARITY_EXISTS",
                     "Songs with ids: " + songA.toString() + " and " + songB.toString() + " are already linked!");
         }

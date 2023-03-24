@@ -35,10 +35,9 @@ public class SongCreateRequest implements Serializable {
 
     @Schema(description = "Playtime of the song")
     private String playtime;
-    
+
     @Schema(description = "Outline text")
     private String outlineText;
-
 
     @Schema(description = "Ids of song lyrics")
     private List<Long> lyricIds;
@@ -58,5 +57,11 @@ public class SongCreateRequest implements Serializable {
 
     @Schema(description = "Id of song cover")
     private Long coverId;
+
+    @Schema(description = "Cover image")
+    private String coverImage;
+
+    @Schema(description = "Cover image data")
+    private String coverImageData;
 
 }

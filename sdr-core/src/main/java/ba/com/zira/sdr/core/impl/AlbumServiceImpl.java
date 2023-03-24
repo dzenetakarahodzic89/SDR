@@ -1,8 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +10,11 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.request.SearchRequest;
@@ -36,9 +37,10 @@ import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
 import ba.com.zira.sdr.api.model.album.SongAudio;
+import ba.com.zira.sdr.api.model.album.SongOfAlbum;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
-import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
 import ba.com.zira.sdr.core.mapper.AlbumMapper;
@@ -94,6 +96,29 @@ public class AlbumServiceImpl implements AlbumService {
         albumEntity.setCreated(LocalDateTime.now());
         albumEntity.setStatus(Status.ACTIVE.value());
         albumEntity.setCreatedBy(request.getUserId());
+        albumDAO.persist(albumEntity);
+        if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
+            var mediaRequest = new MediaCreateRequest();
+            mediaRequest.setObjectType(ObjectType.ALBUM.getValue());
+            mediaRequest.setObjectId(albumEntity.getId());
+            mediaRequest.setMediaObjectData(request.getEntity().getCoverImageData());
+            mediaRequest.setMediaObjectName(request.getEntity().getCoverImage());
+            mediaRequest.setMediaStoreType("COVER_IMAGE");
+            mediaRequest.setMediaObjectType("IMAGE");
+            mediaService.save(new EntityRequest<>(mediaRequest, request));
+        }
+
+        return new PayloadResponse<>(request, ResponseCode.OK, albumMapper.entityToDto(albumEntity));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<AlbumResponse> update(final EntityRequest<AlbumUpdateRequest> request) throws ApiException {
+        albumRequestValidation.validateUpdateAlbumRequest(request);
+        var albumEntity = albumDAO.findByPK(request.getEntity().getId());
+        albumMapper.updateEntity(request.getEntity(), albumEntity);
+        albumEntity.setModifiedBy(request.getUserId());
+        albumEntity.setModified(LocalDateTime.now());
 
         if (request.getEntity().getCoverImage() != null && request.getEntity().getCoverImageData() != null) {
             var mediaRequest = new MediaCreateRequest();
@@ -105,18 +130,6 @@ public class AlbumServiceImpl implements AlbumService {
             mediaRequest.setMediaObjectType("IMAGE");
             mediaService.save(new EntityRequest<>(mediaRequest, request));
         }
-        albumDAO.persist(albumEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, albumMapper.entityToDto(albumEntity));
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<AlbumResponse> update(final EntityRequest<AlbumUpdateRequest> request) {
-        albumRequestValidation.validateUpdateAlbumRequest(request);
-        var albumEntity = albumDAO.findByPK(request.getEntity().getId());
-        albumMapper.updateEntity(request.getEntity(), albumEntity);
-        albumEntity.setModifiedBy(request.getUserId());
-        albumEntity.setModified(LocalDateTime.now());
 
         albumDAO.merge(albumEntity);
         return new PayloadResponse<>(request, ResponseCode.OK, albumMapper.entityToDto(albumEntity));
@@ -194,7 +207,7 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Song> addSongToAlbum(EntityRequest<SongOfAlbumUpdateRequest> request) throws ApiException {
+    public PayloadResponse<SongOfAlbum> addSongToAlbum(EntityRequest<SongOfAlbumUpdateRequest> request) throws ApiException {
         var existingEntriesForAlbum = songArtistDAO.songArtistByAlbum(request.getEntity().getAlbumId());
 
         songArtistDAO.deleteByAlbumId(request.getEntity().getAlbumId());
@@ -213,8 +226,14 @@ public class AlbumServiceImpl implements AlbumService {
 
         var newSongEntity = songDAO.findByPK(request.getEntity().getSongId());
 
-        return new PayloadResponse<>(request, ResponseCode.OK, songMapper.entityToDto(newSongEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, songMapper.entityToSongOfAlbumDto(newSongEntity));
 
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> getAlbumLoVs(EmptyRequest request) throws ApiException {
+        var albums = albumDAO.getAlbumLoVs();
+        return new ListPayloadResponse<>(request, ResponseCode.OK, albums);
     }
 
 }

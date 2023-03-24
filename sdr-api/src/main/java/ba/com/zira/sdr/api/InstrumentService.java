@@ -10,6 +10,8 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.instrument.InsertSongInstrumentRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentCreateRequest;
 import ba.com.zira.sdr.api.instrument.InstrumentResponse;
+import ba.com.zira.sdr.api.instrument.InstrumentSearchRequest;
+import ba.com.zira.sdr.api.instrument.InstrumentSearchResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentUpdateRequest;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrument;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrumentEra;
@@ -66,9 +68,8 @@ public interface InstrumentService {
     ListPayloadResponse<ResponseSongInstrument> insertInstrumentsToSong(ListRequest<InsertSongInstrumentRequest> entityRequest)
             throws ApiException;
 
-
-
     ListPayloadResponse<ResponseSongInstrumentEra> findAllSongsInErasForInstruments(EntityRequest<Long> request) throws ApiException;
 
+    PagedPayloadResponse<InstrumentSearchResponse> search(final EntityRequest<InstrumentSearchRequest> request) throws ApiException;
 
 }

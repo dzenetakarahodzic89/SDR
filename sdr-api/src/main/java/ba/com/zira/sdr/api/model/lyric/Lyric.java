@@ -22,7 +22,7 @@ public class Lyric implements Serializable {
     private String createdBy;
 
     @Schema(description = "Language used in the lyric")
-    private String language;
+    private Long languageId;
 
     @Schema(description = "Last modification date")
     private LocalDateTime modified;
@@ -38,7 +38,4 @@ public class Lyric implements Serializable {
 
     @Schema(description = "The ID of the song")
     private Long songId;
-    @Schema(description = "The NAME of the song")
-    private Long songName;
-
 }
