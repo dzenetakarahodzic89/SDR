@@ -77,4 +77,5 @@ public class LabelEntity implements Serializable {
     @OneToMany(mappedBy = "label")
     private List<SongArtistEntity> songArtists;
 
+
 }

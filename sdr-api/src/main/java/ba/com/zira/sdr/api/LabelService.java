@@ -11,6 +11,7 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.model.label.LabelArtistResponse;
 import ba.com.zira.sdr.api.model.label.LabelCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelResponse;
+import ba.com.zira.sdr.api.model.label.LabelSearchRequest;
 import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 
@@ -111,4 +112,13 @@ public interface LabelService {
      *             the api exception
      */
     ListPayloadResponse<LoV> retrieveAllLoVs(EmptyRequest request) throws ApiException;
+
+    /**
+     * Search by name founder.
+     *
+     * @param request
+     *            the request
+     * @return the paged payload response
+     */
+    PagedPayloadResponse<LabelResponse> searchLabelsByNameFounder(EntityRequest<LabelSearchRequest> request);
 }

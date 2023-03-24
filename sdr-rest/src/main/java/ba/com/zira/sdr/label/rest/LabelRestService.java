@@ -25,6 +25,7 @@ import ba.com.zira.sdr.api.LabelService;
 import ba.com.zira.sdr.api.model.label.LabelArtistResponse;
 import ba.com.zira.sdr.api.model.label.LabelCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelResponse;
+import ba.com.zira.sdr.api.model.label.LabelSearchRequest;
 import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +41,15 @@ public class LabelRestService {
 
     @Autowired
     private LabelService labelService;
+
+    @Operation(summary = "Find Labels based on custom filter")
+    @GetMapping(value = "search")
+    public PagedPayloadResponse<LabelResponse> findByNameFounder(
+            @Parameter(required = false, description = "Name of the label") @RequestParam(required = false) final String name,
+            @Parameter(required = false, description = "Id of a founder of the label") @RequestParam(required = false) final Long founder,
+            @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy) {
+        return labelService.searchLabelsByNameFounder(new EntityRequest<>(new LabelSearchRequest(name, founder, sortBy)));
+    }
 
     @Operation(summary = "Find labels base on filter criteria")
     @GetMapping
