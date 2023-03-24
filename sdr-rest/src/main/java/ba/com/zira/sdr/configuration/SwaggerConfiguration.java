@@ -255,16 +255,28 @@ public class SwaggerConfiguration {
         return GroupedOpenApi.builder().group("songplaylist-api").packagesToScan("ba.com.zira.sdr.songplaylist.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
+
     @Bean
     public GroupedOpenApi itunesIntegrationApi() {
         return GroupedOpenApi.builder().group("itunesintegration-api").packagesToScan("ba.com.zira.sdr.itunesintegration.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
-
     @Bean
     public GroupedOpenApi newsArticlesApi() {
         return GroupedOpenApi.builder().group("newsarticles-api").packagesToScan("ba.com.zira.sdr.newsarticles.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi battleApi() {
+        return GroupedOpenApi.builder().group("battle-api").packagesToScan("ba.com.zira.sdr.battle.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi battleTurnApi() {
+        return GroupedOpenApi.builder().group("battle-turn-api").packagesToScan("ba.com.zira.sdr.battleturn.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
