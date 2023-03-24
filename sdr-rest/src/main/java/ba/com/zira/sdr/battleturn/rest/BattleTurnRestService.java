@@ -29,10 +29,10 @@ public class BattleTurnRestService {
     @Autowired
     private BattleTurnService battleTurnService;
 
-    @Operation(summary = "Get player team information by turn id")
+    @Operation(summary = "Get player team information by battle id")
     @GetMapping(value = "/team/{id}")
     public PayloadResponse<TeamInformation> getPlayingTeamByBattleId(
-            @Parameter(required = true, description = "Id of the turn") @PathVariable final Long id) throws ApiException {
+            @Parameter(required = true, description = "Id of the battle") @PathVariable final Long id) throws ApiException {
         return battleTurnService.getPlayingTeamByBattleId(new EntityRequest<>(id));
     }
 
