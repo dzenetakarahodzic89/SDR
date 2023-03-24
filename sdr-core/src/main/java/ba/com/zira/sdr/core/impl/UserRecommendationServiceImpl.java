@@ -59,6 +59,8 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
 
     @NonNull
     UserRecommendationRequestValidation userRecommendationRequestValidation;
+
+    @NonNull
     RemoteApiFeignClient remoteApiFeignClient;
 
     @NonNull
