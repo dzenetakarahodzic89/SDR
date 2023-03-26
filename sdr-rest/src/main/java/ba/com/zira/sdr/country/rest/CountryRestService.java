@@ -21,9 +21,11 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.CountryService;
+import ba.com.zira.sdr.api.model.country.CountriesSearchRequest;
 import ba.com.zira.sdr.api.model.country.CountryCreateRequest;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.country.CountryUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -76,4 +78,12 @@ public class CountryRestService {
         return countryService.getAll(request);
 
     }
+
+    @Operation(summary = "Find All Countries Except One With The Selected Id")
+    @PostMapping(value = "search")
+    public ListPayloadResponse<LoV> getAllCountriesExceptOneWithTheSelectedId(@RequestBody final CountriesSearchRequest request)
+            throws ApiException {
+        return countryService.getAllCountriesExceptOneWithTheSelectedId(new EntityRequest<>(request));
+    }
+
 }
