@@ -13,6 +13,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.BattleService;
+import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 import ba.com.zira.sdr.api.model.battle.MapState;
@@ -38,6 +39,13 @@ public class BattleServiceImpl implements BattleService {
     }
 
     @Override
+    public PayloadResponse<Battle> getById(EntityRequest<Long> request) throws ApiException {
+        var battleEntity = battleDAO.findByPK(request.getEntity());
+        var battle = battleMapper.entityToBattleDto(battleEntity);
+
+        return new PayloadResponse<>(request, ResponseCode.OK, battle);
+   }
+        
     public PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException {
         var battleTurn = battleDAO.findLastBattleTurn(request.getEntity());
         try {
