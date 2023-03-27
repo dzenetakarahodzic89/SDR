@@ -9,9 +9,8 @@ import lombok.Data;
 public class TeamStructure implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    Long id;
     private List<ArtistStructure> teamArtists;
+    Long id;
     Long countryId;
     String countryName;
     Long numberOfWins;

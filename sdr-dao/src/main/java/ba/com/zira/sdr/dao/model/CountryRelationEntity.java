@@ -19,28 +19,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * The persistent class for the "sat_battle" database table.
- *
- */
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "sat_battle")
-@NamedQuery(name = "BattleEntity.findAll", query = "SELECT c FROM BattleEntity c")
-public class BattleEntity implements Serializable {
+@Table(name = "sat_country_relations")
+@NamedQuery(name = "CountryRelationEntity.findAll", query = "SELECT cr FROM CountryRelationEntity cr")
+public class CountryRelationEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name = "SAT_BATTLE_ID_GENERATOR", sequenceName = "SAT_BATTLE_SEQ")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_BATTLE_ID_GENERATOR")
+    @SequenceGenerator(name = "SAT_COUNTRY_RELATIONS_ID_GENERATOR", sequenceName = "SAT_COUNTRY_RELATIONS_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_COUNTRY_RELATIONS_ID_GENERATOR")
     @Column(name = "id")
     private Long id;
-
-    @Column(name = "name")
-    private String name;
 
     @Column(name = "created")
     private LocalDateTime created;
@@ -57,17 +50,11 @@ public class BattleEntity implements Serializable {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "last_turn")
-    private Long lastTurn;
-
-    @Column(name = "team_size")
-    private Long teamSize;
-
-    @Column(name = "song_size")
-    private Long songSize;
+    @Column(name = "country_relation")
+    private String countryRelation;
 
     @ManyToOne
-    @JoinColumn(name = "winner_country_id")
+    @JoinColumn(name = "country_id")
     private CountryEntity country;
 
 }

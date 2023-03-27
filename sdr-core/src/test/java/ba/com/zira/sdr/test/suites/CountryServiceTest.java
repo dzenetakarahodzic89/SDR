@@ -48,7 +48,7 @@ public class CountryServiceTest extends BasicTestConfiguration {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.countryDAO = Mockito.mock(CountryDAO.class);
         this.countryRequestValidation = Mockito.mock(CountryRequestValidation.class);
-        this.countryService = new CountryServiceImpl(countryDAO, countryMapper, countryRequestValidation);
+        this.countryService = new CountryServiceImpl(countryDAO, countryMapper, null, countryRequestValidation, null);
     }
 
     @Test(enabled = true)
