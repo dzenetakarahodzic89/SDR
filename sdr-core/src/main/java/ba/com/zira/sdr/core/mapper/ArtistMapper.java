@@ -20,9 +20,9 @@ import ba.com.zira.sdr.dao.model.PersonEntity;
 
 public interface ArtistMapper {
 
-    ArtistResponse entityToDto(ArtistEntity artistEntity);
-
     ArtistEntity dtoToEntity(ArtistCreateRequest artistRequest);
+
+    ArtistResponse entityToDto(ArtistEntity artistEntity);
 
     ArtistSingleResponse entityToSingleArtistDto(ArtistEntity artistEntity);
 
