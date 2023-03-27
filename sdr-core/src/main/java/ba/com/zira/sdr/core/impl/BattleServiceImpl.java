@@ -21,14 +21,19 @@ import ba.com.zira.sdr.api.model.battle.TeamsState;
 import ba.com.zira.sdr.core.mapper.BattleMapper;
 import ba.com.zira.sdr.dao.BattleDAO;
 import ba.com.zira.sdr.dao.model.BattleEntity;
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BattleServiceImpl implements BattleService {
 
+    @NonNull
     BattleDAO battleDAO;
+
+    @NonNull
     BattleMapper battleMapper;
+
     private N2bObjectMapper objectMapper = new N2bObjectMapper();
     private static final Logger LOGGER = LoggerFactory.getLogger(BattleServiceImpl.class);
 
@@ -44,8 +49,9 @@ public class BattleServiceImpl implements BattleService {
         var battle = battleMapper.entityToBattleDto(battleEntity);
 
         return new PayloadResponse<>(request, ResponseCode.OK, battle);
-   }
-        
+    }
+
+    @Override
     public PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException {
         var battleTurn = battleDAO.findLastBattleTurn(request.getEntity());
         try {
