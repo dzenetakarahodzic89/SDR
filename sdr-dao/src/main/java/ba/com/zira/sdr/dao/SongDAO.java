@@ -1,5 +1,12 @@
 package ba.com.zira.sdr.dao;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,13 +17,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.commons.message.request.SearchRequest;
@@ -372,7 +372,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         criteriaQuery
                 .multiselect(artists.get(ArtistEntity_.id), root.<Long> get("id"), root.<String> get("name"),
                         root.<String> get("spotifyId"), builder.literal(""), root.<String> get("playtime"))
-                .where(artists.get(ArtistEntity_.id).in(artistIds));
+                .where(artists.get(ArtistEntity_.id).in(artistIds)).orderBy(builder.asc(root.get("name")));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
