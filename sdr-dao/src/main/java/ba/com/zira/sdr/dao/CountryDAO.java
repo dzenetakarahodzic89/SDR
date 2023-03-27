@@ -24,13 +24,13 @@ public class CountryDAO extends AbstractDAO<CountryEntity, Long> {
     }
 
     public List<CountryResponse> getAllCountries() {
-        var hql = "select new ba.com.zira.sdr.api.model.country.CountryResponse(r.id, r.name, r.flagAbbriviation, r.region) from CountryEntity r order by r.name";
+        var hql = "select new ba.com.zira.sdr.api.model.country.CountryResponse(r.id, r.name, r.flagAbbriviation, r.region) from CountryEntity r order by r.name asc";
         TypedQuery<CountryResponse> query = entityManager.createQuery(hql, CountryResponse.class);
         return query.getResultList();
     }
 
     public List<LoV> getAllCountriesExceptOneWithTheSelectedId(final Long id) {
-        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(m.id, m.name) from CountryEntity m where m.id!= :id";
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(m.id, m.name) from CountryEntity m where m.id!= :id  order by m.name asc";
         var q = entityManager.createQuery(hql, LoV.class).setParameter("id", id);
         return q.getResultList();
     }
