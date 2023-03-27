@@ -18,9 +18,8 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.UserRecommendationService;
-import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
 import ba.com.zira.sdr.api.model.user.UserCodeDisplay;
-import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
+import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
 import ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse;
@@ -101,27 +100,30 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
 
     }
 
-    @Override
-    public ListPayloadResponse<UserScoreResponse> scoreCompare(final EntityRequest<ScoreCompareRequest> request) {
-
-        List<UserScoreResponse> usersList = userRecommendationDAO.averageScoreByGenre(request.getEntity().getUserIds());
-
-        PagedPayloadResponse<UserCodeDisplay> usersFullName = remoteApiFeignClient.findAllUsers();
-
-        Map<String, String> userCodeToName = new HashMap<>();
-        for (UserCodeDisplay user : usersFullName.getPayload()) {
-            userCodeToName.put(user.getUsercode(), user.getDisplayname());
-        }
-
-        for (UserScoreResponse user : usersList) {
-            String userName = userCodeToName.get(user.getUserCode());
-            if (userName != null) {
-                user.setUserCode(userName);
-            }
-        }
-
-        return new ListPayloadResponse<>(request, ResponseCode.OK, usersList);
-    }
+    // @Override
+    // public ListPayloadResponse<UserScoreResponse> scoreCompare(final
+    // EntityRequest<ScoreCompareRequest> request) {
+    //
+    // List<UserScoreResponse> usersList =
+    // userRecommendationDAO.averageScoreByGenre(request.getEntity().getUserIds());
+    //
+    // PagedPayloadResponse<UserCodeDisplay> usersFullName =
+    // remoteApiFeignClient.findAllUsers();
+    //
+    // Map<String, String> userCodeToName = new HashMap<>();
+    // for (UserCodeDisplay user : usersFullName.getPayload()) {
+    // userCodeToName.put(user.getUsercode(), user.getDisplayname());
+    // }
+    //
+    // for (UserScoreResponse user : usersList) {
+    // String userName = userCodeToName.get(user.getUserCode());
+    // if (userName != null) {
+    // user.setUserCode(userName);
+    // }
+    // }
+    //
+    // return new ListPayloadResponse<>(request, ResponseCode.OK, usersList);
+    // }
 
     @Override
     public ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountry(EntityRequest<String> request) {

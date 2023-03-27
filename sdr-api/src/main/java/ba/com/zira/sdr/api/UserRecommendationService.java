@@ -8,7 +8,6 @@ import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
-import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
 import ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse;
@@ -90,7 +89,8 @@ public interface UserRecommendationService {
      *            the request
      * @return the list payload response
      */
-    ListPayloadResponse<UserRecommendationResponse> scoreCompare(EntityRequest<ScoreCompareRequest> request);
+    // ListPayloadResponse<UserRecommendationResponse>
+    // scoreCompare(EntityRequest<ScoreCompareRequest> request);
 
     /**
      * Gets the average score per country.
