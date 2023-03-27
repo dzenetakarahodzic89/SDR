@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
+import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
@@ -23,9 +24,11 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.PlaylistGAService;
 import ba.com.zira.sdr.api.enums.ServiceType;
 import ba.com.zira.sdr.api.model.generateplaylist.SavePlaylistRequest;
+import ba.com.zira.sdr.api.model.playlistga.GAHistoryResponse;
 import ba.com.zira.sdr.api.model.playlistga.PlaylistRequestGA;
 import ba.com.zira.sdr.api.model.playlistga.PlaylistResponseGA;
 import ba.com.zira.sdr.api.model.playlistga.WeightGenerator;
+import ba.com.zira.sdr.core.mapper.GAHistoryMapper;
 import ba.com.zira.sdr.core.mapper.PlaylistMapper;
 import ba.com.zira.sdr.core.mapper.SongMapper;
 import ba.com.zira.sdr.core.mapper.SongScoreMapper;
@@ -71,6 +74,8 @@ public class PlaylistGAServiceImpl implements PlaylistGAService {
     GeneratePlaylistServiceHelper generatePlaylistServiceHelper;
     @NonNull
     GAHistoryDAO gaHistoryDAO;
+    @NonNull
+    GAHistoryMapper gaHistoryMapper;
 
     private N2bObjectMapper objectMapper = new N2bObjectMapper();
 
@@ -235,6 +240,13 @@ public class PlaylistGAServiceImpl implements PlaylistGAService {
         serviceScores.put(ServiceType.TIDAL, songScore.getTidalScore().doubleValue());
         serviceScores.put(ServiceType.YT_MUSIC, songScore.getYoutubeMusicScore().doubleValue());
         return serviceScores;
+    }
+
+    @Override
+    public PagedPayloadResponse<GAHistoryResponse> getHistory(FilterRequest filterRequest) throws ApiException {
+        var historyEntities = gaHistoryDAO.findAll(filterRequest.getFilter());
+
+        return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, historyEntities, gaHistoryMapper::entitiesToDtos);
     }
 
 }
