@@ -165,6 +165,12 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    public ListPayloadResponse<LoV> getPersonLoV(final EmptyRequest req) throws ApiException {
+        List<LoV> eras = personDAO.getAllPersonsLoVs();
+        return new ListPayloadResponse<>(req, ResponseCode.OK, eras);
+    }
+
+    @Override
     public PayloadResponse<PersonOverviewResponse> retrieveById(final EntityRequest<Long> request) {
         personRequestValidation.validateExistsPersonRequest(request);
 
