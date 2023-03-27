@@ -22,6 +22,7 @@ import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 
 @Tag(name = "battle")
 @RestController
@@ -43,8 +44,8 @@ public class BattleRestService {
     public PayloadResponse<Battle> findById(@Parameter(required = true, description = "Id of the battle") @PathVariable final Long id)
             throws ApiException {
         return battleService.getById(new EntityRequest<>(id));
-   	}
-        
+    }
+
     @Operation(summary = "Get battle turn")
     @GetMapping(value = "{id}")
     public PayloadResponse<BattleSingleResponse> getById(
