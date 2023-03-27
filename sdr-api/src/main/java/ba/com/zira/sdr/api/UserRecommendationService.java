@@ -8,6 +8,7 @@ import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.userrecommendation.AverageScorePerCountry;
+import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
 import ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse;
