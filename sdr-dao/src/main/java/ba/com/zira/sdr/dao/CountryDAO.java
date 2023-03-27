@@ -29,4 +29,10 @@ public class CountryDAO extends AbstractDAO<CountryEntity, Long> {
         return query.getResultList();
     }
 
+    public List<LoV> getAllCountriesExceptOneWithTheSelectedId(final Long id) {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(m.id, m.name) from CountryEntity m where m.id!= :id";
+        var q = entityManager.createQuery(hql, LoV.class).setParameter("id", id);
+        return q.getResultList();
+    }
+
 }

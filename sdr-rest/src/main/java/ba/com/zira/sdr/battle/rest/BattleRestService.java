@@ -18,18 +18,18 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.BattleService;
 import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
 
-@Tag(name = "battle", description = "Battle API")
+@Tag(name = "battle")
 @RestController
 @RequestMapping(value = "battle")
 @AllArgsConstructor
 public class BattleRestService {
     @Autowired
-    private BattleService battleService;
+    BattleService battleService;
 
     @Operation(summary = "Find battle")
     @GetMapping
@@ -43,6 +43,13 @@ public class BattleRestService {
     public PayloadResponse<Battle> findById(@Parameter(required = true, description = "Id of the battle") @PathVariable final Long id)
             throws ApiException {
         return battleService.getById(new EntityRequest<>(id));
+   	}
+        
+    @Operation(summary = "Get battle turn")
+    @GetMapping(value = "{id}")
+    public PayloadResponse<BattleSingleResponse> getById(
+            @Parameter(required = true, description = "ID of the battle") @PathVariable final Long id) throws ApiException {
+        return battleService.getLastTurn(new EntityRequest<>(id));
     }
 
 }

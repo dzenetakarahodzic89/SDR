@@ -7,12 +7,12 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 
 /**
  * The Interface BattleService.
  */
 public interface BattleService {
-
     /**
      * Find paged payload response.
      *
@@ -34,4 +34,5 @@ public interface BattleService {
      *             the api exception
      */
     PayloadResponse<Battle> getById(EntityRequest<Long> request) throws ApiException;
+    PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException;
 }
