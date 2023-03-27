@@ -1,13 +1,13 @@
 package ba.com.zira.sdr.battle.rest;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -47,7 +47,7 @@ public class BattleRestService {
     }
 
     @Operation(summary = "Get battle turn")
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "{id}/get-last-turn")
     public PayloadResponse<BattleSingleResponse> getById(
             @Parameter(required = true, description = "ID of the battle") @PathVariable final Long id) throws ApiException {
         return battleService.getLastTurn(new EntityRequest<>(id));
