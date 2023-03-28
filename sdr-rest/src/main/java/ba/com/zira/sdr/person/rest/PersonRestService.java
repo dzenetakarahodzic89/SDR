@@ -101,6 +101,13 @@ public class PersonRestService {
         return personService.getPersonLoVs(req);
     }
 
+    @Operation(summary = "Get all Person - LoV")
+    @GetMapping(value = "/lovs")
+    public ListPayloadResponse<LoV> getPersonLoV() throws ApiException {
+        var req = new EmptyRequest();
+        return personService.getPersonLoV(req);
+    }
+
     @Operation(summary = "Person search")
     @PostMapping(value = "/search")
     public ListPayloadResponse<PersonSearchResponse> find(@RequestBody final PersonSearchRequest request) throws ApiException {

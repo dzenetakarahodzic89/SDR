@@ -24,6 +24,7 @@ import ba.com.zira.sdr.api.BattleService;
 import ba.com.zira.sdr.api.CountryService;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
+import ba.com.zira.sdr.api.model.country.CountriesSearchRequest;
 import ba.com.zira.sdr.api.model.country.CountryArtistSongResponse;
 import ba.com.zira.sdr.api.model.country.CountryCreateRequest;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
@@ -82,6 +83,13 @@ public class CountryRestService {
         var request = new EmptyRequest();
         return countryService.getAll(request);
 
+    }
+
+    @Operation(summary = "Find All Countries Except One With The Selected Id")
+    @PostMapping(value = "search")
+    public ListPayloadResponse<LoV> getAllCountriesExceptOneWithTheSelectedId(@RequestBody final CountriesSearchRequest request)
+            throws ApiException {
+        return countryService.getAllCountriesExceptOneWithTheSelectedId(new EntityRequest<>(request));
     }
 
     @Operation(summary = "Get all")

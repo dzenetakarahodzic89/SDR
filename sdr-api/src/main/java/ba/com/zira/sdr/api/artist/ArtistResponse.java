@@ -47,6 +47,8 @@ public class ArtistResponse implements Serializable {
     protected transient Map<Long, String> songArtistNames;
     @Schema(description = "Outline text for the artist")
     protected String outlineText;
+    @Schema(description = "Album Count")
+    protected Long albumCount;
 
     public ArtistResponse(final Long id, final String name, final LocalDateTime created, final String createdBy,
             final LocalDateTime dateOfBirth, final LocalDateTime dateOfDeath, final String information, final LocalDateTime modified,

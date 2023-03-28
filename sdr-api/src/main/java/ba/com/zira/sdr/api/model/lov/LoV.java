@@ -10,6 +10,7 @@ public class LoV implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long id;
     private String name;
+    private String surname;
 
     public LoV() {
         super();
@@ -26,6 +27,13 @@ public class LoV implements Serializable {
         this.id = id;
         this.name = name;
 
+    }
+
+    public LoV(Long id, String name, String surname) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
     }
 
 }

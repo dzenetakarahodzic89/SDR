@@ -25,6 +25,7 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.BattleService;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.model.battle.ArtistStructure;
+import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
 import ba.com.zira.sdr.api.model.battle.BattleLog;
@@ -57,13 +58,10 @@ public class BattleServiceImpl implements BattleService {
     BattleDAO battleDAO;
     @NonNull
     CountryDAO countryDAO;
-
     @NonNull
     BattleMapper battleMapper;
-
     @NonNull
     BattleTurnDAO battleTurnDAO;
-
     private N2bObjectMapper objectMapper = new N2bObjectMapper();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BattleServiceImpl.class);
@@ -72,6 +70,28 @@ public class BattleServiceImpl implements BattleService {
     public PagedPayloadResponse<BattleResponse> find(FilterRequest request) throws ApiException {
         PagedData<BattleEntity> battleEntities = battleDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, battleEntities, battleMapper::entityToDTOs);
+    }
+
+    @Override
+    public PayloadResponse<Battle> getById(EntityRequest<Long> request) throws ApiException {
+        var battleEntity = battleDAO.findByPK(request.getEntity());
+        var battle = battleMapper.entityToBattleDto(battleEntity);
+
+        return new PayloadResponse<>(request, ResponseCode.OK, battle);
+    }
+
+    @Override
+    public PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException {
+        var battleTurn = battleDAO.findLastBattleTurn(request.getEntity());
+        try {
+            var mapState = objectMapper.readValue(battleTurn.getMapStateJson(), MapState.class);
+            battleTurn.setMapState(mapState);
+            var teamState = objectMapper.readValue(battleTurn.getTeamStateJson(), TeamsState.class);
+            battleTurn.setTeamState(teamState);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+        }
+        return new PayloadResponse<>(request, ResponseCode.OK, battleTurn);
     }
 
     @Override
@@ -225,20 +245,6 @@ public class BattleServiceImpl implements BattleService {
         battleTurnDAO.persist(battleTurnEntity);
 
         return new PayloadResponse<>(request, ResponseCode.OK, battleMapper.entityToDtoOne(battleEntity));
-    }
-
-    @Override
-    public PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException {
-        var battleTurn = battleDAO.findLastBattleTurn(request.getEntity());
-        try {
-            var mapState = objectMapper.readValue(battleTurn.getMapStateJson(), MapState.class);
-            battleTurn.setMapState(mapState);
-            var teamState = objectMapper.readValue(battleTurn.getTeamStateJson(), TeamsState.class);
-            battleTurn.setTeamState(teamState);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-        }
-        return new PayloadResponse<>(request, ResponseCode.OK, battleTurn);
     }
 
 }

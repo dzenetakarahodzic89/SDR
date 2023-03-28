@@ -1,5 +1,12 @@
 package ba.com.zira.sdr.dao;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
@@ -11,17 +18,11 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import ba.com.zira.commons.dao.AbstractDAO;
-import ba.com.zira.sdr.api.enums.ObjectType;
-import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationTypesData;
 import ba.com.zira.commons.message.request.SearchRequest;
+import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.battle.SongWrapper;
+import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationTypesData;
 import ba.com.zira.sdr.api.model.generateplaylist.GeneratedPlaylistSongDbResponse;
 import ba.com.zira.sdr.api.model.generateplaylist.PlaylistGenerateRequest;
 import ba.com.zira.sdr.api.model.genre.EraRequest;
@@ -360,6 +361,20 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         var hql = "select distinct new ba.com.zira.sdr.api.model.lov.DoubleStringLoV(s.musicMatchStatus, count(s)+0.0) from SongEntity s group by s.musicMatchStatus";
         TypedQuery<DoubleStringLoV> query = entityManager.createQuery(hql, DoubleStringLoV.class);
         return query.getResultList();
+    }
+
+    public List<SongWrapper> getAllSongsForArtists(List<Long> artistIds) {
+        final CriteriaQuery<SongWrapper> criteriaQuery = builder.createQuery(SongWrapper.class);
+        final Root<SongEntity> root = criteriaQuery.from(SongEntity.class);
+        Join<SongEntity, SongArtistEntity> songArtists = root.join(SongEntity_.songArtists);
+        Join<SongArtistEntity, ArtistEntity> artists = songArtists.join(SongArtistEntity_.artist);
+
+        criteriaQuery
+                .multiselect(artists.get(ArtistEntity_.id), root.<Long> get("id"), root.<String> get("name"),
+                        root.<String> get("spotifyId"), builder.literal(""), root.<String> get("playtime"))
+                .where(artists.get(ArtistEntity_.id).in(artistIds)).orderBy(builder.asc(root.get("name")));
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
 }

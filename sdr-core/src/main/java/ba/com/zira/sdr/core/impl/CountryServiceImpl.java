@@ -17,14 +17,17 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.CountryService;
+import ba.com.zira.sdr.api.model.country.CountriesSearchRequest;
 import ba.com.zira.sdr.api.model.country.CountryArtistSongResponse;
 import ba.com.zira.sdr.api.model.country.CountryCreateRequest;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.country.CountryUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.core.mapper.CountryMapper;
+import ba.com.zira.sdr.core.mapper.CountryRelationsMapper;
 import ba.com.zira.sdr.core.validation.CountryRequestValidation;
 import ba.com.zira.sdr.dao.CountryDAO;
+import ba.com.zira.sdr.dao.CountryRelationsDAO;
 import ba.com.zira.sdr.dao.model.CountryEntity;
 import lombok.AllArgsConstructor;
 
@@ -33,7 +36,9 @@ import lombok.AllArgsConstructor;
 public class CountryServiceImpl implements CountryService {
     CountryDAO countryDAO;
     CountryMapper countryMapper;
+    CountryRelationsMapper countryRelationsMapper;
     CountryRequestValidation countryRequestValidation;
+    CountryRelationsDAO countryRelationsDAO;
 
     @Override
     public PagedPayloadResponse<CountryResponse> get(FilterRequest filterRequest) {
@@ -91,4 +96,12 @@ public class CountryServiceImpl implements CountryService {
         CountryArtistSongResponse get = countryDAO.getArtistsAndSongs(countryId);
         return new PayloadResponse<>(request, ResponseCode.OK, get);
     }
+
+    @Override
+    public ListPayloadResponse<LoV> getAllCountriesExceptOneWithTheSelectedId(final EntityRequest<CountriesSearchRequest> request)
+            throws ApiException {
+        var countries = countryDAO.getAllCountriesExceptOneWithTheSelectedId(request.getEntity().getId());
+        return new ListPayloadResponse<>(request, ResponseCode.OK, countries);
+    }
+
 }

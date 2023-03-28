@@ -27,12 +27,18 @@ public class CountryDAO extends AbstractDAO<CountryEntity, Long> {
     }
 
     public List<CountryResponse> getAllCountries() {
-        var hql = "select new ba.com.zira.sdr.api.model.country.CountryResponse(r.id, r.name, r.flagAbbriviation, r.region) from CountryEntity r order by r.name";
+        var hql = "select new ba.com.zira.sdr.api.model.country.CountryResponse(r.id, r.name, r.flagAbbriviation, r.region) from CountryEntity r order by r.name asc";
         TypedQuery<CountryResponse> query = entityManager.createQuery(hql, CountryResponse.class);
         return query.getResultList();
     }
 
-    public List<LoV> getAllCountriesArtistsSongs() {
+    public List<LoV> getAllCountriesExceptOneWithTheSelectedId(final Long id) {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(m.id, m.name) from CountryEntity m where m.id!= :id  order by m.name asc";
+        var q = entityManager.createQuery(hql, LoV.class).setParameter("id", id);
+        return q.getResultList();
+    }
+    
+     public List<LoV> getAllCountriesArtistsSongs() {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(c.id, c.name) " + "from CountryEntity c "
                 + "join PersonEntity p on c.id = p.country.id " + "join PersonArtistEntity pa on p.id = pa.person.id "
                 + "join ArtistEntity a on pa.artist.id = a.id " + "join SongArtistEntity sa on a.id = sa.artist.id "
