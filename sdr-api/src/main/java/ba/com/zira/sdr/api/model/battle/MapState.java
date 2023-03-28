@@ -18,4 +18,15 @@ public class MapState implements Serializable {
     Long numberOfActiveCountries;
     Long numberOfInactiveCountries;
     Long numberOfPassiveCountries;
+
+    public MapState(List<CountryState> countries, Long numberOfActivePlayerTeams, Long numberOfActiveNpcTeams, Long numberOfActiveCountries,
+            Long numberOfInactiveCountries, Long numberOfPassiveCountries) {
+        this.countries = countries;
+        this.numberOfActivePlayerTeams = numberOfActivePlayerTeams;
+        this.numberOfActiveNpcTeams = numberOfActiveNpcTeams;
+        this.numberOfActiveCountries = numberOfActiveCountries;
+        this.numberOfInactiveCountries = numberOfInactiveCountries;
+        this.numberOfPassiveCountries = numberOfPassiveCountries;
+    }
+
 }

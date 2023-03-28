@@ -88,4 +88,9 @@ public class ArtistResponse implements Serializable {
         this.type = type;
     }
 
+    public ArtistResponse(Long id, String name) {
+        this.id = id;
+        this.name = name;
+
+    }
 }

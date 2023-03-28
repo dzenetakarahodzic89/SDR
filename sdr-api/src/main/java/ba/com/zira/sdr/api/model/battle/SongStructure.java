@@ -13,4 +13,11 @@ public class SongStructure implements Serializable {
     String spotifyId;
     String audioUrl;
 
+    public SongStructure(Long songId, String name, String spotifyId, String audioUrl) {
+        this.songId = songId;
+        this.name = name;
+        this.spotifyId = spotifyId;
+        this.audioUrl = audioUrl;
+    }
+
 }

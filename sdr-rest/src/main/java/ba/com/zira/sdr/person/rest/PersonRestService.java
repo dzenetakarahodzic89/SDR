@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.person.rest;
 
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,10 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import java.util.Map;
-
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -22,10 +20,7 @@ import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
-import ba.com.zira.sdr.api.BattleService;
 import ba.com.zira.sdr.api.PersonService;
-import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
-import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.person.PersonCountResponse;
 import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
@@ -47,8 +42,6 @@ import lombok.AllArgsConstructor;
 public class PersonRestService {
 
     private PersonService personService;
-
-    private BattleService battleService;
 
     @Operation(summary = "Find person base on filter criteria")
     @GetMapping
@@ -119,13 +112,6 @@ public class PersonRestService {
     public PayloadResponse<PersonCountResponse> getPersonsByCountry() throws ApiException {
         var req = new EmptyRequest();
         return personService.getPersonsByCountry(req);
-    }
-
-    @Operation(summary = "Create a battle")
-    @PostMapping(value = "/battle-create")
-    public PayloadResponse<BattleGenerateResponse> createA(@RequestBody(required = true) BattleGenerateRequest request)
-            throws JsonProcessingException {
-        return battleService.create(new EntityRequest<>(request));
     }
 
 }

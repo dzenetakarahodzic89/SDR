@@ -1,7 +1,5 @@
 package ba.com.zira.sdr.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
@@ -24,8 +22,7 @@ public interface BattleService {
      */
     PagedPayloadResponse<BattleResponse> find(final FilterRequest request) throws ApiException;
 
-    PayloadResponse<BattleGenerateResponse> create(EntityRequest<BattleGenerateRequest> request) throws JsonProcessingException;
-
+    PayloadResponse<BattleGenerateResponse> create(EntityRequest<BattleGenerateRequest> request) throws ApiException;
 
     PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException;
 }

@@ -30,12 +30,23 @@ public class CountryResponse implements Serializable {
     private LocalDateTime created;
     @Schema(description = "User that created this country")
     private String createdBy;
+    private Long numberOfCountries;
 
     public CountryResponse(Long id, String name, String flagAbbriviation, String region) {
         this.id = id;
         this.name = name;
         this.flagAbbriviation = flagAbbriviation;
         this.region = region;
+    }
+
+    public CountryResponse(Long id, String name, Long numberOfActiveCountries) {
+        this.id = id;
+        this.name = name;
+        this.numberOfCountries = numberOfActiveCountries;
+    }
+
+    public CountryResponse(Long id) {
+        this.id = id;
     }
 
 }

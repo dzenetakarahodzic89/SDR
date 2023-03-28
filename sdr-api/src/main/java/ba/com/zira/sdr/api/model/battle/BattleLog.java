@@ -12,6 +12,14 @@ public class BattleLog implements Serializable {
     private static final long serialVersionUID = 1L;
     private Map<Long, String> textHistory;
     private List<BattleLogEntry> turnHistory;
-    Long winnerCountryId;
-    Long loserCountryId;
+    private Long winnerCountryId;
+    private Long loserCountryId;
+
+    public BattleLog(Map<Long, String> textHistory, List<BattleLogEntry> turnHistory, Long winnerCountryId, Long loserCountryId) {
+
+        this.textHistory = textHistory;
+        this.turnHistory = turnHistory;
+        this.winnerCountryId = winnerCountryId;
+        this.loserCountryId = loserCountryId;
+    }
 }
