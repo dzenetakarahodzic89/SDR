@@ -9,22 +9,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-public class AlbumsByDecadeResponse implements Serializable {
+public class AlbumsSongByDecade implements Serializable{
     private static final long serialVersionUID = 1L;
 
     @NotNull
     @Schema(description = "Decade of the albums")
     private Integer decade;
-
     @NotNull
     @Schema(description = "List of albums for the decade")
-    private List<AlbumArtistResponse> albums;
-
-    private List<Long> albumIds;
-    public AlbumsByDecadeResponse(Integer decade, List<AlbumArtistResponse> albums) {
+    private List<AlbumArtistSongResponse> albumsSong;
+    public AlbumsSongByDecade(Integer decade,  List<AlbumArtistSongResponse> albumsSong) {
+        super();
         this.decade = decade;
-        this.albums = albums;
+        this.albumsSong = albumsSong;
     }
-
 
 }

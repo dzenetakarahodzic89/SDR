@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.test.suites;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -188,7 +190,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
                     .hasSameElementsAs(response);
 
         } catch (Exception e) {
-            Assert.fail();
+            AssertJUnit.fail();
         }
     }
 
@@ -236,7 +238,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
                     .ignoringFields("created", "createdBy", "modified", "modifiedBy", "status").isEqualTo(newArtist);
 
         } catch (Exception e) {
-            Assert.fail();
+            AssertJUnit.fail();
         }
     }
 
@@ -256,7 +258,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
             Assertions.assertThat(artistResponse.getPayload()).isEqualTo("Artist successfully deleted!");
 
         } catch (Exception e) {
-            Assert.fail();
+            AssertJUnit.fail();
         }
     }
 
@@ -299,7 +301,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
                     .isEqualTo(artistResponse);
 
         } catch (Exception e) {
-            Assert.fail();
+            AssertJUnit.fail();
         }
     }
 

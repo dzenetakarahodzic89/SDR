@@ -1,13 +1,13 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -339,6 +339,7 @@ public class ArtistServiceImpl implements ArtistService {
             personDTOs.add(personDTO);
         }
         artistSingleResponse.setPersons(personDTOs);
+        artistSingleResponse.setAlbumCount(artistSingleResponse.getAlbums().size() + 0L);
         lookupService.lookupCoverImage(Arrays.asList(artistSingleResponse), ArtistSingleResponse::getId, ObjectType.ARTIST.getValue(),
                 ArtistSingleResponse::setImageUrl, ArtistSingleResponse::getImageUrl);
 
