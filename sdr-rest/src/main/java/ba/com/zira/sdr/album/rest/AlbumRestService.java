@@ -19,6 +19,7 @@ import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.request.ListRequest;
 import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -33,8 +34,11 @@ import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
 import ba.com.zira.sdr.api.model.album.SongOfAlbum;
+import ba.com.zira.sdr.api.model.album.AlbumsSongByDecade;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.album.SongsAlbumResponse;
+import ba.com.zira.sdr.api.model.song.Song;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -97,10 +101,10 @@ public class AlbumRestService {
         return albumService.findAllSongsForAlbum(new EntityRequest<>(id));
     }
 
-    @Operation(summary = "albums by artis")
+    @Operation(summary = "albums by artist")
     @GetMapping("/artist/{id}/albums")
-    public ListPayloadResponse<AlbumsByDecadeResponse> getAlbumsByArtistId(@RequestParam Long atistId) throws ApiException {
-        var req = new EntityRequest<>(atistId);
+    public ListPayloadResponse<AlbumsByDecadeResponse> getAlbumsByArtistId(@PathVariable Long id) throws ApiException {
+        var req = new EntityRequest<>(id);
         return albumService.findAllAlbumsForArtist(req);
     }
 
@@ -116,6 +120,19 @@ public class AlbumRestService {
     public PayloadResponse<SongOfAlbum> addSongToAlbum(@RequestBody final SongOfAlbumUpdateRequest request) throws ApiException {
 
         return albumService.addSongToAlbum(new EntityRequest<>(request));
+    }
+    @Operation(summary = "albums song by artist")
+    @GetMapping("/artist/{id}")
+    public ListPayloadResponse<AlbumsSongByDecade> getAllAlbumsSongForArtist(@PathVariable Long id) throws ApiException {
+        var req = new EntityRequest<>(id);
+
+        return albumService.findAllAlbumsSongForArtist(req);
+    }
+    @Operation(summary = "Get album songs")
+    @GetMapping(value = "album/get-decade-information")
+    public ListPayloadResponse<SongsAlbumResponse> findAllSongsWithPlaytimeForAlbum(
+            @Parameter(required = true, description = "ID of the albums") @RequestParam final List<Long> albumIds) throws ApiException {
+        return albumService.findAllSongsWithPlaytimeForAlbum(new ListRequest<>(albumIds));
     }
 
     @Operation(summary = "Album LoVs")

@@ -17,6 +17,7 @@ import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.request.ListRequest;
 import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -29,6 +30,7 @@ import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.SongArtistService;
 import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
+import ba.com.zira.sdr.api.model.album.AlbumArtistSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
@@ -36,10 +38,12 @@ import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
+import ba.com.zira.sdr.api.model.album.AlbumsSongByDecade;
 import ba.com.zira.sdr.api.model.album.SongAudio;
 import ba.com.zira.sdr.api.model.album.SongOfAlbum;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.album.SongsAlbumResponse;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
@@ -178,6 +182,9 @@ public class AlbumServiceImpl implements AlbumService {
             AlbumsByDecadeResponse decadeAlbums = new AlbumsByDecadeResponse(decade, albums);
             albumsByDecadeList.add(decadeAlbums);
         });
+        for (AlbumsByDecadeResponse d : albumsByDecadeList) {
+            d.setAlbumIds(d.getAlbums().stream().map(AlbumArtistResponse::getId).collect(Collectors.toList()));
+        }
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, albumsByDecadeList);
     }
@@ -234,6 +241,34 @@ public class AlbumServiceImpl implements AlbumService {
     public ListPayloadResponse<LoV> getAlbumLoVs(EmptyRequest request) throws ApiException {
         var albums = albumDAO.getAlbumLoVs();
         return new ListPayloadResponse<>(request, ResponseCode.OK, albums);
+    }
+
+    @Override
+    public ListPayloadResponse<AlbumsSongByDecade> findAllAlbumsSongForArtist(EntityRequest<Long> request) throws ApiException {
+        Long artistId = request.getEntity();
+        List<AlbumArtistSongResponse> albumList = albumDAO.findAllAlbumsSongForArtist(artistId);
+
+        Map<Integer, List<AlbumArtistSongResponse>> albumsByDecade = albumList.stream()
+                .collect(Collectors.groupingBy(album -> album.getDateOfRelease().getYear() - (album.getDateOfRelease().getYear() % 10),
+                        TreeMap::new, Collectors.toList()));
+
+        List<AlbumsSongByDecade> albumsByDecadeList = new ArrayList<>();
+        albumsByDecade.forEach((decade, albums) -> {
+            albums.sort(Comparator.comparing(AlbumArtistSongResponse::getDateOfRelease));
+            AlbumsSongByDecade decadeAlbums = new AlbumsSongByDecade(decade, albums);
+            albumsByDecadeList.add(decadeAlbums);
+        });
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, albumsByDecadeList);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ListPayloadResponse<SongsAlbumResponse> findAllSongsWithPlaytimeForAlbum(ListRequest<Long> request) throws ApiException {
+        List<SongsAlbumResponse> listSong = albumDAO.findAllSongsWithPlaytimeForAlbum(request.getList());
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, listSong);
+
     }
 
 }
