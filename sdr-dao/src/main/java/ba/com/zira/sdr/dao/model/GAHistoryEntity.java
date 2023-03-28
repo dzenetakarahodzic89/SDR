@@ -62,4 +62,7 @@ public class GAHistoryEntity implements Serializable {
 
     @Column(name = "fitness_progress")
     private String fitnessProgress;
+
+    @Column(name = "playlist_id")
+    private Long playlistId;
 }

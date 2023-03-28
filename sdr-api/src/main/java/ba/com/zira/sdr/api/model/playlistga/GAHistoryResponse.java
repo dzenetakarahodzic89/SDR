@@ -30,4 +30,7 @@ public class GAHistoryResponse implements Serializable {
 
     @Schema(description = "Name of this history record")
     private String name;
+
+    @Schema(description = "Id of playlist created for this result")
+    private Long playlistId;
 }
