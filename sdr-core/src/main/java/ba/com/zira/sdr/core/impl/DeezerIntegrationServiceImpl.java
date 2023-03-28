@@ -31,6 +31,7 @@ import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.DeezerIntegrationService;
 import ba.com.zira.sdr.api.enums.DeezerStatus;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegration;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationCreateRequest;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationStatisticsResponse;
@@ -243,14 +244,14 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
                     var albums = albumDAO.getAllAlbumsWithNameLike(song.getAlbum().getTitle());
                     if (!albums.isEmpty()) {
                         for (var album : albums) {
-                            var media = mediaDAO.findByTypeAndId(COVER_IMAGE_CONST, album.getId());
+                            var media = mediaDAO.findByTypeAndId(ObjectType.ALBUM.getValue(), album.getId());
                             var newMediaStore = new MediaStoreEntity();
                             newMediaStore.setId(UUID.randomUUID().toString());
                             newMediaStore.setName(album.getName());
                             newMediaStore.setType(COVER_IMAGE_CONST);
                             if (media == null) {
                                 var newMedia = new MediaEntity();
-                                newMedia.setObjectType("ALBUM");
+                                newMedia.setObjectType(ObjectType.ALBUM.getValue());
                                 newMedia.setObjectId(album.getId());
                                 newMedia.setCreated(LocalDateTime.now());
                                 newMedia.setCreatedBy(systemUser.getUserId());
