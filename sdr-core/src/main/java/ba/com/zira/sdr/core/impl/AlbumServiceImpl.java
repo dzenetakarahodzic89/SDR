@@ -1,5 +1,9 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,10 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -42,8 +44,8 @@ import ba.com.zira.sdr.api.model.album.AlbumsSongByDecade;
 import ba.com.zira.sdr.api.model.album.SongAudio;
 import ba.com.zira.sdr.api.model.album.SongOfAlbum;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
-import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.album.SongsAlbumResponse;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.api.model.songartist.SongArtistCreateRequest;
@@ -55,26 +57,62 @@ import ba.com.zira.sdr.core.utils.PlayTimeHelper;
 import ba.com.zira.sdr.core.validation.AlbumRequestValidation;
 import ba.com.zira.sdr.dao.AlbumDAO;
 import ba.com.zira.sdr.dao.LabelDAO;
+import ba.com.zira.sdr.dao.MediaDAO;
+import ba.com.zira.sdr.dao.MediaStoreDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
-import lombok.AllArgsConstructor;
+import ba.com.zira.sdr.dao.model.MediaEntity;
+import ba.com.zira.sdr.dao.model.MediaStoreEntity;
+import ba.com.zira.sdr.dao.model.SongEntity;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AlbumServiceImpl implements AlbumService {
 
+    @NonNull
     AlbumDAO albumDAO;
+
+    @NonNull
     SongArtistDAO songArtistDAO;
+
+    @NonNull
     SongDAO songDAO;
+
+    @NonNull
     LabelDAO labelDAO;
+
+    @NonNull
     SongArtistMapper songArtistMapper;
+
+    @NonNull
     AlbumMapper albumMapper;
+
+    @NonNull
     SongMapper songMapper;
+
+    @NonNull
     AlbumRequestValidation albumRequestValidation;
+
+    @NonNull
     LookupService lookupService;
+
+    @NonNull
     MediaService mediaService;
+
+    @NonNull
     SongArtistService songArtistService;
+
+    @NonNull
+    MediaDAO mediaDAO;
+
+    @NonNull
+    MediaStoreDAO mediaStoreDAO;
+
+    @Value("${image.default.url:http://172.20.20.45:82//vigor//img/mario.jpg}")
+    String defaultImageUrl;
 
     @Override
     public PagedPayloadResponse<AlbumResponse> find(final FilterRequest request) {
@@ -255,7 +293,7 @@ public class AlbumServiceImpl implements AlbumService {
         List<AlbumsSongByDecade> albumsByDecadeList = new ArrayList<>();
         albumsByDecade.forEach((decade, albums) -> {
             albums.sort(Comparator.comparing(AlbumArtistSongResponse::getDateOfRelease));
-            AlbumsSongByDecade decadeAlbums = new AlbumsSongByDecade(decade, albums);
+            var decadeAlbums = new AlbumsSongByDecade(decade, albums);
             albumsByDecadeList.add(decadeAlbums);
         });
 
@@ -263,11 +301,51 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public ListPayloadResponse<SongsAlbumResponse> findAllSongsWithPlaytimeForAlbum(ListRequest<Long> request) throws ApiException {
         List<SongsAlbumResponse> listSong = albumDAO.findAllSongsWithPlaytimeForAlbum(request.getList());
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, listSong);
+
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<String> copyAlbumImageToSongs(EntityRequest<Long> request) throws ApiException {
+        var now = LocalDateTime.now();
+        var album = albumMapper.entityToDto(albumDAO.findByPK(request.getEntity()));
+        lookupService.lookupCoverImage(Arrays.asList(album), AlbumResponse::getId, ObjectType.ALBUM.getValue(), AlbumResponse::setImageUrl,
+                AlbumResponse::getImageUrl);
+        if (album.getImageUrl().equals(defaultImageUrl)) {
+            throw ApiException.createFrom(request, ResponseCode.REQUEST_INVALID,
+                    "Album has no dedicated image so no copying will be done!");
+        }
+        MediaEntity media = mediaDAO.findByTypeAndId(ObjectType.ALBUM.getValue(), album.getId());
+        List<MediaStoreEntity> mediaStores = mediaStoreDAO.getByMediaId(media.getId());
+        List<SongEntity> songsOfAlbum = songDAO.findAllByAlbumId(request.getEntity());
+        for (var song : songsOfAlbum) {
+            var songMedia = mediaDAO.findByTypeAndId(ObjectType.SONG.getValue(), song.getId());
+            if (songMedia == null) {
+                songMedia = new MediaEntity();
+                songMedia.setCreated(now);
+                songMedia.setCreatedBy(request.getUserId());
+                songMedia.setObjectId(song.getId());
+                songMedia.setObjectType(ObjectType.SONG.getValue());
+                mediaDAO.persist(songMedia);
+            }
+            for (var mediaStore : mediaStores) {
+                var songMediaStore = new MediaStoreEntity();
+                songMediaStore.setId(UUID.randomUUID().toString());
+                songMediaStore.setCreated(now);
+                songMediaStore.setCreatedBy(request.getUserId());
+                songMediaStore.setUrl(mediaStore.getUrl());
+                songMediaStore.setMedia(songMedia);
+                songMediaStore.setType(mediaStore.getType());
+                songMediaStore.setName(mediaStore.getName());
+                songMediaStore.setExtension(mediaStore.getExtension());
+                mediaStoreDAO.persist(songMediaStore);
+            }
+        }
+        return new PayloadResponse<>(request, ResponseCode.OK, "Songs populated with album art!");
 
     }
 
