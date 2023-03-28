@@ -1,7 +1,5 @@
 package ba.com.zira.sdr.artist.rest;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+import java.util.Optional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -25,6 +26,8 @@ import ba.com.zira.sdr.api.ArtistService;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
+import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
 import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -47,6 +50,13 @@ public class ArtistRestService {
         return artistService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
+    @Operation(summary = "Find artist by id")
+    @GetMapping(value = "{id}")
+    public PayloadResponse<ArtistSingleResponse> findById(
+            @Parameter(required = true, description = "Id of the artist") @PathVariable final Long id) throws ApiException {
+        return artistService.findById(new EntityRequest<>(id));
+    }
+
     @Operation(summary = "Create artist")
     @PostMapping
     public PayloadResponse<ArtistResponse> create(@RequestBody final ArtistCreateRequest request) throws ApiException {
@@ -65,6 +75,13 @@ public class ArtistRestService {
     public PayloadResponse<String> delete(@Parameter(required = true, description = "Id of the artist") @PathVariable final Long id)
             throws ApiException {
         return artistService.delete(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Copy images to persons")
+    @PostMapping(value = "{id}/copy-images-to-persons")
+    public PayloadResponse<String> copy(@Parameter(required = true, description = "Id of the artist") @PathVariable final Long id)
+            throws ApiException {
+        return artistService.copyImageToPersons(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Update Artist")
@@ -98,11 +115,22 @@ public class ArtistRestService {
         var req = new EmptyRequest();
         return artistService.getArtistNames(req);
     }
-    @Operation(summary = "Find artist by id")
-    @GetMapping(value = "{id}")
-    public PayloadResponse<ArtistSingleResponse> getArtistById(
-            @Parameter(required = true, description = "ID of the song") @PathVariable final Long id) throws ApiException {
-        return artistService.getArtistById(new EntityRequest<>(id));
+
+    @Operation(summary = "Get artists by search")
+    @GetMapping("search")
+    public ListPayloadResponse<ArtistSearchResponse> getArtistsBySearch(@RequestParam("name") Optional<String> name,
+            @RequestParam("album") Optional<Long> album, @RequestParam("genre") Optional<Long> genre,
+            @RequestParam("isSolo") Optional<Boolean> isSolo, @RequestParam("sortBy") Optional<String> sortBy) throws ApiException {
+        var newSearchRequest = new ArtistSearchRequest(name.orElse(""), album.orElse(null), genre.orElse(null), isSolo.orElse(true),
+                sortBy.orElse(""));
+        return artistService.getArtistsBySearch(new EntityRequest<>(newSearchRequest));
+    }
+
+    @Operation(summary = "10 random artists for default search page")
+    @GetMapping("/random-for-search")
+    public ListPayloadResponse<ArtistSearchResponse> getRandomArtistsForSearch() throws ApiException {
+        var req = new EmptyRequest();
+        return artistService.getRandomArtistsForSearch(req);
     }
 
 }

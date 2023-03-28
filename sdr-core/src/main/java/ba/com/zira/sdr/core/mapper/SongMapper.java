@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import ba.com.zira.sdr.api.model.album.SongOfAlbum;
 import ba.com.zira.sdr.api.model.song.Song;
 import ba.com.zira.sdr.api.model.song.SongCreateRequest;
 import ba.com.zira.sdr.api.model.song.SongResponse;
@@ -29,6 +30,9 @@ public interface SongMapper {
     @Mapping(source = "cover.id", target = "coverId")
     @Mapping(source = "genre.id", target = "genreId")
     Song entityToDto(SongEntity songEntity);
+
+    @Mapping(source = "genre.name", target = "genreName")
+    SongOfAlbum entityToSongOfAlbumDto(SongEntity songEntity);
 
     void updateEntity(SongUpdateRequest song, @MappingTarget SongEntity songEntity);
 

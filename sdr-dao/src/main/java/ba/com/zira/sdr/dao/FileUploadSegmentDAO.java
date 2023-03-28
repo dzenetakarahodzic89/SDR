@@ -34,7 +34,7 @@ public class FileUploadSegmentDAO extends AbstractDAO<FileUploadSegmentEntity, S
     }
 
     public Long getReadyToMergeMediaId() {
-        var hql = "select sfus.media.id from FileUploadSegmentEntity sfus where sfus.status = :status";
+        var hql = "select sfus.media from FileUploadSegmentEntity sfus where sfus.status = :status";
         TypedQuery<Long> query = entityManager.createQuery(hql, Long.class).setParameter("status", "READY_TO_MERGE").setMaxResults(1);
         return query.getSingleResult();
     }

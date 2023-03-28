@@ -2,6 +2,7 @@ package ba.com.zira.sdr.api.artist;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,44 +11,64 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class ArtistResponse implements Serializable {
+
     private static final long serialVersionUID = 1L;
+
     @Schema(description = "Unique identifier")
-    private Long id;
+    protected Long id;
     @Schema(description = "Name of the artist")
-    private String name;
+    protected String name;
     @Schema(description = "Creation date")
-    private LocalDateTime created;
+    protected String created;
     @Schema(description = "User that created the artist")
-    private String createdBy;
+    protected String createdBy;
     @Schema(description = "Date of birth")
-    private LocalDateTime dateOfBirth;
+    protected LocalDateTime dateOfBirth;
     @Schema(description = "Date of death")
-    private LocalDateTime dateOfDeath;
+    protected LocalDateTime dateOfDeath;
     @Schema(description = "Information about the artist")
-    private String information;
+    protected String information;
     @Schema(description = "Date of modification")
-    private LocalDateTime modified;
+    protected LocalDateTime modified;
     @Schema(description = "User that modified the artist")
-    private String modifiedBy;
+    protected String modifiedBy;
     @Schema(description = "Status of the artist")
-    private String status;
+    protected String status;
     @Schema(description = "Surname of the artist")
-    private String surname;
+    protected String surname;
     @Schema(description = "Type of the artist")
-    private String type;
+    protected String type;
     @Schema(description = "Person-artist")
-    private Map<Long, String> personArtistNames;
+    protected transient Map<Long, String> personArtistNames;
     @Schema(description = "Song-artist")
-    private Map<Long, String> songArtistNames;
+    protected transient Map<Long, String> songArtistNames;
     @Schema(description = "Outline text for the artist")
-    private String outlineText;
+    protected String outlineText;
+    @Schema(description = "Album Count")
+    protected Long albumCount;
+
+    public ArtistResponse(final Long id, final String name, final LocalDateTime created, final String createdBy,
+            final LocalDateTime dateOfBirth, final LocalDateTime dateOfDeath, final String information, final LocalDateTime modified,
+            final String modifiedBy, final String status, final String surname, final String type) {
+        this.id = id;
+        this.name = name;
+        this.created = created != null ? created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
+        this.createdBy = createdBy;
+        this.dateOfBirth = dateOfBirth;
+        this.dateOfDeath = dateOfDeath;
+        this.information = information;
+        this.modified = modified;
+        this.modifiedBy = modifiedBy;
+        this.status = status;
+        this.surname = surname;
+        this.type = type;
+    }
 
     public ArtistResponse(String name, LocalDateTime dateOfBirth, LocalDateTime dateOfDeath, String information, String status,
             String surname, String type) {
-        super();
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.dateOfDeath = dateOfDeath;
@@ -59,7 +80,6 @@ public class ArtistResponse implements Serializable {
 
     public ArtistResponse(Long id, String name, LocalDateTime dateOfBirth, LocalDateTime dateOfDeath, String information, String status,
             String surname, String type) {
-        super();
         this.id = id;
         this.name = name;
         this.dateOfBirth = dateOfBirth;

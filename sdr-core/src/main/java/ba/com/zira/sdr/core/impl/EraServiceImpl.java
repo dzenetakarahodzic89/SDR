@@ -54,7 +54,6 @@ public class EraServiceImpl implements EraService {
 
     @Override
     public ListPayloadResponse<EraSearchResponse> find(final EntityRequest<EraSearchRequest> request) {
-        // EraRequestValidation.validateExistsEraRequest(request);
 
         List<EraSearchResponse> eras = eraDAO.find(request.getEntity().getName(), request.getEntity().getSortBy(),
 

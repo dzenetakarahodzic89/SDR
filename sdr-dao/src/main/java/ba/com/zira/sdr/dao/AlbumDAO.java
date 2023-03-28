@@ -2,11 +2,15 @@ package ba.com.zira.sdr.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -54,11 +58,11 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         final CriteriaQuery<AlbumSearchResponse> criteriaQuery = builder.createQuery(AlbumSearchResponse.class);
         final Root<AlbumEntity> root = criteriaQuery.from(AlbumEntity.class);
 
-        Join<AlbumEntity, SongArtistEntity> songArtists = root.join(AlbumEntity_.songArtists);
-        Join<SongArtistEntity, SongEntity> songs = songArtists.join(SongArtistEntity_.song);
-        Join<SongEntity, GenreEntity> genres = songs.join(SongEntity_.genre);
-        Join<AlbumEntity, EraEntity> eras = root.join(AlbumEntity_.era);
-        Join<SongArtistEntity, ArtistEntity> artists = songArtists.join(SongArtistEntity_.artist);
+        Join<AlbumEntity, SongArtistEntity> songArtists = root.join(AlbumEntity_.songArtists, JoinType.LEFT);
+        Join<SongArtistEntity, SongEntity> songs = songArtists.join(SongArtistEntity_.song, JoinType.LEFT);
+        Join<SongEntity, GenreEntity> genres = songs.join(SongEntity_.genre, JoinType.LEFT);
+        Join<AlbumEntity, EraEntity> eras = root.join(AlbumEntity_.era, JoinType.LEFT);
+        Join<SongArtistEntity, ArtistEntity> artists = songArtists.join(SongArtistEntity_.artist, JoinType.LEFT);
 
         List<Predicate> predicates = new ArrayList<>();
         var albumSearchRequest = request.getEntity();
@@ -75,17 +79,21 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
             predicates.add(genres.get(GenreEntity_.id).in(albumSearchRequest.getGenres()));
         }
         if (albumSearchRequest.getName() != null && !albumSearchRequest.getName().isEmpty()) {
-            predicates.add(builder.like(root.get(AlbumEntity_.name), "%" + albumSearchRequest.getName() + "%"));
+            predicates
+                    .add(builder.like(builder.lower(root.get(AlbumEntity_.name)), "%" + albumSearchRequest.getName().toLowerCase() + "%"));
         }
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         var sumPlaytime = builder.sum(songs.get(SongEntity_.playtimeInSeconds));
-        var sort = "play_time";
+        var sort = "";
         if (request.getFilter().getSortingFilters() != null && !request.getFilter().getSortingFilters().isEmpty()) {
             sort = request.getFilter().getSortingFilters().get(0).getAttribute();
         }
 
+        Expression<?> modified = builder.selectCase().when(root.get(AlbumEntity_.modified).isNull(), root.get(AlbumEntity_.created))
+                .otherwise(root.get(AlbumEntity_.modified));
+
         if (sort.equals("last_edit")) {
-            criteriaQuery.orderBy(builder.asc(root.get(AlbumEntity_.modified)));
+            criteriaQuery.orderBy(builder.desc(modified));
 
         }
 
@@ -95,14 +103,15 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         }
         if (sort.equals("play_time")) {
 
-            criteriaQuery.orderBy(builder.desc(sumPlaytime));
-            criteriaQuery.groupBy(root.get(AlbumEntity_.id), root.get(AlbumEntity_.dateOfRelease), root.get(AlbumEntity_.name),
-                    root.get(AlbumEntity_.information), root.get(AlbumEntity_.era), root.get(AlbumEntity_.modified));
+            criteriaQuery.orderBy(builder.desc(builder.coalesce(sumPlaytime, 0)));
 
         }
+
+        criteriaQuery.groupBy(root.get(AlbumEntity_.id), root.get(AlbumEntity_.dateOfRelease), root.get(AlbumEntity_.name),
+                root.get(AlbumEntity_.information), root.get(AlbumEntity_.era), modified);
         criteriaQuery.multiselect(root.get(AlbumEntity_.id), root.get(AlbumEntity_.dateOfRelease), root.get(AlbumEntity_.name),
-                root.get(AlbumEntity_.information), root.get(AlbumEntity_.era).get(EraEntity_.id), root.get(AlbumEntity_.modified),
-                sumPlaytime).distinct(true);
+                root.get(AlbumEntity_.information), root.get(AlbumEntity_.era).get(EraEntity_.id), modified,
+                builder.coalesce(sumPlaytime, 0)).distinct(true);
         return handlePaginationFilterForAlbum(request.getFilter(), criteriaQuery);
 
     }
@@ -116,6 +125,18 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
                 artistId);
 
         return query.getResultList();
+    }
+
+    public List<AlbumEntity> findByArtistId(Long artistId) {
+
+        final CriteriaQuery<AlbumEntity> criteriaQuery = builder.createQuery(AlbumEntity.class);
+        final Root<AlbumEntity> root = criteriaQuery.from(AlbumEntity.class);
+
+        Join<AlbumEntity, SongArtistEntity> songArtists = root.join(AlbumEntity_.songArtists);
+        Join<SongArtistEntity, ArtistEntity> artists = songArtists.join(SongArtistEntity_.artist);
+        criteriaQuery.where(builder.equal(artists.get(ArtistEntity_.id), artistId));
+        criteriaQuery.select(root).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     public List<AlbumPersonResponse> findAlbumByPersonId(Long personId) {
@@ -136,12 +157,12 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
     }
 
     public List<LoV> findAlbumsToFetchFromSpotify(int responseLimit) {
-        var cases = "case when sa.album.id is not null and a2.surname is not null then concat('album:',a.name,' ','artist:',a2.name,' ',a2.surname)"
-                + " when sa.album.id is not null and a2.surname is null then concat('album:',a.name,' ','artist:',a2.name) else"
+        var cases = "case when sa.artist.id is not null and a2.surname is not null then concat('album:',a.name,' ','artist:',a2.name,' ',a2.surname)"
+                + " when sa.artist.id is not null and a2.surname is null then concat('album:',a.name,' ','artist:',a2.name) else"
                 + " concat('album:',a.name) end";
         var subquery = "select si from SpotifyIntegrationEntity si where si.objectId=a.id and si.objectType like :album";
         var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id, " + cases
-                + ") from AlbumEntity a left join SongArtistEntity sa on a.id=sa.album.id left join ArtistEntity a2 on sa.album.id=a2.id where not exists("
+                + ") from AlbumEntity a left join SongArtistEntity sa on a.id=sa.album.id left join ArtistEntity a2 on sa.artist.id=a2.id where not exists("
                 + subquery + ") " + "and (a.spotifyId is null or length(a.spotifyId)<1)";
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("album", "ALBUM").setMaxResults(responseLimit);
 
@@ -168,6 +189,7 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
             pagedData.setNumberOfPages((int) Math.ceil((float) numberOfRecords / paginationFilter.getEntitiesPerPage()));
 
             pagedData.setNumberOfRecords(numberOfRecords);
+
             query.setFirstResult(paginationFilter.getPage());
             query.setMaxResults(paginationFilter.getEntitiesPerPage());
         }
@@ -201,7 +223,7 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
         Root<AlbumEntity> root = countQuery.from(AlbumEntity.class);
         addJoinsForAlbum(root, criteriaQuery);
-        countQuery.select(builder.count(root));
+        countQuery.select(builder.countDistinct(root));
         if (criteriaQuery.getRestriction() != null) {
             countQuery.where(criteriaQuery.getRestriction());
         }
@@ -277,4 +299,15 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
     }
 
 
+    public List<LoV> getAlbumLoVs() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from AlbumEntity s ";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);
+        return query.getResultList();
+    }
+
+    public Map<Long, String> getAlbumNames(List<Long> ids) {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from AlbumEntity s where s.id in (:ids)";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("ids", ids);
+        return query.getResultStream().collect(Collectors.toMap(LoV::getId, LoV::getName));
+    }
 }

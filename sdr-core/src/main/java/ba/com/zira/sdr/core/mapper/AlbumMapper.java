@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import ba.com.zira.sdr.api.model.album.AlbumArtistSingleResponse;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
@@ -24,4 +25,8 @@ public interface AlbumMapper {
     void updateEntity(AlbumUpdateRequest albumModel, @MappingTarget AlbumEntity albumEntity);
 
     List<AlbumResponse> entitiesToDtos(List<AlbumEntity> albumEntities);
+
+    @Mapping(source = "era.name", target = "eraName")
+    List<AlbumArtistSingleResponse> entitiesToAlbumArtistSingleResponseDtos(List<AlbumEntity> albumEntities);
+
 }

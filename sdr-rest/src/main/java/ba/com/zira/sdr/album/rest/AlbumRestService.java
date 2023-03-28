@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.request.ListRequest;
@@ -32,8 +33,10 @@ import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
+import ba.com.zira.sdr.api.model.album.SongOfAlbum;
 import ba.com.zira.sdr.api.model.album.AlbumsSongByDecade;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.album.SongsAlbumResponse;
 import ba.com.zira.sdr.api.model.song.Song;
 import io.swagger.v3.oas.annotations.Operation;
@@ -86,10 +89,9 @@ public class AlbumRestService {
             @RequestParam(required = false) List<Long> genres, @RequestParam(required = false) List<Long> artists,
             @RequestParam(required = false) String name, final QueryConditionPage queryCriteria
 
-            ) throws ApiException {
-        // Map<String, Object> filterCriteria = new HashMap<>();
-        return albumService.search(
-                new SearchRequest<>(new AlbumSearchRequest(eras, genres, artists, name), new HashMap<String, Object>(), queryCriteria));
+    ) throws ApiException {
+        return albumService
+                .search(new SearchRequest<>(new AlbumSearchRequest(eras, genres, artists, name), new HashMap<>(), queryCriteria));
     }
 
     @Operation(summary = "Get all songs from album")
@@ -115,7 +117,7 @@ public class AlbumRestService {
 
     @Operation(summary = "Add a new song to the album")
     @PutMapping(value = "/add-song")
-    public PayloadResponse<Song> addSongToAlbum(@RequestBody final SongOfAlbumUpdateRequest request) throws ApiException {
+    public PayloadResponse<SongOfAlbum> addSongToAlbum(@RequestBody final SongOfAlbumUpdateRequest request) throws ApiException {
 
         return albumService.addSongToAlbum(new EntityRequest<>(request));
     }
@@ -131,6 +133,13 @@ public class AlbumRestService {
     public ListPayloadResponse<SongsAlbumResponse> findAllSongsWithPlaytimeForAlbum(
             @Parameter(required = true, description = "ID of the albums") @RequestParam final List<Long> albumIds) throws ApiException {
         return albumService.findAllSongsWithPlaytimeForAlbum(new ListRequest<>(albumIds));
+    }
+
+    @Operation(summary = "Album LoVs")
+    @GetMapping("lov")
+    public ListPayloadResponse<LoV> getAlbumLoVs() throws ApiException {
+        var req = new EmptyRequest();
+        return albumService.getAlbumLoVs(req);
     }
 
 }

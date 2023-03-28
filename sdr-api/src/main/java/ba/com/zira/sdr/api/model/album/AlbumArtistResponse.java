@@ -13,7 +13,6 @@ import lombok.Data;
 @Data
 public class AlbumArtistResponse implements Serializable {
 
-
     private static final long serialVersionUID = 1L;
 
     @NotNull
@@ -29,16 +28,15 @@ public class AlbumArtistResponse implements Serializable {
     private LocalDateTime dateOfRelease;
     @Schema(description = "Release date of album")
     private List<AlbumArtistResponse> album;
+
     public AlbumArtistResponse(Long id, String name, LocalDateTime dateOfRelease) {
         this.id = id;
         this.name = name;
         this.dateOfRelease = dateOfRelease;
     }
+
     public AlbumArtistResponse(List<AlbumArtistResponse> albums) {
-        this.album=albums;
+        this.album = albums;
     }
-
-
-
 
 }

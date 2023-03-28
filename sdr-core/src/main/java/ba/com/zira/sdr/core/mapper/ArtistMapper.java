@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
 import ba.com.zira.sdr.dao.model.PersonEntity;
@@ -19,9 +20,11 @@ import ba.com.zira.sdr.dao.model.PersonEntity;
 
 public interface ArtistMapper {
 
+    ArtistEntity dtoToEntity(ArtistCreateRequest artistRequest);
+
     ArtistResponse entityToDto(ArtistEntity artistEntity);
 
-    ArtistEntity dtoToEntity(ArtistCreateRequest artistRequest);
+    ArtistSingleResponse entityToSingleArtistDto(ArtistEntity artistEntity);
 
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "name", source = "name")

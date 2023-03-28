@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.dao;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +15,8 @@ import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.artist.ArtistLabelResponse;
-import ba.com.zira.sdr.api.artist.ArtistPersonResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
 import ba.com.zira.sdr.api.artist.ArtistSheetResponse;
 import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistSongResponse;
@@ -47,11 +48,11 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return q.getResultList();
     }
 
-    public List<ArtistPersonResponse> getArtistByPersonId(Long personId) {
+    public List<ArtistResponse> getArtistByPersonId(Long personId) {
 
-        var hql = "select new ba.com.zira.sdr.api.artist.ArtistPersonResponse(sa.id, sa.name, sa.created, sa.createdBy, sa.dateOfBirth, sa.dateOfDeath, sa.information, sa.modified, sa.modifiedBy, sa.status, sa.surname, sa.type) from PersonEntity sp inner join PersonArtistEntity spa on sp.id = spa.person.id  "
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistResponse(sa.id, sa.name, sa.created, sa.createdBy, sa.dateOfBirth, sa.dateOfDeath, sa.information, sa.modified, sa.modifiedBy, sa.status, sa.surname, sa.type) from PersonEntity sp inner join PersonArtistEntity spa on sp.id = spa.person.id  "
                 + "inner join ArtistEntity sa on spa.artist.id = sa.id where sp.id = :id";
-        TypedQuery<ArtistPersonResponse> q = entityManager.createQuery(hql, ArtistPersonResponse.class).setParameter("id", personId);
+        TypedQuery<ArtistResponse> q = entityManager.createQuery(hql, ArtistResponse.class).setParameter("id", personId);
         return q.getResultList();
     }
 
@@ -73,6 +74,12 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         var hql = new StringBuilder("select new ba.com.zira.sdr.api.model.lov.LoV(m.id, m.name) from ArtistEntity m where m.id in :ids");
         TypedQuery<LoV> query = entityManager.createQuery(hql.toString(), LoV.class).setParameter("ids", ids);
         return query.getResultList().stream().collect(Collectors.toMap(LoV::getId, LoV::getName));
+    }
+
+    public List<LoV> getArtistNamesAndSurnames() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(m.id, case when m.surname "
+                + "is null then m.name else concat(m.name,' ', m.surname) end) from ArtistEntity m";
+        return entityManager.createQuery(hql, LoV.class).getResultList();
     }
 
     public Boolean songArtistExist(Long id) {
@@ -113,12 +120,6 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         }
     }
 
-    public List<LoV> getArtistLoVs() {
-        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.name || ' ' || a.surname) from ArtistEntity a";
-        TypedQuery<LoV> q = entityManager.createQuery(hql, LoV.class);
-        return q.getResultList();
-    }
-
     public List<LoV> findArtistsToFetchFromSpotify(int responseLimit) {
         var cases = "case when a.surname is null then concat('artist:',a.name) else" + " concat('artist:',a.name,' ',a.surname) end";
         var subquery = "select si from SpotifyIntegrationEntity si where si.objectId=a.id and si.objectType like :artist";
@@ -154,9 +155,12 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
     }
 
     public void deleteArtists(List<Long> artistIds) {
-        var hql = "delete from ArtistEntity a where a.id in (:artistIds)";
-        Query q = entityManager.createQuery(hql).setParameter("artistIds", artistIds);
-        q.executeUpdate();
+        var personArtistHql = "delete from PersonArtistEntity pa where pa.artist.id in (:artistIds)";
+        Query q1 = entityManager.createQuery(personArtistHql).setParameter("artistIds", artistIds);
+        q1.executeUpdate();
+        var artistHql = "delete from ArtistEntity a where a.id in (:artistIds)";
+        Query q2 = entityManager.createQuery(artistHql).setParameter("artistIds", artistIds);
+        q2.executeUpdate();
     }
 
     public List<LoV> getArtistsForDeezerSearch() {
@@ -171,6 +175,7 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
                 .setParameter("id", id);
         query.executeUpdate();
     }
+
     public Long countSoloArtistsByEras(Long era) {
         var hql = "select count(distinct sa.artist.id) from EraEntity e join AlbumEntity al on e.id=al.era.id "
                 + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id "
@@ -197,6 +202,62 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
                 + " group by a.id,a.name, a.dateOfBirth";
         TypedQuery<ArtistSingleResponse> q = entityManager.createQuery(hql, ArtistSingleResponse.class).setParameter("id", artistId);
         return q.getSingleResult();
+    }
+
+    public List<ArtistSearchResponse> getArtistsBySearch(String artistName, Long genreId, Long albumId, Boolean isSolo, String orderBy) {
+        var isSoloString = Boolean.TRUE.equals(isSolo) ? "< 2" : "> 1";
+        var orderString = "";
+        var genreString = " ";
+        var albumString = "";
+        switch (orderBy) {
+        case "NoOfSongs":
+            orderString = "count(sa.id) desc";
+            break;
+        case "LastEdit":
+            orderString = "sa.modified";
+            break;
+        case "Alphabetical":
+            orderString = "concat(coalesce(sa.name,''),' ', coalesce(sa.surname,''))";
+            break;
+        default:
+            orderString = "count(sa.id) desc";
+            break;
+        }
+        if (genreId != null) {
+            genreString = "and sg.id = " + genreId;
+        }
+        if (albumId != null) {
+            albumString = "and sa2.id = " + albumId;
+        }
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from SongEntity ss join SongArtistEntity ssa on ssa.song.id =ss.id \r\n"
+                + "join ArtistEntity sa on ssa.artist.id = sa.id join AlbumEntity sa2 on ssa.album.id = sa2.id join GenreEntity sg on ss.genre.id = sg.id\r\n"
+                + "where lower(concat(coalesce(sa.name,''),' ', coalesce(sa.surname,''))) like lower(CONCAT('%', :artistName, '%'))\r\n"
+                + albumString + genreString + " and(select count(pa.person.id)  from \r\n"
+                + "PersonArtistEntity pa where pa.artist.id = sa.id) " + isSoloString
+                + " group by sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.modified,sa.name,sa.outlineText  order by "
+                + orderString;
+        TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class).setParameter("artistName",
+                artistName);
+
+        return q.getResultList();
+    }
+
+    public List<ArtistSearchResponse> getRandomArtistsForSearch() {
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSearchResponse(sa.id,concat(coalesce(sa.name,''),' ', coalesce(sa.surname,'')),sa.outlineText) from ArtistEntity sa ORDER BY random()";
+        TypedQuery<ArtistSearchResponse> q = entityManager.createQuery(hql, ArtistSearchResponse.class).setMaxResults(10);
+        return q.getResultList();
+    }
+
+    public Long countAllDeezerFields() {
+        var hql = "select count(*) from ArtistEntity s where s.deezerId is not null";
+        TypedQuery<Long> query = entityManager.createQuery(hql, Long.class);
+        return query.getSingleResult();
+    }
+
+    public LocalDateTime getLastModified() {
+        var hql = "select sa.modified from ArtistEntity sa where sa.deezerId is not null and sa.modified is not null order by sa.modified desc";
+        TypedQuery<LocalDateTime> query = entityManager.createQuery(hql, LocalDateTime.class).setMaxResults(1);
+        return query.getSingleResult();
     }
 
 }
