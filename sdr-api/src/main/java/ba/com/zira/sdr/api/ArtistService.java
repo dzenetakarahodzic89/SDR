@@ -10,6 +10,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 
@@ -78,5 +79,6 @@ public interface ArtistService {
     PayloadResponse<ArtistResponse> createFromPerson(EntityRequest<Long> request) throws ApiException;
 
     PayloadResponse<ArtistByEras> countArtistsByEras(EntityRequest<Long> request);
+    PayloadResponse<ArtistSingleResponse> getArtistById(final EntityRequest<Long> request) throws ApiException;
 
 }

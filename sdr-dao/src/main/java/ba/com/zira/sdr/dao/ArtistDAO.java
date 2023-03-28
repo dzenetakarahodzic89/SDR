@@ -17,6 +17,7 @@ import ba.com.zira.sdr.api.artist.ArtistLabelResponse;
 import ba.com.zira.sdr.api.artist.ArtistPersonResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSheetResponse;
+import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistSongResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
@@ -169,7 +170,7 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         Query query = entityManager.createQuery(hql).setParameter("deezerId", deezerId).setParameter("deezerFanCount", deezerFanCount)
                 .setParameter("id", id);
         query.executeUpdate();
-        }
+    }
     public Long countSoloArtistsByEras(Long era) {
         var hql = "select count(distinct sa.artist.id) from EraEntity e join AlbumEntity al on e.id=al.era.id "
                 + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id "
@@ -183,6 +184,18 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
                 + "join SongArtistEntity sa on al.id=sa.album.id join ArtistEntity a on sa.artist.id=a.id where e.id=:id "
                 + "and (select count(pa.person.id) from PersonArtistEntity pa where pa.artist.id=a.id) > 1";
         TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", era);
+        return q.getSingleResult();
+    }
+    public ArtistSingleResponse getArtistById(final Long artistId) {
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSingleResponse(a.id,a.name, a.dateOfBirth,COUNT(DISTINCT sa.album.id))"
+                + " from ArtistEntity as a"
+                + " join SongArtistEntity as sa"
+                + " on a.id=sa.artist.id "
+                + " join AlbumEntity as ae"
+                + " on ae.id =sa.album.id"
+                + " where a.id=:id"
+                + " group by a.id,a.name, a.dateOfBirth";
+        TypedQuery<ArtistSingleResponse> q = entityManager.createQuery(hql, ArtistSingleResponse.class).setParameter("id", artistId);
         return q.getSingleResult();
     }
 

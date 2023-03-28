@@ -2,6 +2,7 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -24,10 +25,13 @@ import ba.com.zira.sdr.api.artist.Artist;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
@@ -51,7 +55,7 @@ public class ArtistServiceImpl implements ArtistService {
     PersonArtistDAO personArtistDAO;
     SongArtistDAO songArtistDAO;
     PersonRequestValidation personRequestValidation;
-
+    LookupService lookupService;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<ArtistResponse> create(final EntityRequest<ArtistCreateRequest> request) {
@@ -200,6 +204,18 @@ public class ArtistServiceImpl implements ArtistService {
         ArtistByEras artistByEras = new ArtistByEras(era.getName(), soloArtistsCount, groupArtistsCount);
 
         return new PayloadResponse<>(request, ResponseCode.OK, artistByEras);
+    }
+
+    @Override
+    public PayloadResponse<ArtistSingleResponse> getArtistById(final EntityRequest<Long> request) {
+        artistRequestValidation.validateExistsArtistRequest(request);
+
+        ArtistSingleResponse artist = artistDAO.getArtistById(request.getEntity());
+        lookupService.lookupCoverImage(Arrays.asList(artist), ArtistSingleResponse::getId, ObjectType.ARTIST.getValue(),
+                ArtistSingleResponse::setImageUrl, ArtistSingleResponse::getImageUrl);
+
+        return new PayloadResponse<>(request, ResponseCode.OK, artist);
+
     }
 
 }

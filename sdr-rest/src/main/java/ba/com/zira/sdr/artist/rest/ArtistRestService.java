@@ -25,6 +25,7 @@ import ba.com.zira.sdr.api.ArtistService;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
@@ -96,6 +97,12 @@ public class ArtistRestService {
     public ListPayloadResponse<LoV> getArtistNames() throws ApiException {
         var req = new EmptyRequest();
         return artistService.getArtistNames(req);
+    }
+    @Operation(summary = "Find artist by id")
+    @GetMapping(value = "{id}")
+    public PayloadResponse<ArtistSingleResponse> getArtistById(
+            @Parameter(required = true, description = "ID of the song") @PathVariable final Long id) throws ApiException {
+        return artistService.getArtistById(new EntityRequest<>(id));
     }
 
 }

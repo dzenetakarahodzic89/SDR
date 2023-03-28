@@ -19,9 +19,11 @@ import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.model.Filter;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
+import ba.com.zira.sdr.api.model.album.AlbumArtistSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumPersonResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
 import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
+import ba.com.zira.sdr.api.model.album.SongsAlbumResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
@@ -238,5 +240,41 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("albumName", albumName);
         return query.getResultList();
     }
+    public List<AlbumArtistSongResponse> findAllAlbumsSongForArtist(Long artistId) {
+        var hql = "SELECT DISTINCT new ba.com.zira.sdr.api.model.album.AlbumArtistSongResponse(al.id, al.name, al.dateOfRelease, COUNT(distinct s.song.id), SUM(ss.playtimeInSeconds)) "
+                + " from ArtistEntity as a"
+                + " join SongArtistEntity as s "
+                + " on a.id = s.artist.id "
+                + " join AlbumEntity as al"
+                + " on al.id=s.album.id"
+                + " join SongEntity as ss "
+                + " on  s.song.id=ss.id "
+                + " where a.id = :artistId"
+                + " group by al.id, al.name,al.dateOfRelease";
+        /*SELECT DISTINCT new ba.com.zira.sdr.api.model.album.AlbumArtistSongResponse(al.id, al.name, al.dateOfRelease, COUNT(distinct s.song.id), SUM(ss.playtimeInSeconds))
+        from ba.com.zira.sdr.dao.model.ArtistEntity as a
+        join ba.com.zira.sdr.dao.model.SongArtistEntity as s
+        on a.id = s.artist.id  join ba.com.zira.sdr.dao.model.AlbumEntity as al
+        on al.id=s.album.id join ba.com.zira.sdr.dao.model.SongEntity as ss
+        on  s.song.id=ss.id  where a.id = :artistId
+        group by al.id, al.name, al.dateOfRelease*/
+        TypedQuery<AlbumArtistSongResponse> query = entityManager.createQuery(hql, AlbumArtistSongResponse.class).setParameter("artistId",
+                artistId);
+
+        return query.getResultList();
+    }
+    public List<SongsAlbumResponse> findAllSongsWithPlaytimeForAlbum(final List<Long> albumId) {
+        var hql = "select new ba.com.zira.sdr.api.model.album.SongsAlbumResponse(a.id, a.name,COUNT(DISTINCT sa.song.id), SUM(s.playtimeInSeconds)) "
+                + "from AlbumEntity a "
+                + "join SongArtistEntity sa "
+                + "on sa.album.id = a.id "
+                + "join SongEntity s "
+                + "on s.id = sa.song.id "
+                + " where a.id in :albumId"
+                + " group by a.id, a.name";
+        TypedQuery<SongsAlbumResponse> query = entityManager.createQuery(hql, SongsAlbumResponse.class).setParameter("albumId", albumId);
+        return query.getResultList();
+    }
+
 
 }

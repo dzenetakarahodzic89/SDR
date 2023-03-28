@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.test.suites;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +29,7 @@ import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistUpdateRequest;
 import ba.com.zira.sdr.core.impl.ArtistServiceImpl;
 import ba.com.zira.sdr.core.mapper.ArtistMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.ArtistValidation;
 import ba.com.zira.sdr.core.validation.PersonRequestValidation;
 import ba.com.zira.sdr.dao.ArtistDAO;
@@ -54,7 +57,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
     private ArtistValidation artistValidation;
     private ArtistService artistService;
     private PersonRequestValidation personRequestValidation;
-
+    LookupService lookupService;
     ArtistValidation artistRequestValidation;
 
     @BeforeMethod
@@ -67,7 +70,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
         this.personRequestValidation = Mockito.mock(PersonRequestValidation.class);
 
         this.artistService = new ArtistServiceImpl(artistDAO, eraDAO, personDAO, artistMapper, artistValidation, personArtistDAO,
-                songArtistDAO, personRequestValidation);
+                songArtistDAO, personRequestValidation, lookupService);
     }
 
     @Test(enabled = true)
@@ -154,7 +157,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
                     .hasSameElementsAs(response);
 
         } catch (Exception e) {
-            Assert.fail();
+            AssertJUnit.fail();
         }
     }
 
@@ -202,7 +205,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
                     .ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(newArtist);
 
         } catch (Exception e) {
-            Assert.fail();
+            AssertJUnit.fail();
         }
     }
 
@@ -222,7 +225,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
             Assertions.assertThat(artistResponse.getPayload()).isEqualTo("Artist successfully deleted!");
 
         } catch (Exception e) {
-            Assert.fail();
+            AssertJUnit.fail();
         }
     }
 
@@ -264,7 +267,7 @@ public class ArtistServiceTest extends BasicTestConfiguration {
                     .usingRecursiveComparison().ignoringFields("created", "createdBy", "modified", "modifiedBy").isEqualTo(artistResponse);
 
         } catch (Exception e) {
-            Assert.fail();
+            AssertJUnit.fail();
         }
     }
 
