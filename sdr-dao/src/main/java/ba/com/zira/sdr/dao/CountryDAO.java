@@ -37,8 +37,8 @@ public class CountryDAO extends AbstractDAO<CountryEntity, Long> {
         var q = entityManager.createQuery(hql, LoV.class).setParameter("id", id);
         return q.getResultList();
     }
-    
-     public List<LoV> getAllCountriesArtistsSongs() {
+
+    public List<LoV> getAllCountriesArtistsSongs() {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(c.id, c.name) " + "from CountryEntity c "
                 + "join PersonEntity p on c.id = p.country.id " + "join PersonArtistEntity pa on p.id = pa.person.id "
                 + "join ArtistEntity a on pa.artist.id = a.id " + "join SongArtistEntity sa on a.id = sa.artist.id "
@@ -59,7 +59,7 @@ public class CountryDAO extends AbstractDAO<CountryEntity, Long> {
     }
 
     public List<ArtistResponse> randomArtists(Long countryId, Long teamSize, Long songSize) {
-        var hql = "select new ba.com.zira.sdr.api.artist.ArtistResponse(a.id, a.name) " + "from CountryEntity c "
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistResponse(a.id, a.name || ' ' || a.surname) " + "from CountryEntity c "
                 + "join PersonEntity p on c.id = p.country.id " + "join PersonArtistEntity pa on p.id = pa.person.id "
                 + "join ArtistEntity a on pa.artist.id = a.id " + "join SongArtistEntity ssa on ssa.artist.id = a.id "
                 + "join SongEntity s on ssa.song.id = s.id " + "where c.id in( " + "select  c.id " + "from CountryEntity c "

@@ -134,7 +134,7 @@ public class BattleServiceImpl implements BattleService {
         }
 
         for (CountryEntity country : passiveCountries) {
-            CountryState countryState = new CountryState(country.getId(), country.getName(), 1L, (double) -1L, Status.INACTIVE.value());
+            CountryState countryState = new CountryState(country.getId(), country.getName(), 1L, (double) -1L, "Passive");
             countryStates.add(countryState);
         }
 
