@@ -7,6 +7,7 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleSingleOverviewResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 
 /**
@@ -34,5 +35,8 @@ public interface BattleService {
      *             the api exception
      */
     PayloadResponse<Battle> getById(EntityRequest<Long> request) throws ApiException;
+
     PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException;
+
+    PayloadResponse<BattleSingleOverviewResponse> getSingleOverview(EntityRequest<Long> request) throws ApiException;
 }

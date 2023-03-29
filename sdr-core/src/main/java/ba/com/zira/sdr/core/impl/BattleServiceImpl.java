@@ -15,11 +15,14 @@ import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.BattleService;
 import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleSingleOverviewResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 import ba.com.zira.sdr.api.model.battle.MapState;
 import ba.com.zira.sdr.api.model.battle.TeamsState;
+import ba.com.zira.sdr.api.model.battle.TurnCombatState;
 import ba.com.zira.sdr.core.mapper.BattleMapper;
 import ba.com.zira.sdr.dao.BattleDAO;
+import ba.com.zira.sdr.dao.BattleTurnDAO;
 import ba.com.zira.sdr.dao.model.BattleEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,7 @@ public class BattleServiceImpl implements BattleService {
 
     @NonNull
     BattleDAO battleDAO;
+    BattleTurnDAO battleTurnDAO;
 
     @NonNull
     BattleMapper battleMapper;
@@ -59,10 +63,38 @@ public class BattleServiceImpl implements BattleService {
             battleTurn.setMapState(mapState);
             var teamState = objectMapper.readValue(battleTurn.getTeamStateJson(), TeamsState.class);
             battleTurn.setTeamState(teamState);
+
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage());
         }
         return new PayloadResponse<>(request, ResponseCode.OK, battleTurn);
+    }
+
+    @Override
+    public PayloadResponse<BattleSingleOverviewResponse> getSingleOverview(EntityRequest<Long> request) throws ApiException {
+        var battleTurns = battleTurnDAO.getByBattleId(request.getEntity());
+        var battleEntity = battleDAO.findByPK(request.getEntity());
+        var winnerCountry = battleEntity.getCountry();
+        int numberOfWins = 0;
+        int totalNumberOfBattles = 0;
+        var response = new BattleSingleOverviewResponse();
+
+        try {
+            for (var battleTurn : battleTurns) {
+                var turnCombatState = objectMapper.readValue(battleTurn.getTurnCombatState(), TurnCombatState.class);
+                for (var battleLog : turnCombatState.getBattleLogs()) {
+                    if (battleLog.getWinnerCountryId() == winnerCountry.getId()) {
+                        numberOfWins++;
+                    }
+                    totalNumberOfBattles++;
+                }
+            }
+        } catch (Exception ex) {
+
+            LOGGER.error(ex.getMessage());
+        }
+        float winPercentage = 100.0F * numberOfWins / totalNumberOfBattles;
+        return new PayloadResponse<>(request, ResponseCode.OK, response);
     }
 
 }
