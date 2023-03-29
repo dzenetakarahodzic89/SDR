@@ -29,7 +29,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping(value = "battle")
 @AllArgsConstructor
 public class BattleRestService {
-    @Autowired
+
     BattleService battleService;
 
     @Operation(summary = "Find battle")
