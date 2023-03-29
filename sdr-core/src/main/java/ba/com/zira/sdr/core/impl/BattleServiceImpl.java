@@ -29,6 +29,7 @@ import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
 import ba.com.zira.sdr.api.model.battle.BattleLog;
+import ba.com.zira.sdr.api.model.battle.BattleLogBattleResult;
 import ba.com.zira.sdr.api.model.battle.BattleLogEntry;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
@@ -149,7 +150,10 @@ public class BattleServiceImpl implements BattleService {
 
         Map<Long, String> textHistory = new HashMap<>();
         List<BattleLogEntry> battleLogEntity = new ArrayList<>();
-        BattleLog battleLog = new BattleLog(textHistory, battleLogEntity, null, null);
+
+        List<BattleLogBattleResult> battleLogBattleResult = new ArrayList<>();
+
+        BattleLog battleLog = new BattleLog(textHistory, battleLogEntity, battleLogBattleResult);
 
         var turnCombatState = new TurnCombatState("In Progress", Collections.singletonList(battleLog));
         String turnCombatStateJson = null;
