@@ -34,5 +34,7 @@ public interface BattleService {
      *             the api exception
      */
     PayloadResponse<Battle> getById(EntityRequest<Long> request) throws ApiException;
+
     PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException;
+
 }

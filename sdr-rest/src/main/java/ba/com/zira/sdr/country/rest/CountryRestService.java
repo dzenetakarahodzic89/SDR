@@ -23,6 +23,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.CountryService;
 import ba.com.zira.sdr.api.model.country.CountriesSearchRequest;
 import ba.com.zira.sdr.api.model.country.CountryCreateRequest;
+import ba.com.zira.sdr.api.model.country.CountryGetByIdsRequest;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.country.CountryUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -84,6 +85,12 @@ public class CountryRestService {
     public ListPayloadResponse<LoV> getAllCountriesExceptOneWithTheSelectedId(@RequestBody final CountriesSearchRequest request)
             throws ApiException {
         return countryService.getAllCountriesExceptOneWithTheSelectedId(new EntityRequest<>(request));
+    }
+
+    @Operation(summary = "Find all countries by ids")
+    @PostMapping(value = "get-by-ids")
+    public ListPayloadResponse<LoV> getAllCountriesByIds(@RequestBody CountryGetByIdsRequest request) throws ApiException {
+        return countryService.getAllCountryLoVsByIds(new EntityRequest<>(request));
     }
 
 }
