@@ -12,6 +12,5 @@ public class BattleLog implements Serializable {
     private static final long serialVersionUID = 1L;
     private Map<Long, String> textHistory;
     private List<BattleLogEntry> turnHistory;
-    Long winnerCountryId;
-    Long loserCountryId;
+    private List<BattleLogBattleResult> battleResults;
 }
