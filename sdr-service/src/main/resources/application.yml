@@ -66,8 +66,8 @@ eureka:
 feign:
   client:
     config:
-     default:
-      connectTimeout: 160000000
-      readTimeout: 160000000
+      default:
+        connectTimeout: 160000000
+        readTimeout: 160000000
 ga:
   users: OFAdmin,ih,system,3K,radomir.bjelopetrovic,sergej.lempl,zlatan.garibovic,boris.nad,boris.stipinovic,sasa.jungic,elizabeta.montan,zeljko.sestan,emilija.jakovljević-malović,natalija.vraneković,ana.tarabic,mario.nekic,amra.besic,maja.brajkovic,natko.gluscevic,marina.mandir,eta.zolnai,silvija.glatki,martin.sajko,petra.gluhak,vladimir.caric,ivona.patljak,ivan.gutschy,rrr,testerprvi,barbara.meden,Team,amir_r,ee,saniz,test1,aa,anja,paja,ivanabrisevac,gm,sam,sm,testic,oghandourah,sthubiti,belma,testedu,elvis.duric,aeid,test_dev_3,aa_2,test_dev_4,test_dev_5,adna.mehanovic,lejla.omerspahic,surejja.alibegovic,nermina.hodzic,amina.kurtovic,mahir.prcanovic,amila.hadzibajramovic,selma.omanovic,dzeneta.karahodzic,hena.pamuk,ahmed.babic,elma.catic,amina.jukic,dzejlana.nefic,hana.kovacevic,emina.custovic,faris.curevac,mustafa.isic,ismihana.mededovic,dino.dedic,tarik.halac,ema.kalmar,bilal.dedovic,armin.petrovic,medina.krupalija,alem.krbedzija,almir.jusic,velid.imsirovic

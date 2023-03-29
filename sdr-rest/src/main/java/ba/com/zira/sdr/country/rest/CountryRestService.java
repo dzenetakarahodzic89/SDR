@@ -20,8 +20,12 @@ import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
+import ba.com.zira.sdr.api.BattleService;
 import ba.com.zira.sdr.api.CountryService;
+import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
+import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
 import ba.com.zira.sdr.api.model.country.CountriesSearchRequest;
+import ba.com.zira.sdr.api.model.country.CountryArtistSongResponse;
 import ba.com.zira.sdr.api.model.country.CountryCreateRequest;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.country.CountryUpdateRequest;
@@ -37,6 +41,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CountryRestService {
     private CountryService countryService;
+
+    private BattleService battleService;
 
     @Operation(summary = "Find countries base on filter criteria")
     @GetMapping
@@ -84,6 +90,28 @@ public class CountryRestService {
     public ListPayloadResponse<LoV> getAllCountriesExceptOneWithTheSelectedId(@RequestBody final CountriesSearchRequest request)
             throws ApiException {
         return countryService.getAllCountriesExceptOneWithTheSelectedId(new EntityRequest<>(request));
+    }
+
+    @Operation(summary = "Get all")
+    @GetMapping(value = "all-countries")
+    public ListPayloadResponse<LoV> getAllCountries() throws ApiException {
+        var request = new EmptyRequest();
+        return countryService.getAllCountries(request);
+
+    }
+
+    @Operation(summary = "Artists and songs by countryId")
+    @GetMapping("/artists-songs")
+    public PayloadResponse<CountryArtistSongResponse> getArtistsAndSongs(@RequestParam Long id) throws ApiException {
+        var req = new EntityRequest<>(id);
+        return countryService.getArtistsSongs(req);
+    }
+
+    @Operation(summary = "Create a battle")
+    @PostMapping(value = "/battle-create")
+    public PayloadResponse<BattleGenerateResponse> createA(@RequestBody(required = true) BattleGenerateRequest request)
+            throws ApiException {
+        return battleService.create(new EntityRequest<>(request));
     }
 
 }
