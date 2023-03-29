@@ -126,7 +126,8 @@ public class BattleServiceImpl implements BattleService {
                     }
                     newRequest.setStatus("Finished");
                     battleTurnDAO.persist(newRequest);
-                    return new PayloadResponse<>(request, ResponseCode.OK, "You won against " + move.getAttackedName());
+                    return new PayloadResponse<>(request, ResponseCode.OK,
+                            "Country " + move.getAttackedName() + " is passive, " + move.getAttackerName() + " has taken over!");
                 }
             }
         } else {
