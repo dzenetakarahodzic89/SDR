@@ -130,12 +130,17 @@ public class BattleServiceImpl implements BattleService {
 
         List<CountryState> countryStates = new ArrayList<>();
         for (CountryResponse country : numberOfActiveCountries) {
-            CountryState countryState = new CountryState(country.getId(), country.getName(), 2L, (double) 0L, Status.ACTIVE.value());
-            countryStates.add(countryState);
+            if (battleGenerateRequest.getCountries().contains(country.getId())) {
+                CountryState countryState = new CountryState(country.getId(), country.getName(), 1L, (double) 0L, Status.ACTIVE.value());
+                countryStates.add(countryState);
+            } else {
+                CountryState countryState = new CountryState(country.getId(), country.getName(), 2L, (double) 0L, Status.ACTIVE.value());
+                countryStates.add(countryState);
+            }
         }
 
         for (CountryEntity country : passiveCountries) {
-            CountryState countryState = new CountryState(country.getId(), country.getName(), 1L, (double) -1L, "Passive");
+            CountryState countryState = new CountryState(country.getId(), country.getName(), 0L, (double) -1L, "Passive");
             countryStates.add(countryState);
         }
 
@@ -187,10 +192,16 @@ public class BattleServiceImpl implements BattleService {
                 newTeamStructure.setCountryId(countryId);
                 CountryEntity countryName = countryDAO.findByPK(newTeamStructure.getCountryId());
                 newTeamStructure.setCountryName(countryName.getName());
+                newTeamStructure.setNumberOfWins(0L);
+                newTeamStructure.setNumberOfLoses(0L);
+                newTeamStructure.setLastActiveTurn(0L);
+                List<Long> eligibleCountryId = new ArrayList<>();
+                eligibleCountryId.add(countryId);
+
+                newTeamStructure.setEligibleCountryIds(eligibleCountryId);
                 List<ArtistStructure> newArtistStructureList = new ArrayList<>();
                 List<ArtistResponse> artistEntity = countryDAO.randomArtists(countryId, battleGenerateRequest.getTeamSize(),
                         battleGenerateRequest.getSongSize());
-
                 for (ArtistResponse artistResponse : artistEntity) {
                     ArtistStructure artistStructure = new ArtistStructure();
                     artistStructure.setArtistId(artistResponse.getId());
