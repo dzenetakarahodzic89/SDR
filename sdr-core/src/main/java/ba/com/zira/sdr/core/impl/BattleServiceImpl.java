@@ -22,8 +22,10 @@ import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleLogEntry;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleTurnUpdateRequest;
 import ba.com.zira.sdr.api.model.battle.MapState;
 import ba.com.zira.sdr.api.model.battle.PreBattleCreateRequest;
+import ba.com.zira.sdr.api.model.battle.TeamStructure;
 import ba.com.zira.sdr.api.model.battle.TeamsState;
 import ba.com.zira.sdr.api.model.battle.TurnCombatState;
 import ba.com.zira.sdr.core.mapper.BattleMapper;
@@ -143,10 +145,84 @@ public class BattleServiceImpl implements BattleService {
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-            battleTurnDAO.persist(newRequest);
-            return new PayloadResponse<>(request, ResponseCode.OK, "Turn has been created.");
+            var savedTurn = battleTurnDAO.persist(newRequest);
+            return new PayloadResponse<>(request, ResponseCode.OK, savedTurn.getId().toString());
         }
         return null;
+    }
+
+    @Override
+    public PayloadResponse<String> attackBattle(EntityRequest<BattleTurnUpdateRequest> request) throws ApiException {
+        var inProgressTurn = battleTurnDAO.findByPK(request.getEntity().getBattleTurnId());
+        var requestEntity = request.getEntity();
+        var loggedUser = request.getUser().getUserId();
+        MapState mapState = null;
+        TeamsState teamState = null;
+        TurnCombatState combatState = null;
+        var returnString = "";
+        try {
+            mapState = objectMapper.readValue(inProgressTurn.getMapState(), MapState.class);
+            teamState = objectMapper.readValue(inProgressTurn.getTeamState(), TeamsState.class);
+            combatState = objectMapper.readValue(inProgressTurn.getTurnCombatState(), TurnCombatState.class);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+            throw ApiException.createFrom(request, ResponseCode.INVALID_SETUP, "Json could not be parsed");
+        }
+        combatState.setStatus("Finished");
+        Long prevKey = combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
+        combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1,
+                "The battle is between " + requestEntity.getAttackerName() + " and " + requestEntity.getAttackedName());
+        prevKey += 1;
+        for (var explanation : requestEntity.getSongBattleExplained()) {
+            combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1, explanation + " decided by " + loggedUser);
+            prevKey += 1;
+        }
+        combatState.getBattleLogs().get(0).getTurnHistory().addAll(requestEntity.getSongBattles());
+        var foundNpcTeamIndex = 0;
+        for (var i = 0; i < teamState.getActiveNpcTeams().size(); i++) {
+            var item = teamState.getActiveNpcTeams().get(i);
+            if (item.getCountryId().equals(requestEntity.getAttackedCountryId())) {
+                foundNpcTeamIndex = i;
+                break;
+            }
+        }
+        if (requestEntity.getWonCase().equalsIgnoreCase("PLAYER")) {
+            teamState.getActivePlayerTeam().setNumberOfWins(teamState.getActivePlayerTeam().getNumberOfWins() + 1);
+            teamState.getActiveNpcTeams().get(foundNpcTeamIndex)
+                    .setNumberOfLoses(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getNumberOfLoses() + 1);
+            teamState.getActivePlayerTeam().getEligibleCountryIds().add(requestEntity.getAttackedCountryId());
+            TeamStructure wonAgainsTeam = teamState.getActiveNpcTeams().get(foundNpcTeamIndex);
+            teamState.getInactiveNpcTeams().add(wonAgainsTeam);
+            teamState.getActiveNpcTeams().remove(foundNpcTeamIndex);
+            Integer npcCountryIndex = null;
+            for (var i = 0; i < mapState.getCountries().size(); i++) {
+                if (mapState.getCountries().get(i).getCountryId().equals(requestEntity.getAttackedCountryId())) {
+                    npcCountryIndex = i;
+                    break;
+                }
+            }
+            mapState.getCountries().get(npcCountryIndex).setTeamOwnershipId(1L);
+            mapState.getCountries().get(npcCountryIndex).setMapValue((double) 1);
+            returnString = "Country " + request.getEntity().getAttackerName() + " has won over " + request.getEntity().getAttackedName();
+
+        } else if (requestEntity.getWonCase().equalsIgnoreCase("NPC")) {
+            teamState.getActivePlayerTeam().setNumberOfLoses(teamState.getActivePlayerTeam().getNumberOfLoses() + 1);
+            teamState.getActiveNpcTeams().get(foundNpcTeamIndex)
+                    .setNumberOfWins(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getNumberOfWins() + 1);
+            teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds().add(requestEntity.getAttackerCountryId());
+            returnString = "Country " + request.getEntity().getAttackedName() + " has won over " + request.getEntity().getAttackerName();
+        }
+
+        inProgressTurn.setStatus("Finished");
+        try {
+            inProgressTurn.setTeamState(objectMapper.writeValueAsString(teamState));
+            inProgressTurn.setTurnCombatState(objectMapper.writeValueAsString(combatState));
+            inProgressTurn.setMapState(objectMapper.writeValueAsString(mapState));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        battleTurnDAO.merge(inProgressTurn);
+        return new PayloadResponse<>(request, ResponseCode.OK, returnString);
     }
 
 }
