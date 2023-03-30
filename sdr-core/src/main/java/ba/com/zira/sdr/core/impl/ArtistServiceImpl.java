@@ -1,13 +1,13 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -24,6 +24,7 @@ import ba.com.zira.sdr.api.MediaService;
 import ba.com.zira.sdr.api.artist.Artist;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
+import ba.com.zira.sdr.api.artist.ArtistImageResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
 import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
@@ -379,6 +380,14 @@ public class ArtistServiceImpl implements ArtistService {
                     ArtistSearchResponse::setImageUrl, ArtistSearchResponse::getImageUrl);
         }
         return new ListPayloadResponse<>(request, ResponseCode.OK, artists);
+    }
+
+    @Override
+    public PayloadResponse<ArtistImageResponse> findPictureOfArtist(EntityRequest<Long> request) throws ApiException {
+        var artist = artistDAO.findLoVForArtistImage(request.getEntity());
+        lookupService.lookupCoverImage(Arrays.asList(artist), ArtistImageResponse::getId, ObjectType.ARTIST.getValue(),
+                ArtistImageResponse::setImageUrl, ArtistImageResponse::getImageUrl);
+        return new PayloadResponse<>(request, ResponseCode.OK, artist);
     }
 
 }

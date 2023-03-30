@@ -1,17 +1,19 @@
 package ba.com.zira.sdr.api.model.countryrelations;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CountryRelation implements Serializable {
-    private String typeOfLink;
-    private String countryName;
-    private Long countryId;
+@Builder
+public class CountryRelation {
 
+    private Long foreignCountryId;
+    private String foreignCountryName;
+    private String typeOfLink;
 }

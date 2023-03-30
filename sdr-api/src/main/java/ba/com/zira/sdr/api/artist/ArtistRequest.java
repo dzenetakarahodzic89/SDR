@@ -16,6 +16,8 @@ public class ArtistRequest implements Serializable {
     protected String name;
     @Schema(description = "Surname of the artist")
     protected String surname;
+    @Schema(description = "Full name of the artist")
+    protected String fullName;
     @Schema(description = "Date of birth")
     protected LocalDateTime dateOfBirth;
     @Schema(description = "Date of death")

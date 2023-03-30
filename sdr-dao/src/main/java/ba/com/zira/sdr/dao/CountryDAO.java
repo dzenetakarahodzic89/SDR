@@ -9,8 +9,11 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.model.country.CountryArtistSongResponse;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.dao.model.CountryEntity;
 
 @Repository
@@ -35,4 +38,54 @@ public class CountryDAO extends AbstractDAO<CountryEntity, Long> {
         return q.getResultList();
     }
 
+    public List<LoV> getAllCountriesArtistsSongs() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(c.id, c.name) " + "from CountryEntity c "
+                + "join PersonEntity p on c.id = p.country.id " + "join PersonArtistEntity pa on p.id = pa.person.id "
+                + "join ArtistEntity a on pa.artist.id = a.id " + "join SongArtistEntity sa on a.id = sa.artist.id "
+                + "join SongEntity s on s.id = sa.song.id " + "group by c.id, c.name order by c.name asc";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);
+        return query.getResultList();
+    }
+
+    public CountryArtistSongResponse getArtistsAndSongs(Long countryId) {
+        var hql = "select new ba.com.zira.sdr.api.model.country.CountryArtistSongResponse(c.id, c.name, count(distinct a.name), count(distinct s.name)) "
+                + "from CountryEntity c " + "join PersonEntity p on c.id = p.country.id "
+                + "join PersonArtistEntity pa on p.id = pa.person.id " + "join ArtistEntity a on pa.artist.id = a.id "
+                + "join SongArtistEntity sa on a.id = sa.artist.id " + "join SongEntity s on s.id = sa.song.id " + "where c.id = :id "
+                + "group by c.id, c.name";
+        TypedQuery<CountryArtistSongResponse> query = entityManager.createQuery(hql, CountryArtistSongResponse.class).setParameter("id",
+                countryId);
+        return query.getSingleResult();
+    }
+
+    public List<ArtistResponse> randomArtists(Long countryId, Long teamSize, Long songSize) {
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistResponse(a.id, a.name || ' ' || a.surname) " + "from CountryEntity c "
+                + "join PersonEntity p on c.id = p.country.id " + "join PersonArtistEntity pa on p.id = pa.person.id "
+                + "join ArtistEntity a on pa.artist.id = a.id " + "join SongArtistEntity ssa on ssa.artist.id = a.id "
+                + "join SongEntity s on ssa.song.id = s.id " + "where c.id in( " + "select  c.id " + "from CountryEntity c "
+                + "join PersonEntity p on c.id = p.country.id " + "join PersonArtistEntity pa on p.id = pa.person.id "
+                + "join ArtistEntity a2 on pa.artist.id = a2.id join SongArtistEntity ssa ON ssa.artist.id = a2.id "
+                + "join SongEntity s on ssa.song.id = s.id  " + "where c.id = :countryId " + "group by c.id, c.name "
+                + "having count(distinct a2.id) >= :teamSize) " + "and c.id = :countryId " + "group by a.id, c.id, c.name "
+                + "having count(distinct s.id) >= :songSize " + "order by random()";
+
+        TypedQuery<ArtistResponse> query = entityManager.createQuery(hql, ArtistResponse.class).setParameter("countryId", countryId)
+                .setParameter("songSize", songSize).setParameter("teamSize", teamSize).setMaxResults(teamSize.intValue());
+        return query.getResultList();
+    }
+
+    public List<SongResponse> randomSongs(Long artistId, Long songSize) {
+        var hql = "select new ba.com.zira.sdr.api.model.song.SongResponse (s.id, s.name, s.spotifyId) " + "from SongEntity s "
+                + "join SongArtistEntity sa on s.id = sa.song.id " + "join ArtistEntity a on sa.artist.id = a.id "
+                + "where a.id = :artistId " + "order by random()";
+        TypedQuery<SongResponse> query = entityManager.createQuery(hql, SongResponse.class).setParameter("artistId", artistId)
+                .setMaxResults(songSize.intValue());
+        return query.getResultList();
+    }
+
+    public List<LoV> getAllCountryLoVByIds(List<Long> ids) {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(sc.id, sc.name) from CountryEntity sc where sc.id in :ids";
+        var q = entityManager.createQuery(hql, LoV.class).setParameter("ids", ids);
+        return q.getResultList();
+    }
 }

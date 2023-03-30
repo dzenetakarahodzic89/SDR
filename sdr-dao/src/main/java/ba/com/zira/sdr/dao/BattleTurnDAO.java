@@ -3,6 +3,8 @@ package ba.com.zira.sdr.dao;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.TypedQuery;
+
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
@@ -65,4 +67,11 @@ public class BattleTurnDAO extends AbstractDAO<BattleTurnEntity, Long> {
         q.executeUpdate();
     }
 
+    public BattleTurnEntity getFullBattleTurn(Long battleId) {
+        var hql = "select bt from BattleTurnEntity bt where bt.battle.id=:battleId order by bt.turnNumber desc";
+        TypedQuery<BattleTurnEntity> q = entityManager.createQuery(hql, BattleTurnEntity.class).setParameter("battleId", battleId)
+                .setMaxResults(1);
+
+        return q.getSingleResult();
+    }
 }

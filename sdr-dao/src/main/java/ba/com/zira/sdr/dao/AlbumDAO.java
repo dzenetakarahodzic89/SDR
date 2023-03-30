@@ -157,12 +157,10 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
     }
 
     public List<LoV> findAlbumsToFetchFromSpotify(int responseLimit) {
-        var cases = "case when sa.artist.id is not null and a2.surname is not null then concat('album:',a.name,' ','artist:',a2.name,' ',a2.surname)"
-                + " when sa.artist.id is not null and a2.surname is null then concat('album:',a.name,' ','artist:',a2.name) else"
-                + " concat('album:',a.name) end";
+        var cases = "case when sa.artist.id is not null then concat('album:',a.name,' ','artist:',a2.fullName) else concat('album:', a.name) end";
         var subquery = "select si from SpotifyIntegrationEntity si where si.objectId=a.id and si.objectType like :album";
-        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id, " + cases
-                + ") from AlbumEntity a left join SongArtistEntity sa on a.id=sa.album.id left join ArtistEntity a2 on sa.artist.id=a2.id where not exists("
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id,  concat('album:'," + cases
+                + ")) from AlbumEntity a left join SongArtistEntity sa on a.id=sa.album.id left join ArtistEntity a2 on sa.artist.id=a2.id where not exists("
                 + subquery + ") " + "and (a.spotifyId is null or length(a.spotifyId)<1)";
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("album", "ALBUM").setMaxResults(responseLimit);
 
