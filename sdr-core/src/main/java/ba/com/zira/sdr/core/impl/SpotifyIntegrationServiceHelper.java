@@ -1,5 +1,17 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +30,6 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -380,7 +380,7 @@ public class SpotifyIntegrationServiceHelper {
 
                 if (response.getStatusCode() == HttpStatus.OK) {
                     spotifyIntegration.setResponse(response.getBody());
-                    LOGGER.info("SPOTIFY INTEGRATION: Artist {} successfully found!", artist.getName());
+                    LOGGER.info("SPOTIFY INTEGRATION: Artist {} successfully found!", artist.getFullName());
                     var entityRequest = new EntityRequest<>(spotifyIntegration);
                     entityRequest.setUser(systemUser);
                     spotifyIntegrationService.create(entityRequest);
@@ -734,6 +734,8 @@ public class SpotifyIntegrationServiceHelper {
     private ArtistEntity saveArtistFromSpotify(String artistName, String artistSpotifyId, String spotifyStatus) {
         if (mapOfExistingSpotifyIds.get(artistSpotifyId) == null) {
             ArtistEntity artistEntity = new ArtistEntity();
+
+            artistEntity.setFullName(artistName);
             artistEntity.setName(artistName);
             artistEntity.setStatus(STATUS_ACTIVE);
             artistEntity.setCreated(LocalDateTime.now());
@@ -920,10 +922,8 @@ public class SpotifyIntegrationServiceHelper {
         LOGGER.info("SPOTIFY INTEGRATION: Found {} artists to fetch albums for!", artists.size());
 
         artists.forEach(artist -> {
-            var artistName = artist.getName();
-            if (artist.getSurname() != null) {
-                artistName += " " + artist.getSurname();
-            }
+            var artistName = artist.getFullName();
+
             LOGGER.info("Fetching albums for artist {}...", artistName);
             try {
                 SpotifyGetArtistsAlbums response = mapper.readValue(fetchAlbumsOfArtistFromSpotify(artist.getSpotifyId(), artistName),
@@ -998,9 +998,9 @@ public class SpotifyIntegrationServiceHelper {
      * Removes the duplicates.
      */
     private void removeDuplicates() {
-        var duplicateAlbums = albumDAO.getDuplicateAlbums().stream().map(a -> a.getId()).collect(Collectors.toList());
-        var duplicateArtists = artistDAO.getDuplicateArtists().stream().map(a -> a.getId()).collect(Collectors.toList());
-        var duplicateSongs = songDAO.getDuplicateSongs().stream().map(s -> s.getId()).collect(Collectors.toList());
+        var duplicateAlbums = albumDAO.getDuplicateAlbums().stream().map(AlbumEntity::getId).collect(Collectors.toList());
+        var duplicateArtists = artistDAO.getDuplicateArtists().stream().map(ArtistEntity::getId).collect(Collectors.toList());
+        var duplicateSongs = songDAO.getDuplicateSongs().stream().map(SongEntity::getId).collect(Collectors.toList());
 
         LOGGER.info("SPOTIFY INTEGRATION: Found {} duplicate albums, {} duplicate songs and {} duplicate artists. Removing duplicates...",
                 duplicateAlbums.size(), duplicateSongs.size(), duplicateArtists.size());

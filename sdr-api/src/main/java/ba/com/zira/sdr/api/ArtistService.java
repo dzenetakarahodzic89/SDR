@@ -9,6 +9,7 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
+import ba.com.zira.sdr.api.artist.ArtistImageResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
 import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
@@ -82,9 +83,13 @@ public interface ArtistService {
 
     PayloadResponse<ArtistResponse> createFromPerson(EntityRequest<Long> request) throws ApiException;
 
-    PayloadResponse<ArtistByEras> countArtistsByEras(EntityRequest<Long> request);
+    PayloadResponse<ArtistByEras> countArtistsByEras(EntityRequest<Long> request) throws ApiException;
+
+    PayloadResponse<String> copyImageToPersons(final EntityRequest<Long> request) throws ApiException;
 
     ListPayloadResponse<ArtistSearchResponse> getArtistsBySearch(EntityRequest<ArtistSearchRequest> request) throws ApiException;
 
     ListPayloadResponse<ArtistSearchResponse> getRandomArtistsForSearch(EmptyRequest request) throws ApiException;
+
+    PayloadResponse<ArtistImageResponse> findPictureOfArtist(EntityRequest<Long> request) throws ApiException;
 }

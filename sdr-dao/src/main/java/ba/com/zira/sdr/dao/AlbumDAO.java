@@ -23,9 +23,11 @@ import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.model.Filter;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.sdr.api.model.album.AlbumArtistResponse;
+import ba.com.zira.sdr.api.model.album.AlbumArtistSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumPersonResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSearchRequest;
 import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
+import ba.com.zira.sdr.api.model.album.SongsAlbumResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
@@ -155,12 +157,10 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
     }
 
     public List<LoV> findAlbumsToFetchFromSpotify(int responseLimit) {
-        var cases = "case when sa.artist.id is not null and a2.surname is not null then concat('album:',a.name,' ','artist:',a2.name,' ',a2.surname)"
-                + " when sa.artist.id is not null and a2.surname is null then concat('album:',a.name,' ','artist:',a2.name) else"
-                + " concat('album:',a.name) end";
+        var cases = "case when sa.artist.id is not null then concat('album:',a.name,' ','artist:',a2.fullName) else concat('album:', a.name) end";
         var subquery = "select si from SpotifyIntegrationEntity si where si.objectId=a.id and si.objectType like :album";
-        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id, " + cases
-                + ") from AlbumEntity a left join SongArtistEntity sa on a.id=sa.album.id left join ArtistEntity a2 on sa.artist.id=a2.id where not exists("
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id,  concat('album:'," + cases
+                + ")) from AlbumEntity a left join SongArtistEntity sa on a.id=sa.album.id left join ArtistEntity a2 on sa.artist.id=a2.id where not exists("
                 + subquery + ") " + "and (a.spotifyId is null or length(a.spotifyId)<1)";
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("album", "ALBUM").setMaxResults(responseLimit);
 
@@ -260,6 +260,42 @@ public class AlbumDAO extends AbstractDAO<AlbumEntity, Long> {
         TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("albumName", albumName);
         return query.getResultList();
     }
+    public List<AlbumArtistSongResponse> findAllAlbumsSongForArtist(Long artistId) {
+        var hql = "SELECT DISTINCT new ba.com.zira.sdr.api.model.album.AlbumArtistSongResponse(al.id, al.name, al.dateOfRelease, COUNT(distinct s.song.id), SUM(ss.playtimeInSeconds)) "
+                + " from ArtistEntity as a"
+                + " join SongArtistEntity as s "
+                + " on a.id = s.artist.id "
+                + " join AlbumEntity as al"
+                + " on al.id=s.album.id"
+                + " join SongEntity as ss "
+                + " on  s.song.id=ss.id "
+                + " where a.id = :artistId"
+                + " group by al.id, al.name,al.dateOfRelease";
+        /*SELECT DISTINCT new ba.com.zira.sdr.api.model.album.AlbumArtistSongResponse(al.id, al.name, al.dateOfRelease, COUNT(distinct s.song.id), SUM(ss.playtimeInSeconds))
+        from ba.com.zira.sdr.dao.model.ArtistEntity as a
+        join ba.com.zira.sdr.dao.model.SongArtistEntity as s
+        on a.id = s.artist.id  join ba.com.zira.sdr.dao.model.AlbumEntity as al
+        on al.id=s.album.id join ba.com.zira.sdr.dao.model.SongEntity as ss
+        on  s.song.id=ss.id  where a.id = :artistId
+        group by al.id, al.name, al.dateOfRelease*/
+        TypedQuery<AlbumArtistSongResponse> query = entityManager.createQuery(hql, AlbumArtistSongResponse.class).setParameter("artistId",
+                artistId);
+
+        return query.getResultList();
+    }
+    public List<SongsAlbumResponse> findAllSongsWithPlaytimeForAlbum(final List<Long> albumId) {
+        var hql = "select new ba.com.zira.sdr.api.model.album.SongsAlbumResponse(a.id, a.name,COUNT(DISTINCT sa.song.id), SUM(s.playtimeInSeconds)) "
+                + "from AlbumEntity a "
+                + "join SongArtistEntity sa "
+                + "on sa.album.id = a.id "
+                + "join SongEntity s "
+                + "on s.id = sa.song.id "
+                + " where a.id in :albumId"
+                + " group by a.id, a.name";
+        TypedQuery<SongsAlbumResponse> query = entityManager.createQuery(hql, SongsAlbumResponse.class).setParameter("albumId", albumId);
+        return query.getResultList();
+    }
+
 
     public List<LoV> getAlbumLoVs() {
         var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from AlbumEntity s ";

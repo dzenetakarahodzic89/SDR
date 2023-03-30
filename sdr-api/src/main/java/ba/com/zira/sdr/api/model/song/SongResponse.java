@@ -7,8 +7,10 @@ import javax.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@RequiredArgsConstructor
 @Schema(description = "Properties of song response")
 public class SongResponse implements Serializable {
 
@@ -34,6 +36,7 @@ public class SongResponse implements Serializable {
 
     private String audioUrl;
     private String coverUrl;
+    private String spotifyId;
 
     public SongResponse(@NotNull final Long id, @NotBlank final String name, @NotBlank final String playtime,
             @NotBlank final String genreName) {
@@ -44,4 +47,9 @@ public class SongResponse implements Serializable {
         this.genreName = genreName;
     }
 
+    public SongResponse(Long id, String name, String spotifyId) {
+        this.id = id;
+        this.name = name;
+        this.spotifyId = spotifyId;
+    }
 }

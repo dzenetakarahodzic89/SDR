@@ -20,6 +20,10 @@ public interface SongPlaylistMapper {
 
     @Mapping(source = "song.id", target = "songId")
     @Mapping(source = "playlist.id", target = "playlistId")
+    @Mapping(source = "song.name", target = "songName")
+    @Mapping(source = "song.playtime", target = "playtime")
+    @Mapping(source = "song.genre.id", target = "genreId")
+    @Mapping(source = "song.genre.name", target = "genreName")
     SongPlaylist entityToDto(SongPlaylistEntity songPlaylistEntity);
 
     @Mapping(source = "playlistId", target = "playlist.id")

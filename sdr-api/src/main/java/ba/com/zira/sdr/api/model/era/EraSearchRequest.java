@@ -18,12 +18,12 @@ public class EraSearchRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public String name;
-    public String sortBy;
-    public int page;
-    public int pageSize;
-    public List<Long> albumIds;
-    public List<Long> artistIds;
-    public List<Long> genreIds;
+    private String name;
+    private String sortBy;
+    private int page;
+    private int pageSize;
+    private List<Long> albumIds;
+    private List<Long> artistIds;
+    private List<Long> genreIds;
 
 }

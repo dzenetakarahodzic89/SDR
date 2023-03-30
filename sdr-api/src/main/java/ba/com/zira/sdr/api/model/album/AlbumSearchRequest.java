@@ -20,9 +20,9 @@ public class AlbumSearchRequest implements Serializable {
 
     }
 
-    List<Long> eras;
-    List<Long> genres;
-    List<Long> artists;
-    String name;
+    private List<Long> eras;
+    private List<Long> genres;
+    private List<Long> artists;
+    private String name;
 
 }

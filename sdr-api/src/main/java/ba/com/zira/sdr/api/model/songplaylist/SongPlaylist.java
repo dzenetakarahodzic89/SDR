@@ -25,8 +25,16 @@ public class SongPlaylist implements Serializable {
     private LocalDateTime modified;
     @Schema(description = "User that modified the  Song Playlist")
     private String modifiedBy;
-    @Schema(description = "Song ID")
+    @Schema(description = "Id of the song")
     private Long songId;
+    @Schema(description = "Song name")
+    private String songName;
+    @Schema(description = "Song genre")
+    private String genreName;
+    @Schema(description = "Song playtime")
+    private String playtime;
+    @Schema(description = "Genre id")
+    private Long genreId;
     @Schema(description = "Playlist ID")
     private Long playlistId;
 
