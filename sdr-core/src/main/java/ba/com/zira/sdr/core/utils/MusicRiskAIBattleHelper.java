@@ -1,16 +1,16 @@
 package ba.com.zira.sdr.core.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Random;
-import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.model.User;
@@ -30,11 +30,13 @@ import ba.com.zira.sdr.dao.CountryRelationsDAO;
 public class MusicRiskAIBattleHelper {
     private CountryRelationsDAO countryRelationsDAO;
     private CountryDAO countryDAO;
+    /* SecureRandom */
+    /* Dodaj LOGGER */
     private Random rand;
     private static final User systemUser = new User("System");
 
-    public Boolean simulateBattle(TeamStructure teamA, TeamStructure teamB, Long countryA, Long countryB, BattleLog battleLog,
-            Long textHistoryLastIndex, Long turnNumber) {
+    public Boolean simulateBattle(TeamStructure teamA, TeamStructure teamB, BattleLog battleLog, Long textHistoryLastIndex,
+            Long turnNumber) {
         var turnHistory = battleLog.getTurnHistory();
         var textHistory = battleLog.getTextHistory();
         var battleResult = battleLog.getBattleResults();
@@ -50,7 +52,7 @@ public class MusicRiskAIBattleHelper {
         textHistory.put(textHistoryLastIndex + 1, "The battle is between " + artistA.getName() + " and " + artistB.getName() + ".");
         textHistoryLastIndex += 1;
         var numberOfWins = 0;
-        for (int i = 0; i < songsA.size(); i++) {
+        for (var i = 0; i < songsA.size(); i++) {
             var songA = songsA.get(i);
             var songB = songsB.get(i);
 
@@ -74,6 +76,12 @@ public class MusicRiskAIBattleHelper {
         }
 
         if (numberOfWins > Math.floor(songsA.size() / 2.)) {
+            /*
+             * Ukoliko je napad uspiješan, uzeti set od X (team size) iz seta
+             * Artista date države što je preuzeta, i uraditi shuffle te i
+             * pobijedničke ekipe, a za gubitnika napraviti isto, ali iz seta
+             * PREOSTALIH Eligible countries KOJE NISU PASSIVE
+             */
             battleResult.add(new BattleLogBattleResult(turnNumber, teamA.getId(), teamB.getId(), teamA.getEligibleCountryIds(),
                     teamB.getEligibleCountryIds()));
 
@@ -84,14 +92,14 @@ public class MusicRiskAIBattleHelper {
             battleLog.setBattleResults(battleResult);
             battleLog.setTextHistory(textHistory);
             battleLog.setTurnHistory(turnHistory);
-            return true;
+            return Boolean.TRUE;
         } else {
             battleResult.add(new BattleLogBattleResult(turnNumber, teamB.getId(), teamA.getId(), teamB.getEligibleCountryIds(),
                     teamA.getEligibleCountryIds()));
             battleLog.setBattleResults(battleResult);
             battleLog.setTextHistory(textHistory);
             battleLog.setTurnHistory(turnHistory);
-            return false;
+            return Boolean.FALSE;
         }
 
         // Omogućava metodu simulateBattle(Team 1, Team 2) koja simulira bitku
@@ -128,36 +136,41 @@ public class MusicRiskAIBattleHelper {
         var battleLog = turnCombatState.getBattleLogs().get(turnCombatState.getBattleLogs().size() - 1);
         var textHistory = battleLog.getTextHistory();
 
-        N2bObjectMapper mapper = new N2bObjectMapper();
+        var mapper = new N2bObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+        /*
+         * Zamjeniti lambda funkciju sa private local metodom i pozivati kao
+         * this::mojaMetoda
+         */
+        /*
+         * U toku jednog poteza svaka NPC ekipa ima jedan napad, i potencijalnih
+         * X odbrana (ako se potrefi). Za svaki NPC potez bira se mjesto napada
+         * - attackLocation i njegove relacije.
+         */
         teamsState.getActiveNpcTeams().forEach(npcTeam -> {
             if (!processedNpcTeams.contains(npcTeam.getId())) {
                 var lastKey = textHistory.entrySet().stream().max((e1, e2) -> e1.getKey() > e2.getKey() ? 1 : -1).get().getKey();
 
-                // Šta ako se odabere država koja nema artista u timu?
-                var attacker = countryDAO
+                var attackLocation = countryDAO
                         .findByPK(npcTeam.getEligibleCountryIds().get(rand.nextInt(npcTeam.getEligibleCountryIds().size())));
-                var countryRelations = countryRelationsDAO.getCountryRelations(attacker.getId());
+                var attackLocationRelations = countryRelationsDAO.getCountryRelations(attackLocation.getId());
                 try {
-                    var countriesEligibleToAttack = mapper.readValue(countryRelations, CountryRelations.class).getCountryRelations()
+                    var countriesEligibleToAttack = mapper.readValue(attackLocationRelations, CountryRelations.class).getCountryRelations()
                             .stream().filter(c -> !npcTeam.getEligibleCountryIds().contains(c.getCountryId())).collect(Collectors.toList());
-                    var defender = countriesEligibleToAttack.get(rand.nextInt(countriesEligibleToAttack.size()));
+                    var locationThatIsBeingAttacked = countriesEligibleToAttack.get(rand.nextInt(countriesEligibleToAttack.size()));
 
-                    var defenderCountryState = mapState.getCountries().stream()
-                            .filter(c -> Objects.equals(c.getCountryId(), defender.getCountryId())).findAny().get();
+                    var locationThatIsBeingAttackedState = mapState.getCountries().stream()
+                            .filter(c -> Objects.equals(c.getCountryId(), locationThatIsBeingAttacked.getCountryId())).findAny().get();
 
-                    if (defenderCountryState.getCountryStatus().equals("Passive")) {
+                    if (locationThatIsBeingAttackedState.getCountryStatus().equals("Passive")) {
                         var newNpcTeam = new TeamStructure();
                         newNpcTeam.setCountryId(npcTeam.getCountryId());
                         newNpcTeam.setCountryName(npcTeam.getCountryName());
                         newNpcTeam.setEligibleCountryIds(npcTeam.getEligibleCountryIds());
                         newNpcTeam.setId(npcTeam.getId());
-                        // Treba li azurirati last turn?
                         newNpcTeam.setLastActiveTurn(npcTeam.getLastActiveTurn());
                         newNpcTeam.setNumberOfLoses(npcTeam.getNumberOfLoses());
-                        // Treba li povecati wins za 1, ako je osvojena passive
-                        // drzava?
                         newNpcTeam.setNumberOfWins(npcTeam.getNumberOfWins() + 1);
                         newNpcTeam.setTeamArtists(npcTeam.getTeamArtists());
                         newNpcTeams.add(newNpcTeam);
@@ -167,12 +180,14 @@ public class MusicRiskAIBattleHelper {
                         // state
                         var mapStateCountries = newMapState.getCountries();
                         mapStateCountries = mapStateCountries.stream()
-                                .filter(c -> !Objects.equals(c.getCountryId(), defender.getCountryId())).toList();
-                        CountryState newCountryState = new CountryState();
-                        newCountryState.setCountryId(defender.getCountryId());
-                        newCountryState.setCountryName(defender.getCountryName());
+                                .filter(c -> !Objects.equals(c.getCountryId(), locationThatIsBeingAttacked.getCountryId()))
+                                .collect(Collectors.toList());
+
+                        var newCountryState = new CountryState();
+                        newCountryState.setCountryId(locationThatIsBeingAttacked.getCountryId());
+                        newCountryState.setCountryName(locationThatIsBeingAttacked.getCountryName());
+                        /* Prepisati mapValue iz attacking Country */
                         newCountryState.setMapValue(0.);
-                        newCountryState.setCountryStatus("Inactive");
                         newCountryState.setTeamOwnershipId(npcTeam.getId());
 
                         mapStateCountries.add(newCountryState);
@@ -180,31 +195,31 @@ public class MusicRiskAIBattleHelper {
                         newMapState.setNumberOfInactiveCountries(newMapState.getNumberOfInactiveCountries() + 1);
                         newMapState.setNumberOfPassiveCountries(newMapState.getNumberOfPassiveCountries() - 1);
 
+                        /* Koristiti String.format */
                         // Update battle logs
-                        textHistory.put(lastKey + 1,
-                                "Country " + attacker.getName() + " is starting to attack " + defender.getCountryName() + "!");
+                        textHistory.put(lastKey + 1, "Country " + attackLocation.getName() + " is starting to attack "
+                                + locationThatIsBeingAttacked.getCountryName() + "!");
                         lastKey += 1;
-                        textHistory.put(lastKey + 1,
-                                "Country " + defender.getCountryName() + "id passive, " + attacker.getName() + " has taken over!");
+                        textHistory.put(lastKey + 1, "Country " + locationThatIsBeingAttacked.getCountryName() + "id passive, "
+                                + attackLocation.getName() + " has taken over!");
 
                         battleLog.setTextHistory(textHistory);
                     } else {
-                        textHistory.put(lastKey + 1,
-                                "Country " + attacker.getName() + " is starting to attack " + defender.getCountryName() + "!");
+                        textHistory.put(lastKey + 1, "Country " + attackLocation.getName() + " is starting to attack "
+                                + locationThatIsBeingAttacked.getCountryName() + "!");
                         battleLog.setTextHistory(textHistory);
                         lastKey += 1;
 
                         var defenderTeam = teamsState.getActiveNpcTeams().stream()
-                                .filter(t -> Objects.equals(t.getId(), defenderCountryState.getTeamOwnershipId())).findFirst().get();
-                        var won = simulateBattle(npcTeam, defenderTeam, attacker.getId(), defender.getCountryId(), battleLog, lastKey,
-                                turn.getTurn());
-                        if (!won) {
+                                .filter(t -> Objects.equals(t.getId(), locationThatIsBeingAttackedState.getTeamOwnershipId())).findFirst()
+                                .get();
+                        var won = simulateBattle(npcTeam, defenderTeam, battleLog, lastKey, turn.getTurn());
+                        if (!won.booleanValue()) {
                             var newNpcTeam = new TeamStructure();
                             newNpcTeam.setCountryId(npcTeam.getCountryId());
                             newNpcTeam.setCountryName(npcTeam.getCountryName());
                             newNpcTeam.setEligibleCountryIds(npcTeam.getEligibleCountryIds());
                             newNpcTeam.setId(npcTeam.getId());
-                            // Treba li azurirati last turn?
                             newNpcTeam.setLastActiveTurn(npcTeam.getLastActiveTurn());
                             newNpcTeam.setNumberOfLoses(npcTeam.getNumberOfLoses() + 1);
                             newNpcTeam.setNumberOfWins(npcTeam.getNumberOfWins());
@@ -216,13 +231,11 @@ public class MusicRiskAIBattleHelper {
                             newNpcTeam.setCountryId(npcTeam.getCountryId());
                             newNpcTeam.setCountryName(npcTeam.getCountryName());
                             var eligibleIds = npcTeam.getEligibleCountryIds();
-                            eligibleIds.add(defender.getCountryId());
+                            eligibleIds.add(locationThatIsBeingAttacked.getCountryId());
                             newNpcTeam.setEligibleCountryIds(eligibleIds);
                             newNpcTeam.setId(npcTeam.getId());
-                            // Treba li azurirati last turn?
                             newNpcTeam.setLastActiveTurn(npcTeam.getLastActiveTurn());
                             newNpcTeam.setNumberOfLoses(npcTeam.getNumberOfLoses());
-
                             newNpcTeam.setNumberOfWins(npcTeam.getNumberOfWins() + 1);
                             newNpcTeam.setTeamArtists(npcTeam.getTeamArtists());
                             newNpcTeams.add(newNpcTeam);
@@ -233,20 +246,27 @@ public class MusicRiskAIBattleHelper {
                             // state
                             var mapStateCountries = newMapState.getCountries();
                             mapStateCountries = mapStateCountries.stream()
-                                    .filter(c -> !Objects.equals(c.getCountryId(), defender.getCountryId())).toList();
-                            CountryState newCountryState = new CountryState();
-                            newCountryState.setCountryId(defender.getCountryId());
-                            newCountryState.setCountryName(defender.getCountryName());
+                                    .filter(c -> !Objects.equals(c.getCountryId(), locationThatIsBeingAttacked.getCountryId()))
+                                    .collect(Collectors.toList());
+                            var newCountryState = new CountryState();
+                            newCountryState.setCountryId(locationThatIsBeingAttacked.getCountryId());
+                            newCountryState.setCountryName(locationThatIsBeingAttacked.getCountryName());
+                            /* Prepisati mapValue iz attacking Country */
                             newCountryState.setMapValue(0.);
-                            newCountryState.setCountryStatus("Inactive");
                             newCountryState.setTeamOwnershipId(npcTeam.getId());
 
                             mapStateCountries.add(newCountryState);
+                            /*
+                             * Napraviti provjeru da li je napadnuti tim ostao
+                             * bez država, i ukoliko jeste onda ga skloniti iz
+                             * liste aktivnih, a ako ne, ostaje stanje isto
+                             */
                             newMapState.setCountries(mapStateCountries);
                             newMapState.setNumberOfActiveNpcTeams(newMapState.getNumberOfActiveNpcTeams() - 1);
                             newMapState.setNumberOfInactiveCountries(newMapState.getNumberOfInactiveCountries() + 1);
                             newMapState.setNumberOfActiveCountries(newMapState.getNumberOfActiveCountries() - 1);
 
+                            /* Ako nema defender zemalja vise, onda dodati */
                             processedNpcTeams.add(defenderTeam.getId());
                         }
                     }
@@ -294,10 +314,11 @@ public class MusicRiskAIBattleHelper {
 
     }
 
-    public void generateAITeams() {
+    public void differeniateAITeamIds() {
 
         // ažurira team_state zadnjeg poteza da svi Active countries/teams su
-        // zaseban broj ID-a (1 je uvijek player team, ostalo slobodno)
+        // zaseban broj ID-a (1 je uvijek player team, ostalo slobodno) I MAP
+        // VALUE (od -1 do 1 po segmentima)
     }
 
 }
