@@ -16,7 +16,7 @@ import ba.com.zira.sdr.dao.model.CountryRelationEntity;
 @Repository
 public class CountryRelationsDAO extends AbstractDAO<CountryRelationEntity, Long> {
 
-	public List<CountryRelationEntity> findByCountryAndRelation(Long countryId, String relation) {
+    public List<CountryRelationEntity> findByCountryAndRelation(Long countryId, String relation) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<CountryRelationEntity> query = cb.createQuery(CountryRelationEntity.class);
         Root<CountryRelationEntity> root = query.from(CountryRelationEntity.class);
@@ -37,7 +37,11 @@ public class CountryRelationsDAO extends AbstractDAO<CountryRelationEntity, Long
         CriteriaQuery<String> query = cb.createQuery(String.class);
         Root<CountryRelationEntity> root = query.from(CountryRelationEntity.class);
         query.select(root.get("countryRelation")).where(cb.equal(root.get("country").get("id"), countryId));
-        return entityManager.createQuery(query).getSingleResult();
+        try {
+            return entityManager.createQuery(query).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public CountryRelationEntity relationByCountryId(final Long countryId) {

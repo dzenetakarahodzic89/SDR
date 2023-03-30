@@ -10,10 +10,13 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.model.User;
@@ -30,13 +33,20 @@ import ba.com.zira.sdr.api.model.countryrelations.CountryRelations;
 import ba.com.zira.sdr.dao.BattleTurnDAO;
 import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.CountryRelationsDAO;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class MusicRiskAIBattleHelper {
-    private static CountryRelationsDAO countryRelationsDAO;
-    private static CountryDAO countryDAO;
-    private static BattleTurnDAO battleTurnDAO;
-    private static SecureRandom rand;
+    @NonNull
+    private CountryRelationsDAO countryRelationsDAO;
+    @NonNull
+    private CountryDAO countryDAO;
+    @NonNull
+    private BattleTurnDAO battleTurnDAO;
+    @NonNull
+    private static SecureRandom rand = new SecureRandom();
     private static final Logger LOGGER = LoggerFactory.getLogger(MusicRiskAIBattleHelper.class);
     private static final User systemUser = new User("System");
     private static BattleLog battleLog;
@@ -47,9 +57,10 @@ public class MusicRiskAIBattleHelper {
     private static List<TeamStructure> alteredActiveNpcTeams;
     private static Long turnNumber;
     private static N2bObjectMapper mapper = new N2bObjectMapper();
-    private static LookupService lookupService;
+    @Autowired
+    private LookupService lookupService;
 
-    public static Boolean simulateBattle(TeamStructure teamA, TeamStructure teamB, Long attackedCountryId) {
+    public Boolean simulateBattle(TeamStructure teamA, TeamStructure teamB, Long attackedCountryId) {
         var turnHistory = battleLog.getTurnHistory();
         var textHistory = battleLog.getTextHistory();
         var lastKey = getMaxKeyOfMap(textHistory);
@@ -129,7 +140,7 @@ public class MusicRiskAIBattleHelper {
 
     }
 
-    public static BattleSingleResponse simulateTurnForAI(BattleSingleResponse turn) {
+    public BattleSingleResponse simulateTurnForAI(BattleSingleResponse turn) {
         MusicRiskAIBattleHelper.mapState = turn.getMapState();
 
         MusicRiskAIBattleHelper.turnNumber = turn.getTurn();
@@ -199,11 +210,19 @@ public class MusicRiskAIBattleHelper {
         turnCombatState.setBattleLogs(logs);
         turn.setTurnCombatState(turnCombatState);
 
+        try {
+            String turnCombatStateJSON;
+            turnCombatStateJSON = mapper.writeValueAsString(turnCombatState);
+            turn.setTurnCombatStateJson(turnCombatStateJSON);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Error mapping turnCombatState object to JSON. Exception message: {}", e.getMessage());
+        }
+
         LOGGER.info("End of turn {}.", turnNumber);
         return turn;
     }
 
-    private static void simulateAttack(TeamStructure attackerTeam) {
+    private void simulateAttack(TeamStructure attackerTeam) {
         var textHistory = battleLog.getTextHistory();
         var lastKey = getMaxKeyOfMap(textHistory);
 
@@ -211,21 +230,28 @@ public class MusicRiskAIBattleHelper {
         var attackLocation = countryDAO
                 .findByPK(attackerTeam.getEligibleCountryIds().get(rand.nextInt(attackerTeam.getEligibleCountryIds().size())));
 
-        LOGGER.info("Team with id {} launches an attack from {}!", attackerTeam.getId(), attackLocation.getName());
         /**
          * Choose a country to attack as a random country the country that the
-         * attack is being launched from is in relation with
+         * attack is being launched from is in relation with and that is not in
+         * the player team
          **/
         var attackLocationRelations = countryRelationsDAO.getCountryRelations(attackLocation.getId());
+        if (attackLocationRelations == null) {
+            LOGGER.info("No nearby countries to attack from {}.", attackLocation.getName());
+            return;
+        }
         try {
+            LOGGER.info("Team with id {} launches an attack from {}!", attackerTeam.getId(), attackLocation.getName());
             var countriesEligibleToAttack = mapper.readValue(attackLocationRelations, CountryRelations.class).getCountryRelations().stream()
-                    .filter(c -> !attackerTeam.getEligibleCountryIds().contains(c.getCountryId())).collect(Collectors.toList());
+                    .filter(c -> !attackerTeam.getEligibleCountryIds().contains(c.getForeignCountryId())
+                            && !teamsState.getActivePlayerTeam().getEligibleCountryIds().contains(c.getForeignCountryId()))
+                    .collect(Collectors.toList());
             var locationThatIsBeingAttacked = countriesEligibleToAttack.get(rand.nextInt(countriesEligibleToAttack.size()));
 
-            LOGGER.info("Country {} is being attacked!", locationThatIsBeingAttacked.getCountryName());
+            LOGGER.info("Country {} is being attacked!", locationThatIsBeingAttacked.getForeignCountryName());
 
             var locationThatIsBeingAttackedStateOptional = mapState.getCountries().stream()
-                    .filter(c -> Objects.equals(c.getCountryId(), locationThatIsBeingAttacked.getCountryId())).findAny();
+                    .filter(c -> Objects.equals(c.getCountryId(), locationThatIsBeingAttacked.getForeignCountryId())).findAny();
             var attackerLocationStateOptional = mapState.getCountries().stream()
                     .filter(c -> Objects.equals(c.getCountryId(), attackLocation.getId())).findAny();
 
@@ -245,7 +271,7 @@ public class MusicRiskAIBattleHelper {
                 }
 
             } else {
-                LOGGER.error("Can't find country {} or {} in map state!", locationThatIsBeingAttacked.getCountryName(),
+                LOGGER.error("Can't find country {} or {} in map state!", locationThatIsBeingAttacked.getForeignCountryName(),
                         attackLocation.getName());
 
             }
@@ -265,7 +291,7 @@ public class MusicRiskAIBattleHelper {
         return 0L;
     }
 
-    private static void handlePassiveCountryAttack(TeamStructure attackerTeam, CountryState passiveCountryState,
+    private void handlePassiveCountryAttack(TeamStructure attackerTeam, CountryState passiveCountryState,
             CountryState attackerLocationCountryState) {
         /**
          * Add attacked country to eligible countries of attacker team. Update
@@ -309,7 +335,7 @@ public class MusicRiskAIBattleHelper {
         battleLog.setTextHistory(textHistory);
     }
 
-    private static void handleActiveCountryAttack(TeamStructure attackerTeam, CountryState locationThatIsBeingAttackedState,
+    private void handleActiveCountryAttack(TeamStructure attackerTeam, CountryState locationThatIsBeingAttackedState,
             CountryState attackerLocationCountryState) {
 
         var defenderTeamOptional = teamsState.getActiveNpcTeams().stream()
@@ -333,7 +359,7 @@ public class MusicRiskAIBattleHelper {
 
     }
 
-    private static void restructureTeams(TeamStructure winnerTeam, TeamStructure loserTeam, Long loserCountryId) {
+    private void restructureTeams(TeamStructure winnerTeam, TeamStructure loserTeam, Long loserCountryId) {
         /**
          * Mix artists from winner team and artists from loserCountry and choose
          * the required number of artists from the resulting artist pool as
@@ -382,8 +408,7 @@ public class MusicRiskAIBattleHelper {
 
     }
 
-    private static void handleWin(TeamStructure winnerTeam, TeamStructure loserTeam, CountryState loserCountryState,
-            Double winnerTeamMapValue) {
+    private void handleWin(TeamStructure winnerTeam, TeamStructure loserTeam, CountryState loserCountryState, Double winnerTeamMapValue) {
         /*
          * Add loser country to winner team. Update number of wins for winner
          * team.
@@ -443,7 +468,7 @@ public class MusicRiskAIBattleHelper {
 
     }
 
-    private static void handleDefeat(TeamStructure loserTeam, TeamStructure winnerTeam) {
+    private void handleDefeat(TeamStructure loserTeam, TeamStructure winnerTeam) {
         /** Update number of losses for attacker team **/
         var newNpcTeam = new TeamStructure();
         newNpcTeam.setCountryId(loserTeam.getCountryId());
@@ -517,4 +542,26 @@ public class MusicRiskAIBattleHelper {
         return turn;
     }
 
+    @Scheduled(fixedDelay = 600000)
+    public void testSimulation() {
+        var turnEnt = battleTurnDAO.findByPK(4L);
+        LOGGER.info("turn {}", turnEnt);
+        try {
+            BattleSingleResponse turn = new BattleSingleResponse(turnEnt.getId(), turnEnt.getName(), turnEnt.getTurnNumber(),
+                    turnEnt.getMapState(), turnEnt.getTeamState(), turnEnt.getTurnCombatState());
+            turn = differeniateAITeamIds(turn);
+            turn = simulateTurnForAI(turn);
+            turnEnt.setMapState(turn.getMapStateJson());
+            turnEnt.setTeamState(turn.getTeamStateJson());
+            turnEnt.setTurnCombatState(turn.getTurnCombatStateJson());
+            battleTurnDAO.merge(turnEnt);
+        } catch (JsonMappingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
 }
