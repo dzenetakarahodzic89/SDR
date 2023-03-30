@@ -191,18 +191,6 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", era);
         return q.getSingleResult();
     }
-    public ArtistSingleResponse getArtistById(final Long artistId) {
-        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSingleResponse(a.id,a.name, a.dateOfBirth,COUNT(DISTINCT sa.album.id))"
-                + " from ArtistEntity as a"
-                + " join SongArtistEntity as sa"
-                + " on a.id=sa.artist.id "
-                + " join AlbumEntity as ae"
-                + " on ae.id =sa.album.id"
-                + " where a.id=:id"
-                + " group by a.id,a.name, a.dateOfBirth";
-        TypedQuery<ArtistSingleResponse> q = entityManager.createQuery(hql, ArtistSingleResponse.class).setParameter("id", artistId);
-        return q.getSingleResult();
-    }
 
     public ArtistSingleResponse getArtistById(final Long artistId) {
         var hql = "select new ba.com.zira.sdr.api.artist.ArtistSingleResponse(a.id,a.name, a.dateOfBirth,COUNT(DISTINCT sa.album.id))"
