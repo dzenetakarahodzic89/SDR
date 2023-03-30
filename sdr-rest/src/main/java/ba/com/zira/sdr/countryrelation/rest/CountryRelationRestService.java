@@ -6,10 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
-import ba.com.zira.commons.message.request.EntityRequest;
+import ba.com.zira.commons.message.request.ListRequest;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.CountryRelationService;
-import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.countryrelations.CountryRelationCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,9 +23,9 @@ public class CountryRelationRestService {
 
     @Operation(summary = "Create country relations")
     @PostMapping(value = "add")
-    public PayloadResponse<CountryResponse> createCountriesRelation(@RequestBody final CountryRelationCreateRequest request)
+    public PayloadResponse<String> createCountriesRelation(@RequestBody final ListRequest<CountryRelationCreateRequest> request)
             throws ApiException {
-        return countryRelationService.createCountriesRelation(new EntityRequest<>(request));
+        return countryRelationService.createCountriesRelation(request);
     }
 
 }

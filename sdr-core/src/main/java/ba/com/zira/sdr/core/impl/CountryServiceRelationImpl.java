@@ -1,24 +1,22 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.EntityNotFoundException;
-
-import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import ba.com.zira.commons.exception.ApiException;
-import ba.com.zira.commons.message.request.EntityRequest;
+import ba.com.zira.commons.exception.ApiRuntimeException;
+import ba.com.zira.commons.message.request.ListRequest;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.CountryRelationService;
-import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.countryrelations.CountryRelation;
 import ba.com.zira.sdr.api.model.countryrelations.CountryRelationCreateRequest;
 import ba.com.zira.sdr.core.mapper.CountryMapper;
@@ -27,7 +25,6 @@ import ba.com.zira.sdr.core.validation.CountryRequestValidation;
 import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.CountryRelationsDAO;
 import ba.com.zira.sdr.dao.PersonDAO;
-import ba.com.zira.sdr.dao.model.CountryEntity;
 import ba.com.zira.sdr.dao.model.CountryRelationEntity;
 import lombok.AllArgsConstructor;
 
@@ -42,76 +39,70 @@ public class CountryServiceRelationImpl implements CountryRelationService {
     PersonDAO personDAO;
 
     @Override
-    public PayloadResponse<CountryResponse> createCountriesRelation(final EntityRequest<CountryRelationCreateRequest> request)
-            throws ApiException {
+    @Transactional(rollbackFor = Exception.class)
+    public PayloadResponse<String> createCountriesRelation(final ListRequest<CountryRelationCreateRequest> request) throws ApiException {
 
         var objectMapper = new ObjectMapper();
-        CountryRelationEntity countryRelationEntity = countryRelationsMapper.dtoToEntity(request.getEntity());
-        CountryEntity countryEntity = countryDAO.findByPK(request.getEntity().getCountryId());
-        var existingRelation = countryRelationsDAO.getCountryRelationByCountryId(request.getEntity().getCountryId());
-
-        if (countryEntity == null) {
-            throw new EntityNotFoundException("Country not found with ID: " + request.getEntity().getCountryId());
-        }
-        if (!existingRelation.isEmpty()) {
-            // Update existing country realtion
-
-            CountryRelationEntity relationByCountryId = countryRelationsDAO.relationByCountryId(request.getEntity().getCountryId());
-
-            var r = request.getEntity().getCountryRelation();
-            var updateCountryRelation = new CountryRelation(r.getForeignCountryId(), r.getForeignCountryName(), r.getTypeOfLink());
-
-            String jsonUpdateForeignRelation = "";
-
+        for (CountryRelationCreateRequest r : request.getList()) {
             try {
+                var countryRelationEntity = countryRelationsMapper.dtoToEntity(r);
+                var countryEntity = countryDAO.findByPK(r.getCountryId());
+                var existingRelation = countryRelationsDAO.getCountryRelationByCountryId(r.getCountryId());
 
-                CountryRelation[] countryRelationArray = objectMapper.readValue(relationByCountryId.getCountryRelation(),
-                        CountryRelation[].class);
-                List<CountryRelation> countryRelationList = new ArrayList<>(Arrays.asList(countryRelationArray));
+                if (countryEntity == null) {
+                    throw ApiException.createFrom(request, ResponseCode.REQUEST_INVALID,
+                            String.format("Country with ID:%s does not exist", r.getCountryId()));
+                }
+                if (!existingRelation.isEmpty()) {
+                    // Update existing country relation
 
-                countryRelationList.forEach(countryRelation -> {
-                    if (countryRelation.getTypeOfLink().equalsIgnoreCase(updateCountryRelation.getTypeOfLink())
-                            && countryRelation.getForeignCountryId().equals(updateCountryRelation.getForeignCountryId())) {
-                        throw new RuntimeException("Data for:" + updateCountryRelation.getForeignCountryName() + " already exists");
-                    }
-                });
+                    CountryRelationEntity relationByCountryId = countryRelationsDAO.relationByCountryId(r.getCountryId());
 
-                countryRelationList.add(updateCountryRelation);
-                jsonUpdateForeignRelation = objectMapper.writeValueAsString(countryRelationList);
+                    var countryRelation = r.getCountryRelation();
+                    var updateCountryRelation = new CountryRelation(countryRelation.getForeignCountryId(),
+                            countryRelation.getForeignCountryName(), countryRelation.getTypeOfLink());
 
-            } catch (JsonProcessingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                    var jsonUpdateForeignRelation = "";
+
+                    CountryRelation[] countryRelationArray = objectMapper.readValue(relationByCountryId.getCountryRelation(),
+                            CountryRelation[].class);
+                    List<CountryRelation> countryRelationList = new ArrayList<>(Arrays.asList(countryRelationArray));
+
+                    countryRelationList.forEach(cr -> {
+                        if (cr.getTypeOfLink().equalsIgnoreCase(updateCountryRelation.getTypeOfLink())
+                                && cr.getForeignCountryId().equals(updateCountryRelation.getForeignCountryId())) {
+                            throw ApiRuntimeException.createFrom(ResponseCode.REQUEST_INVALID,
+                                    String.format("Data for:%s already exists", updateCountryRelation.getForeignCountryName()));
+                        }
+                    });
+
+                    countryRelationList.add(updateCountryRelation);
+                    jsonUpdateForeignRelation = objectMapper.writeValueAsString(countryRelationList);
+
+                    relationByCountryId.setModifiedBy(request.getUserId());
+                    relationByCountryId.setModified(LocalDateTime.now());
+                    relationByCountryId.setCountryRelation(jsonUpdateForeignRelation);
+                    countryRelationsDAO.persist(relationByCountryId);
+                } else {
+                    var countryRelations = new ArrayList<CountryRelation>();
+                    var rq = r.getCountryRelation();
+                    var newCountryRelation = new CountryRelation(rq.getForeignCountryId(), rq.getForeignCountryName(), rq.getTypeOfLink());
+                    countryRelations.add(newCountryRelation);
+
+                    var jsonCreateCountryRelation = "";
+                    jsonCreateCountryRelation = objectMapper.writeValueAsString(countryRelations);
+                    countryRelationEntity.setCreated(LocalDateTime.now());
+                    countryRelationEntity.setCreatedBy(request.getUserId());
+                    countryRelationEntity.setStatus(Status.ACTIVE.value());
+                    countryRelationEntity.setCountry(countryEntity);
+                    countryRelationEntity.setCountryRelation(jsonCreateCountryRelation);
+                    countryRelationsDAO.persist(countryRelationEntity);
+                }
+            } catch (Exception e) {
+                throw ApiException.createFrom(request, e);
             }
-
-            relationByCountryId.setModifiedBy(request.getUserId());
-            relationByCountryId.setModified(LocalDateTime.now());
-            relationByCountryId.setCountryRelation(jsonUpdateForeignRelation);
-            countryRelationsDAO.persist(relationByCountryId);
-            return new PayloadResponse<>(request, ResponseCode.OK, countryRelationsMapper.entityToDto(relationByCountryId));
         }
-        // Create new country realtion
-        var countryRelations = new ArrayList<CountryRelation>();
-        var rq = request.getEntity().getCountryRelation();
-        var newCountryRelation = new CountryRelation(rq.getForeignCountryId(), rq.getForeignCountryName(), rq.getTypeOfLink());
-        countryRelations.add(newCountryRelation);
-
-        String jsonCreateCountryRelation = "";
-        try {
-            jsonCreateCountryRelation = objectMapper.writeValueAsString(countryRelations);
-
-        } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        countryRelationEntity.setCreated(LocalDateTime.now());
-        countryRelationEntity.setCreatedBy(request.getUserId());
-        countryRelationEntity.setStatus(Status.ACTIVE.value());
-        countryRelationEntity.setCountry(countryEntity);
-        countryRelationEntity.setCountryRelation(jsonCreateCountryRelation);
-        countryRelationsDAO.persist(countryRelationEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, countryRelationsMapper.entityToDto(countryRelationEntity));
+        return new PayloadResponse<>(request, ResponseCode.OK, "List of relations Saved!");
     }
 
 }
