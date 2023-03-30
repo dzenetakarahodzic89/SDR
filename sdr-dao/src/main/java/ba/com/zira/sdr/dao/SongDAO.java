@@ -1,5 +1,12 @@
 package ba.com.zira.sdr.dao;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,13 +17,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.commons.message.request.SearchRequest;
@@ -237,15 +237,12 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
     }
 
     public List<LoV> findSongsToFetchFromSpotify(int responseLimit) {
-        var cases = "case when sa.artist.id is not null and a.surname is not null then concat('track:',s.name,' ','artist:',a.name,' ',a.surname)"
-                + " when sa.artist.id is not null and a.surname is null then concat('track:',s.name,' ','artist:',a.name) else"
-                + " concat('track:',s.name) end";
+        var cases = "case when sa.artist.id is not null then concat('track:',s.name,' ','artist:',a.fullName) else concat('track:',s.name) end";
         var subquery = "select si from SpotifyIntegrationEntity si where si.objectId=s.id and si.objectType like :song";
-        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id, " + cases
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(s.id," + cases
                 + ") from SongEntity s left join SongArtistEntity sa on s.id=sa.song.id left join ArtistEntity a on sa.artist.id=a.id where not exists("
                 + subquery + ") " + "and (s.spotifyId is null or length(s.spotifyId)<1)";
         return entityManager.createQuery(hql, LoV.class).setParameter("song", "SONG").setMaxResults(responseLimit).getResultList();
-
     }
 
     public List<SongEntity> findSongsToFetchArtistsAndAlbumFromSpotify(int responseLimit) {
@@ -265,9 +262,8 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
     }
 
     public List<LoV> getSongTitlesArtistNames() {
-        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id, case when sa.artist.surname is null then"
-                + " concat(s.name,' - ',sa.artist.name) else concat(s.name,' - ',sa.artist.name,' ',sa.artist.surname) end) from SongEntity s join SongArtistEntity sa"
-                + " on s.id=sa.song.id group by s.id,sa.artist.name,sa.artist.surname";
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id, concat(s.name,' - ',sa.artist.fullName)) from SongEntity s join SongArtistEntity sa"
+                + " on s.id=sa.song.id group by s.id,sa.artist.fullName";
         return entityManager.createQuery(hql, LoV.class).getResultList();
     }
 

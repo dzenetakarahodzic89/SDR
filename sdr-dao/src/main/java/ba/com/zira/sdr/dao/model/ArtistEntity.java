@@ -60,6 +60,9 @@ public class ArtistEntity implements Serializable {
     @Column(name = "modified_by")
     private String modifiedBy;
 
+    @Column(name = "full_name")
+    private String fullName;
+
     @Column(name = "name")
     private String name;
 

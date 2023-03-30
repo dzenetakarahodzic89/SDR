@@ -18,7 +18,7 @@ public class ArtistSheetResponse implements Serializable {
     @Schema(description = "Country id")
     private String flagAbbriviation;
     @Schema(description = "Full stage name")
-    private String name;
+    private String fullName;
     @Schema(description = "Unique identifier")
     private Long personId;
     @Schema(description = "Full real name")
