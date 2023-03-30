@@ -18,6 +18,7 @@ import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.CountryService;
 import ba.com.zira.sdr.api.model.country.CountriesSearchRequest;
+import ba.com.zira.sdr.api.model.country.CountryArtistSongResponse;
 import ba.com.zira.sdr.api.model.country.CountryCreateRequest;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.country.CountryUpdateRequest;
@@ -81,6 +82,19 @@ public class CountryServiceImpl implements CountryService {
     public ListPayloadResponse<CountryResponse> getAll(EmptyRequest req) throws ApiException {
         List<CountryResponse> get = countryDAO.getAllCountries();
         return new ListPayloadResponse<>(req, ResponseCode.OK, get);
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> getAllCountries(EmptyRequest req) throws ApiException {
+        List<LoV> get = countryDAO.getAllCountriesArtistsSongs();
+        return new ListPayloadResponse<>(req, ResponseCode.OK, get);
+    }
+
+    @Override
+    public PayloadResponse<CountryArtistSongResponse> getArtistsSongs(EntityRequest<Long> request) throws ApiException {
+        Long countryId = request.getEntity();
+        CountryArtistSongResponse get = countryDAO.getArtistsAndSongs(countryId);
+        return new PayloadResponse<>(request, ResponseCode.OK, get);
     }
 
     @Override

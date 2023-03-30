@@ -47,6 +47,8 @@ public class ArtistSingleResponse implements Serializable {
     private String labelName;
     @Schema(description = "Type")
     private String type;
+    @Schema(description = "Album Count")
+    protected Long albumCount;
 
     private String spotifyId;
 }

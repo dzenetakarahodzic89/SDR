@@ -368,7 +368,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
         criteriaQuery
                 .multiselect(artists.get(ArtistEntity_.id), root.<Long> get("id"), root.<String> get("name"),
                         root.<String> get("spotifyId"), builder.literal(""), root.<String> get("playtime"))
-                .where(artists.get(ArtistEntity_.id).in(artistIds));
+                .where(artists.get(ArtistEntity_.id).in(artistIds)).orderBy(builder.asc(root.get("name")));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
     }

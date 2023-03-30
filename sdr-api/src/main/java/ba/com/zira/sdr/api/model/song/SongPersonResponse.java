@@ -63,4 +63,5 @@ public class SongPersonResponse implements Serializable {
         this.dateOfRelease = dateOfRelease != null ? dateOfRelease.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
 
     }
+
 }
