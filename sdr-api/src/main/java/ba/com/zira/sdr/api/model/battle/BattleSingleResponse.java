@@ -25,6 +25,8 @@ public class BattleSingleResponse implements Serializable {
 
     private TeamsState teamState;
 
+    private TurnCombatState turnCombatState;
+
     public BattleSingleResponse(String name, Long turn, String mapStateJson, String teamStateJson) {
         this.name = name;
         this.turn = turn;

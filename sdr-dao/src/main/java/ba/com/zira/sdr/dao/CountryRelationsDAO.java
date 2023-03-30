@@ -23,4 +23,12 @@ public class CountryRelationsDAO extends AbstractDAO<CountryRelationEntity, Long
         return entityManager.createQuery(query).getResultList();
     }
 
+    public String getCountryRelations(Long countryId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<String> query = cb.createQuery(String.class);
+        Root<CountryRelationEntity> root = query.from(CountryRelationEntity.class);
+        query.select(root.get("countryRelation")).where(cb.equal(root.get("country").get("id"), countryId));
+        return entityManager.createQuery(query).getSingleResult();
+    }
+
 }
