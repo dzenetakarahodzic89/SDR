@@ -14,6 +14,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.artist.ArtistImageResponse;
 import ba.com.zira.sdr.api.artist.ArtistLabelResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
@@ -191,15 +192,11 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         TypedQuery<Long> q = entityManager.createQuery(hql, Long.class).setParameter("id", era);
         return q.getSingleResult();
     }
+
     public ArtistSingleResponse getArtistById(final Long artistId) {
         var hql = "select new ba.com.zira.sdr.api.artist.ArtistSingleResponse(a.id,a.name, a.dateOfBirth,COUNT(DISTINCT sa.album.id))"
-                + " from ArtistEntity as a"
-                + " join SongArtistEntity as sa"
-                + " on a.id=sa.artist.id "
-                + " join AlbumEntity as ae"
-                + " on ae.id =sa.album.id"
-                + " where a.id=:id"
-                + " group by a.id,a.name, a.dateOfBirth";
+                + " from ArtistEntity as a" + " join SongArtistEntity as sa" + " on a.id=sa.artist.id " + " join AlbumEntity as ae"
+                + " on ae.id =sa.album.id" + " where a.id=:id" + " group by a.id,a.name, a.dateOfBirth";
         TypedQuery<ArtistSingleResponse> q = entityManager.createQuery(hql, ArtistSingleResponse.class).setParameter("id", artistId);
         return q.getSingleResult();
     }
@@ -260,4 +257,9 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return query.getSingleResult();
     }
 
+    public ArtistImageResponse findLoVForArtistImage(Long id) {
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistImageResponse(sa.id,sa.name) from ArtistEntity sa where sa.id = :id";
+        TypedQuery<ArtistImageResponse> query = entityManager.createQuery(hql, ArtistImageResponse.class).setParameter("id", id);
+        return query.getSingleResult();
+    }
 }
