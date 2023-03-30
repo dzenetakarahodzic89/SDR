@@ -34,8 +34,10 @@ import ba.com.zira.sdr.api.model.battle.BattleLogBattleResult;
 import ba.com.zira.sdr.api.model.battle.BattleLogEntry;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleTurnUpdateRequest;
 import ba.com.zira.sdr.api.model.battle.CountryState;
 import ba.com.zira.sdr.api.model.battle.MapState;
+import ba.com.zira.sdr.api.model.battle.PreBattleCreateRequest;
 import ba.com.zira.sdr.api.model.battle.SongStructure;
 import ba.com.zira.sdr.api.model.battle.TeamStructure;
 import ba.com.zira.sdr.api.model.battle.TeamsState;
@@ -49,20 +51,6 @@ import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.model.BattleEntity;
 import ba.com.zira.sdr.dao.model.BattleTurnEntity;
 import ba.com.zira.sdr.dao.model.CountryEntity;
-import ba.com.zira.sdr.api.model.battle.BattleLogEntry;
-import ba.com.zira.sdr.api.model.battle.BattleResponse;
-import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
-import ba.com.zira.sdr.api.model.battle.BattleTurnUpdateRequest;
-import ba.com.zira.sdr.api.model.battle.MapState;
-import ba.com.zira.sdr.api.model.battle.PreBattleCreateRequest;
-import ba.com.zira.sdr.api.model.battle.TeamStructure;
-import ba.com.zira.sdr.api.model.battle.TeamsState;
-import ba.com.zira.sdr.api.model.battle.TurnCombatState;
-import ba.com.zira.sdr.core.mapper.BattleMapper;
-import ba.com.zira.sdr.dao.BattleDAO;
-import ba.com.zira.sdr.dao.BattleTurnDAO;
-import ba.com.zira.sdr.dao.model.BattleEntity;
-import ba.com.zira.sdr.dao.model.BattleTurnEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -278,7 +266,7 @@ public class BattleServiceImpl implements BattleService {
         return new PayloadResponse<>(request, ResponseCode.OK, battleMapper.entityToDtoOne(battleEntity));
     }
 
-}
+    @Override
     public PayloadResponse<String> preBattleTurn(EntityRequest<PreBattleCreateRequest> request) throws ApiException {
         var move = request.getEntity();
         var turnFull = battleTurnDAO.getFullBattleTurn(move.getBattleId());
