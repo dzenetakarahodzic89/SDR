@@ -4,8 +4,18 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Data
 @Schema(description = "Properties for creation of country relation")
 public class CountryRelationCreateRequest implements Serializable {
@@ -27,7 +37,7 @@ public class CountryRelationCreateRequest implements Serializable {
     private String status;
 
     @Schema(description = "The text field that combines foreign country name and a type of link")
-    private String countryRelation;
+    private CountryRelation countryRelation;
 
     @Schema(description = "Home country id")
     private Long countryId;
