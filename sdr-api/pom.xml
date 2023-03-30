@@ -20,11 +20,7 @@
 			<groupId>ba.com.zira</groupId>
 			<artifactId>zira-commons-model</artifactId>
 		</dependency>
-		<dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-core</artifactId>
-    <version>2.14.2</version>
-</dependency>
+		 
 		<dependency>
 		    <groupId>org.projectlombok</groupId>
 		    <artifactId>lombok</artifactId>
