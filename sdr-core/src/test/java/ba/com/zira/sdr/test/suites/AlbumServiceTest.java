@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.test.suites;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +7,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -23,6 +23,8 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.validation.RequestValidator;
 import ba.com.zira.sdr.api.AlbumService;
+import ba.com.zira.sdr.api.MediaService;
+import ba.com.zira.sdr.api.SongArtistService;
 import ba.com.zira.sdr.api.model.album.AlbumCreateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
@@ -33,6 +35,9 @@ import ba.com.zira.sdr.core.mapper.SongMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.AlbumRequestValidation;
 import ba.com.zira.sdr.dao.AlbumDAO;
+import ba.com.zira.sdr.dao.LabelDAO;
+import ba.com.zira.sdr.dao.MediaDAO;
+import ba.com.zira.sdr.dao.MediaStoreDAO;
 import ba.com.zira.sdr.dao.SongArtistDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
@@ -58,14 +63,27 @@ public class AlbumServiceTest extends BasicTestConfiguration {
     private AlbumService albumService;
     private LookupService lookupService;
     private SongDAO songDAO;
+    private MediaDAO mediaDAO;
+    private MediaStoreDAO mediaStoreDAO;
+    private LabelDAO labelDAO;
+    private SongArtistService songArtistService;
+    private MediaService mediaService;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.albumDAO = Mockito.mock(AlbumDAO.class);
         this.albumRequestValidation = Mockito.mock(AlbumRequestValidation.class);
-        this.albumService = new AlbumServiceImpl(albumDAO, songArtistDAO, songDAO, null, songArtistMapper, albumMapper, songMapper,
-                albumRequestValidation, lookupService, null, null);
+        this.mediaDAO = Mockito.mock(MediaDAO.class);
+        this.mediaStoreDAO = Mockito.mock(MediaStoreDAO.class);
+        this.labelDAO = Mockito.mock(LabelDAO.class);
+        this.songArtistDAO = Mockito.mock(SongArtistDAO.class);
+        this.songDAO = Mockito.mock(SongDAO.class);
+        this.lookupService = Mockito.mock(LookupService.class);
+        this.mediaService = Mockito.mock(MediaService.class);
+        this.songArtistService = Mockito.mock(SongArtistService.class);
+        this.albumService = new AlbumServiceImpl(albumDAO, songArtistDAO, songDAO, labelDAO, songArtistMapper, albumMapper, songMapper,
+                albumRequestValidation, lookupService, mediaService, songArtistService, mediaDAO, mediaStoreDAO);
     }
 
     @Test(enabled = true)

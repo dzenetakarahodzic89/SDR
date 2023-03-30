@@ -12,4 +12,11 @@ public class TeamsState implements Serializable {
     private TeamStructure activePlayerTeam;
     private List<TeamStructure> activeNpcTeams;
     private List<TeamStructure> inactiveNpcTeams;
+
+    public TeamsState(TeamStructure activePlayerTeam, List<TeamStructure> activeNpcTeams, List<TeamStructure> inactiveNpcTeams) {
+        this.activePlayerTeam = activePlayerTeam;
+        this.activeNpcTeams = activeNpcTeams;
+        this.inactiveNpcTeams = inactiveNpcTeams;
+    }
+
 }

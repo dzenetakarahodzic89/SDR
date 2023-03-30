@@ -1,12 +1,12 @@
 package ba.com.zira.sdr.dao;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.media.CoverImageHelper;
@@ -26,6 +26,14 @@ public class MediaStoreDAO extends AbstractDAO<MediaStoreEntity, String> {
 
         return query.getResultList().stream().collect(Collectors.groupingBy(CoverImageHelper::getObjectId));
 
+    }
+
+    public List<MediaStoreEntity> getByMediaId(Long mediaId) {
+        var hql = "select m from MediaStoreEntity m where m.media.id = :mediaId";
+        TypedQuery<MediaStoreEntity> query = entityManager.createQuery(hql, MediaStoreEntity.class);
+        query.setParameter("mediaId", mediaId);
+
+        return query.getResultList();
     }
 
 }

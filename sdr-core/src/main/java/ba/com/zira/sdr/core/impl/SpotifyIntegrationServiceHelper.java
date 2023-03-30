@@ -380,7 +380,7 @@ public class SpotifyIntegrationServiceHelper {
 
                 if (response.getStatusCode() == HttpStatus.OK) {
                     spotifyIntegration.setResponse(response.getBody());
-                    LOGGER.info("SPOTIFY INTEGRATION: Artist {} successfully found!", artist.getName());
+                    LOGGER.info("SPOTIFY INTEGRATION: Artist {} successfully found!", artist.getFullName());
                     var entityRequest = new EntityRequest<>(spotifyIntegration);
                     entityRequest.setUser(systemUser);
                     spotifyIntegrationService.create(entityRequest);
@@ -734,6 +734,8 @@ public class SpotifyIntegrationServiceHelper {
     private ArtistEntity saveArtistFromSpotify(String artistName, String artistSpotifyId, String spotifyStatus) {
         if (mapOfExistingSpotifyIds.get(artistSpotifyId) == null) {
             ArtistEntity artistEntity = new ArtistEntity();
+
+            artistEntity.setFullName(artistName);
             artistEntity.setName(artistName);
             artistEntity.setStatus(STATUS_ACTIVE);
             artistEntity.setCreated(LocalDateTime.now());
@@ -920,10 +922,8 @@ public class SpotifyIntegrationServiceHelper {
         LOGGER.info("SPOTIFY INTEGRATION: Found {} artists to fetch albums for!", artists.size());
 
         artists.forEach(artist -> {
-            var artistName = artist.getName();
-            if (artist.getSurname() != null) {
-                artistName += " " + artist.getSurname();
-            }
+            var artistName = artist.getFullName();
+
             LOGGER.info("Fetching albums for artist {}...", artistName);
             try {
                 SpotifyGetArtistsAlbums response = mapper.readValue(fetchAlbumsOfArtistFromSpotify(artist.getSpotifyId(), artistName),
