@@ -3,11 +3,18 @@ package ba.com.zira.sdr.dao;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
+
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.battle.ArtistStructure;
+import ba.com.zira.sdr.dao.model.BattleEntity;
+import ba.com.zira.sdr.dao.model.BattleEntity_;
 import ba.com.zira.sdr.dao.model.BattleTurnEntity;
+import ba.com.zira.sdr.dao.model.BattleTurnEntity_;
 
 @Repository
 public class BattleTurnDAO extends AbstractDAO<BattleTurnEntity, Long> {
@@ -41,6 +48,19 @@ public class BattleTurnDAO extends AbstractDAO<BattleTurnEntity, Long> {
         var q = entityManager.createQuery(hql2).setParameter("userCode", userCode).setParameter("turnId", turnId)
                 .setParameter("teamStateJSON", teamStateJSON).setParameter("timestamp", timestamp);
         q.executeUpdate();
+    }
+
+    public List<BattleTurnEntity> getByBattleId(Long battleId) {
+
+        final CriteriaQuery<BattleTurnEntity> criteriaQuery = builder.createQuery(BattleTurnEntity.class);
+        final Root<BattleTurnEntity> root = criteriaQuery.from(BattleTurnEntity.class);
+
+        Join<BattleTurnEntity, BattleEntity> battles = root.join(BattleTurnEntity_.battle);
+
+        criteriaQuery.where(builder.equal(battles.get(BattleEntity_.id), battleId));
+        criteriaQuery.select(root).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+
     }
 
 }
