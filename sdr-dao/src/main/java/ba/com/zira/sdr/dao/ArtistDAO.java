@@ -14,6 +14,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.artist.ArtistImageResponse;
 import ba.com.zira.sdr.api.artist.ArtistLabelResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
@@ -256,4 +257,9 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return query.getSingleResult();
     }
 
+    public ArtistImageResponse findLoVForArtistImage(Long id) {
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistImageResponse(sa.id,sa.name) from ArtistEntity sa where sa.id = :id";
+        TypedQuery<ArtistImageResponse> query = entityManager.createQuery(hql, ArtistImageResponse.class).setParameter("id", id);
+        return query.getSingleResult();
+    }
 }
