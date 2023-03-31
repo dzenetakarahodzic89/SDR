@@ -16,11 +16,32 @@ import ba.com.zira.sdr.dao.model.CountryRelationEntity;
 @Repository
 public class CountryRelationsDAO extends AbstractDAO<CountryRelationEntity, Long> {
 
+    public List<CountryRelationEntity> findByCountryAndRelation(Long countryId, String relation) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<CountryRelationEntity> query = cb.createQuery(CountryRelationEntity.class);
+        Root<CountryRelationEntity> root = query.from(CountryRelationEntity.class);
+        query.select(root)
+                .where(cb.and(cb.equal(root.get("country").get("id"), countryId), cb.equal(root.get("countryRelation"), relation)));
+        return entityManager.createQuery(query).getResultList();
+    }
+
     public List<CountryRelationResponse> getCountryRelationByCountryId(final Long countryId) {
         var hql = "select new ba.com.zira.sdr.api.model.countryrelations.CountryRelationResponse(cr.id, cr.created, cr.createdBy, cr.modified, cr.modifiedBy, cr.country.id, cr.countryRelation) from CountryRelationEntity cr where cr.country.id =:countryId";
         TypedQuery<CountryRelationResponse> q = entityManager.createQuery(hql, CountryRelationResponse.class).setParameter("countryId",
                 countryId);
         return q.getResultList();
+    }
+
+    public String getCountryRelations(Long countryId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<String> query = cb.createQuery(String.class);
+        Root<CountryRelationEntity> root = query.from(CountryRelationEntity.class);
+        query.select(root.get("countryRelation")).where(cb.equal(root.get("country").get("id"), countryId));
+        try {
+            return entityManager.createQuery(query).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public CountryRelationEntity relationByCountryId(final Long countryId) {

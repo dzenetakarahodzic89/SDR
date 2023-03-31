@@ -14,6 +14,7 @@ import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.battle.ArtistStructure;
 import ba.com.zira.sdr.dao.model.BattleEntity;
 import ba.com.zira.sdr.dao.model.BattleEntity_;
+import ba.com.zira.sdr.api.model.battle.SongStructure;
 import ba.com.zira.sdr.dao.model.BattleTurnEntity;
 import ba.com.zira.sdr.dao.model.BattleTurnEntity_;
 
@@ -37,6 +38,30 @@ public class BattleTurnDAO extends AbstractDAO<BattleTurnEntity, Long> {
 
         return q.getResultList();
 
+    }
+
+    public List<ArtistStructure> getEligibleArtistsInformationByCountryId(List<Long> countryIds, Integer requiredNumberOfArtists,
+            Long requiredNumberOfSongs, List<Long> forbiddenArtistIds) {
+        var subquery1 = "(select count (distinct sa2.id) from SongArtistEntity sa2 join ArtistEntity a2 on sa2.artist.id=a2.id where a2.id=a.id)";
+        var subquery = "(select count (distinct sa.album.id) from SongArtistEntity sa join ArtistEntity a3 on sa.artist.id=a3.id where a3.id=a.id)";
+        var hql = "select new ba.com.zira.sdr.api.model.battle.ArtistStructure(a.id,concat(coalesce(a.name,''),' ', coalesce(a.surname,'')),p.country.id,p.country.name,"
+                + subquery1 + "," + subquery
+                + ") from ArtistEntity a join PersonArtistEntity pa on a.id=pa.artist.id join PersonEntity p on pa.person.id=p.id where p.country.id in (:countryIds)"
+                + " and " + subquery1 + ">=:requiredNumberOfSongs and a.id not in (:forbiddenArtistIds)";
+        var q = entityManager.createQuery(hql, ArtistStructure.class).setParameter("countryIds", countryIds)
+                .setParameter("forbiddenArtistIds", forbiddenArtistIds).setParameter("requiredNumberOfSongs", requiredNumberOfSongs)
+                .setMaxResults(requiredNumberOfArtists);
+
+        return q.getResultList();
+
+    }
+
+    public List<SongStructure> getRandomSongsForArtist(Long artistId, Integer requiredNumberOfSongs) {
+        var hql = "select new ba.com.zira.sdr.api.model.battle.SongStructure(s.id,s.name,s.spotifyId,'',s.playtime) from SongEntity s"
+                + " join SongArtistEntity sa on s.id=sa.song.id where sa.artist.id=:artistId";
+        var q = entityManager.createQuery(hql, SongStructure.class).setParameter("artistId", artistId).setMaxResults(requiredNumberOfSongs);
+
+        return q.getResultList();
     }
 
     public void updateTeamStateOfLastTurn(String teamStateJSON, Long battleId, String userCode) {
