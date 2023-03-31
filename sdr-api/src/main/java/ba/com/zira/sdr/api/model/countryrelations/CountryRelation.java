@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.api.model.countryrelations;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CountryRelation {
+public class CountryRelation implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Long foreignCountryId;
     private String foreignCountryName;
