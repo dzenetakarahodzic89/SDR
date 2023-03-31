@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
@@ -63,4 +64,11 @@ public class BattleTurnDAO extends AbstractDAO<BattleTurnEntity, Long> {
 
     }
 
+    public BattleTurnEntity getFullBattleTurn(Long battleId) {
+        var hql = "select bt from BattleTurnEntity bt where bt.battle.id=:battleId order by bt.turnNumber desc";
+        TypedQuery<BattleTurnEntity> q = entityManager.createQuery(hql, BattleTurnEntity.class).setParameter("battleId", battleId)
+                .setMaxResults(1);
+
+        return q.getSingleResult();
+    }
 }

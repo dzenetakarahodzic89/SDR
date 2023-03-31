@@ -20,6 +20,7 @@ import ba.com.zira.sdr.api.CountryService;
 import ba.com.zira.sdr.api.model.country.CountriesSearchRequest;
 import ba.com.zira.sdr.api.model.country.CountryArtistSongResponse;
 import ba.com.zira.sdr.api.model.country.CountryCreateRequest;
+import ba.com.zira.sdr.api.model.country.CountryGetByIdsRequest;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.country.CountryUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -101,6 +102,12 @@ public class CountryServiceImpl implements CountryService {
     public ListPayloadResponse<LoV> getAllCountriesExceptOneWithTheSelectedId(final EntityRequest<CountriesSearchRequest> request)
             throws ApiException {
         var countries = countryDAO.getAllCountriesExceptOneWithTheSelectedId(request.getEntity().getId());
+        return new ListPayloadResponse<>(request, ResponseCode.OK, countries);
+    }
+
+    @Override
+    public ListPayloadResponse<LoV> getAllCountryLoVsByIds(EntityRequest<CountryGetByIdsRequest> request) throws ApiException {
+        var countries = countryDAO.getAllCountryLoVByIds(request.getEntity().getCountryIds());
         return new ListPayloadResponse<>(request, ResponseCode.OK, countries);
     }
 

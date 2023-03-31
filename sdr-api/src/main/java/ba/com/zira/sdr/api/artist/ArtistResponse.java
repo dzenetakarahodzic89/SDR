@@ -39,6 +39,8 @@ public class ArtistResponse implements Serializable {
     protected String status;
     @Schema(description = "Surname of the artist")
     protected String surname;
+    @Schema(description = "Full name of the artist")
+    protected String fullName;
     @Schema(description = "Type of the artist")
     protected String type;
     @Schema(description = "Person-artist")

@@ -11,6 +11,7 @@ public class LoV implements Serializable {
     private Long id;
     private String name;
     private String surname;
+    private String fullName;
 
     public LoV() {
         super();
