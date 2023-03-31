@@ -37,7 +37,7 @@ public class CountryRelationCreateRequest implements Serializable {
     private String status;
 
     @Schema(description = "The text field that combines foreign country name and a type of link")
-    private CountryRelation countryRelation;
+    private CountryRelation[] countryRelation;
 
     @Schema(description = "Home country id")
     private Long countryId;
