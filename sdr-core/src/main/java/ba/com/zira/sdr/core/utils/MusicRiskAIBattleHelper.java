@@ -1,23 +1,25 @@
 package ba.com.zira.sdr.core.utils;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.model.User;
@@ -32,9 +34,11 @@ import ba.com.zira.sdr.api.model.battle.SongStructure;
 import ba.com.zira.sdr.api.model.battle.TeamStructure;
 import ba.com.zira.sdr.api.model.battle.TeamsState;
 import ba.com.zira.sdr.api.model.countryrelations.CountryRelation;
+import ba.com.zira.sdr.dao.BattleDAO;
 import ba.com.zira.sdr.dao.BattleTurnDAO;
 import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.CountryRelationsDAO;
+import ba.com.zira.sdr.dao.model.BattleTurnEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -48,6 +52,8 @@ public class MusicRiskAIBattleHelper {
     @NonNull
     private BattleTurnDAO battleTurnDAO;
     @NonNull
+    private BattleDAO battleDAO;
+    @NonNull
     private static SecureRandom rand = new SecureRandom();
     private static final Logger LOGGER = LoggerFactory.getLogger(MusicRiskAIBattleHelper.class);
     private static final User systemUser = new User("System");
@@ -59,7 +65,7 @@ public class MusicRiskAIBattleHelper {
     private static List<TeamStructure> alteredActiveNpcTeams;
     private static Long turnNumber;
     private static N2bObjectMapper mapper = new N2bObjectMapper();
-    private static Integer battleResultIdCounter = 2;
+    private static Long battleResultId = 2L;
     @Autowired
     private LookupService lookupService;
 
@@ -108,14 +114,14 @@ public class MusicRiskAIBattleHelper {
                 numberOfWins += 1;
                 turnHistory.add(new BattleLogEntry(songA.getSongId(), songB.getSongId(), songA.getName(), songB.getName(),
                         songA.getSpotifyId(), songB.getSpotifyId(), songA.getAudioUrl(), songB.getAudioUrl(), songA.getSongId(),
-                        songB.getSongId(), systemUser.getUserId()));
+                        songB.getSongId(), systemUser.getUserId(), battleResultId));
                 textHistory.put(lastKey + 1,
                         String.format("Song %s wins over %s decided by %s.", songA.getName(), songB.getName(), systemUser.getUserId()));
             } else {
                 LOGGER.info("Song {} wins round {}.", songB.getName(), i + 1);
                 turnHistory.add(new BattleLogEntry(songA.getSongId(), songB.getSongId(), songA.getName(), songB.getName(),
                         songA.getSpotifyId(), songB.getSpotifyId(), songA.getAudioUrl(), songB.getAudioUrl(), songB.getSongId(),
-                        songA.getSongId(), systemUser.getUserId()));
+                        songA.getSongId(), systemUser.getUserId(), battleResultId));
                 textHistory.put(lastKey + 1,
                         String.format("Song %s wins over %s decided by %s.", songB.getName(), songA.getName(), systemUser.getUserId()));
 
@@ -132,20 +138,22 @@ public class MusicRiskAIBattleHelper {
             LOGGER.info("The attacker team has won the battle!");
             restructureTeams(teamA, teamB, attackedCountryId);
 
-            battleResult.add(new BattleLogBattleResult(turnNumber, teamA.getId(), teamB.getId(), teamA.getEligibleCountryIds(),
-                    teamB.getEligibleCountryIds()));
+            battleResult.add(new BattleLogBattleResult(battleResultId, turnNumber, teamA.getId(), teamB.getId(),
+                    teamA.getEligibleCountryIds(), teamB.getEligibleCountryIds()));
 
             battleLog.setBattleResults(battleResult);
             battleLog.setTextHistory(textHistory);
             battleLog.setTurnHistory(turnHistory);
+            battleResultId += 1;
             return Boolean.TRUE;
         } else {
             LOGGER.info("The attacker team has lost the battle!");
-            battleResult.add(new BattleLogBattleResult(turnNumber, teamB.getId(), teamA.getId(), teamB.getEligibleCountryIds(),
-                    teamA.getEligibleCountryIds()));
+            battleResult.add(new BattleLogBattleResult(battleResultId, turnNumber, teamB.getId(), teamA.getId(),
+                    teamB.getEligibleCountryIds(), teamA.getEligibleCountryIds()));
             battleLog.setBattleResults(battleResult);
             battleLog.setTextHistory(textHistory);
             battleLog.setTurnHistory(turnHistory);
+            battleResultId += 1;
             return Boolean.FALSE;
         }
 
@@ -202,6 +210,7 @@ public class MusicRiskAIBattleHelper {
         });
 
         /** Update mapState, teamState and turnCombatState of the turn **/
+        newMapState.setNumberOfActiveNpcTeams((long) alteredActiveNpcTeams.size());
         turn.setMapState(newMapState);
         String mapStateJSON;
         try {
@@ -273,6 +282,12 @@ public class MusicRiskAIBattleHelper {
                     .filter(c -> !attackerTeam.getEligibleCountryIds().contains(c.getForeignCountryId())
                             && !teamsState.getActivePlayerTeam().getEligibleCountryIds().contains(c.getForeignCountryId()))
                     .collect(Collectors.toList());
+
+            if (countriesEligibleToAttack.isEmpty()) {
+                LOGGER.info("No nearby countries to attack from {}.", attackLocation.getName());
+                return;
+            }
+
             var locationThatIsBeingAttacked = countriesEligibleToAttack.get(rand.nextInt(countriesEligibleToAttack.size()));
 
             LOGGER.info("Country {} is being attacked!", locationThatIsBeingAttacked.getForeignCountryName());
@@ -292,11 +307,21 @@ public class MusicRiskAIBattleHelper {
 
                 battleLog.setTextHistory(textHistory);
 
-                if (locationThatIsBeingAttackedState.getCountryStatus().equals("Passive")) {
+                /**
+                 * A country is considered passive if it's status is Passive (it
+                 * has no team) or it is a member of a team that has no active
+                 * countries. A team that has no artists consists of only
+                 * passive countries.
+                 */
+
+                var defenderTeamOptional = alteredActiveNpcTeams.stream()
+                        .filter(t -> Objects.equals(t.getId(), locationThatIsBeingAttackedState.getTeamOwnershipId())).findFirst();
+
+                if (!defenderTeamOptional.isPresent() || defenderTeamOptional.get().getTeamArtists().isEmpty()) {
                     LOGGER.info("Country {} is passive.", locationThatIsBeingAttackedState.getCountryName());
-                    handlePassiveCountryAttack(attackerTeam, locationThatIsBeingAttackedState, attackerLocationState);
+                    handlePassiveCountryAttack(attackerTeam, locationThatIsBeingAttackedState, attackerLocationState, defenderTeamOptional);
                 } else {
-                    handleActiveCountryAttack(attackerTeam, locationThatIsBeingAttackedState, attackerLocationState);
+                    handleActiveCountryAttack(attackerTeam, locationThatIsBeingAttackedState, attackerLocationState, defenderTeamOptional);
                 }
 
             } else {
@@ -321,7 +346,7 @@ public class MusicRiskAIBattleHelper {
     }
 
     private void handlePassiveCountryAttack(TeamStructure attackerTeam, CountryState passiveCountryState,
-            CountryState attackerLocationCountryState) {
+            CountryState attackerLocationCountryState, Optional<TeamStructure> passiveTeamOptional) {
         /**
          * Add attacked country to eligible countries of attacker team. Update
          * number of wins for the attacker team.
@@ -359,6 +384,14 @@ public class MusicRiskAIBattleHelper {
         mapStateCountries.add(conqueredCountryState);
         newMapState.setCountries(mapStateCountries);
 
+        /**
+         * If passive country was in a team with no active countries, remove the
+         * country from its previous team.
+         */
+        if (passiveTeamOptional.isPresent()) {
+            removeLoserCountryFromDefenderTeam(passiveTeamOptional.get(), passiveCountryState.getCountryId());
+        }
+
         /** Update battle logs **/
         var textHistory = battleLog.getTextHistory();
         var lastKey = getMaxKeyOfMap(textHistory);
@@ -369,10 +402,7 @@ public class MusicRiskAIBattleHelper {
     }
 
     private void handleActiveCountryAttack(TeamStructure attackerTeam, CountryState locationThatIsBeingAttackedState,
-            CountryState attackerLocationCountryState) {
-
-        var defenderTeamOptional = teamsState.getActiveNpcTeams().stream()
-                .filter(t -> Objects.equals(t.getId(), locationThatIsBeingAttackedState.getTeamOwnershipId())).findFirst();
+            CountryState attackerLocationCountryState, Optional<TeamStructure> defenderTeamOptional) {
 
         if (defenderTeamOptional.isPresent()) {
             LOGGER.info("Team with id {} is defending country {}.", defenderTeamOptional.get().getId(),
@@ -443,6 +473,8 @@ public class MusicRiskAIBattleHelper {
             artistNames = loserTeamArtists.stream().map(ta -> ta.getName()).collect(Collectors.joining(", "));
 
             LOGGER.info("Team with id {} now consists of {}.", loserTeam.getId(), artistNames);
+        } else {
+            loserTeam.setTeamArtists(new ArrayList<>());
         }
 
     }
@@ -483,51 +515,7 @@ public class MusicRiskAIBattleHelper {
         mapStateCountries.add(newCountryState);
         newMapState.setCountries(mapStateCountries);
 
-        eligibleIds = loserTeam.getEligibleCountryIds();
-        eligibleIds.remove(loserCountryState.getCountryId());
-
-        /*
-         * If the team has lost all countries, it is removed from activeNpcTeams
-         * and added to inactiveNpcTeams. Otherwise, just the loser country is
-         * removed from loser team.
-         */
-
-        oldTeam = alteredActiveNpcTeams.stream().filter(t -> Objects.equals(t.getId(), loserTeam.getId())).collect(Collectors.toList());
-
-        if (!oldTeam.isEmpty()) {
-            alteredActiveNpcTeams.remove(oldTeam.get(0));
-        }
-
-        if (eligibleIds.isEmpty()) {
-            LOGGER.info("Team with id {} now has no countries. It is removed from active teams.", loserTeam.getId());
-            newMapState.setNumberOfActiveNpcTeams(newMapState.getNumberOfActiveNpcTeams() - 1);
-            inactiveNpcTeams.add(loserTeam);
-
-        } else {
-            newNpcTeam = new TeamStructure();
-
-            if (eligibleIds.contains(loserTeam.getCountryId())) {
-                newNpcTeam.setCountryId(loserTeam.getCountryId());
-                newNpcTeam.setCountryName(loserTeam.getCountryName());
-            } else {
-                var countryId = eligibleIds.get(0);
-                newNpcTeam.setCountryId(countryId);
-                var country = newMapState.getCountries().stream().filter(c -> Objects.equals(c.getCountryId(), countryId)).findAny();
-                if (country.isPresent()) {
-                    newNpcTeam.setCountryName(country.get().getCountryName());
-                }
-            }
-
-            newNpcTeam.setEligibleCountryIds(eligibleIds);
-            newNpcTeam.setId(loserTeam.getId());
-            newNpcTeam.setLastActiveTurn(loserTeam.getLastActiveTurn());
-            newNpcTeam.setNumberOfLoses(loserTeam.getNumberOfLoses() + 1);
-            newNpcTeam.setNumberOfWins(loserTeam.getNumberOfWins());
-            newNpcTeam.setTeamArtists(loserTeam.getTeamArtists());
-
-            alteredActiveNpcTeams.add(newNpcTeam);
-        }
-
+        removeLoserCountryFromDefenderTeam(loserTeam, loserCountryState.getCountryId());
     }
 
     private void handleDefeat(TeamStructure loserTeam, TeamStructure winnerTeam) {
@@ -568,6 +556,55 @@ public class MusicRiskAIBattleHelper {
         }
 
         alteredActiveNpcTeams.add(newNpcTeam);
+
+    }
+
+    private void removeLoserCountryFromDefenderTeam(TeamStructure defenderTeam, Long loserCountryId) {
+        var eligibleIds = defenderTeam.getEligibleCountryIds();
+        eligibleIds.remove(loserCountryId);
+
+        /*
+         * If the team has lost all countries, it is removed from activeNpcTeams
+         * and added to inactiveNpcTeams. Otherwise, just the loser country is
+         * removed from loser team.
+         */
+
+        var oldTeam = alteredActiveNpcTeams.stream().filter(t -> Objects.equals(t.getId(), defenderTeam.getId()))
+                .collect(Collectors.toList());
+
+        if (!oldTeam.isEmpty()) {
+            alteredActiveNpcTeams.remove(oldTeam.get(0));
+        }
+
+        if (eligibleIds.isEmpty()) {
+            LOGGER.info("Team with id {} now has no countries. It is removed from active teams.", defenderTeam.getId());
+            newMapState.setNumberOfActiveNpcTeams(newMapState.getNumberOfActiveNpcTeams() - 1);
+            inactiveNpcTeams.add(defenderTeam);
+
+        } else {
+            var newNpcTeam = new TeamStructure();
+
+            if (eligibleIds.contains(defenderTeam.getCountryId())) {
+                newNpcTeam.setCountryId(defenderTeam.getCountryId());
+                newNpcTeam.setCountryName(defenderTeam.getCountryName());
+            } else {
+                var countryId = eligibleIds.get(0);
+                newNpcTeam.setCountryId(countryId);
+                var country = newMapState.getCountries().stream().filter(c -> Objects.equals(c.getCountryId(), countryId)).findAny();
+                if (country.isPresent()) {
+                    newNpcTeam.setCountryName(country.get().getCountryName());
+                }
+            }
+
+            newNpcTeam.setEligibleCountryIds(eligibleIds);
+            newNpcTeam.setId(defenderTeam.getId());
+            newNpcTeam.setLastActiveTurn(defenderTeam.getLastActiveTurn());
+            newNpcTeam.setNumberOfLoses(defenderTeam.getNumberOfLoses() + 1);
+            newNpcTeam.setNumberOfWins(defenderTeam.getNumberOfWins());
+            newNpcTeam.setTeamArtists(defenderTeam.getTeamArtists());
+
+            alteredActiveNpcTeams.add(newNpcTeam);
+        }
 
     }
 
@@ -618,25 +655,24 @@ public class MusicRiskAIBattleHelper {
         return turn;
     }
 
-    // @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 15000)
     public void testSimulation() {
-        var turnEnt = battleTurnDAO.findByPK(6L);
-        try {
-            BattleSingleResponse turn = new BattleSingleResponse(turnEnt.getId(), turnEnt.getName(), turnEnt.getTurnNumber(),
-                    turnEnt.getMapState(), turnEnt.getTeamState(), turnEnt.getTurnCombatState());
-            // turn = differeniateAITeamIds(turn);
-            turn = simulateTurnForAI(turn);
-            turnEnt.setMapState(turn.getMapStateJson());
-            turnEnt.setTeamState(turn.getTeamStateJson());
-            turnEnt.setTurnCombatState(turn.getTurnCombatStateJson());
-            battleTurnDAO.merge(turnEnt);
-        } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        var battle = battleDAO.findByPK(2L);
+        var turn = battleDAO.findLastBattleTurn(2L);
+
+        turn = simulateTurnForAI(turn);
+        var turnEnt = new BattleTurnEntity();
+        turnEnt.setMapState(turn.getMapStateJson());
+        turnEnt.setTeamState(turn.getTeamStateJson());
+        turnEnt.setTurnCombatState(turn.getTurnCombatStateJson());
+        turnEnt.setCreated(LocalDateTime.now());
+        turnEnt.setCreatedBy("amila");
+        turnEnt.setBattle(battle);
+        turnEnt.setName("Simulation");
+        turnEnt.setTurnNumber(battle.getLastTurn() + 1);
+        battle.setLastTurn(battle.getLastTurn() + 1);
+        battleDAO.merge(battle);
+        battleTurnDAO.persist(turnEnt);
 
     }
 }
