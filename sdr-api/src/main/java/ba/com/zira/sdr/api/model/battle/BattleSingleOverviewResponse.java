@@ -2,6 +2,7 @@ package ba.com.zira.sdr.api.model.battle;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class BattleSingleOverviewResponse implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    List<TurnStateResponse> turnStates;
+    Map<Long, TeamBattleState> teamBattleStates;
     List<BattleArtistStateResponse> artistState;
     int numberOfSongsWon;
     int numberOfSongsLost;

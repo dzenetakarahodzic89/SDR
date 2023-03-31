@@ -3,10 +3,10 @@ package ba.com.zira.sdr.dao;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
-import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
@@ -59,7 +59,7 @@ public class BattleTurnDAO extends AbstractDAO<BattleTurnEntity, Long> {
         Join<BattleTurnEntity, BattleEntity> battles = root.join(BattleTurnEntity_.battle);
 
         criteriaQuery.where(builder.equal(battles.get(BattleEntity_.id), battleId));
-        criteriaQuery.select(root).distinct(true);
+        criteriaQuery.select(root).distinct(true).orderBy(builder.asc(root.get(BattleTurnEntity_.turnNumber)));
         return entityManager.createQuery(criteriaQuery).getResultList();
 
     }

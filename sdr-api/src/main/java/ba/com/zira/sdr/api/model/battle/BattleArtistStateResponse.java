@@ -14,5 +14,6 @@ public class BattleArtistStateResponse implements Serializable {
     List<SongStructure> songs;
     int numberOfSongsWon = 0;
     int numberOfSongsLost = 0;
+    Long countryId;
 
 }
