@@ -3,7 +3,10 @@ package ba.com.zira.sdr.api.model.battle;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
+import ba.com.zira.commons.configuration.N2bObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,16 +25,26 @@ public class BattleSingleResponse implements Serializable {
     private String teamStateJson;
     @JsonIgnore
     private String turnCombatStateJson;
+
+    private TurnCombatState turnCombatState;
+
     private MapState mapState;
 
     private TeamsState teamState;
 
-    public BattleSingleResponse(Long id, String name, Long turn, String mapStateJson, String teamStateJson, String turnCombatJSON) {
+    public BattleSingleResponse(Long id, String name, Long turn, String mapStateJson, String teamStateJson, String turnCombatJSON)
+            throws JsonMappingException, JsonProcessingException {
         this.id = id;
         this.name = name;
         this.turn = turn;
         this.mapStateJson = mapStateJson;
         this.teamStateJson = teamStateJson;
         this.turnCombatStateJson = turnCombatJSON;
+
+        var mapper = new N2bObjectMapper();
+
+        this.turnCombatState = mapper.readValue(turnCombatJSON, TurnCombatState.class);
+        this.mapState = mapper.readValue(mapStateJson, MapState.class);
+        this.teamState = mapper.readValue(teamStateJson, TeamsState.class);
     }
 }
