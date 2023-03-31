@@ -3,14 +3,17 @@ package ba.com.zira.sdr.core.impl;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.AbstractMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -20,6 +23,7 @@ import ba.com.zira.sdr.api.PlaylistService;
 import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.playlist.Playlist;
 import ba.com.zira.sdr.api.model.playlist.PlaylistCreateRequest;
+import ba.com.zira.sdr.api.model.playlist.PlaylistResponse;
 import ba.com.zira.sdr.api.model.playlist.PlaylistSearchRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistUpdateRequest;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
@@ -27,6 +31,7 @@ import ba.com.zira.sdr.core.mapper.PlaylistMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.PlaylistRequestValidation;
 import ba.com.zira.sdr.dao.PlaylistDAO;
+import ba.com.zira.sdr.dao.SongPlaylistDAO;
 import ba.com.zira.sdr.dao.model.PlaylistEntity;
 import lombok.AllArgsConstructor;
 
@@ -38,6 +43,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     PlaylistMapper playlistMapper;
     PlaylistRequestValidation playlistRequestValidation;
     LookupService lookupService;
+    SongPlaylistDAO songPlaylistDAO;
     private static SecureRandom random = new SecureRandom();
 
     @Override
@@ -100,9 +106,17 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         playlistRequestValidation.validateExistsPlaylistRequest(request);
-
+        songPlaylistDAO.deleteByPlaylistId(request.getEntity());
         playlistDAO.removeByPK(request.getEntity());
+
         return new PayloadResponse<>(request, ResponseCode.OK, "Playlist successfully deleted.");
+    }
+
+    @Override
+    public ListPayloadResponse<PlaylistResponse> getAll(final EntityRequest<Long> req) throws ApiException {
+        List<PlaylistResponse> playlist = playlistDAO.getPlaylistInfo(req.getEntity());
+        lookupService.lookupAudio(playlist, PlaylistResponse::getSongId, PlaylistResponse::setSongAudioUrl);
+        return new ListPayloadResponse<>(req, ResponseCode.OK, playlist);
     }
 
 }

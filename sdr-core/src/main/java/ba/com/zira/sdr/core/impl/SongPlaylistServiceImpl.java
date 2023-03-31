@@ -19,6 +19,7 @@ import ba.com.zira.sdr.api.model.songplaylist.SongPlaylistCreateRequest;
 import ba.com.zira.sdr.api.model.songplaylist.SongPlaylistUpdateRequest;
 import ba.com.zira.sdr.core.mapper.SongPlaylistMapper;
 import ba.com.zira.sdr.core.validation.SongPlaylistRequestValidation;
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.SongPlaylistDAO;
 import ba.com.zira.sdr.dao.model.SongPlaylistEntity;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class SongPlaylistServiceImpl implements SongPlaylistService {
     private SongPlaylistDAO songPlaylistDAO;
     private SongPlaylistMapper songPlaylistMapper;
     private SongPlaylistRequestValidation songPlaylistRequestValidation;
+    private SongDAO songDAO;
 
     @Override
     public PagedPayloadResponse<SongPlaylist> find(FilterRequest request) throws ApiException {

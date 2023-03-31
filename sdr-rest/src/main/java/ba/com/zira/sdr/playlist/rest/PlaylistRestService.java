@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.PlaylistService;
 import ba.com.zira.sdr.api.model.playlist.Playlist;
 import ba.com.zira.sdr.api.model.playlist.PlaylistCreateRequest;
+import ba.com.zira.sdr.api.model.playlist.PlaylistResponse;
 import ba.com.zira.sdr.api.model.playlist.PlaylistSearchRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,6 +43,13 @@ public class PlaylistRestService {
     public PagedPayloadResponse<Playlist> find(@RequestParam Map<String, Object> filterCriteria, final QueryConditionPage queryCriteria)
             throws ApiException {
         return playlistService.find(new FilterRequest(filterCriteria, queryCriteria));
+    }
+
+    @Operation(summary = "Get playlist")
+    @GetMapping(value = "/{id}")
+    public ListPayloadResponse<PlaylistResponse> get(
+            @Parameter(required = true, description = "Id of the playlist") @PathVariable final Long id) throws ApiException {
+        return playlistService.getAll(new EntityRequest<>(id));
     }
 
     @Operation(summary = "Find Playlists based on custom filter")

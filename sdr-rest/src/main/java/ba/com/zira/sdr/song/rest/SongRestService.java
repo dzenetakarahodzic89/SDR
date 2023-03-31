@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.song.rest;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -61,6 +61,12 @@ public class SongRestService {
     public PayloadResponse<SongSingleResponse> retrieveById(
             @Parameter(required = true, description = "ID of the song") @PathVariable final Long id) throws ApiException {
         return songService.retrieveById(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Find song by id")
+    @GetMapping(value = "/find-song")
+    public PayloadResponse<LoV> getSongByName(@RequestParam final String songName) throws ApiException {
+        return songService.findByName(new EntityRequest<>(songName));
     }
 
     @Operation(summary = "Get song ids and names which are not tied to the album specified by parameter albumId")
