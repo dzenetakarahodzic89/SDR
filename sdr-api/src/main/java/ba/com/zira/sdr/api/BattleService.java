@@ -11,6 +11,8 @@ import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleTurnUpdateRequest;
+import ba.com.zira.sdr.api.model.battle.PreBattleCreateRequest;
 
 /**
  * The Interface BattleService.
@@ -37,6 +39,12 @@ public interface BattleService {
      *             the api exception
      */
     PayloadResponse<Battle> getById(EntityRequest<Long> request) throws ApiException;
+
     PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException;
     PayloadResponse<BattleGenerateResponse> create(EntityRequest<BattleGenerateRequest> request) throws ApiException;
+
+    public PayloadResponse<String> preBattleTurn(EntityRequest<PreBattleCreateRequest> request) throws ApiException;
+
+    public PayloadResponse<String> attackBattle(EntityRequest<BattleTurnUpdateRequest> request) throws ApiException;
+
 }
