@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class BattleLogBattleResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    Long id;
     Long turnNumber;
     Long winnerTeamId;
     Long loserTeamId;

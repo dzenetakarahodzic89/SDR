@@ -23,4 +23,5 @@ public class BattleLogEntry implements Serializable {
     Long winnerSongId;
     Long loserSongId;
     String userCodeOfDecider;
+    Long battleResultId;
 }
