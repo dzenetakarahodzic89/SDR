@@ -1,7 +1,6 @@
 package ba.com.zira.sdr.core.utils;
 
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,7 +36,6 @@ import ba.com.zira.sdr.dao.BattleDAO;
 import ba.com.zira.sdr.dao.BattleTurnDAO;
 import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.CountryRelationsDAO;
-import ba.com.zira.sdr.dao.model.BattleTurnEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -655,24 +652,4 @@ public class MusicRiskAIBattleHelper {
         return turn;
     }
 
-    @Scheduled(fixedDelay = 15000)
-    public void testSimulation() {
-        var battle = battleDAO.findByPK(2L);
-        var turn = battleDAO.findLastBattleTurn(2L);
-
-        turn = simulateTurnForAI(turn);
-        var turnEnt = new BattleTurnEntity();
-        turnEnt.setMapState(turn.getMapStateJson());
-        turnEnt.setTeamState(turn.getTeamStateJson());
-        turnEnt.setTurnCombatState(turn.getTurnCombatStateJson());
-        turnEnt.setCreated(LocalDateTime.now());
-        turnEnt.setCreatedBy("amila");
-        turnEnt.setBattle(battle);
-        turnEnt.setName("Simulation");
-        turnEnt.setTurnNumber(battle.getLastTurn() + 1);
-        battle.setLastTurn(battle.getLastTurn() + 1);
-        battleDAO.merge(battle);
-        battleTurnDAO.persist(turnEnt);
-
-    }
 }
