@@ -23,6 +23,7 @@ public class SongGene implements Rankable {
 
     public SongGene() {
         fitness = (double) 0;
+        playtimeInSeconds = 0L;
     }
 
     @Override

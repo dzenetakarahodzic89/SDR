@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,25 +11,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
+import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.model.PagedData;
+import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.PlaylistGAService;
 import ba.com.zira.sdr.api.enums.ServiceType;
 import ba.com.zira.sdr.api.model.generateplaylist.SavePlaylistRequest;
+import ba.com.zira.sdr.api.model.playlistga.GAHistoryResponse;
 import ba.com.zira.sdr.api.model.playlistga.PlaylistRequestGA;
 import ba.com.zira.sdr.api.model.playlistga.PlaylistResponseGA;
 import ba.com.zira.sdr.api.model.playlistga.WeightGenerator;
+import ba.com.zira.sdr.core.mapper.GAHistoryMapper;
 import ba.com.zira.sdr.core.mapper.PlaylistMapper;
 import ba.com.zira.sdr.core.mapper.SongMapper;
 import ba.com.zira.sdr.core.mapper.SongScoreMapper;
 import ba.com.zira.sdr.core.validation.SongRequestValidation;
+import ba.com.zira.sdr.dao.GAHistoryDAO;
 import ba.com.zira.sdr.dao.PlaylistDAO;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.SongPlaylistDAO;
 import ba.com.zira.sdr.dao.SongScoreDAO;
+import ba.com.zira.sdr.dao.model.GAHistoryEntity;
 import ba.com.zira.sdr.dao.model.SongScoresEntity;
 import ba.com.zira.sdr.ga.impl.GeneticAlgorithmImpl;
 import ba.com.zira.sdr.ga.impl.LinearGenerator;
@@ -36,22 +46,38 @@ import ba.com.zira.sdr.ga.impl.PlaylistChromosome;
 import ba.com.zira.sdr.ga.impl.PopulationImpl;
 import ba.com.zira.sdr.ga.impl.Randomizer;
 import ba.com.zira.sdr.ga.impl.SongGene;
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PlaylistGAServiceImpl implements PlaylistGAService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaylistGAServiceImpl.class);
+    @NonNull
     SongScoreDAO songScoreDAO;
+    @NonNull
     SongDAO songDAO;
+    @NonNull
     SongScoreMapper songScoreMapper;
+    @NonNull
     SongPlaylistDAO songPlaylistDAO;
+    @NonNull
     SongMapper songMapper;
+    @NonNull
     PlaylistDAO playlistDAO;
+    @NonNull
     PlaylistMapper playlistMapper;
+    @NonNull
     SongRequestValidation songRequestValidation;
+    @NonNull
     GeneratePlaylistServiceHelper generatePlaylistServiceHelper;
+    @NonNull
+    GAHistoryDAO gaHistoryDAO;
+    @NonNull
+    GAHistoryMapper gaHistoryMapper;
+
+    private N2bObjectMapper objectMapper = new N2bObjectMapper();
 
     @Override
     public PagedPayloadResponse<PlaylistResponseGA> generatePlaylist(final EntityRequest<PlaylistRequestGA> request) throws ApiException {
@@ -77,6 +103,8 @@ public class PlaylistGAServiceImpl implements PlaylistGAService {
         var geneticAlgorithm = new GeneticAlgorithmImpl(parameters);
         geneticAlgorithm.setAllValidGenes(allValidSongGenes);
 
+        var fitnessProgress = new ArrayList<Double>();
+
         for (var i = 0; i < parameters.getNumberOfGenerations(); i++) {
             population.calculateFitnessForAllChromosomes();
 
@@ -87,6 +115,7 @@ public class PlaylistGAServiceImpl implements PlaylistGAService {
             var currentOptimalChromosome = (PlaylistChromosome) population.findFittestChromosome();
 
             LOGGER.info(String.valueOf(currentOptimalChromosome.getFitness()));
+            fitnessProgress.add(currentOptimalChromosome.getFitness());
 
             population = (PopulationImpl) geneticAlgorithm.reproduction(population);
         }
@@ -125,6 +154,25 @@ public class PlaylistGAServiceImpl implements PlaylistGAService {
 
         LOGGER.info("Playlist playtime in seconds: ");
         LOGGER.info(response.getPayload().getTotalPlaytime().toString());
+
+        // save GA results as a history
+        var gaHistoryEntity = new GAHistoryEntity();
+
+        gaHistoryEntity.setCreated(LocalDateTime.now());
+        gaHistoryEntity.setCreatedBy(request.getUserId());
+        gaHistoryEntity.setNumberOfIterations(parameters.getNumberOfGenerations());
+        gaHistoryEntity.setPopulationSize(parameters.getPopulationSize());
+        gaHistoryEntity.setMaxFitness(((PlaylistChromosome) population.findFittestChromosome()).getFitness());
+        gaHistoryEntity.setName("GA HISTORY:" + LocalDateTime.now().toString());
+        gaHistoryEntity.setStatus(Status.ACTIVE.getValue());
+
+        try {
+            gaHistoryEntity.setFitnessProgress(objectMapper.writeValueAsString(fitnessProgress));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        gaHistoryDAO.persist(gaHistoryEntity);
 
         return new PagedPayloadResponse<>(request, ResponseCode.OK, responseData, songScoreMapper::entitiesToDtos);
     }
@@ -192,6 +240,13 @@ public class PlaylistGAServiceImpl implements PlaylistGAService {
         serviceScores.put(ServiceType.TIDAL, songScore.getTidalScore().doubleValue());
         serviceScores.put(ServiceType.YT_MUSIC, songScore.getYoutubeMusicScore().doubleValue());
         return serviceScores;
+    }
+
+    @Override
+    public PagedPayloadResponse<GAHistoryResponse> getHistory(FilterRequest filterRequest) throws ApiException {
+        var historyEntities = gaHistoryDAO.findAll(filterRequest.getFilter());
+
+        return new PagedPayloadResponse<>(filterRequest, ResponseCode.OK, historyEntities, gaHistoryMapper::entitiesToDtos);
     }
 
 }

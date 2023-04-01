@@ -83,4 +83,6 @@ public interface PersonService {
 
     PayloadResponse<PersonCountResponse> getPersonsByCountry(EmptyRequest req) throws ApiException;
 
+    ListPayloadResponse<LoV> getPersonLoV(EmptyRequest req) throws ApiException;
+
 }

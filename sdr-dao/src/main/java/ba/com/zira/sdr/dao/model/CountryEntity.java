@@ -57,6 +57,10 @@ public class CountryEntity implements Serializable {
     @Column(name = "status")
     private String status;
 
+    // bi-directional many-to-one association to SongArtistEntity
+    @OneToMany(mappedBy = "country")
+    private List<CountryRelationEntity> countries;
+    
     @OneToMany(mappedBy = "country")
     private List<ReleaseCountryEntity> releaseCountries;
 

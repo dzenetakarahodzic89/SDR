@@ -1,16 +1,18 @@
 package ba.com.zira.sdr.dao;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.userrecommendationdetail.ResponseUserRecommendedDetailSongs;
 import ba.com.zira.sdr.dao.model.UserRecommendationDetailEntity;
 
 @Repository
@@ -26,6 +28,14 @@ public class UserRecommendationDetailDAO extends AbstractDAO<UserRecommendationD
         } catch (Exception e) {
             return new HashMap<>();
         }
+
+    }
+
+    public List<ResponseUserRecommendedDetailSongs> findTopTenRatedSongs() {
+        var hql = "select new ba.com.zira.sdr.api.model.userrecommendationdetail.ResponseUserRecommendedDetailSongs(s.name, ROUND(AVG(urd.userScore),2)) "
+                + "from UserRecommendationDetailEntity as urd " + "join SongEntity as s " + "on urd.song.id = s.id " + "group by s.name";
+        TypedQuery<ResponseUserRecommendedDetailSongs> query = entityManager.createQuery(hql, ResponseUserRecommendedDetailSongs.class);
+        return query.setMaxResults(10).getResultList();
 
     }
 

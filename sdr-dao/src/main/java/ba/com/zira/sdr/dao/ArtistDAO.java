@@ -10,18 +10,29 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.artist.ArtistImageResponse;
 import ba.com.zira.sdr.api.artist.ArtistLabelResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
 import ba.com.zira.sdr.api.artist.ArtistSheetResponse;
+import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistSongResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.ArtistEntity_;
+import ba.com.zira.sdr.dao.model.CountryEntity;
+import ba.com.zira.sdr.dao.model.CountryEntity_;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
+import ba.com.zira.sdr.dao.model.PersonArtistEntity_;
+import ba.com.zira.sdr.dao.model.PersonEntity;
+import ba.com.zira.sdr.dao.model.PersonEntity_;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
 
 @Repository
@@ -42,7 +53,7 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
     }
 
     public List<ArtistSongResponse> getBySongId(Long songId) {
-        var hql = "select distinct new ba.com.zira.sdr.api.artist.ArtistSongResponse(sa.id,sa.name || ' ' || sa.surname,sp.id,sp.name || ' ' || sp.surname,sp.dateOfBirth,ssi.name, sa2.name,sl.name) from SongArtistEntity ssa join ArtistEntity sa on ssa.artist.id = sa.id join PersonArtistEntity spa on sa.id =spa.artist.id join PersonEntity sp on spa.person.id = sp.id left join SongInstrumentEntity ssi on ssi.person.id =sp.id join AlbumEntity sa2 on ssa.album.id = sa2.id join LabelEntity sl on ssa.label.id = sl.id  where ssa.song.id = :id";
+        var hql = "select distinct new ba.com.zira.sdr.api.artist.ArtistSongResponse(sa.id,sa.fullName,sp.id,sp.name || ' ' || sp.surname,sp.dateOfBirth,ssi.name, sa2.name,sl.name) from SongArtistEntity ssa join ArtistEntity sa on ssa.artist.id = sa.id join PersonArtistEntity spa on sa.id =spa.artist.id join PersonEntity sp on spa.person.id = sp.id left join SongInstrumentEntity ssi on ssi.person.id =sp.id join AlbumEntity sa2 on ssa.album.id = sa2.id join LabelEntity sl on ssa.label.id = sl.id  where ssa.song.id = :id";
         TypedQuery<ArtistSongResponse> q = entityManager.createQuery(hql, ArtistSongResponse.class).setParameter("id", songId);
         return q.getResultList();
     }
@@ -56,13 +67,13 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
     }
 
     public List<ArtistLabelResponse> getLabelById(Long labelId) {
-        var hql = "select distinct new ba.com.zira.sdr.api.artist.ArtistLabelResponse(sa.id,sa.name || ' ' || sa.surname,sp.name || ' ' || sp.surname,sp.dateOfBirth,sa2.name) from SongArtistEntity ssa join ArtistEntity sa on ssa.artist.id = sa.id join PersonArtistEntity spa on sa.id =spa.artist.id join PersonEntity sp on spa.person.id = sp.id  join AlbumEntity sa2 on ssa.album.id = sa2.id where ssa.label.id = :id";
+        var hql = "select distinct new ba.com.zira.sdr.api.artist.ArtistLabelResponse(sa.id,sa.fullName,sp.name || ' ' || sp.surname,sp.dateOfBirth,sa2.name) from SongArtistEntity ssa join ArtistEntity sa on ssa.artist.id = sa.id join PersonArtistEntity spa on sa.id =spa.artist.id join PersonEntity sp on spa.person.id = sp.id  join AlbumEntity sa2 on ssa.album.id = sa2.id where ssa.label.id = :id";
         TypedQuery<ArtistLabelResponse> q = entityManager.createQuery(hql, ArtistLabelResponse.class).setParameter("id", labelId);
         return q.getResultList();
     }
 
     public ArtistSheetResponse getArt(Long noteSheetId) {
-        var hql = "select distinct new ba.com.zira.sdr.api.artist.ArtistSheetResponse(sa.id, sp.country.id, co.flagAbbriviation, sa.name || ' ' || sa.surname,sp.id,sp.name || ' ' || sp.surname) from NoteSheetEntity ns  JOIN SongEntity s ON ns.song = s.id  JOIN SongArtistEntity sae ON s.id = sae.song.id  JOIN ArtistEntity sa ON sae.artist.id = sa.id  JOIN PersonArtistEntity spa ON sa.id = spa.artist.id  JOIN PersonEntity sp ON spa.person.id = sp.id  JOIN CountryEntity co ON sp.country.id = co.id  JOIN ba.com.zira.sdr.dao.model.SongEntity ss ON ns.song = ss.id  WHERE ns.id = :noteSheetId";
+        var hql = "select distinct new ba.com.zira.sdr.api.artist.ArtistSheetResponse(sa.id, sp.country.id, co.flagAbbriviation, sa.fullName,sp.id,sp.name || ' ' || sp.surname) from NoteSheetEntity ns  JOIN SongEntity s ON ns.song = s.id  JOIN SongArtistEntity sae ON s.id = sae.song.id  JOIN ArtistEntity sa ON sae.artist.id = sa.id  JOIN PersonArtistEntity spa ON sa.id = spa.artist.id  JOIN PersonEntity sp ON spa.person.id = sp.id  JOIN CountryEntity co ON sp.country.id = co.id  JOIN ba.com.zira.sdr.dao.model.SongEntity ss ON ns.song = ss.id  WHERE ns.id = :noteSheetId";
         TypedQuery<ArtistSheetResponse> q = entityManager.createQuery(hql, ArtistSheetResponse.class).setParameter("noteSheetId",
                 noteSheetId);
 
@@ -95,6 +106,20 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         }
     }
 
+    public List<Long> getAllByCountryId(Long countryId) {
+
+        final CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        final Root<ArtistEntity> root = criteriaQuery.from(ArtistEntity.class);
+
+        Join<PersonEntity, CountryEntity> countries = root.join(ArtistEntity_.personArtists).join(PersonArtistEntity_.person)
+                .join(PersonEntity_.country);
+
+        criteriaQuery.where(builder.equal(countries.get(CountryEntity_.id), countryId));
+        criteriaQuery.select(root.get(ArtistEntity_.id)).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+
+    }
+
     public Boolean personArtistExist(Long id) {
         var hql = "select s from PersonArtistEntity s where s.artist.id = :id";
         TypedQuery<PersonArtistEntity> q = entityManager.createQuery(hql, PersonArtistEntity.class).setParameter("id", id);
@@ -122,7 +147,7 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
     public List<LoV> findArtistsToFetchFromSpotify(int responseLimit) {
         var cases = "case when a.surname is null then concat('artist:',a.name) else" + " concat('artist:',a.name,' ',a.surname) end";
         var subquery = "select si from SpotifyIntegrationEntity si where si.objectId=a.id and si.objectType like :artist";
-        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id," + cases + ") from ArtistEntity a" + " where not exists("
+        var hql = "select distinct new ba.com.zira.sdr.api.model.lov.LoV(a.id,a.fullName) from ArtistEntity a" + " where not exists("
                 + subquery + ") and (a.spotifyId is null or length(a.spotifyId)<1)";
         return entityManager.createQuery(hql, LoV.class).setParameter("artist", "ARTIST").setMaxResults(responseLimit).getResultList();
 
@@ -191,6 +216,14 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return q.getSingleResult();
     }
 
+    public ArtistSingleResponse getArtistById(final Long artistId) {
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistSingleResponse(a.id,a.name, a.dateOfBirth,COUNT(DISTINCT sa.album.id))"
+                + " from ArtistEntity as a" + " join SongArtistEntity as sa" + " on a.id=sa.artist.id " + " join AlbumEntity as ae"
+                + " on ae.id =sa.album.id" + " where a.id=:id" + " group by a.id,a.name, a.dateOfBirth";
+        TypedQuery<ArtistSingleResponse> q = entityManager.createQuery(hql, ArtistSingleResponse.class).setParameter("id", artistId);
+        return q.getSingleResult();
+    }
+
     public List<ArtistSearchResponse> getArtistsBySearch(String artistName, Long genreId, Long albumId, Boolean isSolo, String orderBy) {
         var isSoloString = Boolean.TRUE.equals(isSolo) ? "< 2" : "> 1";
         var orderString = "";
@@ -247,4 +280,9 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return query.getSingleResult();
     }
 
+    public ArtistImageResponse findLoVForArtistImage(Long id) {
+        var hql = "select new ba.com.zira.sdr.api.artist.ArtistImageResponse(sa.id,sa.name) from ArtistEntity sa where sa.id = :id";
+        TypedQuery<ArtistImageResponse> query = entityManager.createQuery(hql, ArtistImageResponse.class).setParameter("id", id);
+        return query.getSingleResult();
+    }
 }

@@ -76,6 +76,12 @@ public class PersonDAO extends AbstractDAO<PersonEntity, Long> {
         return query.getResultList();
     }
 
+    public List<LoV> getAllPersonsLoVs() {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name,s.surname) from PersonEntity s";
+        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class);
+        return query.getResultList();
+    }
+
     public PersonOverviewResponse getById(Long personId) {
         var hql = "select new ba.com.zira.sdr.api.model.person.PersonOverviewResponse(sp.id, sp.created, sp.createdBy, sp.dateOfBirth, sp.dateOfDeath, sp.gender, sp.information, sp.modified, sp.modifiedBy, sp.name,  sp.surname, sp.outlineText, sc.id, sc.flagAbbriviation) from PersonEntity sp inner join CountryEntity sc on sp.country.id = sc.id "
                 + " where sp.id =:id";
