@@ -283,6 +283,12 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi countryRelationApi() {
         return GroupedOpenApi.builder().group("countryrelation-api").packagesToScan("ba.com.zira.sdr.countryrelation.rest")
+                        .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+     
+    @Bean
+    public GroupedOpenApi releaseApi() {
+        return GroupedOpenApi.builder().group("release-api").packagesToScan("ba.com.zira.sdr.release.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 
