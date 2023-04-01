@@ -10,6 +10,7 @@ import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleSingleOverviewResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 import ba.com.zira.sdr.api.model.battle.BattleTurnUpdateRequest;
 import ba.com.zira.sdr.api.model.battle.PreBattleCreateRequest;
@@ -41,6 +42,8 @@ public interface BattleService {
     PayloadResponse<Battle> getById(EntityRequest<Long> request) throws ApiException;
 
     PayloadResponse<BattleSingleResponse> getLastTurn(EntityRequest<Long> request) throws ApiException;
+
+    PayloadResponse<BattleSingleOverviewResponse> getSingleOverview(EntityRequest<Long> request) throws ApiException;
     PayloadResponse<BattleGenerateResponse> create(EntityRequest<BattleGenerateRequest> request) throws ApiException;
 
     public PayloadResponse<String> preBattleTurn(EntityRequest<PreBattleCreateRequest> request) throws ApiException;

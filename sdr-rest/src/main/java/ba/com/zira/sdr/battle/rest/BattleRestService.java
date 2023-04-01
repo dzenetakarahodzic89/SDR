@@ -21,6 +21,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.BattleService;
 import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleResponse;
+import ba.com.zira.sdr.api.model.battle.BattleSingleOverviewResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 import ba.com.zira.sdr.api.model.battle.BattleTurnUpdateRequest;
 import ba.com.zira.sdr.api.model.battle.PreBattleCreateRequest;
@@ -56,6 +57,13 @@ public class BattleRestService {
     public PayloadResponse<BattleSingleResponse> getById(
             @Parameter(required = true, description = "ID of the battle") @PathVariable final Long id) throws ApiException {
         return battleService.getLastTurn(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Get battle turn")
+    @GetMapping(value = "{id}/overview")
+    public PayloadResponse<BattleSingleOverviewResponse> getOverviewById(
+            @Parameter(required = true, description = "ID of the battle") @PathVariable final Long id) throws ApiException {
+        return battleService.getSingleOverview(new EntityRequest<>(id));
     }
 
     @Operation(summary = "pre-battle check")

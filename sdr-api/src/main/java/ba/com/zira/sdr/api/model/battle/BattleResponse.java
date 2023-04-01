@@ -22,6 +22,10 @@ public class BattleResponse implements Serializable {
     @Schema(description = "Last Turn")
     private Long lastTurn;
 
+    private Long teamSize;
+
+    private Long songSize;
+
     @Schema(description = "Country name")
     private String countryName;
 
