@@ -8,20 +8,20 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
-import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.request.ListRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.CountryRelationService;
 import ba.com.zira.sdr.api.model.countryrelations.CountryRelation;
 import ba.com.zira.sdr.api.model.countryrelations.CountryRelationCreateRequest;
-import ba.com.zira.sdr.api.model.countryrelations.CountryRelationSingleResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.core.mapper.CountryMapper;
 import ba.com.zira.sdr.core.mapper.CountryRelationsMapper;
@@ -139,9 +139,12 @@ public class CountryServiceRelationImpl implements CountryRelationService {
         var countryRelation = countryRelationsDAO.getRelationForCountry(request.getEntity());
         var loVsToReturn = new ArrayList<LoV>();
         try {
-            var countries = n2bObjectMapper.readValue(countryRelation.getCountryRelation(), CountryRelationSingleResponse.class);
-            for (var country : countries.getRelations()) {
-                loVsToReturn.add(new LoV(country.getCountryId(), country.getCountryName() + " (" + country.getTypeOfLink() + ")"));
+            List<CountryRelation> countries = n2bObjectMapper.readValue(countryRelation.getCountryRelation(),
+                    new TypeReference<List<CountryRelation>>() {
+                    });
+            for (var country : countries) {
+                loVsToReturn.add(
+                        new LoV(country.getForeignCountryId(), country.getForeignCountryName() + " (" + country.getTypeOfLink() + ")"));
             }
             return new ListPayloadResponse<>(request, ResponseCode.OK, loVsToReturn);
         } catch (Exception ex) {
