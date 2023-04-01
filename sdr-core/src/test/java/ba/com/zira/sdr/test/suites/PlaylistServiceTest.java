@@ -1,5 +1,10 @@
 package ba.com.zira.sdr.test.suites;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.assertj.core.api.Assertions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -30,6 +30,7 @@ import ba.com.zira.sdr.core.mapper.PlaylistMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.PlaylistRequestValidation;
 import ba.com.zira.sdr.dao.PlaylistDAO;
+import ba.com.zira.sdr.dao.SongPlaylistDAO;
 import ba.com.zira.sdr.dao.model.PlaylistEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
@@ -41,6 +42,7 @@ public class PlaylistServiceTest extends BasicTestConfiguration {
     private PlaylistMapper playlistMapper;
 
     private PlaylistDAO playlistDAO;
+    private SongPlaylistDAO songPlaylistDAO;
     private RequestValidator requestValidator;
     private PlaylistRequestValidation playlistValidation;
     private PlaylistService playlistService;
@@ -48,11 +50,12 @@ public class PlaylistServiceTest extends BasicTestConfiguration {
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
+        this.songPlaylistDAO = Mockito.mock(SongPlaylistDAO.class);
         this.playlistDAO = Mockito.mock(PlaylistDAO.class);
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.playlistValidation = Mockito.mock(PlaylistRequestValidation.class);
         this.lookupService = Mockito.mock(LookupService.class);
-        this.playlistService = new PlaylistServiceImpl(playlistDAO, playlistMapper, playlistValidation, lookupService);
+        this.playlistService = new PlaylistServiceImpl(playlistDAO, playlistMapper, playlistValidation, lookupService, songPlaylistDAO);
     }
 
     @Test(enabled = true)

@@ -5,8 +5,10 @@ import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@RequiredArgsConstructor
 @Schema(description = "Properties of an  Song Playlist response")
 
 public class SongPlaylist implements Serializable {
