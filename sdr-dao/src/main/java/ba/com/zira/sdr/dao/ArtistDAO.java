@@ -10,6 +10,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +26,13 @@ import ba.com.zira.sdr.api.artist.ArtistSingleResponse;
 import ba.com.zira.sdr.api.artist.ArtistSongResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
+import ba.com.zira.sdr.dao.model.ArtistEntity_;
+import ba.com.zira.sdr.dao.model.CountryEntity;
+import ba.com.zira.sdr.dao.model.CountryEntity_;
 import ba.com.zira.sdr.dao.model.PersonArtistEntity;
+import ba.com.zira.sdr.dao.model.PersonArtistEntity_;
+import ba.com.zira.sdr.dao.model.PersonEntity;
+import ba.com.zira.sdr.dao.model.PersonEntity_;
 import ba.com.zira.sdr.dao.model.SongArtistEntity;
 
 @Repository
@@ -95,6 +104,20 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         } catch (NoResultException e) {
             return false;
         }
+    }
+
+    public List<Long> getAllByCountryId(Long countryId) {
+
+        final CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        final Root<ArtistEntity> root = criteriaQuery.from(ArtistEntity.class);
+
+        Join<PersonEntity, CountryEntity> countries = root.join(ArtistEntity_.personArtists).join(PersonArtistEntity_.person)
+                .join(PersonEntity_.country);
+
+        criteriaQuery.where(builder.equal(countries.get(CountryEntity_.id), countryId));
+        criteriaQuery.select(root.get(ArtistEntity_.id)).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+
     }
 
     public Boolean personArtistExist(Long id) {
