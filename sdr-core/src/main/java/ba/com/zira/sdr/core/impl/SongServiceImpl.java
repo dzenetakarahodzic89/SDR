@@ -234,11 +234,4 @@ public class SongServiceImpl implements SongService {
         return new ListPayloadResponse<>(request, ResponseCode.OK, songTitlesArtistNames);
     }
 
-    @Override
-    public PayloadResponse<LoV> findByName(final EntityRequest<String> request) {
-        String song = request.getEntity();
-        LoV songEntity = songDAO.getSongNames(song);
-        return new PayloadResponse<>(request, ResponseCode.OK, songEntity);
-    }
-
 }

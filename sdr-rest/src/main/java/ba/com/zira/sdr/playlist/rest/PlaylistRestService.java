@@ -22,6 +22,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.PlaylistService;
 import ba.com.zira.sdr.api.model.playlist.Playlist;
 import ba.com.zira.sdr.api.model.playlist.PlaylistCreateRequest;
+import ba.com.zira.sdr.api.model.playlist.PlaylistOfUserResponse;
 import ba.com.zira.sdr.api.model.playlist.PlaylistResponse;
 import ba.com.zira.sdr.api.model.playlist.PlaylistSearchRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistUpdateRequest;
@@ -46,7 +47,7 @@ public class PlaylistRestService {
     }
 
     @Operation(summary = "Get playlist")
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/get/{id}")
     public ListPayloadResponse<PlaylistResponse> get(
             @Parameter(required = true, description = "Id of the playlist") @PathVariable final Long id) throws ApiException {
         return playlistService.getAll(new EntityRequest<>(id));
@@ -58,8 +59,11 @@ public class PlaylistRestService {
             @Parameter(required = false, description = "Name of the playlist") @RequestParam(required = false) final String name,
             @Parameter(required = false, description = "Id of a song in the playlist") @RequestParam(required = false) final Long songId,
             @Parameter(required = false, description = "Id of a genre in the playlist") @RequestParam(required = false) final Long genreId,
-            @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy) {
-        return playlistService.searchByNameSongGenre(new EntityRequest<>(new PlaylistSearchRequest(name, songId, genreId, sortBy)));
+            @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy)
+            throws ApiException {
+        return playlistService
+                .searchByNameSongGenre(new EntityRequest<PlaylistSearchRequest>(new PlaylistSearchRequest(name, songId, genreId, sortBy)));
+
     }
 
     @Operation(summary = "Create playlist")
@@ -83,6 +87,14 @@ public class PlaylistRestService {
     public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the playlist") @PathVariable final Long id)
             throws ApiException {
         return playlistService.delete(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Get random playlist of a user")
+    @GetMapping(value = "{userCode}")
+    public ListPayloadResponse<PlaylistOfUserResponse> findPlaylistOfUser(
+            @Parameter(required = true, description = "User code") @PathVariable final String userCode) throws ApiException {
+        return playlistService.findPlaylistOfUser(new EntityRequest<>(userCode));
+
     }
 
 }

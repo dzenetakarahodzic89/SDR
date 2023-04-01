@@ -2,6 +2,7 @@ package ba.com.zira.sdr.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.persistence.Tuple;
@@ -16,6 +17,7 @@ import javax.persistence.criteria.Subquery;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.model.playlist.PlaylistOfUserResponse;
 import ba.com.zira.sdr.api.model.playlist.PlaylistResponse;
 import ba.com.zira.sdr.dao.model.GenreEntity_;
 import ba.com.zira.sdr.dao.model.PlaylistEntity;
@@ -82,8 +84,19 @@ public class PlaylistDAO extends AbstractDAO<PlaylistEntity, Long> {
 
     }
 
+    public Map<Long, List<PlaylistOfUserResponse>> findPlaylistOfUser(String userCode) {
+        var hql = "select new ba.com.zira.sdr.api.model.playlist.PlaylistOfUserResponse(p.id, s.id, s.name, s.playtimeInSeconds,s.spotifyId) "
+                + "from PlaylistEntity p " + "join SongPlaylistEntity sp " + "on sp.playlist.id = p.id " + "join SongEntity s "
+                + "on sp.song.id = s.id " + "where p.userCode = :userCode " + "order by p.id ";
+        TypedQuery<PlaylistOfUserResponse> query = entityManager.createQuery(hql, PlaylistOfUserResponse.class);
+        query.setParameter("userCode", userCode);
+
+        return query.getResultList().stream().collect(Collectors.groupingBy(PlaylistOfUserResponse::getPlaylistId));
+
+    }
+
     public List<PlaylistResponse> getPlaylistInfo(Long id) {
-        var hql = "select new ba.com.zira.sdr.api.model.playlist.PlaylistResponse (s.id, s.name, al.name, ar.name || ' ' || ar.surname, s.playtime, "
+        var hql = "select new ba.com.zira.sdr.api.model.playlist.PlaylistResponse (s.id, s.name, al.name, ar.name || ' ' || ar.surname, s.playtime, s.spotifyId, "
                 + "p.name, p.numberOfPlays, p.numberOfShares, p.outlineText) "
                 + "from PlaylistEntity p join SongPlaylistEntity ssp on p.id=ssp.playlist.id "
                 + "join SongEntity s on ssp.song.id =s.id join SongArtistEntity ssa on s.id =ssa.song.id "

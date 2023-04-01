@@ -12,6 +12,7 @@ import ba.com.zira.sdr.api.model.SampleModelCreateRequest;
 import ba.com.zira.sdr.api.model.SampleModelUpdateRequest;
 import ba.com.zira.sdr.api.model.playlist.Playlist;
 import ba.com.zira.sdr.api.model.playlist.PlaylistCreateRequest;
+import ba.com.zira.sdr.api.model.playlist.PlaylistOfUserResponse;
 import ba.com.zira.sdr.api.model.playlist.PlaylistResponse;
 import ba.com.zira.sdr.api.model.playlist.PlaylistSearchRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistUpdateRequest;
@@ -82,6 +83,8 @@ public interface PlaylistService {
      * @return the paged payload response
      */
     PagedPayloadResponse<Playlist> searchByNameSongGenre(EntityRequest<PlaylistSearchRequest> request);
+
+    ListPayloadResponse<PlaylistOfUserResponse> findPlaylistOfUser(EntityRequest<String> request) throws ApiException;
 
     ListPayloadResponse<PlaylistResponse> getAll(EntityRequest<Long> req) throws ApiException;
 

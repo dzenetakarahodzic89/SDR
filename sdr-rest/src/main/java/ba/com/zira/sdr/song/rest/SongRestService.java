@@ -63,12 +63,6 @@ public class SongRestService {
         return songService.retrieveById(new EntityRequest<>(id));
     }
 
-    @Operation(summary = "Find song by id")
-    @GetMapping(value = "/find-song")
-    public PayloadResponse<LoV> getSongByName(@RequestParam final String songName) throws ApiException {
-        return songService.findByName(new EntityRequest<>(songName));
-    }
-
     @Operation(summary = "Get song ids and names which are not tied to the album specified by parameter albumId")
     @GetMapping(value = "/not-in-album/{albumId}")
     public ListPayloadResponse<LoV> findLabelsNotInAlbum(

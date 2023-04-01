@@ -182,13 +182,6 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
     }
 
-    public LoV getSongNames(final String songName) {
-        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(s.id,s.name) from SongEntity s where lower(s.name) like lower(concat('%', :songName, '%')) ";
-        TypedQuery<LoV> query = entityManager.createQuery(hql, LoV.class).setParameter("songName", songName).setMaxResults(1);
-        return query.getSingleResult();
-
-    }
-
     public List<SongSearchResponse> find(final String songName, final String sortBy, final Long remixId, final Long coverId,
             final List<Long> artistIds, final List<Long> albumIds, final List<Long> genreIds, final int page, final int pageSize) {
         var query = "select distinct new ba.com.zira.sdr.api.model.song.SongSearchResponse(ss.id, ss.name, ss.outlineText, ss.modified) from SongEntity ss left join SongArtistEntity ssa on ss.id = ssa.artist.id  left join AlbumEntity sa on sa.id = ssa.album.id \r\n"

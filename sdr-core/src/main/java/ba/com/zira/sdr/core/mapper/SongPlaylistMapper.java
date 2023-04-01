@@ -32,8 +32,4 @@ public interface SongPlaylistMapper {
 
     List<SongPlaylist> entitiesToDtos(List<SongPlaylistEntity> songPlaylistEntity);
 
-    SongPlaylistEntity dtoToEntityOne(SongPlaylistCreateRequest songPlaylistCreateRequest);
-
-    SongPlaylist entityToDtoOne(SongPlaylistEntity songPlaylistEntity);
-
 }

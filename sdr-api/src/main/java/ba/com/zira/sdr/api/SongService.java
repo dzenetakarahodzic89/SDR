@@ -123,6 +123,4 @@ public interface SongService {
      */
     ListPayloadResponse<LoV> getSongTitlesArtistNames(final EmptyRequest request) throws ApiException;
 
-    PayloadResponse<LoV> findByName(EntityRequest<String> name);
-
 }

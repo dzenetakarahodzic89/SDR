@@ -31,19 +31,20 @@ public class PlaylistResponse implements Serializable {
     @Schema(description = "Number of shares")
     private Long numberOfShares;
 
-    @Schema(description = "Song audio")
-    private String songAudioUrl;
     @Schema(description = "Playtime of the song")
     private String playtime;
     private String outlineText;
 
-    public PlaylistResponse(Long songId, String songName, String albumName, String artistName, String playtime, String playlistName,
-            Long numberOfPlays, Long numberOfShares, String outlineText) {
+    private String spotifyId;
+
+    public PlaylistResponse(Long songId, String songName, String albumName, String artistName, String playtime, String spotifyId,
+            String playlistName, Long numberOfPlays, Long numberOfShares, String outlineText) {
         this.songId = songId;
         this.songName = songName;
         this.albumName = albumName;
         this.artistName = artistName;
         this.playtime = playtime;
+        this.spotifyId = spotifyId;
         this.playlistName = playlistName;
         this.numberOfPlays = numberOfPlays;
         this.numberOfShares = numberOfShares;
