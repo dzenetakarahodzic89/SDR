@@ -345,7 +345,7 @@ public class BattleServiceImpl implements BattleService {
                 newTeamStructure.setCountryName(countryName.getName());
                 newTeamStructure.setNumberOfWins(0L);
                 newTeamStructure.setNumberOfLoses(0L);
-                newTeamStructure.setLastActiveTurn(0L);
+                newTeamStructure.setLastActiveTurn(1L);
                 List<Long> eligibleCountryId = new ArrayList<>();
                 eligibleCountryId.add(countryId);
 
@@ -385,7 +385,7 @@ public class BattleServiceImpl implements BattleService {
 
         teamStructure.setNumberOfWins(0L);
         teamStructure.setNumberOfLoses(0L);
-        teamStructure.setLastActiveTurn(0L);
+        teamStructure.setLastActiveTurn(1L);
         teamStructure.setEligibleCountryIds(battleGenerateRequest.getCountries());
 
         List<TeamStructure> inactiveNpcTeams = new ArrayList<>();
@@ -403,7 +403,7 @@ public class BattleServiceImpl implements BattleService {
         battleTurnEntity.setCreatedBy(battleEntity.getCreatedBy());
         battleTurnEntity.setStatus(battleEntity.getStatus());
         battleTurnEntity.setBattle(battleEntity);
-        battleTurnEntity.setTurnNumber(0L);
+        battleTurnEntity.setTurnNumber(1L);
         battleTurnEntity.setMapState(mapStateJson);
         battleTurnEntity.setTurnCombatState(turnCombatStateJson);
         battleTurnEntity.setTeamState(teamStateJson);
