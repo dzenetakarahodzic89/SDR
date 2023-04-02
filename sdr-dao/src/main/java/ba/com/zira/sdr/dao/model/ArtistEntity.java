@@ -60,6 +60,9 @@ public class ArtistEntity implements Serializable {
     @Column(name = "modified_by")
     private String modifiedBy;
 
+    @Column(name = "full_name")
+    private String fullName;
+
     @Column(name = "name")
     private String name;
 
@@ -88,11 +91,11 @@ public class ArtistEntity implements Serializable {
     private Long deezerFans;
 
     // bi-directional many-to-one association to PersonArtistEntity
-    @OneToMany(mappedBy = "artist")
+    @OneToMany(mappedBy = "artist", orphanRemoval = true)
     private List<PersonArtistEntity> personArtists;
 
     // bi-directional many-to-one association to SongArtistEntity
-    @OneToMany(mappedBy = "artist")
+    @OneToMany(mappedBy = "artist", orphanRemoval = true)
     private List<SongArtistEntity> songArtists;
 
 }

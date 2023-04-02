@@ -103,8 +103,7 @@ public class NoteSheetServiceImpl implements NoteSheetService {
         noteSheetEntity.setStatus(Status.ACTIVE.value());
         noteSheetEntity.setCreated(LocalDateTime.now());
         noteSheetEntity.setCreatedBy(request.getUserId());
-        noteSheetEntity.setModified(LocalDateTime.now());
-        noteSheetEntity.setModifiedBy(request.getUserId());
+        noteSheetEntity.setNotationType("Standard");
         noteSheetEntity.setSheetContent(sheetContent);
 
         notesheetDAO.persist(noteSheetEntity);
@@ -116,13 +115,13 @@ public class NoteSheetServiceImpl implements NoteSheetService {
     public PayloadResponse<NoteSheet> update(final EntityRequest<NoteSheetUpdateRequest> request) {
         notesheetRequestValidation.validateUpdateNoteSheetRequest(request);
 
-        var NoteSheetEntity = notesheetDAO.findByPK(request.getEntity().getId());
-        notesheetMapper.updateEntity(request.getEntity(), NoteSheetEntity);
-
-        NoteSheetEntity.setModified(LocalDateTime.now());
-        NoteSheetEntity.setModifiedBy(request.getUserId());
-        notesheetDAO.merge(NoteSheetEntity);
-        return new PayloadResponse<>(request, ResponseCode.OK, notesheetMapper.entityToDto(NoteSheetEntity));
+        var noteSheetEntity = notesheetDAO.findByPK(request.getEntity().getId());
+        notesheetMapper.updateEntity(request.getEntity(), noteSheetEntity);
+        noteSheetEntity.setNotationType("Standard");
+        noteSheetEntity.setModified(LocalDateTime.now());
+        noteSheetEntity.setModifiedBy(request.getUserId());
+        notesheetDAO.merge(noteSheetEntity);
+        return new PayloadResponse<>(request, ResponseCode.OK, notesheetMapper.entityToDto(noteSheetEntity));
     }
 
     @Override

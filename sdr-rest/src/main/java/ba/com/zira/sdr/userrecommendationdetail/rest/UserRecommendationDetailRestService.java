@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.UserRecommendationDetailService;
+import ba.com.zira.sdr.api.model.userrecommendationdetail.ResponseUserRecommendedDetailSongs;
 import ba.com.zira.sdr.api.model.userrecommendationdetail.UserRecommendationDetailCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendationdetail.UserRecommendationDetailResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,5 +58,15 @@ public class UserRecommendationDetailRestService {
         entityRequest.setEntity(id);
         return userRecommendationDetailService.delete(entityRequest);
     }
+
+
+    @Operation(summary = "Get the ten top rated songs")
+    @GetMapping(value = "/userRecommended-songs")
+    public ListPayloadResponse<ResponseUserRecommendedDetailSongs> getTopTenRecommendedSongs() throws ApiException {
+        var req = new EmptyRequest();
+        return userRecommendationDetailService.getTopTenRecommendedSongs(req);
+
+    }
+
 
 }

@@ -22,6 +22,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.PersonService;
 import ba.com.zira.sdr.api.model.lov.LoV;
+import ba.com.zira.sdr.api.model.person.PersonCountResponse;
 import ba.com.zira.sdr.api.model.person.PersonCountryRequest;
 import ba.com.zira.sdr.api.model.person.PersonCreateRequest;
 import ba.com.zira.sdr.api.model.person.PersonOverviewResponse;
@@ -100,10 +101,24 @@ public class PersonRestService {
         return personService.getPersonLoVs(req);
     }
 
+    @Operation(summary = "Get all Person - LoV")
+    @GetMapping(value = "/lovs")
+    public ListPayloadResponse<LoV> getPersonLoV() throws ApiException {
+        var req = new EmptyRequest();
+        return personService.getPersonLoV(req);
+    }
+
     @Operation(summary = "Person search")
     @PostMapping(value = "/search")
     public ListPayloadResponse<PersonSearchResponse> find(@RequestBody final PersonSearchRequest request) throws ApiException {
         return personService.search(new EntityRequest<>(request));
+    }
+
+    @Operation(summary = "Get all Person - Country")
+    @GetMapping(value = "/person-statistics")
+    public PayloadResponse<PersonCountResponse> getPersonsByCountry() throws ApiException {
+        var req = new EmptyRequest();
+        return personService.getPersonsByCountry(req);
     }
 
 }

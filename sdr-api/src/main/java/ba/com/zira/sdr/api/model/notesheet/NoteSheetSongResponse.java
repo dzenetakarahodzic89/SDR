@@ -31,7 +31,7 @@ public class NoteSheetSongResponse implements Serializable {
     private NoteSheetContentResponse sheetContent;
     private ArtistSheetResponse artists;
     private String audioUrl;
-    private String ImageUrl;
+    private String imageUrl;
 
     public NoteSheetSongResponse(Long id, String instrument, Long instrumentId, LocalDateTime dateOfRelease, Long songId, String songName,
             String sheetContent) {

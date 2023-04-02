@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.JsonSyntaxException;
 
@@ -54,11 +53,10 @@ public class MusicMatchServiceImpl implements MusicMatchService {
     @Scheduled(cron = "0 0 * * * *")
     public void createLyricsScheduled() throws MusixMatchException {
         var request = new EmptyRequest();
-        var response = insertLyric(request);
+        insertLyric(request);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<String> insertLyric(EmptyRequest request) throws MusixMatchException {
         List<SongEntity> songList = songDAO.getSongsForMusicMatch();
         int counter = 0;
@@ -97,20 +95,20 @@ public class MusicMatchServiceImpl implements MusicMatchService {
                 counter++;
 
             } catch (MusixMatchException e) {
-                LOGGER.error(song.getName() + " <-- This song doesn't exist in MusicMatch db");
+                LOGGER.error("{} <-- This song doesn't exist in MusicMatch db", song.getName());
                 SongEntity songEntity = songDAO.findByPK(song.getId());
                 songEntity.setMusicMatchStatus(MusicMatchStatus.NOTFOUND.getValue());
                 songDAO.merge(songEntity);
 
             } catch (JsonSyntaxException e) {
-                LOGGER.error("Error processing JSON response for " + song.getName() + ": " + e.getMessage());
+                LOGGER.error("Error processing JSON response for {}: {}", song.getName(), e.getMessage());
                 SongEntity songEntity = songDAO.findByPK(song.getId());
                 songEntity.setMusicMatchStatus(MusicMatchStatus.FORMATNOTSUPPORTED.getValue());
                 songDAO.merge(songEntity);
-                continue;
             }
         }
-        LOGGER.info("Successfull inserted lyric for " + counter + " Songs");
+        LOGGER.info("Successfully inserted lyric for {} Songs", counter);
+
         return new PayloadResponse<>(request, ResponseCode.OK, "Successfull inserted lyric for " + counter + " Songs");
     }
 }

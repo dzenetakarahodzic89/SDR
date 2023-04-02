@@ -208,9 +208,10 @@ public class SongServiceImpl implements SongService {
     public ListPayloadResponse<SongSearchResponse> find(final EntityRequest<SongSearchRequest> request) {
 
         List<SongSearchResponse> songs = songDAO.find(request.getEntity().getName(), request.getEntity().getSortBy(),
-                request.getEntity().getRemixId(), request.getEntity().getCoverId(), request.getEntity().getAlbumIds(),
-                request.getEntity().getGenreIds(), request.getEntity().getArtistIds(), request.getEntity().getPage(),
-                request.getEntity().getPageSize());
+                request.getEntity().getRemixId(), request.getEntity().getCoverId(), request.getEntity().getArtistIds(),
+                request.getEntity().getAlbumIds(), request.getEntity().getGenreIds(),
+                request.getEntity().getPage() != null ? request.getEntity().getPage() : 1,
+                request.getEntity().getPageSize() != null ? request.getEntity().getPageSize() : 10);
 
         lookupService.lookupCoverImage(songs, SongSearchResponse::getId, ObjectType.SONG.getValue(), SongSearchResponse::setImageUrl,
                 SongSearchResponse::getImageUrl);

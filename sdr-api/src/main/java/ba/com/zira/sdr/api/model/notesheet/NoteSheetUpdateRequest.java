@@ -3,7 +3,6 @@ package ba.com.zira.sdr.api.model.notesheet;
 import java.io.Serializable;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -19,11 +18,9 @@ public class NoteSheetUpdateRequest implements Serializable {
     @Min(1)
     @Schema(description = "Unique identifier of the notesheet")
     private Long id;
-    @NotBlank
+
     @Schema(description = "Content of notesheet")
     private NoteSheetContentResponse sheetContent;
-    @Schema(description = "Id of the object")
-    private String notationType;
     @Schema(description = " Id of the instrument")
     private Long instrumentId;
     @Schema(description = " Id of the song")

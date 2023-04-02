@@ -1,9 +1,5 @@
 package ba.com.zira.sdr.album.rest;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +11,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.request.ListRequest;
 import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -32,8 +33,10 @@ import ba.com.zira.sdr.api.model.album.AlbumSearchResponse;
 import ba.com.zira.sdr.api.model.album.AlbumSongResponse;
 import ba.com.zira.sdr.api.model.album.AlbumUpdateRequest;
 import ba.com.zira.sdr.api.model.album.AlbumsByDecadeResponse;
+import ba.com.zira.sdr.api.model.album.AlbumsSongByDecade;
 import ba.com.zira.sdr.api.model.album.SongOfAlbum;
 import ba.com.zira.sdr.api.model.album.SongOfAlbumUpdateRequest;
+import ba.com.zira.sdr.api.model.album.SongsAlbumResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -65,6 +68,12 @@ public class AlbumRestService {
         return albumService.update(new EntityRequest<>(album));
     }
 
+    @Operation(summary = "Update song")
+    @PutMapping(value = "{id}/copy-album-cover-image")
+    public PayloadResponse<String> copyAlbumImageToSongs(@PathVariable final Long id) throws ApiException {
+        return albumService.copyAlbumImageToSongs(new EntityRequest<>(id));
+    }
+
     @Operation(summary = "Delete album")
     @DeleteMapping(value = "{id}")
     public PayloadResponse<String> delete(@Parameter(required = true, description = "ID of the album") @PathVariable final Long id)
@@ -86,9 +95,8 @@ public class AlbumRestService {
             @RequestParam(required = false) String name, final QueryConditionPage queryCriteria
 
     ) throws ApiException {
-        // Map<String, Object> filterCriteria = new HashMap<>();
-        return albumService.search(
-                new SearchRequest<>(new AlbumSearchRequest(eras, genres, artists, name), new HashMap<String, Object>(), queryCriteria));
+        return albumService
+                .search(new SearchRequest<>(new AlbumSearchRequest(eras, genres, artists, name), new HashMap<>(), queryCriteria));
     }
 
     @Operation(summary = "Get all songs from album")
@@ -98,10 +106,10 @@ public class AlbumRestService {
         return albumService.findAllSongsForAlbum(new EntityRequest<>(id));
     }
 
-    @Operation(summary = "albums by artis")
+    @Operation(summary = "albums by artist")
     @GetMapping("/artist/{id}/albums")
-    public ListPayloadResponse<AlbumsByDecadeResponse> getAlbumsByArtistId(@RequestParam Long atistId) throws ApiException {
-        var req = new EntityRequest<>(atistId);
+    public ListPayloadResponse<AlbumsByDecadeResponse> getAlbumsByArtistId(@PathVariable Long id) throws ApiException {
+        var req = new EntityRequest<>(id);
         return albumService.findAllAlbumsForArtist(req);
     }
 
@@ -117,6 +125,21 @@ public class AlbumRestService {
     public PayloadResponse<SongOfAlbum> addSongToAlbum(@RequestBody final SongOfAlbumUpdateRequest request) throws ApiException {
 
         return albumService.addSongToAlbum(new EntityRequest<>(request));
+    }
+
+    @Operation(summary = "albums song by artist")
+    @GetMapping("/artist/{id}")
+    public ListPayloadResponse<AlbumsSongByDecade> getAllAlbumsSongForArtist(@PathVariable Long id) throws ApiException {
+        var req = new EntityRequest<>(id);
+
+        return albumService.findAllAlbumsSongForArtist(req);
+    }
+
+    @Operation(summary = "Get album songs")
+    @GetMapping(value = "album/get-decade-information")
+    public ListPayloadResponse<SongsAlbumResponse> findAllSongsWithPlaytimeForAlbum(
+            @Parameter(required = true, description = "ID of the albums") @RequestParam final List<Long> albumIds) throws ApiException {
+        return albumService.findAllSongsWithPlaytimeForAlbum(new ListRequest<>(albumIds));
     }
 
     @Operation(summary = "Album LoVs")

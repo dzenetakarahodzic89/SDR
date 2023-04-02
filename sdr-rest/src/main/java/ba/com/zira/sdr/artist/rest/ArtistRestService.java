@@ -25,6 +25,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.ArtistService;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
+import ba.com.zira.sdr.api.artist.ArtistImageResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
 import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
@@ -77,6 +78,13 @@ public class ArtistRestService {
         return artistService.delete(new EntityRequest<>(id));
     }
 
+    @Operation(summary = "Copy images to persons")
+    @PostMapping(value = "{id}/copy-images-to-persons")
+    public PayloadResponse<String> copy(@Parameter(required = true, description = "Id of the artist") @PathVariable final Long id)
+            throws ApiException {
+        return artistService.copyImageToPersons(new EntityRequest<>(id));
+    }
+
     @Operation(summary = "Update Artist")
     @PutMapping(value = "{id}")
     public PayloadResponse<ArtistResponse> edit(@Parameter(required = true, description = "ID of the artist") @PathVariable final Long id,
@@ -124,6 +132,13 @@ public class ArtistRestService {
     public ListPayloadResponse<ArtistSearchResponse> getRandomArtistsForSearch() throws ApiException {
         var req = new EmptyRequest();
         return artistService.getRandomArtistsForSearch(req);
+    }
+
+    @Operation(summary = "Get artists imageUrl with name")
+    @GetMapping("/get-picture/{id}")
+    public PayloadResponse<ArtistImageResponse> getPictureOfArtist(
+            @Parameter(required = true, description = "ID of the artist") @PathVariable final Long id) throws ApiException {
+        return artistService.findPictureOfArtist(new EntityRequest<>(id));
     }
 
 }

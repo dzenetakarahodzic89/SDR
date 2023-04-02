@@ -12,7 +12,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -35,7 +34,8 @@ public class UserRecommendationDetailEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name = "SAT_USER_RECOMMENDATION_DETAIL_ID_GENERATOR", sequenceName = "SAT_USER_RECOMMENDATION_DETAIL_SEQ")
+    @SequenceGenerator(name = "SAT_USER_RECOMMENDATION_DETAIL_ID_GENERATOR", sequenceName = "SAT_USER_RECOMMENDATION_DETAIL_SEQ",
+            allocationSize = 50)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAT_USER_RECOMMENDATION_DETAIL_ID_GENERATOR")
     @Column(name = "id")
     private Long id;
@@ -53,7 +53,7 @@ public class UserRecommendationDetailEntity implements Serializable {
     private String status;
 
     @Column(name = "user_score")
-    private BigDecimal userScore;
+    private Double userScore;
 
     // bi-directional many-to-one association to UserRecommendationEntity
     @ManyToOne
