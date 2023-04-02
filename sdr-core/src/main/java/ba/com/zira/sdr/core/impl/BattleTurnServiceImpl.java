@@ -18,17 +18,23 @@ import ba.com.zira.sdr.api.model.battle.ActivePlayerTeamUpdateRequest;
 import ba.com.zira.sdr.api.model.battle.EligibleArtistsInformation;
 import ba.com.zira.sdr.api.model.battle.TeamInformation;
 import ba.com.zira.sdr.api.model.battle.TeamsState;
+import ba.com.zira.sdr.api.model.battle.TurnCombatState;
 import ba.com.zira.sdr.dao.BattleTurnDAO;
 import ba.com.zira.sdr.dao.CountryDAO;
 import ba.com.zira.sdr.dao.SongDAO;
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BattleTurnServiceImpl implements BattleTurnService {
+    @NonNull
     BattleTurnDAO battleTurnDAO;
+    @NonNull
     SongDAO songDAO;
+    @NonNull
     CountryDAO countryDAO;
+    private N2bObjectMapper objectMapper = new N2bObjectMapper();
 
     @Override
     public PayloadResponse<TeamInformation> getPlayingTeamByBattleId(EntityRequest<Long> request) throws ApiException {
@@ -76,5 +82,18 @@ public class BattleTurnServiceImpl implements BattleTurnService {
             return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID,
                     "Error updating player team of battle with " + request.getEntity().getBattleId());
         }
+    }
+
+    @Override
+    public PayloadResponse<TurnCombatState> getBattleLogs(EntityRequest<Long> request) throws ApiException {
+        var found = battleTurnDAO.findByPK(request.getEntity()).getTurnCombatState();
+        TurnCombatState result = null;
+        try {
+            result = objectMapper.readValue(found, TurnCombatState.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new PayloadResponse<>(request, ResponseCode.REQUEST_INVALID, null);
+        }
+        return new PayloadResponse<>(request, ResponseCode.OK, result);
     }
 }

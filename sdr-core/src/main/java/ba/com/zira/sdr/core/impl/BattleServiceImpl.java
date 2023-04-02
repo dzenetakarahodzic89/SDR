@@ -446,6 +446,7 @@ public class BattleServiceImpl implements BattleService {
                     Long prevKey = combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
                     combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1,
                             "Country " + move.getAttackedName() + " is passive, " + move.getAttackerName() + " has taken over!");
+
                     teamState.getActivePlayerTeam().setNumberOfWins(teamState.getActivePlayerTeam().getNumberOfWins() + 1);
                     teamState.getActivePlayerTeam().setLastActiveTurn(teamState.getActivePlayerTeam().getLastActiveTurn() + 1);
                     teamState.getActivePlayerTeam().getEligibleCountryIds().add(move.getAttackedId());
@@ -472,6 +473,7 @@ public class BattleServiceImpl implements BattleService {
             combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1,
                     "Country " + move.getAttackerName() + " is starting to attack " + move.getAttackedName());
             combatState.getBattleLogs().get(0).getTurnHistory().add(new BattleLogEntry());
+
             try {
                 newRequest.setMapState(objectMapper.writeValueAsString(mapState));
                 newRequest.setTeamState(objectMapper.writeValueAsString(teamState));
@@ -488,6 +490,7 @@ public class BattleServiceImpl implements BattleService {
     @Override
     public PayloadResponse<String> attackBattle(EntityRequest<BattleTurnUpdateRequest> request) throws ApiException {
         var inProgressTurn = battleTurnDAO.findByPK(request.getEntity().getBattleTurnId());
+
         var requestEntity = request.getEntity();
         var loggedUser = request.getUser().getUserId();
         MapState mapState = null;
@@ -509,7 +512,15 @@ public class BattleServiceImpl implements BattleService {
         prevKey += 1;
         for (var explanation : requestEntity.getSongBattleExplained()) {
             combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1, explanation + " decided by " + loggedUser);
+
             prevKey += 1;
+        }
+        var battleResult = new BattleLogBattleResult();
+        Long prevKeyResult = combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
+        battleResult.setId(prevKeyResult + 1);
+        battleResult.setTurnNumber(inProgressTurn.getTurnNumber() + 1);
+        for (var songBattle : requestEntity.getSongBattles()) {
+            songBattle.setBattleResultId(battleResult.getId());
         }
         combatState.getBattleLogs().get(0).getTurnHistory().addAll(requestEntity.getSongBattles());
         var foundNpcTeamIndex = 0;
@@ -527,7 +538,12 @@ public class BattleServiceImpl implements BattleService {
             teamState.getActivePlayerTeam().getEligibleCountryIds().add(requestEntity.getAttackedCountryId());
             TeamStructure wonAgainsTeam = teamState.getActiveNpcTeams().get(foundNpcTeamIndex);
             teamState.getInactiveNpcTeams().add(wonAgainsTeam);
+            battleResult.setWinnerTeamId(teamState.getActivePlayerTeam().getId());
+            battleResult.setWinnerEligibleCountryIds(teamState.getActivePlayerTeam().getEligibleCountryIds());
+            battleResult.setLoserTeamId(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getId());
+            battleResult.setLoserEligibleCountryIds(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds());
             teamState.getActiveNpcTeams().remove(foundNpcTeamIndex);
+
             Integer npcCountryIndex = null;
             for (var i = 0; i < mapState.getCountries().size(); i++) {
                 if (mapState.getCountries().get(i).getCountryId().equals(requestEntity.getAttackedCountryId())) {
@@ -538,15 +554,19 @@ public class BattleServiceImpl implements BattleService {
             mapState.getCountries().get(npcCountryIndex).setTeamOwnershipId(1L);
             mapState.getCountries().get(npcCountryIndex).setMapValue((double) 1);
             returnString = "Country " + request.getEntity().getAttackerName() + " has won over " + request.getEntity().getAttackedName();
-
         } else if (requestEntity.getWonCase().equalsIgnoreCase("NPC")) {
             teamState.getActivePlayerTeam().setNumberOfLoses(teamState.getActivePlayerTeam().getNumberOfLoses() + 1);
             teamState.getActiveNpcTeams().get(foundNpcTeamIndex)
                     .setNumberOfWins(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getNumberOfWins() + 1);
             teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds().add(requestEntity.getAttackerCountryId());
-            returnString = "Country " + request.getEntity().getAttackedName() + " has won over " + request.getEntity().getAttackerName();
-        }
 
+            returnString = "Country " + request.getEntity().getAttackedName() + " has won over " + request.getEntity().getAttackerName();
+            battleResult.setWinnerTeamId(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getId());
+            battleResult.setWinnerEligibleCountryIds(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds());
+            battleResult.setLoserTeamId(teamState.getActivePlayerTeam().getId());
+            battleResult.setLoserEligibleCountryIds(teamState.getActivePlayerTeam().getEligibleCountryIds());
+        }
+        combatState.getBattleLogs().get(0).getBattleResults().add(battleResult);
         inProgressTurn.setStatus("Finished");
         try {
             inProgressTurn.setTeamState(objectMapper.writeValueAsString(teamState));

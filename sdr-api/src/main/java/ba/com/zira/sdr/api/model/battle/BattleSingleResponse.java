@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import lombok.AllArgsConstructor;
@@ -31,15 +30,17 @@ public class BattleSingleResponse implements Serializable {
     private MapState mapState;
 
     private TeamsState teamState;
+    private Long battleTurnId;
 
-    public BattleSingleResponse(Long id, String name, Long turn, String mapStateJson, String teamStateJson, String turnCombatJSON)
-            throws JsonMappingException, JsonProcessingException {
+    public BattleSingleResponse(Long id, String name, Long turn, String mapStateJson, String teamStateJson, String turnCombatJSON,
+            Long battleturnId) throws JsonProcessingException {
         this.id = id;
         this.name = name;
         this.turn = turn;
         this.mapStateJson = mapStateJson;
         this.teamStateJson = teamStateJson;
         this.turnCombatStateJson = turnCombatJSON;
+        this.battleTurnId = battleturnId;
 
         var mapper = new N2bObjectMapper();
 

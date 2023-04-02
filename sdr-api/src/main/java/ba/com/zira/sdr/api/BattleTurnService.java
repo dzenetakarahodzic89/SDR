@@ -8,6 +8,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.battle.ActivePlayerTeamUpdateRequest;
 import ba.com.zira.sdr.api.model.battle.EligibleArtistsInformation;
 import ba.com.zira.sdr.api.model.battle.TeamInformation;
+import ba.com.zira.sdr.api.model.battle.TurnCombatState;
 
 public interface BattleTurnService {
 
@@ -36,4 +37,5 @@ public interface BattleTurnService {
 
     public PayloadResponse<String> updateTeam(EntityRequest<ActivePlayerTeamUpdateRequest> request) throws ApiException;
 
+    public PayloadResponse<TurnCombatState> getBattleLogs(EntityRequest<Long> request) throws ApiException;
 }
