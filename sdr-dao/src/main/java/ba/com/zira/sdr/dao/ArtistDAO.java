@@ -248,4 +248,16 @@ public class ArtistDAO extends AbstractDAO<ArtistEntity, Long> {
         return query.getSingleResult();
     }
 
+    public Long countAllSpotifyFields() {
+        var hql = "select count(*) from ArtistEntity a where a.spotifyId is not null";
+        TypedQuery<Long> query = entityManager.createQuery(hql, Long.class);
+        return query.getSingleResult();
+    }
+
+    public LocalDateTime getLastModifiedSpotifyField() {
+        var hql = "select a.modified from ArtistEntity a where a.spotifyId is not null and a.modified is not null order by a.modified desc";
+        TypedQuery<LocalDateTime> query = entityManager.createQuery(hql, LocalDateTime.class).setMaxResults(1);
+        return query.getSingleResult();
+    }
+
 }
