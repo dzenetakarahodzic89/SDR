@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.label.rest;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
@@ -26,6 +29,7 @@ import ba.com.zira.sdr.api.model.label.LabelArtistResponse;
 import ba.com.zira.sdr.api.model.label.LabelCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelResponse;
 import ba.com.zira.sdr.api.model.label.LabelSearchRequest;
+import ba.com.zira.sdr.api.model.label.LabelSearchResponse;
 import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,13 +46,13 @@ public class LabelRestService {
     @Autowired
     private LabelService labelService;
 
-    @Operation(summary = "Find Labels based on custom filter")
+    @Operation(summary = "Search labels")
     @GetMapping(value = "search")
-    public PagedPayloadResponse<LabelResponse> findByNameFounder(
-            @Parameter(required = false, description = "Name of the label") @RequestParam(required = false) final String name,
-            @Parameter(required = false, description = "Id of a founder of the label") @RequestParam(required = false) final Long founder,
-            @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy) {
-        return labelService.searchLabelsByNameFounder(new EntityRequest<>(new LabelSearchRequest(name, founder, sortBy)));
+    public PagedPayloadResponse<LabelSearchResponse> searchLabel(@RequestParam(required = false) List<Long> founders,
+            @RequestParam(required = false) String name, final QueryConditionPage queryCriteria
+
+    ) throws ApiException {
+        return labelService.search(new SearchRequest<>(new LabelSearchRequest(founders, name), new HashMap<>(), queryCriteria));
     }
 
     @Operation(summary = "Find labels base on filter criteria")

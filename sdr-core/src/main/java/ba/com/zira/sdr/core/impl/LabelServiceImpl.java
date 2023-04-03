@@ -11,6 +11,7 @@ import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.request.SearchRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
@@ -25,6 +26,7 @@ import ba.com.zira.sdr.api.model.label.LabelArtistResponse;
 import ba.com.zira.sdr.api.model.label.LabelCreateRequest;
 import ba.com.zira.sdr.api.model.label.LabelResponse;
 import ba.com.zira.sdr.api.model.label.LabelSearchRequest;
+import ba.com.zira.sdr.api.model.label.LabelSearchResponse;
 import ba.com.zira.sdr.api.model.label.LabelUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.api.model.media.MediaCreateRequest;
@@ -62,20 +64,36 @@ public class LabelServiceImpl implements LabelService {
         this.labelReqVal = labelReqVal;
     }
 
+
     @Override
+    public PagedPayloadResponse<LabelSearchResponse> search(SearchRequest<LabelSearchRequest> request) {
+
+        PagedData<LabelSearchResponse> resultEntities = labelDAO.findLabelsByNameFounder(request);
+
+        lookupservice.lookupCoverImage(resultEntities.getRecords(), LabelSearchResponse::getId, ObjectType.LABEL.getValue(),
+                LabelSearchResponse::setImageUrl, LabelSearchResponse::getImageUrl);
+        return new PagedPayloadResponse<>(request, ResponseCode.OK, resultEntities);
+    }
+    /*@Override
     public PagedPayloadResponse<LabelResponse> searchLabelsByNameFounder(final EntityRequest<LabelSearchRequest> request) {
 
         PagedData<LabelEntity> labelEntities = new PagedData<>();
         var data = labelDAO.findLabelsByNameFounder(request.getEntity().getName(), request.getEntity().getFounder(),
                 request.getEntity().getSortBy());
+        if (request.getEntity().getFounder() != null) {
+            data = data.stream().filter(p->p.getFounder().getId().equals(request.getEntity().getFounder())).collect(Collectors.toList());
+        }
 
         labelEntities.setRecords(data);
         PagedData<LabelResponse> response = new PagedData<>();
-
         response.setRecords(labelMapper.entitiesToDtos(labelEntities.getRecords()));
 
+        lookupservice.lookupCoverImage(response.getRecords(), LabelResponse::getId, ObjectType.LABEL.getValue(),
+                LabelResponse::setImageUrl, LabelResponse::getImageUrl);
+
         return new PagedPayloadResponse<>(request, ResponseCode.OK, response);
-    }
+    }*/
+
 
     @Override
     public PagedPayloadResponse<LabelResponse> find(final FilterRequest request) {
@@ -172,6 +190,8 @@ public class LabelServiceImpl implements LabelService {
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, labels);
     }
+
+
 
 
 
