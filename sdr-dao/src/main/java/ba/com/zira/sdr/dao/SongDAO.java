@@ -36,6 +36,7 @@ import ba.com.zira.sdr.api.model.song.SongInstrumentResponse;
 import ba.com.zira.sdr.api.model.song.SongPersonResponse;
 import ba.com.zira.sdr.api.model.song.SongSearchResponse;
 import ba.com.zira.sdr.api.model.song.SongSingleResponse;
+import ba.com.zira.sdr.api.model.spotifyintegration.SpotifyIntegrationTypesData;
 import ba.com.zira.sdr.dao.model.AlbumEntity;
 import ba.com.zira.sdr.dao.model.AlbumEntity_;
 import ba.com.zira.sdr.dao.model.ArtistEntity;
@@ -371,6 +372,31 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
                 .where(artists.get(ArtistEntity_.id).in(artistIds)).orderBy(builder.asc(root.get("name")));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
+    public Long countAllSpotifyFields() {
+        var hql = "select count(*) from SongEntity s where s.spotifyId is not null";
+        TypedQuery<Long> query = entityManager.createQuery(hql, Long.class);
+        return query.getSingleResult();
+    }
+
+    public LocalDateTime getLastModifiedSpotifyField() {
+        var hql = "select s.modified from SongEntity s where s.spotifyId is not null and s.modified is not null order by s.modified desc";
+        TypedQuery<LocalDateTime> query = entityManager.createQuery(hql, LocalDateTime.class).setMaxResults(1);
+        return query.getSingleResult();
+    }
+
+    public List<SpotifyIntegrationTypesData> getLastUpdatedSpotifyFields() {
+        var hql = "select distinct new ba.com.zira.sdr.api.model.spotifyintegration.SpotifyIntegrationTypesData"
+                + "(case when (s.modified > a.modified and s.modified > al.modified) then 'SONG' when (a.modified > al.modified) then 'ARTIST' else 'ALBUM' end , "
+                + "case when (s.modified > a.modified and s.modified > al.modified) then s.modified when (a.modified > al.modified) then a.modified else al.modified end as modification, "
+                + "case when (s.modified > a.modified and s.modified > al.modified) then s.name when (a.modified > al.modified) then a.name else al.name end , "
+                + "case when (s.modified > a.modified and s.modified > al.modified) then s.spotifyId  when (a.modified > al.modified) then a.spotifyId else al.spotifyId end) "
+                + "from SongEntity s join SongArtistEntity sa on s.id = sa.song.id join ArtistEntity a on sa.artist.id = a.id join AlbumEntity al on sa.album.id = al.id "
+                + "where (s.modified is not null and a.modified is not null and al.modified is not null and "
+                + "s.spotifyId is not null and a.spotifyId is not null and al.spotifyId is not null) order by modification desc";
+        TypedQuery<SpotifyIntegrationTypesData> query = entityManager.createQuery(hql, SpotifyIntegrationTypesData.class).setMaxResults(10);
+        return query.getResultList();
     }
 
 }
