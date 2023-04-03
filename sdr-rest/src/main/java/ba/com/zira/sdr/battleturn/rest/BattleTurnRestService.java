@@ -18,6 +18,7 @@ import ba.com.zira.sdr.api.model.battle.ActivePlayerTeamUpdateRequest;
 import ba.com.zira.sdr.api.model.battle.EligibleArtistsInformation;
 import ba.com.zira.sdr.api.model.battle.TeamInformation;
 import ba.com.zira.sdr.api.model.battle.TeamStructure;
+import ba.com.zira.sdr.api.model.battle.TurnCombatState;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,4 +53,10 @@ public class BattleTurnRestService {
         return battleTurnService.updateTeam(request);
     }
 
+    @Operation(summary = "Get battle logs for turn")
+    @GetMapping(value = "/get-log/{turnId}")
+    public PayloadResponse<TurnCombatState> getBattleLogsForTurn(
+            @Parameter(required = true, description = "Turn id") @PathVariable Long turnId) throws ApiException {
+        return battleTurnService.getBattleLogs(new EntityRequest<>(turnId));
+    }
 }

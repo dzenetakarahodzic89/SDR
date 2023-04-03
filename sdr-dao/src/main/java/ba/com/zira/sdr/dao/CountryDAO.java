@@ -88,4 +88,11 @@ public class CountryDAO extends AbstractDAO<CountryEntity, Long> {
         var q = entityManager.createQuery(hql, LoV.class).setParameter("ids", ids);
         return q.getResultList();
     }
+
+    public List<LoV> getFlagsForCountries(List<Long> ids) {
+        var hql = "select new ba.com.zira.sdr.api.model.lov.LoV(sc.id, sc.flagAbbriviation) from CountryEntity sc where sc.id in :ids";
+        var q = entityManager.createQuery(hql, LoV.class).setParameter("ids", ids);
+        return q.getResultList();
+    }
+
 }

@@ -67,9 +67,13 @@ public interface CountryService {
 
     PayloadResponse<CountryArtistSongResponse> getArtistsSongs(EntityRequest<Long> request) throws ApiException;
 
-    ListPayloadResponse<LoV> getAllCountries(EmptyRequest req) throws ApiException;  
+    ListPayloadResponse<LoV> getAllCountries(EmptyRequest req) throws ApiException;
+
     ListPayloadResponse<LoV> getAllCountriesExceptOneWithTheSelectedId(final EntityRequest<CountriesSearchRequest> request)
             throws ApiException;
 
     ListPayloadResponse<LoV> getAllCountryLoVsByIds(EntityRequest<CountryGetByIdsRequest> request) throws ApiException;
+
+    ListPayloadResponse<LoV> getCountryFlags(EntityRequest<CountryGetByIdsRequest> request) throws ApiException;
+
 }
