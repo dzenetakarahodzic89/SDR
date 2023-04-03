@@ -185,7 +185,7 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
     public List<SongSearchResponse> find(final String songName, final String sortBy, final Long remixId, final Long coverId,
             final List<Long> artistIds, final List<Long> albumIds, final List<Long> genreIds, final int page, final int pageSize) {
-        var query = "select distinct new ba.com.zira.sdr.api.model.song.SongSearchResponse(ss.id, ss.name, ss.outlineText, ss.modified) from SongEntity ss left join SongArtistEntity ssa on ss.id = ssa.artist.id  left join AlbumEntity sa on sa.id = ssa.album.id \r\n"
+        var query = "select distinct new ba.com.zira.sdr.api.model.song.SongSearchResponse(ss.id, ss.name, ss.outlineText, ss.modified, ss.playtime, ss.created) from SongEntity ss left join SongArtistEntity ssa on ss.id = ssa.artist.id  left join AlbumEntity sa on sa.id = ssa.album.id \r\n"
                 + "left join GenreEntity sg on ss.genre.id = sg.id where lower(ss.name) like lower(CONCAT('%', :songName, '%')) ";
 
         if (remixId != null) {
