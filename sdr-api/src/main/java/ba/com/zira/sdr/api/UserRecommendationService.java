@@ -101,4 +101,12 @@ public interface UserRecommendationService {
      */
     ListPayloadResponse<AverageScorePerCountry> getAverageScorePerCountry(EntityRequest<String> request);
 
+    /**
+     * Generate user recommendations for GA.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     */
+    PayloadResponse<String> generateUserRecommendationsForGA(final EmptyRequest request);
 }

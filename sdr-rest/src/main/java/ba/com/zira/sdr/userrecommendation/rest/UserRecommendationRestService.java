@@ -60,6 +60,12 @@ public class UserRecommendationRestService {
         return userRecommendationService.create(new EntityRequest<>(comment));
     }
 
+    @Operation(summary = "Create user recommendations for GA")
+    @PostMapping(value = "/ga")
+    public PayloadResponse<String> create(EmptyRequest request) {
+        return userRecommendationService.generateUserRecommendationsForGA(request);
+    }
+
     @Operation(summary = "Delete user recommendation")
     @DeleteMapping(value = "{id}")
     public PayloadResponse<String> delete(

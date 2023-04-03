@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -19,6 +13,12 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -31,6 +31,7 @@ import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.DeezerIntegrationService;
 import ba.com.zira.sdr.api.enums.DeezerStatus;
+import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegration;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationCreateRequest;
 import ba.com.zira.sdr.api.model.deezerintegration.DeezerIntegrationStatisticsResponse;
@@ -117,7 +118,7 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
 
     private static final String ARTIST_CONST = "ARTIST";
     private static final String COVER_IMAGE_CONST = "COVER_IMAGE";
-    private static final Boolean INTEGRATION_DISABLED_CONST = true;
+    private static final Boolean INTEGRATION_DISABLED_CONST = false;
 
     @Scheduled(initialDelay = 100, fixedDelay = 300000L)
     public void getArtistInformationFromDeezer() {
@@ -243,14 +244,14 @@ public class DeezerIntegrationServiceImpl implements DeezerIntegrationService {
                     var albums = albumDAO.getAllAlbumsWithNameLike(song.getAlbum().getTitle());
                     if (!albums.isEmpty()) {
                         for (var album : albums) {
-                            var media = mediaDAO.findByTypeAndId(COVER_IMAGE_CONST, album.getId());
+                            var media = mediaDAO.findByTypeAndId(ObjectType.ALBUM.getValue(), album.getId());
                             var newMediaStore = new MediaStoreEntity();
                             newMediaStore.setId(UUID.randomUUID().toString());
                             newMediaStore.setName(album.getName());
                             newMediaStore.setType(COVER_IMAGE_CONST);
                             if (media == null) {
                                 var newMedia = new MediaEntity();
-                                newMedia.setObjectType("ALBUM");
+                                newMedia.setObjectType(ObjectType.ALBUM.getValue());
                                 newMedia.setObjectId(album.getId());
                                 newMedia.setCreated(LocalDateTime.now());
                                 newMedia.setCreatedBy(systemUser.getUserId());

@@ -27,12 +27,6 @@ public class SwaggerConfiguration {
     }
 
     @Bean
-    public GroupedOpenApi battleApi() {
-        return GroupedOpenApi.builder().group("battle-api").packagesToScan("ba.com.zira.sdr.battle.rest")
-                .addOperationCustomizer(ziraOperationCustomizer).build();
-    }
-
-    @Bean
     public GroupedOpenApi eventApi() {
         return GroupedOpenApi.builder().group("event-api").packagesToScan("ba.com.zira.sdr.event.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
@@ -271,6 +265,30 @@ public class SwaggerConfiguration {
     @Bean
     public GroupedOpenApi newsArticlesApi() {
         return GroupedOpenApi.builder().group("newsarticles-api").packagesToScan("ba.com.zira.sdr.newsarticles.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi battleApi() {
+        return GroupedOpenApi.builder().group("battle-api").packagesToScan("ba.com.zira.sdr.battle.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi battleTurnApi() {
+        return GroupedOpenApi.builder().group("battle-turn-api").packagesToScan("ba.com.zira.sdr.battleturn.rest")
+                .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+
+    @Bean
+    public GroupedOpenApi countryRelationApi() {
+        return GroupedOpenApi.builder().group("countryrelation-api").packagesToScan("ba.com.zira.sdr.countryrelation.rest")
+                        .addOperationCustomizer(ziraOperationCustomizer).build();
+    }
+     
+    @Bean
+    public GroupedOpenApi releaseApi() {
+        return GroupedOpenApi.builder().group("release-api").packagesToScan("ba.com.zira.sdr.release.rest")
                 .addOperationCustomizer(ziraOperationCustomizer).build();
     }
 

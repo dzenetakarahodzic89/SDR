@@ -25,6 +25,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.ArtistService;
 import ba.com.zira.sdr.api.artist.ArtistByEras;
 import ba.com.zira.sdr.api.artist.ArtistCreateRequest;
+import ba.com.zira.sdr.api.artist.ArtistImageResponse;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.artist.ArtistSearchRequest;
 import ba.com.zira.sdr.api.artist.ArtistSearchResponse;
@@ -131,6 +132,13 @@ public class ArtistRestService {
     public ListPayloadResponse<ArtistSearchResponse> getRandomArtistsForSearch() throws ApiException {
         var req = new EmptyRequest();
         return artistService.getRandomArtistsForSearch(req);
+    }
+
+    @Operation(summary = "Get artists imageUrl with name")
+    @GetMapping("/get-picture/{id}")
+    public PayloadResponse<ArtistImageResponse> getPictureOfArtist(
+            @Parameter(required = true, description = "ID of the artist") @PathVariable final Long id) throws ApiException {
+        return artistService.findPictureOfArtist(new EntityRequest<>(id));
     }
 
 }

@@ -188,6 +188,10 @@ public class LookupService {
             lookupAlbumNames(values, getter, setter);
         }
 
+        if (ObjectType.ARTIST.getValue().equalsIgnoreCase(objectType)) {
+            lookupArtistNames(values, getter, setter);
+        }
+
     }
 
     public <E> void lookupPersonNames(List<E> values, Function<E, Long> getter, BiConsumer<E, String> setter) {

@@ -20,8 +20,11 @@ public class AlbumsByDecadeResponse implements Serializable {
     @Schema(description = "List of albums for the decade")
     private List<AlbumArtistResponse> albums;
 
+    private List<Long> albumIds;
     public AlbumsByDecadeResponse(Integer decade, List<AlbumArtistResponse> albums) {
         this.decade = decade;
         this.albums = albums;
     }
+
+
 }
