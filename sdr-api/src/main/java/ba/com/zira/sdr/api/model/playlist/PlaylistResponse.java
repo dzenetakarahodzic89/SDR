@@ -34,8 +34,12 @@ public class PlaylistResponse implements Serializable {
     @Schema(description = "Playtime of the song")
     private String playtime;
     private String outlineText;
-
     private String spotifyId;
+    private String genre;
+    private String country;
+
+    private String songImageUrl;
+    private String songAudioUrl;
 
     public PlaylistResponse(Long songId, String songName, String albumName, String artistName, String playtime, String spotifyId,
             String playlistName, Long numberOfPlays, Long numberOfShares, String outlineText) {
@@ -50,4 +54,17 @@ public class PlaylistResponse implements Serializable {
         this.numberOfShares = numberOfShares;
         this.outlineText = outlineText;
     }
+
+    public PlaylistResponse(String playlistName, Long songId, String songName, String spotifyId, String genre, String country,
+            String artistName, String playtime) {
+        this.genre = genre;
+        this.country = country;
+        this.artistName = artistName;
+        this.songId = songId;
+        this.songName = songName;
+        this.playtime = playtime;
+        this.spotifyId = spotifyId;
+        this.playlistName = playlistName;
+    }
+
 }
