@@ -10,8 +10,10 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionOverview;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchResponse;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSongResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordSongAlbumEraResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import ba.com.zira.sdr.dao.model.ChordProgressionEntity;
@@ -88,6 +90,28 @@ public class ChordProgressionDAO extends AbstractDAO<ChordProgressionEntity, Lon
         q.setFirstResult(firstResult);
         q.setMaxResults(maxResults);
 
+        return q.getResultList();
+    }
+
+    public ChordProgressionOverview getById(final Long id) {
+        var hql = "select new ba.com.zira.sdr.api.model.chordprogression.ChordProgressionOverview (cp.id,cp.name, cp.status,cp.information,cp.outlineText, COUNT(DISTINCT s.id))"
+                + " from ChordProgressionEntity as cp" + "  join SongEntity as s" + " on s.chordProgression.id=cp.id" + " where cp.id= :id"
+                + " group by cp.id,cp.name, cp.status,cp.information,cp.outlineText";
+
+        TypedQuery<ChordProgressionOverview> q = entityManager.createQuery(hql, ChordProgressionOverview.class).setParameter("id", id);
+        return q.getSingleResult();
+    }
+
+    public List<ChordProgressionSongResponse> getSongsByChordId(final Long id) {
+        var hql = "select distinct new ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSongResponse (s.name, s.playtime,g.name,c.flagAbbriviation)"
+
+                + " from ChordProgressionEntity as cp " + " join SongEntity as s " + " on s.chordProgression.id= cp.id "
+                + "  join GenreEntity as g" + " on g.id=s.genre.id" + " left join SongInstrumentEntity as si" + " on si.song.id=s.id"
+                + " left join PersonEntity as p" + " on p.id=si.person.id" + " left join CountryEntity as c" + " on c.id=p.country.id"
+                + " where cp.id = :id ";
+
+        TypedQuery<ChordProgressionSongResponse> q = entityManager.createQuery(hql, ChordProgressionSongResponse.class).setParameter("id",
+                id);
         return q.getResultList();
     }
 
