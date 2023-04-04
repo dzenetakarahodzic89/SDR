@@ -148,4 +148,12 @@ public class PlaylistServiceImpl implements PlaylistService {
         return new ListPayloadResponse<>(req, ResponseCode.OK, playlist);
     }
 
+    @Override
+    public ListPayloadResponse<PlaylistResponse> getAllPlaylistInfo(final EntityRequest<Long> req) throws ApiException {
+        List<PlaylistResponse> playlist = playlistDAO.getPlaylistInfoOverview(req.getEntity());
+        lookupService.lookupCoverImage(playlist, PlaylistResponse::getSongId, ObjectType.SONG.getValue(), PlaylistResponse::setSongImageUrl,
+                PlaylistResponse::getSongImageUrl);
+        lookupService.lookupAudio(playlist, PlaylistResponse::getSongId, PlaylistResponse::setSongAudioUrl);
+        return new ListPayloadResponse<>(req, ResponseCode.OK, playlist);
+    }
 }

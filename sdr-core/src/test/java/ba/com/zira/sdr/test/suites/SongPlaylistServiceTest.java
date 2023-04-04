@@ -27,7 +27,9 @@ import ba.com.zira.sdr.api.model.songplaylist.SongPlaylistCreateRequest;
 import ba.com.zira.sdr.api.model.songplaylist.SongPlaylistUpdateRequest;
 import ba.com.zira.sdr.core.impl.SongPlaylistServiceImpl;
 import ba.com.zira.sdr.core.mapper.SongPlaylistMapper;
+import ba.com.zira.sdr.core.validation.PlaylistRequestValidation;
 import ba.com.zira.sdr.core.validation.SongPlaylistRequestValidation;
+import ba.com.zira.sdr.core.validation.SongRequestValidation;
 import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.SongPlaylistDAO;
 import ba.com.zira.sdr.dao.model.PlaylistEntity;
@@ -46,6 +48,8 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
     private RequestValidator requestValidator;
     private SongPlaylistRequestValidation songplaylistValidation;
     private SongPlaylistService songplaylistService;
+    private SongRequestValidation songValidation;
+    PlaylistRequestValidation playlistValidation;
     private SongDAO songDAO;
 
     @BeforeMethod
@@ -54,7 +58,8 @@ public class SongPlaylistServiceTest extends BasicTestConfiguration {
         this.songDAO = Mockito.mock(SongDAO.class);
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.songplaylistValidation = Mockito.mock(SongPlaylistRequestValidation.class);
-        this.songplaylistService = new SongPlaylistServiceImpl(songplaylistDAO, songplaylistMapper, songplaylistValidation, songDAO);
+        this.songplaylistService = new SongPlaylistServiceImpl(songplaylistDAO, songplaylistMapper, songplaylistValidation, songValidation,
+                playlistValidation, songDAO);
     }
 
     @Test(enabled = true)

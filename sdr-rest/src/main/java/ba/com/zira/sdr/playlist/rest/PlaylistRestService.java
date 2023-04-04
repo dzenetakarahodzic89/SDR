@@ -53,6 +53,13 @@ public class PlaylistRestService {
         return playlistService.getAll(new EntityRequest<>(id));
     }
 
+    @Operation(summary = "Get playlist")
+    @GetMapping(value = "/get-playlist/{id}")
+    public ListPayloadResponse<PlaylistResponse> getAll(
+            @Parameter(required = true, description = "Id of the playlist") @PathVariable final Long id) throws ApiException {
+        return playlistService.getAllPlaylistInfo(new EntityRequest<>(id));
+    }
+
     @Operation(summary = "Find Playlists based on custom filter")
     @GetMapping(value = "search")
     public PagedPayloadResponse<Playlist> findByNameSongGenre(
