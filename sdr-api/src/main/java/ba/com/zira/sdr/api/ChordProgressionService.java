@@ -1,5 +1,7 @@
 package ba.com.zira.sdr.api;
 
+import java.util.List;
+
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
@@ -9,9 +11,11 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionByEraResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionCreateRequest;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionOverview;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchResponse;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSongResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 
@@ -86,4 +90,7 @@ public interface ChordProgressionService {
     ListPayloadResponse<ChordProgressionSearchResponse> searchChordProgression(final EntityRequest<ChordProgressionSearchRequest> request)
             throws ApiException;
 
+    PayloadResponse<ChordProgressionOverview> get(final EntityRequest<Long> request) throws ApiException;
+
+    PayloadResponse<List<ChordProgressionSongResponse>> getSongsByChordId(final EntityRequest<Long> request) throws ApiException;
 }
