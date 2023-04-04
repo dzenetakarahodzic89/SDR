@@ -88,4 +88,6 @@ public interface PlaylistService {
 
     ListPayloadResponse<PlaylistResponse> getAll(EntityRequest<Long> req) throws ApiException;
 
+    ListPayloadResponse<PlaylistResponse> getAllPlaylistInfo(EntityRequest<Long> req) throws ApiException;
+
 }

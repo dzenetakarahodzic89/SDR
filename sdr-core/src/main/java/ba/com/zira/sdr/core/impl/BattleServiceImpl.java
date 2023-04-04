@@ -1,5 +1,12 @@
 package ba.com.zira.sdr.core.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +24,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -84,11 +94,20 @@ public class BattleServiceImpl implements BattleService {
     private N2bObjectMapper objectMapper = new N2bObjectMapper();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BattleServiceImpl.class);
+    private static final String FINISHED = "Finished";
 
     @Override
     public PagedPayloadResponse<BattleResponse> find(FilterRequest request) throws ApiException {
         PagedData<BattleEntity> battleEntities = battleDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, battleEntities, battleMapper::entityToDTOs);
+    }
+
+    @Override
+    public ListPayloadResponse<BattleResponse> getAll(EmptyRequest request) throws ApiException {
+        var battles = battleDAO.findAll();
+        List<BattleResponse> battleDTOS = battles.stream().map(battleMapper::entityToDto).collect(Collectors.toList());
+        return new ListPayloadResponse<>(request, ResponseCode.OK, battleDTOS);
+
     }
 
     @Override
@@ -273,7 +292,7 @@ public class BattleServiceImpl implements BattleService {
         for (CountryEntity country : allCountries) {
             boolean isActive = false;
             for (CountryResponse activeCountry : numberOfActiveCountries) {
-                if (country.getId() == activeCountry.getId()) {
+                if (country.getId().equals(activeCountry.getId())) {
                     isActive = true;
                     break;
                 }
@@ -317,7 +336,7 @@ public class BattleServiceImpl implements BattleService {
 
         teamStructure.setTeamArtists(artistStructureList);
         teamStructure.setId(1L);
-
+        var teamIdGenerator = 2L;
         for (Long countryId : activeCountries) {
             if (battleGenerateRequest.getCountries().contains(countryId)) {
                 if (teamStructure.getCountryId() == null) {
@@ -328,9 +347,10 @@ public class BattleServiceImpl implements BattleService {
                 continue;
             }
 
-            if (countryId != teamStructure.getCountryId()) {
+            if (!countryId.equals(teamStructure.getCountryId())) {
                 var newTeamStructure = new TeamStructure();
-                newTeamStructure.setId(2L);
+                newTeamStructure.setId(teamIdGenerator);
+                teamIdGenerator += 1;
                 newTeamStructure.setCountryId(countryId);
                 CountryEntity countryName = countryDAO.findByPK(newTeamStructure.getCountryId());
                 newTeamStructure.setCountryName(countryName.getName());
@@ -446,8 +466,8 @@ public class BattleServiceImpl implements BattleService {
                     country.setMapValue((double) 1);
                     country.setCountryStatus("Active");
                     Long prevKey = combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
-                    combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1,
-                            "Country " + move.getAttackedName() + " is passive, " + move.getAttackerName() + " has taken over!");
+                    combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1, MessageFormat
+                            .format("Country {0} is passive, {1} has taken over!", move.getAttackedName(), move.getAttackerName()));
 
                     teamState.getActivePlayerTeam().setNumberOfWins(teamState.getActivePlayerTeam().getNumberOfWins() + 1);
                     teamState.getActivePlayerTeam().setLastActiveTurn(teamState.getActivePlayerTeam().getLastActiveTurn() + 1);
@@ -457,11 +477,12 @@ public class BattleServiceImpl implements BattleService {
                     mapState.setNumberOfActiveNpcTeams(mapState.getNumberOfActiveNpcTeams() - 1);
                     mapState.setNumberOfPassiveCountries(mapState.getNumberOfPassiveCountries() - 1);
 
-                    newRequest.setStatus("Finished");
+                    newRequest.setStatus(FINISHED);
                     var battleTurnResponse = new BattleSingleResponse();
                     battleTurnResponse.setTurnCombatState(combatState);
                     battleTurnResponse.setMapState(mapState);
                     battleTurnResponse.setTeamState(teamState);
+                    battleTurnResponse.setTurn(turnFull.getTurnNumber());
                     battleTurnResponse = musicRiskAIBattleHelper.simulateTurnForAI(battleTurnResponse);
                     try {
                         newRequest.setTeamState(objectMapper.writeValueAsString(battleTurnResponse.getTeamState()));
@@ -471,15 +492,15 @@ public class BattleServiceImpl implements BattleService {
                         e.printStackTrace();
                     }
                     battleTurnDAO.persist(newRequest);
-                    return new PayloadResponse<>(request, ResponseCode.OK,
-                            "Country " + move.getAttackedName() + " is passive, " + move.getAttackerName() + " has taken over!");
+                    return new PayloadResponse<>(request, ResponseCode.OK, MessageFormat
+                            .format("Country {0} is passive, {1} has taken over!", move.getAttackedName(), move.getAttackerName()));
                 }
             }
         } else {
             newRequest.setStatus("In process");
             Long prevKey = combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
             combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1,
-                    "Country " + move.getAttackerName() + " is starting to attack " + move.getAttackedName());
+                    MessageFormat.format("Country {0} is starting to attack {1}", move.getAttackerName(), move.getAttackedName()));
             combatState.getBattleLogs().get(0).getTurnHistory().add(new BattleLogEntry());
 
             try {
@@ -513,10 +534,10 @@ public class BattleServiceImpl implements BattleService {
             LOGGER.error(ex.getMessage());
             throw ApiException.createFrom(request, ResponseCode.INVALID_SETUP, "Json could not be parsed");
         }
-        combatState.setStatus("Finished");
+        combatState.setStatus(FINISHED);
         Long prevKey = combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
-        combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1,
-                "The battle is between " + requestEntity.getAttackerName() + " and " + requestEntity.getAttackedName());
+        combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1, MessageFormat.format("The battle is between {0} and {1}",
+                requestEntity.getAttackerName(), requestEntity.getAttackedName()));
         prevKey += 1;
         for (var explanation : requestEntity.getSongBattleExplained()) {
             combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1, explanation + " decided by " + loggedUser);
@@ -561,26 +582,28 @@ public class BattleServiceImpl implements BattleService {
             }
             mapState.getCountries().get(npcCountryIndex).setTeamOwnershipId(1L);
             mapState.getCountries().get(npcCountryIndex).setMapValue((double) 1);
-            returnString = "Country " + request.getEntity().getAttackerName() + " has won over " + request.getEntity().getAttackedName();
+            returnString = MessageFormat.format("Country {0} has won over {1}", request.getEntity().getAttackerName(),
+                    request.getEntity().getAttackedName());
         } else if (requestEntity.getWonCase().equalsIgnoreCase("NPC")) {
             teamState.getActivePlayerTeam().setNumberOfLoses(teamState.getActivePlayerTeam().getNumberOfLoses() + 1);
             teamState.getActiveNpcTeams().get(foundNpcTeamIndex)
                     .setNumberOfWins(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getNumberOfWins() + 1);
             teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds().add(requestEntity.getAttackerCountryId());
-
-            returnString = "Country " + request.getEntity().getAttackedName() + " has won over " + request.getEntity().getAttackerName();
+            returnString = MessageFormat.format("Country {0} has won over {1}", request.getEntity().getAttackedName(),
+                    request.getEntity().getAttackerName());
             battleResult.setWinnerTeamId(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getId());
             battleResult.setWinnerEligibleCountryIds(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds());
             battleResult.setLoserTeamId(teamState.getActivePlayerTeam().getId());
             battleResult.setLoserEligibleCountryIds(teamState.getActivePlayerTeam().getEligibleCountryIds());
         }
         combatState.getBattleLogs().get(0).getBattleResults().add(battleResult);
-        inProgressTurn.setStatus("Finished");
+        inProgressTurn.setStatus(FINISHED);
 
         var battleTurnResponse = new BattleSingleResponse();
         battleTurnResponse.setTurnCombatState(combatState);
         battleTurnResponse.setMapState(mapState);
         battleTurnResponse.setTeamState(teamState);
+        battleTurnResponse.setTurn(inProgressTurn.getTurnNumber());
         battleTurnResponse = musicRiskAIBattleHelper.simulateTurnForAI(battleTurnResponse);
 
         try {

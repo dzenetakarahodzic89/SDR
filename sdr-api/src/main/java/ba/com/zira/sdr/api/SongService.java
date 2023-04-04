@@ -110,6 +110,15 @@ public interface SongService {
      */
     ListPayloadResponse<LoV> retrieveNotInAlbum(final EntityRequest<Long> request) throws ApiException;
 
+    /**
+     * Find.
+     *
+     * @param request
+     *            the request
+     * @return the list payload response
+     * @throws ApiException
+     *             the api exception
+     */
     ListPayloadResponse<SongSearchResponse> find(final EntityRequest<SongSearchRequest> request) throws ApiException;
 
     /**

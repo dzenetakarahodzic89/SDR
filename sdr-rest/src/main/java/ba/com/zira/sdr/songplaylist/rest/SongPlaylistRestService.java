@@ -66,4 +66,11 @@ public class SongPlaylistRestService {
         return songPlaylistService.delete(entityRequest);
     }
 
+    @Operation(summary = "Delete song playlist")
+    @DeleteMapping(value = "/delete")
+    public PayloadResponse<String> deleteSongFromPlaylist(@RequestParam Long playlistId, @RequestParam Long songId) throws ApiException {
+        SongPlaylistCreateRequest req = new SongPlaylistCreateRequest(playlistId, songId);
+        return songPlaylistService.deleteByPlaylistIdAndSongId(new EntityRequest<>(req));
+    }
+
 }

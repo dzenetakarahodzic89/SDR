@@ -2,6 +2,7 @@ package ba.com.zira.sdr.api.model.song;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -43,8 +44,13 @@ public class SongSearchResponse implements Serializable {
     @Schema(description = "List of artists")
 
     private List<ArtistSongResponse> artists;
-
     private String audioUrl;
+
+    @Schema(description = "playtime")
+    private String playtime;
+
+    @Schema(description = "created")
+    private String created;
 
     public SongSearchResponse(Long id, String songName, String outlineText, String information, LocalDateTime dateOfRelease,
             String chordName, String genreName, Long genreId) {
@@ -59,12 +65,15 @@ public class SongSearchResponse implements Serializable {
 
     }
 
-    public SongSearchResponse(Long id, String name, String outlineText, LocalDateTime modified) {
+    public SongSearchResponse(Long id, String name, String outlineText, LocalDateTime modified, String playtime,
+            final LocalDateTime created) {
         super();
         this.id = id;
         this.name = name;
         this.outlineText = outlineText;
         this.modified = modified;
+        this.playtime = playtime;
+        this.created = created != null ? created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
     }
 
 }
