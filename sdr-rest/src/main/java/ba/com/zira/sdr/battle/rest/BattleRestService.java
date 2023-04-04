@@ -2,7 +2,6 @@ package ba.com.zira.sdr.battle.rest;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.QueryConditionPage;
@@ -43,6 +44,12 @@ public class BattleRestService {
     public PagedPayloadResponse<BattleResponse> find(@RequestParam Map<String, Object> filterCriteria,
             final QueryConditionPage queryCriteria) throws ApiException {
         return battleService.find(new FilterRequest(filterCriteria, queryCriteria));
+    }
+
+    @Operation(summary = "Get all battle")
+    @GetMapping(value = "/all")
+    public ListPayloadResponse<BattleResponse> getAll() throws ApiException {
+        return battleService.getAll(new EmptyRequest());
     }
 
     @Operation(summary = "Find battle by id")
