@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +24,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -97,6 +100,14 @@ public class BattleServiceImpl implements BattleService {
     public PagedPayloadResponse<BattleResponse> find(FilterRequest request) throws ApiException {
         PagedData<BattleEntity> battleEntities = battleDAO.findAll(request.getFilter());
         return new PagedPayloadResponse<>(request, ResponseCode.OK, battleEntities, battleMapper::entityToDTOs);
+    }
+
+    @Override
+    public ListPayloadResponse<BattleResponse> getAll(EmptyRequest request) throws ApiException {
+        var battles = battleDAO.findAll();
+        List<BattleResponse> battleDTOS = battles.stream().map(battleMapper::entityToDto).collect(Collectors.toList());
+        return new ListPayloadResponse<>(request, ResponseCode.OK, battleDTOS);
+
     }
 
     @Override
