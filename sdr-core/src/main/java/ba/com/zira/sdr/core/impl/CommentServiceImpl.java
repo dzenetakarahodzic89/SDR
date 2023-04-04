@@ -1,7 +1,14 @@
 package ba.com.zira.sdr.core.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
+import ba.com.zira.commons.message.response.ListPayloadResponse;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
@@ -11,15 +18,12 @@ import ba.com.zira.sdr.api.CommentService;
 import ba.com.zira.sdr.api.model.comment.Comment;
 import ba.com.zira.sdr.api.model.comment.CommentCreateRequest;
 import ba.com.zira.sdr.api.model.comment.CommentUpdateRequest;
+import ba.com.zira.sdr.api.model.comment.CommentsFetchRequest;
 import ba.com.zira.sdr.core.mapper.CommentMapper;
 import ba.com.zira.sdr.core.validation.CommentRequestValidation;
 import ba.com.zira.sdr.dao.CommentDAO;
 import ba.com.zira.sdr.dao.model.CommentEntity;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -71,4 +75,13 @@ public class CommentServiceImpl implements CommentService {
         return new PayloadResponse<>(request, ResponseCode.OK,
                 String.format("Comment with id %s is successfully deleted!", request.getEntity()));
     }
+
+    @Override
+    public ListPayloadResponse<Comment> fetchComments(final EntityRequest<CommentsFetchRequest> request) {
+
+        List<Comment> comments = commentDAO.fetchComments(request.getEntity().getObjectType(), request.getEntity().getObjectId());
+
+        return new ListPayloadResponse<>(request, ResponseCode.OK, comments);
+    }
+
 }
