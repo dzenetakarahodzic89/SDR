@@ -10,4 +10,12 @@ public class SongPlaylistCreateRequest implements Serializable {
     private Long playlistId;
     private Long songId;
 
+    public SongPlaylistCreateRequest(Long playlistId, Long songId) {
+
+        this.playlistId = playlistId;
+        this.songId = songId;
+    }
+
+    public SongPlaylistCreateRequest() {
+    }
 }
