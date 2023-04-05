@@ -24,7 +24,7 @@ import ba.com.zira.commons.validation.RequestValidator;
 import ba.com.zira.sdr.api.UserRecommendationService;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
-import ba.com.zira.sdr.core.client.feign.RemoteApiFeignClient;
+import ba.com.zira.sdr.core.client.feign.UaaFeignClient;
 import ba.com.zira.sdr.core.impl.UserRecommendationServiceImpl;
 import ba.com.zira.sdr.core.mapper.UserRecommendationMapper;
 import ba.com.zira.sdr.core.validation.UserRecommendationRequestValidation;
@@ -48,7 +48,7 @@ public class UserRecommendationServiceTest extends BasicTestConfiguration {
     private SongDAO songDAO;
     private UserRecommendationDetailDAO userRecommendationDetailDAO;
     private UserRecommendationIntegrationDetailDAO userRecommendationIntegrationDetailDAO;
-    private RemoteApiFeignClient remoteApiFeignClient;
+    private UaaFeignClient remoteApiFeignClient;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
@@ -59,7 +59,7 @@ public class UserRecommendationServiceTest extends BasicTestConfiguration {
         this.songDAO = Mockito.mock(SongDAO.class);
         this.userRecommendationDetailDAO = Mockito.mock(UserRecommendationDetailDAO.class);
         this.userRecommendationIntegrationDetailDAO = Mockito.mock(UserRecommendationIntegrationDetailDAO.class);
-        this.remoteApiFeignClient = Mockito.mock(RemoteApiFeignClient.class);
+        this.remoteApiFeignClient = Mockito.mock(UaaFeignClient.class);
         this.userRecommendationService = new UserRecommendationServiceImpl(userRecommendationDAO, userRecommendationDetailDAO,
                 userRecommendationMapper, userRecommendationRequestValidation, remoteApiFeignClient, songDAO,
                 userRecommendationIntegrationDetailDAO);

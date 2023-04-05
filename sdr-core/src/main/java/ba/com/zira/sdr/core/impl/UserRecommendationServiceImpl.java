@@ -28,7 +28,7 @@ import ba.com.zira.sdr.api.model.userrecommendation.ScoreCompareRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationCreateRequest;
 import ba.com.zira.sdr.api.model.userrecommendation.UserRecommendationResponse;
 import ba.com.zira.sdr.api.model.userrecommendation.UserScoreResponse;
-import ba.com.zira.sdr.core.client.feign.RemoteApiFeignClient;
+import ba.com.zira.sdr.core.client.feign.UaaFeignClient;
 import ba.com.zira.sdr.core.mapper.UserRecommendationMapper;
 import ba.com.zira.sdr.core.validation.UserRecommendationRequestValidation;
 import ba.com.zira.sdr.dao.SongDAO;
@@ -61,7 +61,7 @@ public class UserRecommendationServiceImpl implements UserRecommendationService 
     UserRecommendationRequestValidation userRecommendationRequestValidation;
 
     @NonNull
-    RemoteApiFeignClient remoteApiFeignClient;
+    UaaFeignClient remoteApiFeignClient;
 
     @NonNull
     SongDAO songDAO;
