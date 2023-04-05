@@ -57,13 +57,10 @@ public class InstrumentRestService {
         return instrumentService.find(new FilterRequest(filterCriteria, queryCriteria));
     }
 
-    @Operation(summary = "Instrument Search")
-    @GetMapping(value = "search")
-    public PagedPayloadResponse<InstrumentSearchResponse> search(
-            @Parameter(required = false, description = "Name of the instrument") @RequestParam(required = false) final String name,
-            @Parameter(required = false, description = "Sorting method") @RequestParam(required = false) final String sortBy)
-            throws ApiException {
-        return instrumentService.search(new EntityRequest<>(new InstrumentSearchRequest(name, sortBy)));
+    @Operation(summary = "Instrument search")
+    @PostMapping(value = "/search")
+    public ListPayloadResponse<InstrumentSearchResponse> find(@RequestBody final InstrumentSearchRequest request) throws ApiException {
+        return instrumentService.instrumentSearch(new EntityRequest<>(request));
     }
 
     @Operation(summary = "Create instrument")
