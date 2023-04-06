@@ -45,7 +45,7 @@ public class SpotifyIntegrationServiceTest extends BasicTestConfiguration {
         this.spotifyIntergationDAO = Mockito.mock(SpotifyIntegrationDAO.class);
         this.spotifyIntergationRequestValidation = Mockito.mock(SpotifyIntegrationRequestValidation.class);
         this.spotifyIntergationService = new SpotifyIntegrationServiceImpl(spotifyIntergationDAO, spotifyIntergationMapper,
-                spotifyIntergationRequestValidation);
+                spotifyIntergationRequestValidation, null, null, null);
     }
 
     @Test(enabled = true)

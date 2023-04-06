@@ -114,11 +114,17 @@ public class CountryRestService {
             throws ApiException {
         return battleService.create(new EntityRequest<>(request));
     }
-    
+
     @Operation(summary = "Find all countries by ids")
     @PostMapping(value = "get-by-ids")
     public ListPayloadResponse<LoV> getAllCountriesByIds(@RequestBody CountryGetByIdsRequest request) throws ApiException {
         return countryService.getAllCountryLoVsByIds(new EntityRequest<>(request));
+    }
+
+    @Operation(summary = "Get flags for ids")
+    @PostMapping(value = "get-flags")
+    public ListPayloadResponse<LoV> getCountryFlags(@RequestBody CountryGetByIdsRequest request) throws ApiException {
+        return countryService.getCountryFlags(new EntityRequest<>(request));
     }
 
 }

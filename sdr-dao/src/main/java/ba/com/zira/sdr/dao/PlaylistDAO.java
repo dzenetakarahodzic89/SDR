@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.playlist.PlaylistOfUserResponse;
+import ba.com.zira.sdr.api.model.playlist.PlaylistResponse;
 import ba.com.zira.sdr.dao.model.GenreEntity_;
 import ba.com.zira.sdr.dao.model.PlaylistEntity;
 import ba.com.zira.sdr.dao.model.PlaylistEntity_;
@@ -83,15 +84,10 @@ public class PlaylistDAO extends AbstractDAO<PlaylistEntity, Long> {
 
     }
 
-    public Map<Long,List<PlaylistOfUserResponse>> findPlaylistOfUser(String userCode) {
+    public Map<Long, List<PlaylistOfUserResponse>> findPlaylistOfUser(String userCode) {
         var hql = "select new ba.com.zira.sdr.api.model.playlist.PlaylistOfUserResponse(p.id, s.id, s.name, s.playtimeInSeconds,s.spotifyId) "
-                + "from PlaylistEntity p "
-                + "join SongPlaylistEntity sp "
-                + "on sp.playlist.id = p.id "
-                + "join SongEntity s "
-                + "on sp.song.id = s.id "
-                + "where p.userCode = :userCode "
-                + "order by p.id ";
+                + "from PlaylistEntity p " + "join SongPlaylistEntity sp " + "on sp.playlist.id = p.id " + "join SongEntity s "
+                + "on sp.song.id = s.id " + "where p.userCode = :userCode " + "order by p.id ";
         TypedQuery<PlaylistOfUserResponse> query = entityManager.createQuery(hql, PlaylistOfUserResponse.class);
         query.setParameter("userCode", userCode);
 
@@ -99,7 +95,30 @@ public class PlaylistDAO extends AbstractDAO<PlaylistEntity, Long> {
 
     }
 
+    public List<PlaylistResponse> getPlaylistInfo(Long id) {
 
+        var hql = "select new ba.com.zira.sdr.api.model.playlist.PlaylistResponse (s.id, s.name, al.name, ar.name || ' ' || ar.surname, s.playtime, s.spotifyId, "
+                + "p.name, p.numberOfPlays, p.numberOfShares, p.outlineText) "
+                + "from PlaylistEntity p join SongPlaylistEntity ssp on p.id=ssp.playlist.id join "
+                + "SongEntity s on ssp.song.id =s.id join GenreEntity sg on s.genre.id =sg.id join SongArtistEntity ssa on s.id =ssa.song.id "
+                + "join ArtistEntity ar on ssa.artist.id =ar.id join PersonArtistEntity spa on spa.artist.id =ar.id join AlbumEntity al on ssa.album.id =al.id join "
+                + "PersonEntity sp on spa.person.id =sp.id join CountryEntity sc on sp.country.id =sc.id where p.id=:id "
+                + "group by s.id, p.id, sc.id, ar.id, s.playtime, sg.name, al.name " + "order by s.name asc";
+        TypedQuery<PlaylistResponse> query = entityManager.createQuery(hql, PlaylistResponse.class).setParameter("id", id);
+        return query.getResultList();
 
+    }
+
+    public List<PlaylistResponse> getPlaylistInfoOverview(Long id) {
+        var hql = "select new ba.com.zira.sdr.api.model.playlist.PlaylistResponse(p.name, s.id, s.name, s.spotifyId, sg.name, sc.name, ar.name || ' ' || ar.surname, s.playtime) "
+                + "from PlaylistEntity p join SongPlaylistEntity ssp on p.id=ssp.playlist.id join "
+                + "SongEntity s on ssp.song.id =s.id join GenreEntity sg on s.genre.id =sg.id join SongArtistEntity ssa on s.id =ssa.song.id "
+                + "join ArtistEntity ar on ssa.artist.id =ar.id join PersonArtistEntity spa on spa.artist.id =ar.id join "
+                + "PersonEntity sp on spa.person.id =sp.id join CountryEntity sc on sp.country.id =sc.id where p.id=:id "
+                + "group by s.id, p.id, sc.id, ar.id, s.playtime, sg.name " + "order by s.name asc";
+        TypedQuery<PlaylistResponse> query = entityManager.createQuery(hql, PlaylistResponse.class).setParameter("id", id);
+        return query.getResultList();
+
+    }
 
 }

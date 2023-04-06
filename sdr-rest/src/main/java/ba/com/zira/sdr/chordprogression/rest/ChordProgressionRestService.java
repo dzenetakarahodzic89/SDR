@@ -1,5 +1,6 @@
 package ba.com.zira.sdr.chordprogression.rest;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,11 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.ChordProgressionService;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionByEraResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionCreateRequest;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionOverview;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchResponse;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSongResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
 import ba.com.zira.sdr.api.model.lov.LoV;
 import io.swagger.v3.oas.annotations.Operation;
@@ -90,5 +93,23 @@ public class ChordProgressionRestService {
     public ListPayloadResponse<ChordProgressionSearchResponse> find(@RequestBody final ChordProgressionSearchRequest request)
             throws ApiException {
         return chordProgressionService.searchChordProgression(new EntityRequest<>(request));
+    }
+
+    @Operation(summary = "Return chord progression with specified id")
+    @GetMapping(value = "{id}")
+    public PayloadResponse<ChordProgressionOverview> get(
+            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) throws ApiException {
+        EntityRequest<Long> request = new EntityRequest<>();
+        request.setEntity(id);
+        return chordProgressionService.get(request);
+    }
+
+    @Operation(summary = "Return chord progression with specified id")
+    @GetMapping(value = "/songs/{id}")
+    public PayloadResponse<List<ChordProgressionSongResponse>> getSongsByChordId(
+            @Parameter(required = true, description = "ID of the record") @PathVariable final Long id) throws ApiException {
+        EntityRequest<Long> request = new EntityRequest<>();
+        request.setEntity(id);
+        return chordProgressionService.getSongsByChordId(request);
     }
 }

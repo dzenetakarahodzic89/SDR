@@ -111,4 +111,10 @@ public class CountryServiceImpl implements CountryService {
         return new ListPayloadResponse<>(request, ResponseCode.OK, countries);
     }
 
+    @Override
+    public ListPayloadResponse<LoV> getCountryFlags(EntityRequest<CountryGetByIdsRequest> request) throws ApiException {
+        var loVList = countryDAO.getFlagsForCountries(request.getEntity().getCountryIds());
+        return new ListPayloadResponse<>(request, ResponseCode.OK, loVList);
+    }
+
 }

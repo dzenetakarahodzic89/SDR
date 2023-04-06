@@ -2,6 +2,7 @@ package ba.com.zira.sdr.core.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +25,11 @@ import ba.com.zira.sdr.api.ChordProgressionService;
 import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionByEraResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionCreateRequest;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionOverview;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSearchResponse;
+import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionSongResponse;
 import ba.com.zira.sdr.api.model.chordprogression.ChordProgressionUpdateRequest;
 import ba.com.zira.sdr.api.model.chordprogression.ChordSongAlbumEraResponse;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -132,6 +135,23 @@ public class ChordProgressionServiceImpl implements ChordProgressionService {
                 ChordProgressionSearchResponse::setImageUrl, ChordProgressionSearchResponse::getImageUrl);
 
         return new ListPayloadResponse<>(request, ResponseCode.OK, chordProgressions);
+    }
+
+    @Override
+    public PayloadResponse<ChordProgressionOverview> get(final EntityRequest<Long> request) throws ApiException {
+        chordProgressionValidator.validateExistsChordProgressionRequest(request);
+
+        ChordProgressionOverview chordProgression = chordProgressionDAO.getById(request.getEntity());
+        lookupService.lookupCoverImage(Arrays.asList(chordProgression), ChordProgressionOverview::getId,
+                ObjectType.CHORDPROGRESSION.getValue(), ChordProgressionOverview::setImageUrl, ChordProgressionOverview::getImageUrl);
+        return new PayloadResponse<>(request, ResponseCode.OK, chordProgression);
+    }
+
+    @Override
+    public PayloadResponse<List<ChordProgressionSongResponse>> getSongsByChordId(EntityRequest<Long> request) throws ApiException {
+        chordProgressionValidator.validateExistsChordProgressionRequest(request);
+        List<ChordProgressionSongResponse> chordProgression = chordProgressionDAO.getSongsByChordId(request.getEntity());
+        return new PayloadResponse<>(request, ResponseCode.OK, chordProgression);
     }
 
 }

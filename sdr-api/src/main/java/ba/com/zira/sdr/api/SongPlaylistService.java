@@ -19,4 +19,6 @@ public interface SongPlaylistService {
 
     public PayloadResponse<String> delete(EntityRequest<Long> request) throws ApiException;
 
+    PayloadResponse<String> deleteByPlaylistIdAndSongId(EntityRequest<SongPlaylistCreateRequest> req);
+
 }

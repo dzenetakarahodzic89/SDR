@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.PagedPayloadResponse;
@@ -21,6 +22,7 @@ import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.sdr.api.SpotifyIntegrationService;
 import ba.com.zira.sdr.api.model.spotifyintegration.SpotifyIntegrationCreateRequest;
 import ba.com.zira.sdr.api.model.spotifyintegration.SpotifyIntegrationResponse;
+import ba.com.zira.sdr.api.model.spotifyintegration.SpotifyIntegrationStatistics;
 import ba.com.zira.sdr.api.model.spotifyintegration.SpotifyIntegrationUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -65,5 +67,11 @@ public class SpotifyIntegrationRestService {
     public PayloadResponse<String> delete(
             @Parameter(required = true, description = "ID of the spotify integration") @PathVariable final Long id) throws ApiException {
         return spotifyIntegrationService.delete(new EntityRequest<>(id));
+    }
+
+    @Operation(summary = "Get data for Spotify statistics")
+    @GetMapping(value = "statistics")
+    public PayloadResponse<SpotifyIntegrationStatistics> getDataForStatistics() throws ApiException {
+        return spotifyIntegrationService.getDataForStatistics(new EmptyRequest());
     }
 }

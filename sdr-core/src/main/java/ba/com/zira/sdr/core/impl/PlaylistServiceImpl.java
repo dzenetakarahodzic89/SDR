@@ -1,6 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.AbstractMap;
@@ -28,6 +27,7 @@ import ba.com.zira.sdr.api.enums.ObjectType;
 import ba.com.zira.sdr.api.model.playlist.Playlist;
 import ba.com.zira.sdr.api.model.playlist.PlaylistCreateRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistOfUserResponse;
+import ba.com.zira.sdr.api.model.playlist.PlaylistResponse;
 import ba.com.zira.sdr.api.model.playlist.PlaylistSearchRequest;
 import ba.com.zira.sdr.api.model.playlist.PlaylistUpdateRequest;
 import ba.com.zira.sdr.api.utils.PagedDataMetadataMapper;
@@ -35,6 +35,7 @@ import ba.com.zira.sdr.core.mapper.PlaylistMapper;
 import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.validation.PlaylistRequestValidation;
 import ba.com.zira.sdr.dao.PlaylistDAO;
+import ba.com.zira.sdr.dao.SongPlaylistDAO;
 import ba.com.zira.sdr.dao.model.PlaylistEntity;
 import lombok.AllArgsConstructor;
 
@@ -46,8 +47,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     PlaylistMapper playlistMapper;
     PlaylistRequestValidation playlistRequestValidation;
     LookupService lookupService;
+    SongPlaylistDAO songPlaylistDAO;
     private static SecureRandom random = new SecureRandom();
-
 
     @Override
     public PagedPayloadResponse<Playlist> find(final FilterRequest request) {
@@ -109,10 +110,12 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<String> delete(final EntityRequest<Long> request) {
         playlistRequestValidation.validateExistsPlaylistRequest(request);
-
+        songPlaylistDAO.deleteByPlaylistId(request.getEntity());
         playlistDAO.removeByPK(request.getEntity());
+
         return new PayloadResponse<>(request, ResponseCode.OK, "Playlist successfully deleted.");
     }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ListPayloadResponse<PlaylistOfUserResponse> findPlaylistOfUser(EntityRequest<String> request) throws ApiException {
@@ -135,11 +138,22 @@ public class PlaylistServiceImpl implements PlaylistService {
             }
         }
 
-
-
         return new ListPayloadResponse<>(request, ResponseCode.OK, Collections.emptyList());
     }
 
+    @Override
+    public ListPayloadResponse<PlaylistResponse> getAll(final EntityRequest<Long> req) throws ApiException {
+        List<PlaylistResponse> playlist = playlistDAO.getPlaylistInfo(req.getEntity());
 
+        return new ListPayloadResponse<>(req, ResponseCode.OK, playlist);
+    }
 
+    @Override
+    public ListPayloadResponse<PlaylistResponse> getAllPlaylistInfo(final EntityRequest<Long> req) throws ApiException {
+        List<PlaylistResponse> playlist = playlistDAO.getPlaylistInfoOverview(req.getEntity());
+        lookupService.lookupCoverImage(playlist, PlaylistResponse::getSongId, ObjectType.SONG.getValue(), PlaylistResponse::setSongImageUrl,
+                PlaylistResponse::getSongImageUrl);
+        lookupService.lookupAudio(playlist, PlaylistResponse::getSongId, PlaylistResponse::setSongAudioUrl);
+        return new ListPayloadResponse<>(req, ResponseCode.OK, playlist);
+    }
 }
