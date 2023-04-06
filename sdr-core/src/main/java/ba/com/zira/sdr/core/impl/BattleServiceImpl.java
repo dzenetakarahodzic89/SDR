@@ -1,11 +1,5 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.exception.ApiException;
@@ -443,7 +443,7 @@ public class BattleServiceImpl implements BattleService {
         var newRequest = new BattleTurnEntity();
         newRequest.setBattle(turnFull.getBattle());
         newRequest.setCreated(LocalDateTime.now());
-        newRequest.setCreatedBy(turnFull.getCreatedBy());
+        newRequest.setCreatedBy(request.getUserId());
         newRequest.setModified(turnFull.getModified());
         newRequest.setModifiedBy(turnFull.getModifiedBy());
         newRequest.setTurnNumber(turnFull.getTurnNumber() + 1);
@@ -487,7 +487,8 @@ public class BattleServiceImpl implements BattleService {
                 }
             }
         } else {
-            newRequest.setStatus("In process");
+            // WAITING FOR BATTLE TURN TO BE DECIDED
+            newRequest.setStatus("WAITING");
             Long prevKey = combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
             combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1,
                     MessageFormat.format("Country {0} is starting to attack {1}", move.getAttackerName(), move.getAttackedName()));
@@ -588,7 +589,7 @@ public class BattleServiceImpl implements BattleService {
         }
         combatState.getBattleLogs().get(0).getBattleResults().add(battleResult);
         inProgressTurn.setStatus(FINISHED);
-
+        inProgressTurn.setCreatedBy(request.getUserId());
         var battleTurnResponse = new BattleSingleResponse();
         battleTurnResponse.setTurnCombatState(combatState);
         battleTurnResponse.setMapState(mapState);

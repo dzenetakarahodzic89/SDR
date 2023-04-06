@@ -14,7 +14,7 @@ import ba.com.zira.sdr.dao.model.BattleEntity;
 @Repository
 public class BattleDAO extends AbstractDAO<BattleEntity, Long> {
     public BattleSingleResponse findLastBattleTurn(Long id) {
-        var hql = "select new ba.com.zira.sdr.api.model.battle.BattleSingleResponse(sb.id,sb.name, sbt.turnNumber, sbt.mapState, sbt.teamState,sbt.turnCombatState,sbt.id) from BattleEntity sb join BattleTurnEntity sbt on sb.id =sbt.battle where sb.id = :id order by sbt.turnNumber desc";
+        var hql = "select new ba.com.zira.sdr.api.model.battle.BattleSingleResponse(sb.id,sb.name, sbt.turnNumber, sbt.mapState, sbt.teamState,sbt.turnCombatState,sbt.id,sbt.status) from BattleEntity sb join BattleTurnEntity sbt on sb.id =sbt.battle where sb.id = :id order by sbt.turnNumber desc";
         TypedQuery<BattleSingleResponse> query = entityManager.createQuery(hql, BattleSingleResponse.class).setParameter("id", id)
                 .setMaxResults(1);
         return query.getSingleResult();
