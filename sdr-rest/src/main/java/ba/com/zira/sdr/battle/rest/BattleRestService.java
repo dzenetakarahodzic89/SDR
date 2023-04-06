@@ -26,6 +26,7 @@ import ba.com.zira.sdr.api.model.battle.BattleSingleOverviewResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 import ba.com.zira.sdr.api.model.battle.BattleTurnUpdateRequest;
 import ba.com.zira.sdr.api.model.battle.PreBattleCreateRequest;
+import ba.com.zira.sdr.api.model.battle.WinnerCountryNamesResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -88,4 +89,12 @@ public class BattleRestService {
         }
         return battleService.attackBattle(new EntityRequest<>(request));
     }
+
+    @Operation(summary = "Get winner loser country names")
+    @GetMapping(value = "{id}/winner-loser-country-name")
+    public PayloadResponse<WinnerCountryNamesResponse> getWinnerLoserCountryName(
+            @Parameter(required = true, description = "ID of the battle") @PathVariable final Long id) throws ApiException {
+        return battleService.getWinnerLoserCountryName(new EntityRequest<>(id));
+    }
+
 }
