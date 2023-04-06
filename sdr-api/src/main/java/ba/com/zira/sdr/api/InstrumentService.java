@@ -32,6 +32,15 @@ public interface InstrumentService {
      */
     PagedPayloadResponse<InstrumentResponse> find(final FilterRequest filterRequest) throws ApiException;
 
+    /**
+     * Gets the.
+     *
+     * @param request
+     *            the request
+     * @return the payload response
+     * @throws ApiException
+     *             the api exception
+     */
     PayloadResponse<InstrumentResponse> get(final EntityRequest<Long> request) throws ApiException;
 
     /**
@@ -65,11 +74,39 @@ public interface InstrumentService {
      */
     PayloadResponse<String> delete(final EntityRequest<Long> entityRequest);
 
+    /**
+     * Insert instruments to song.
+     *
+     * @param entityRequest
+     *            the entity request
+     * @return the list payload response
+     * @throws ApiException
+     *             the api exception
+     */
     ListPayloadResponse<ResponseSongInstrument> insertInstrumentsToSong(ListRequest<InsertSongInstrumentRequest> entityRequest)
             throws ApiException;
 
+    /**
+     * Find all songs in eras for instruments.
+     *
+     * @param request
+     *            the request
+     * @return the list payload response
+     * @throws ApiException
+     *             the api exception
+     */
     ListPayloadResponse<ResponseSongInstrumentEra> findAllSongsInErasForInstruments(EntityRequest<Long> request) throws ApiException;
 
-    PagedPayloadResponse<InstrumentSearchResponse> search(final EntityRequest<InstrumentSearchRequest> request) throws ApiException;
+    /**
+     * Search.
+     *
+     * @param request
+     *            the request
+     * @return the paged payload response
+     * @throws ApiException
+     *             the api exception
+     */
+    ListPayloadResponse<InstrumentSearchResponse> instrumentSearch(final EntityRequest<InstrumentSearchRequest> request)
+            throws ApiException;
 
 }
