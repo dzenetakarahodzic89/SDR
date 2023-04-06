@@ -17,9 +17,13 @@ import lombok.Setter;
 @Schema(description = "Search filters for instrument")
 public class InstrumentSearchRequest implements Serializable {
     private static final long serialVersionUID = 1L;
-
+    @Schema(description = "Instrument name")
     private String name;
-    @Schema(description = "Sorting method", allowableValues = { "NoOfPersons", "Alphabetical", "LastEdit" })
+    @Schema(description = "Sorting method", allowableValues = { "last_date", "instrument_name" })
     public String sortBy;
+    @Schema(description = "Number of page")
+    private Integer page;
+    @Schema(description = "Number of instruments per page")
+    private Integer pageSize;
 
 }

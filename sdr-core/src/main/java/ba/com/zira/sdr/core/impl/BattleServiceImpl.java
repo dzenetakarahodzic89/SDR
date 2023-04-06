@@ -16,12 +16,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.exception.ApiException;
 import ba.com.zira.commons.message.request.EmptyRequest;
@@ -159,16 +153,6 @@ public class BattleServiceImpl implements BattleService {
         return listOfBattleTurns.get(currentLastIndex);
     }
 
-    private TeamStructure getTeamForCountryId(TeamsState ts, Long countryId) {
-        var teams = getAllTeamsForTeamsState(ts);
-        for (var team : teams) {
-            if (team.getCountryId().equals(countryId)) {
-                return team;
-            }
-        }
-        return null;
-    }
-
     List<TeamStructure> getAllTeamsForTeamsState(TeamsState ts) {
         List<TeamStructure> teams = new ArrayList<>();
         teams.addAll(ts.getActiveNpcTeams());
@@ -181,7 +165,7 @@ public class BattleServiceImpl implements BattleService {
     public PayloadResponse<BattleSingleOverviewResponse> getSingleOverview(EntityRequest<Long> request) throws ApiException {
         List<BattleTurnEntity> battleTurns = battleTurnDAO.getByBattleId(request.getEntity());
         var battleEntity = battleDAO.findByPK(request.getEntity());
-        var winnerCountry = battleEntity.getCountry();
+
         var response = new BattleSingleOverviewResponse();
         BattleTurnEntity lastTurn = getLastTurn(battleTurns);
         List<BattleArtistStateResponse> artists = new ArrayList<>();
@@ -189,6 +173,7 @@ public class BattleServiceImpl implements BattleService {
         try {
             var firstTurn = getBattleTurnEntityByTurnNumber(battleTurns, 1L);
             TeamsState firstTurnTeamState = objectMapper.readValue(firstTurn.getTeamState(), TeamsState.class);
+
             for (var team : getAllTeamsForTeamsState(firstTurnTeamState)) {
                 for (var artist : team.getTeamArtists()) {
                     var battleArtistState = new BattleArtistStateResponse();
@@ -199,27 +184,26 @@ public class BattleServiceImpl implements BattleService {
                     artists.add(battleArtistState);
                 }
             }
-            TeamsState lastTurnTeamState = objectMapper.readValue(lastTurn.getTeamState(), TeamsState.class);
             var lastTurnCombatState = objectMapper.readValue(lastTurn.getTurnCombatState(), TurnCombatState.class);
-            TeamStructure winnerTeamStructure = getTeamForCountryId(lastTurnTeamState, winnerCountry.getId());
             lastTurnCombatState.getBattleLogs().stream().forEach((var battleLog) -> {
                 battleLog.getTurnHistory().forEach((var battleLogEntry) -> {
                     artists.forEach(artist -> {
                         boolean hasWinnerSong = artist.getSongs().stream()
                                 .anyMatch(song -> song.getSongId().equals(battleLogEntry.getWinnerSongId()));
-                        boolean hasLoserSong = artist.getSongs().stream().anyMatch(song -> {
-                            return song.getSongId().equals(battleLogEntry.getLoserSongId());
-                        });
+                        boolean hasLoserSong = artist.getSongs().stream()
+                                .anyMatch(song -> song.getSongId().equals(battleLogEntry.getLoserSongId()));
                         if (hasWinnerSong) {
 
                             artist.setNumberOfSongsWon(artist.getNumberOfSongsWon() + 1);
-                            if (artist.getCountryId().equals(winnerCountry.getId())) {
+                            if (checkIfArtistAndCountryMatch(battleEntity.getCountry() != null ? battleEntity.getCountry().getId() : null,
+                                    firstTurnTeamState, artist)) {
                                 response.setNumberOfSongsWon(response.getNumberOfSongsWon() + 1);
                             }
                         }
                         if (hasLoserSong) {
                             artist.setNumberOfSongsLost(artist.getNumberOfSongsLost() + 1);
-                            if (artist.getCountryId().equals(winnerCountry.getId())) {
+                            if (checkIfArtistAndCountryMatch(battleEntity.getCountry() != null ? battleEntity.getCountry().getId() : null,
+                                    firstTurnTeamState, artist)) {
                                 response.setNumberOfSongsLost(response.getNumberOfSongsLost() + 1);
                             }
                         }
@@ -267,6 +251,12 @@ public class BattleServiceImpl implements BattleService {
 
         response.setArtistState(artists);
         return new PayloadResponse<>(request, ResponseCode.OK, response);
+    }
+
+    private boolean checkIfArtistAndCountryMatch(final Long winnerCountry, TeamsState firstTurnTeamState,
+            BattleArtistStateResponse artist) {
+        return (winnerCountry != null && artist.getCountryId().equals(winnerCountry))
+                || (artist.getCountryId().equals(firstTurnTeamState.getActivePlayerTeam().getCountryId()));
     }
 
     @Override
