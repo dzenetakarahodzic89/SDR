@@ -45,7 +45,7 @@ public class ChatDAO extends AbstractDAO<ChatEntity, Long> {
             chatTopics.add(entityManager.createQuery(hql, ChatTopic.class).setParameter("cId", cId).setMaxResults(1).getSingleResult());
         });
 
-        chatTopics.sort((x, y) -> x.getCreated().isAfter(y.getCreated()) ? 1 : -1);
+        chatTopics.sort((x, y) -> x.getCreated().isAfter(y.getCreated()) ? -1 : 1);
 
         pagedData.setRecords(chatTopics);
 
@@ -72,7 +72,7 @@ public class ChatDAO extends AbstractDAO<ChatEntity, Long> {
         pagedData.setRecordsPerPage(pageSize);
 
         var hql = "SELECT new ba.com.zira.sdr.api.model.chat.Chat(c.id,c.userCode,c.created,c.content,c.chatId,c.topic) "
-                + "FROM ChatEntity c where c.chatId=:chatId ORDER BY c.created DESC";
+                + "FROM ChatEntity c where c.chatId=:chatId ORDER BY c.created ASC";
 
         pagedData.setRecords(entityManager.createQuery(hql, Chat.class).setParameter("chatId", chatId).setFirstResult(firstResult)
                 .setMaxResults(maxResults).getResultList());
