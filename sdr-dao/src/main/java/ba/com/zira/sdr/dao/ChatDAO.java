@@ -107,4 +107,16 @@ public class ChatDAO extends AbstractDAO<ChatEntity, Long> {
         }
     }
 
+    public String getUserCodeOfTopicCreator(String chatId) {
+        var hql = "SELECT c.createdBy FROM ChatEntity c WHERE c.chatId=:chatId AND c.created="
+                + "(SELECT MIN(c2.created) FROM ChatEntity c2 WHERE c2.chatId=c.chatId)";
+        var q = entityManager.createQuery(hql, String.class).setParameter("chatId", chatId).setMaxResults(1);
+
+        try {
+            return q.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }
