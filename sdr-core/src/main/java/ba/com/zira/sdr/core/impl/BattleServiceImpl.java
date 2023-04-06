@@ -32,6 +32,7 @@ import ba.com.zira.sdr.api.artist.ArtistResponse;
 import ba.com.zira.sdr.api.model.battle.ArtistStructure;
 import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleArtistStateResponse;
+import ba.com.zira.sdr.api.model.battle.BattleFinishedNotificationRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
 import ba.com.zira.sdr.api.model.battle.BattleLog;
@@ -44,6 +45,7 @@ import ba.com.zira.sdr.api.model.battle.BattleTurnUpdateRequest;
 import ba.com.zira.sdr.api.model.battle.CountryState;
 import ba.com.zira.sdr.api.model.battle.MapState;
 import ba.com.zira.sdr.api.model.battle.PreBattleCreateRequest;
+import ba.com.zira.sdr.api.model.battle.SongBattleResult;
 import ba.com.zira.sdr.api.model.battle.SongStructure;
 import ba.com.zira.sdr.api.model.battle.TeamBattleState;
 import ba.com.zira.sdr.api.model.battle.TeamStructure;
@@ -84,6 +86,9 @@ public class BattleServiceImpl implements BattleService {
 
     @NonNull
     MusicRiskAIBattleHelper musicRiskAIBattleHelper;
+
+    @NonNull
+    BattleNotificationService battleNotificationService;
 
     private N2bObjectMapper objectMapper = new N2bObjectMapper();
 
@@ -510,103 +515,147 @@ public class BattleServiceImpl implements BattleService {
     @Override
     public PayloadResponse<String> attackBattle(EntityRequest<BattleTurnUpdateRequest> request) throws ApiException {
         var inProgressTurn = battleTurnDAO.findByPK(request.getEntity().getBattleTurnId());
-
+        var battle = battleDAO.findByPK(inProgressTurn.getBattle().getId());
+        var notificationReq = new BattleFinishedNotificationRequest();
+        notificationReq.setResults(new ArrayList<>());
+        ;
+        notificationReq.setBattleName(battle.getName());
+        notificationReq.setTurnNumber(inProgressTurn.getTurnNumber());
+        notificationReq.setUserSentTo(inProgressTurn.getCreatedBy());
+        // notificationReq.setCountriesCombat(FINISHED);
         var requestEntity = request.getEntity();
-        var loggedUser = request.getUser().getUserId();
-        MapState mapState = null;
-        TeamsState teamState = null;
-        TurnCombatState combatState = null;
-        var returnString = "";
-        try {
-            mapState = objectMapper.readValue(inProgressTurn.getMapState(), MapState.class);
-            teamState = objectMapper.readValue(inProgressTurn.getTeamState(), TeamsState.class);
-            combatState = objectMapper.readValue(inProgressTurn.getTurnCombatState(), TurnCombatState.class);
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
-            throw ApiException.createFrom(request, ResponseCode.INVALID_SETUP, "Json could not be parsed");
+        // var loggedUser = request.getUser().getUserId();
+        // MapState mapState = null;
+        // TeamsState teamState = null;
+        // TurnCombatState combatState = null;
+        // var returnString = "";
+        // try {
+        // mapState = objectMapper.readValue(inProgressTurn.getMapState(),
+        // MapState.class);
+        // teamState = objectMapper.readValue(inProgressTurn.getTeamState(),
+        // TeamsState.class);
+        // combatState =
+        // objectMapper.readValue(inProgressTurn.getTurnCombatState(),
+        // TurnCombatState.class);
+        // } catch (Exception ex) {
+        // LOGGER.error(ex.getMessage());
+        // throw ApiException.createFrom(request, ResponseCode.INVALID_SETUP,
+        // "Json could not be parsed");
+        // }
+        // combatState.setStatus(FINISHED);
+        // Long prevKey =
+        // combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
+        // combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1,
+        // MessageFormat.format("The battle is between {0} and {1}",
+        // requestEntity.getAttackerName(), requestEntity.getAttackedName()));
+        // prevKey += 1;
+        // for (var explanation : requestEntity.getSongBattleExplained()) {
+        // combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1,
+        // explanation + " decided by " + loggedUser);
+        //
+        // prevKey += 1;
+        // }
+        // var battleResult = new BattleLogBattleResult();
+        // Long prevKeyResult =
+        // combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
+        // battleResult.setId(prevKeyResult + 1);
+        // battleResult.setTurnNumber(inProgressTurn.getTurnNumber());
+        // for (var songBattle : requestEntity.getSongBattles()) {
+        // songBattle.setBattleResultId(battleResult.getId());
+        // }
+        // combatState.getBattleLogs().get(0).getTurnHistory().addAll(requestEntity.getSongBattles());
+        for (var result : requestEntity.getSongBattles()) {
+            var newResult = new SongBattleResult();
+            newResult.setSongAName(result.getPlayerASongName());
+            newResult.setSongBName(result.getPlayerBSongName());
+            newResult.setSongAStatus(result.getLoserSongId().equals(result.getPlayerASongId()) ? "Lost" : "Won");
+            newResult.setSongBStatus(result.getLoserSongId().equals(result.getPlayerBSongId()) ? "Lost" : "Won");
+            notificationReq.getResults().add(newResult);
         }
-        combatState.setStatus(FINISHED);
-        Long prevKey = combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
-        combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1, MessageFormat.format("The battle is between {0} and {1}",
-                requestEntity.getAttackerName(), requestEntity.getAttackedName()));
-        prevKey += 1;
-        for (var explanation : requestEntity.getSongBattleExplained()) {
-            combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1, explanation + " decided by " + loggedUser);
-
-            prevKey += 1;
-        }
-        var battleResult = new BattleLogBattleResult();
-        Long prevKeyResult = combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
-        battleResult.setId(prevKeyResult + 1);
-        battleResult.setTurnNumber(inProgressTurn.getTurnNumber() + 1);
-        for (var songBattle : requestEntity.getSongBattles()) {
-            songBattle.setBattleResultId(battleResult.getId());
-        }
-        combatState.getBattleLogs().get(0).getTurnHistory().addAll(requestEntity.getSongBattles());
-        var foundNpcTeamIndex = 0;
-        for (var i = 0; i < teamState.getActiveNpcTeams().size(); i++) {
-            var item = teamState.getActiveNpcTeams().get(i);
-            if (item.getCountryId().equals(requestEntity.getAttackedCountryId())) {
-                foundNpcTeamIndex = i;
-                break;
-            }
-        }
-        if (requestEntity.getWonCase().equalsIgnoreCase("PLAYER")) {
-            teamState.getActivePlayerTeam().setNumberOfWins(teamState.getActivePlayerTeam().getNumberOfWins() + 1);
-            teamState.getActiveNpcTeams().get(foundNpcTeamIndex)
-                    .setNumberOfLoses(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getNumberOfLoses() + 1);
-            teamState.getActivePlayerTeam().getEligibleCountryIds().add(requestEntity.getAttackedCountryId());
-            TeamStructure wonAgainsTeam = teamState.getActiveNpcTeams().get(foundNpcTeamIndex);
-            teamState.getInactiveNpcTeams().add(wonAgainsTeam);
-            battleResult.setWinnerTeamId(teamState.getActivePlayerTeam().getId());
-            battleResult.setWinnerEligibleCountryIds(teamState.getActivePlayerTeam().getEligibleCountryIds());
-            battleResult.setLoserTeamId(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getId());
-            battleResult.setLoserEligibleCountryIds(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds());
-            teamState.getActiveNpcTeams().remove(foundNpcTeamIndex);
-
-            Integer npcCountryIndex = null;
-            for (var i = 0; i < mapState.getCountries().size(); i++) {
-                if (mapState.getCountries().get(i).getCountryId().equals(requestEntity.getAttackedCountryId())) {
-                    npcCountryIndex = i;
-                    break;
-                }
-            }
-            mapState.getCountries().get(npcCountryIndex).setTeamOwnershipId(1L);
-            mapState.getCountries().get(npcCountryIndex).setMapValue((double) 1);
-            returnString = MessageFormat.format("Country {0} has won over {1}", request.getEntity().getAttackerName(),
-                    request.getEntity().getAttackedName());
-        } else if (requestEntity.getWonCase().equalsIgnoreCase("NPC")) {
-            teamState.getActivePlayerTeam().setNumberOfLoses(teamState.getActivePlayerTeam().getNumberOfLoses() + 1);
-            teamState.getActiveNpcTeams().get(foundNpcTeamIndex)
-                    .setNumberOfWins(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getNumberOfWins() + 1);
-            teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds().add(requestEntity.getAttackerCountryId());
-            returnString = MessageFormat.format("Country {0} has won over {1}", request.getEntity().getAttackedName(),
-                    request.getEntity().getAttackerName());
-            battleResult.setWinnerTeamId(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getId());
-            battleResult.setWinnerEligibleCountryIds(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds());
-            battleResult.setLoserTeamId(teamState.getActivePlayerTeam().getId());
-            battleResult.setLoserEligibleCountryIds(teamState.getActivePlayerTeam().getEligibleCountryIds());
-        }
-        combatState.getBattleLogs().get(0).getBattleResults().add(battleResult);
-        inProgressTurn.setStatus(FINISHED);
-        inProgressTurn.setCreatedBy(request.getUserId());
-        var battleTurnResponse = new BattleSingleResponse();
-        battleTurnResponse.setTurnCombatState(combatState);
-        battleTurnResponse.setMapState(mapState);
-        battleTurnResponse.setTeamState(teamState);
-        battleTurnResponse.setTurn(inProgressTurn.getTurnNumber());
-        battleTurnResponse = musicRiskAIBattleHelper.simulateTurnForAI(battleTurnResponse);
-
-        try {
-            inProgressTurn.setTeamState(objectMapper.writeValueAsString(battleTurnResponse.getTeamState()));
-            inProgressTurn.setTurnCombatState(objectMapper.writeValueAsString(battleTurnResponse.getTurnCombatState()));
-            inProgressTurn.setMapState(objectMapper.writeValueAsString(battleTurnResponse.getMapState()));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        // var foundNpcTeamIndex = 0;
+        // for (var i = 0; i < teamState.getActiveNpcTeams().size(); i++) {
+        // var item = teamState.getActiveNpcTeams().get(i);
+        // if (item.getCountryId().equals(requestEntity.getAttackedCountryId()))
+        // {
+        // foundNpcTeamIndex = i;
+        // break;
+        // }
+        // }
+        // if (requestEntity.getWonCase().equalsIgnoreCase("PLAYER")) {
+        // teamState.getActivePlayerTeam().setNumberOfWins(teamState.getActivePlayerTeam().getNumberOfWins()
+        // + 1);
+        // teamState.getActiveNpcTeams().get(foundNpcTeamIndex)
+        // .setNumberOfLoses(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getNumberOfLoses()
+        // + 1);
+        // teamState.getActivePlayerTeam().getEligibleCountryIds().add(requestEntity.getAttackedCountryId());
+        // TeamStructure wonAgainsTeam =
+        // teamState.getActiveNpcTeams().get(foundNpcTeamIndex);
+        // teamState.getInactiveNpcTeams().add(wonAgainsTeam);
+        // battleResult.setWinnerTeamId(teamState.getActivePlayerTeam().getId());
+        // battleResult.setWinnerEligibleCountryIds(teamState.getActivePlayerTeam().getEligibleCountryIds());
+        // battleResult.setLoserTeamId(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getId());
+        // battleResult.setLoserEligibleCountryIds(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds());
+        // teamState.getActiveNpcTeams().remove(foundNpcTeamIndex);
+        //
+        // Integer npcCountryIndex = null;
+        // for (var i = 0; i < mapState.getCountries().size(); i++) {
+        // if
+        // (mapState.getCountries().get(i).getCountryId().equals(requestEntity.getAttackedCountryId()))
+        // {
+        // npcCountryIndex = i;
+        // break;
+        // }
+        // }
+        // mapState.getCountries().get(npcCountryIndex).setTeamOwnershipId(1L);
+        // mapState.getCountries().get(npcCountryIndex).setMapValue((double) 1);
+        // returnString = MessageFormat.format("Country {0} has won over {1}",
+        // request.getEntity().getAttackerName(),
+        // request.getEntity().getAttackedName());
+        // } else if (requestEntity.getWonCase().equalsIgnoreCase("NPC")) {
+        // teamState.getActivePlayerTeam().setNumberOfLoses(teamState.getActivePlayerTeam().getNumberOfLoses()
+        // + 1);
+        // teamState.getActiveNpcTeams().get(foundNpcTeamIndex)
+        // .setNumberOfWins(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getNumberOfWins()
+        // + 1);
+        // teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds().add(requestEntity.getAttackerCountryId());
+        // returnString = MessageFormat.format("Country {0} has won over {1}",
+        // request.getEntity().getAttackedName(),
+        // request.getEntity().getAttackerName());
+        // battleResult.setWinnerTeamId(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getId());
+        // battleResult.setWinnerEligibleCountryIds(teamState.getActiveNpcTeams().get(foundNpcTeamIndex).getEligibleCountryIds());
+        // battleResult.setLoserTeamId(teamState.getActivePlayerTeam().getId());
+        // battleResult.setLoserEligibleCountryIds(teamState.getActivePlayerTeam().getEligibleCountryIds());
+        // }
+        // combatState.getBattleLogs().get(0).getBattleResults().add(battleResult);
+        // inProgressTurn.setStatus(FINISHED);
+        // notificationReq.setUserSentTo(inProgressTurn.getCreatedBy());
+        // inProgressTurn.setCreatedBy(request.getUserId());
+        notificationReq.setUserDecided(request.getUserId());
+        // var battleTurnResponse = new BattleSingleResponse();
+        // battleTurnResponse.setTurnCombatState(combatState);
+        // battleTurnResponse.setMapState(mapState);
+        // battleTurnResponse.setTeamState(teamState);
+        // battleTurnResponse.setTurn(inProgressTurn.getTurnNumber());
+        // battleTurnResponse =
+        // musicRiskAIBattleHelper.simulateTurnForAI(battleTurnResponse);
+        // try {
+        // inProgressTurn.setTeamState(objectMapper.writeValueAsString(battleTurnResponse.getTeamState()));
+        // inProgressTurn.setTurnCombatState(objectMapper.writeValueAsString(battleTurnResponse.getTurnCombatState()));
+        // inProgressTurn.setMapState(objectMapper.writeValueAsString(battleTurnResponse.getMapState()));
+        // } catch (JsonProcessingException e) {
+        // e.printStackTrace();
+        // }
+        System.out.println(notificationReq);
+        notificationReq.setCountriesCombat(FINISHED);
+        // try {
+        battleNotificationService.sendNotification(new EntityRequest<>(notificationReq, request));
+        // } catch (Exception e) {
+        // LOGGER.error("handleError => {}", e.getMessage());
+        // }
 
         battleTurnDAO.merge(inProgressTurn);
-        return new PayloadResponse<>(request, ResponseCode.OK, returnString);
+        // return new PayloadResponse<>(request, ResponseCode.OK, returnString);
+        return new PayloadResponse<>(request, ResponseCode.OK, "a");
     }
 
 }
