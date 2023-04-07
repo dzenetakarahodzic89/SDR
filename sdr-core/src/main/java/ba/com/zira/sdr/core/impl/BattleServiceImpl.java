@@ -1,20 +1,21 @@
 package ba.com.zira.sdr.core.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import ba.com.zira.commons.configuration.N2bObjectMapper;
 import ba.com.zira.commons.exception.ApiException;
@@ -29,6 +30,8 @@ import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.BattleService;
 import ba.com.zira.sdr.api.artist.ArtistResponse;
+import ba.com.zira.sdr.api.enums.ObjectType;
+import ba.com.zira.sdr.api.model.battle.ArtistSongInformation;
 import ba.com.zira.sdr.api.model.battle.ArtistStructure;
 import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleArtistStateResponse;
@@ -41,6 +44,7 @@ import ba.com.zira.sdr.api.model.battle.BattleResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleOverviewResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 import ba.com.zira.sdr.api.model.battle.BattleTurnUpdateRequest;
+import ba.com.zira.sdr.api.model.battle.CountryResults;
 import ba.com.zira.sdr.api.model.battle.CountryState;
 import ba.com.zira.sdr.api.model.battle.MapState;
 import ba.com.zira.sdr.api.model.battle.PreBattleCreateRequest;
@@ -49,9 +53,11 @@ import ba.com.zira.sdr.api.model.battle.TeamBattleState;
 import ba.com.zira.sdr.api.model.battle.TeamStructure;
 import ba.com.zira.sdr.api.model.battle.TeamsState;
 import ba.com.zira.sdr.api.model.battle.TurnCombatState;
+import ba.com.zira.sdr.api.model.battle.WinnerCountryNamesResponse;
 import ba.com.zira.sdr.api.model.country.CountryResponse;
 import ba.com.zira.sdr.api.model.song.SongResponse;
 import ba.com.zira.sdr.core.mapper.BattleMapper;
+import ba.com.zira.sdr.core.utils.LookupService;
 import ba.com.zira.sdr.core.utils.MusicRiskAIBattleHelper;
 import ba.com.zira.sdr.dao.ArtistDAO;
 import ba.com.zira.sdr.dao.BattleDAO;
@@ -84,6 +90,8 @@ public class BattleServiceImpl implements BattleService {
 
     @NonNull
     MusicRiskAIBattleHelper musicRiskAIBattleHelper;
+    @NonNull
+    LookupService lookupService;
 
     private N2bObjectMapper objectMapper = new N2bObjectMapper();
 
@@ -161,29 +169,73 @@ public class BattleServiceImpl implements BattleService {
         return teams;
     }
 
+    private List<BattleArtistStateResponse> getAllArtistsForTeamState(TeamsState teamState) {
+        List<BattleArtistStateResponse> artists = new ArrayList<>();
+        for (var team : getAllTeamsForTeamsState(teamState)) {
+            for (var artist : team.getTeamArtists()) {
+                var battleArtistState = new BattleArtistStateResponse(artist.getArtistId(), artist.getName(), artist.getSongs(),
+                        artist.getCountryId());
+                artists.add(battleArtistState);
+            }
+        }
+        return artists;
+    }
+
+    private float getWinPercentage(int numberOfWins, int numberOfLost) {
+        int total = numberOfWins + numberOfLost;
+        if (total == 0) {
+            return total;
+        }
+        return 100 * numberOfWins / total;
+    }
+
+    private Map<Long, TeamBattleState> getTeamBattleStatesForBattleTurns(List<BattleTurnEntity> battleTurns) {
+
+        try {
+            Map<Long, List<Long>> artistsPerCountry = new HashMap<>();
+            Map<Long, TeamBattleState> teamBattleStates = new HashMap<>();
+
+            for (var battleTurn : battleTurns) {
+                TeamsState teamState = objectMapper.readValue(battleTurn.getTeamState(), TeamsState.class);
+                for (var team : getAllTeamsForTeamsState(teamState)) {
+                    if (!teamBattleStates.containsKey(team.getId())) {
+                        var newTeam = new TeamBattleState(team.getId(), team.getCountryId(), team.getCountryName());
+                        teamBattleStates.put(team.getId(), newTeam);
+                    }
+                    List<Long> availableArtistsForTeam = new ArrayList<>();
+                    team.getEligibleCountryIds().forEach(eligibleCountryId -> {
+                        if (artistsPerCountry.containsKey(eligibleCountryId)) {
+                            availableArtistsForTeam.addAll(artistsPerCountry.get(eligibleCountryId));
+                        } else {
+
+                            var availableArtistForCountry = artistDAO.getAllByCountryId(eligibleCountryId);
+                            artistsPerCountry.put(eligibleCountryId, availableArtistForCountry);
+                            availableArtistsForTeam.addAll(availableArtistForCountry);
+                        }
+                    });
+                    teamBattleStates.get(team.getId()).getAvailableArtistsByTurn().add(Long.valueOf(availableArtistsForTeam.size()));
+                }
+            }
+            return teamBattleStates;
+        } catch (Exception ex) {
+
+            LOGGER.error(ex.getMessage());
+        }
+        return null;
+
+    }
+
     @Override
     public PayloadResponse<BattleSingleOverviewResponse> getSingleOverview(EntityRequest<Long> request) throws ApiException {
         List<BattleTurnEntity> battleTurns = battleTurnDAO.getByBattleId(request.getEntity());
         var battleEntity = battleDAO.findByPK(request.getEntity());
-
         var response = new BattleSingleOverviewResponse();
         BattleTurnEntity lastTurn = getLastTurn(battleTurns);
-        List<BattleArtistStateResponse> artists = new ArrayList<>();
 
         try {
             var firstTurn = getBattleTurnEntityByTurnNumber(battleTurns, 1L);
             TeamsState firstTurnTeamState = objectMapper.readValue(firstTurn.getTeamState(), TeamsState.class);
-
-            for (var team : getAllTeamsForTeamsState(firstTurnTeamState)) {
-                for (var artist : team.getTeamArtists()) {
-                    var battleArtistState = new BattleArtistStateResponse();
-                    battleArtistState.setId(artist.getArtistId());
-                    battleArtistState.setName(artist.getName());
-                    battleArtistState.setSongs(artist.getSongs());
-                    battleArtistState.setCountryId(artist.getCountryId());
-                    artists.add(battleArtistState);
-                }
-            }
+            List<BattleArtistStateResponse> artists = getAllArtistsForTeamState(firstTurnTeamState);
             var lastTurnCombatState = objectMapper.readValue(lastTurn.getTurnCombatState(), TurnCombatState.class);
             lastTurnCombatState.getBattleLogs().stream().forEach((var battleLog) -> {
                 battleLog.getTurnHistory().forEach((var battleLogEntry) -> {
@@ -212,44 +264,14 @@ public class BattleServiceImpl implements BattleService {
                 });
 
             });
-            if (response.getNumberOfSongsWon() + response.getNumberOfSongsLost() != 0) {
-                var winPercentage = 100 * (response.getNumberOfSongsWon())
-                        / (response.getNumberOfSongsWon() + response.getNumberOfSongsLost());
-                response.setWinPercentage(winPercentage);
-
-            }
-            Map<Long, List<Long>> artistsPerCountry = new HashMap<>();
-            Map<Long, TeamBattleState> teamBattleStates = new HashMap<>();
-
-            for (var battleTurn : battleTurns) {
-                TeamsState teamState = objectMapper.readValue(battleTurn.getTeamState(), TeamsState.class);
-                for (var team : getAllTeamsForTeamsState(teamState)) {
-                    if (!teamBattleStates.containsKey(team.getId())) {
-                        var newTeam = new TeamBattleState(team.getId(), team.getCountryId(), team.getCountryName());
-                        teamBattleStates.put(team.getId(), newTeam);
-                    }
-                    List<Long> availableArtistsForTeam = new ArrayList<>();
-                    team.getEligibleCountryIds().forEach(eligibleCountryId -> {
-                        if (artistsPerCountry.containsKey(eligibleCountryId)) {
-                            availableArtistsForTeam.addAll(artistsPerCountry.get(eligibleCountryId));
-                        } else {
-
-                            var availableArtistForCountry = artistDAO.getAllByCountryId(eligibleCountryId);
-                            artistsPerCountry.put(eligibleCountryId, availableArtistForCountry);
-                            availableArtistsForTeam.addAll(availableArtistForCountry);
-                        }
-                    });
-                    teamBattleStates.get(team.getId()).getAvailableArtistsByTurn().add(Long.valueOf(availableArtistsForTeam.size()));
-                }
-            }
-            response.setTeamBattleStates(teamBattleStates);
-
+            response.setWinPercentage(getWinPercentage(response.getNumberOfSongsWon(), response.getNumberOfSongsLost()));
+            response.setTeamBattleStates(getTeamBattleStatesForBattleTurns(battleTurns));
+            response.setArtistState(artists);
         } catch (Exception ex) {
 
             LOGGER.error(ex.getMessage());
         }
 
-        response.setArtistState(artists);
         return new PayloadResponse<>(request, ResponseCode.OK, response);
     }
 
@@ -606,6 +628,88 @@ public class BattleServiceImpl implements BattleService {
 
         battleTurnDAO.merge(inProgressTurn);
         return new PayloadResponse<>(request, ResponseCode.OK, returnString);
+    }
+
+    @Override
+    public PayloadResponse<WinnerCountryNamesResponse> getWinnerLoserCountryName(EntityRequest<Long> request) throws ApiException {
+        List<BattleTurnEntity> battleTurns = battleTurnDAO.getByBattleId(request.getEntity());
+        var battleEntity = battleDAO.findByPK(request.getEntity());
+        var winnerCountry = battleEntity.getCountry();
+        var response = new WinnerCountryNamesResponse();
+        String battleName = battleEntity.getName();
+        response.setBattleName(battleName);
+        List<ArtistSongInformation> artists = new ArrayList<>();
+        try {
+            var getTurn = getBattleTurnEntityByTurnNumber(battleTurns, 1L);
+            TeamsState getTurnTeamState = objectMapper.readValue(getTurn.getTeamState(), TeamsState.class);
+            for (var team : getAllTeamsForTeamsState(getTurnTeamState)) {
+                if (team.getCountryId().equals(winnerCountry.getId())) {
+                    response.setId(team.getId());
+                    response.setCountryName(team.getCountryName());
+                    response.setCountryId(team.getCountryId());
+                    for (var p = 0; p < team.getTeamArtists().size(); p++) {
+                        for (var m = 0; m < team.getTeamArtists().get(p).getSongs().size(); m++) {
+                            var artistSongInformation = new ArtistSongInformation();
+                            artistSongInformation.setArtistId(team.getTeamArtists().get(p).getArtistId());
+                            artistSongInformation.setArtistName(team.getTeamArtists().get(p).getName());
+                            artistSongInformation.setSongId(team.getTeamArtists().get(p).getSongs().get(m).getSongId());
+                            artistSongInformation.setSongName(team.getTeamArtists().get(p).getSongs().get(m).getName());
+                            artistSongInformation.setSpotifyId(team.getTeamArtists().get(p).getSongs().get(m).getSpotifyId());
+                            artistSongInformation.setAudioUrl(team.getTeamArtists().get(p).getSongs().get(m).getAudioUrl());
+                            artistSongInformation.setPlaytime(team.getTeamArtists().get(p).getSongs().get(m).getPlaytime());
+                            artists.add(artistSongInformation);
+                            for (var artist : artists) {
+                                lookupService.lookupCoverImage(Arrays.asList(artist), ArtistSongInformation::getArtistId,
+                                        ObjectType.ARTIST.getValue(), ArtistSongInformation::setImageUrl,
+                                        ArtistSongInformation::getImageUrl);
+                            }
+                            response.setArtistsSongs(artists);
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < battleTurns.size(); i++) {
+                List<CountryResults> countryResults = new ArrayList<>();
+                TeamsState getTeamStates = objectMapper.readValue(battleTurns.get(i).getTeamState(), TeamsState.class);
+                var getTurnCombatStates = objectMapper.readValue(battleTurns.get(i).getTurnCombatState(), TurnCombatState.class);
+                getTurnCombatStates.getBattleLogs().stream().forEach((var battleLog) -> {
+                    battleLog.getBattleResults().forEach((var battleLogEntry) -> {
+                        var countryResult = new CountryResults();
+                        if (response.getId().equals(battleLogEntry.getWinnerTeamId())) {
+                            TeamStructure winnerTeamStructure = getTeamForTeamId(getTeamStates, battleLogEntry.getWinnerTeamId());
+                            String winnerCountryName = winnerTeamStructure.getCountryName();
+                            countryResult.setCountryWon(winnerCountryName);
+                            countryResult.setTurn(battleLogEntry.getTurnNumber());
+                            countryResult.setCountryLoserId(battleLogEntry.getLoserTeamId());
+                            TeamStructure loserTeamStructure = getTeamForTeamId(getTeamStates, battleLogEntry.getLoserTeamId());
+                            String loserCountryTeamName = loserTeamStructure.getCountryName();
+                            countryResult.setCountryLoserName(loserCountryTeamName);
+                            countryResult.setWinnerLoserName(winnerCountryName + " vs " + loserCountryTeamName);
+                            if (battleLogEntry.getWinnerTeamId() == 1 || battleLogEntry.getLoserTeamId() == 1) {
+                                countryResult.setType("NPC");
+                            } else {
+                                countryResult.setType("PLAYER");
+                            }
+                            countryResults.add(countryResult);
+                        }
+                        response.setCountryResults(countryResults);
+                    });
+                });
+            }
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+        }
+        return new PayloadResponse<>(request, ResponseCode.OK, response);
+    }
+
+    private TeamStructure getTeamForTeamId(TeamsState ts, Long teamId) {
+        var teams = getAllTeamsForTeamsState(ts);
+        for (var team : teams) {
+            if (team.getId().equals(teamId)) {
+                return team;
+            }
+        }
+        return null;
     }
 
 }
