@@ -20,6 +20,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.commons.validation.RequestValidator;
+import ba.com.zira.sdr.api.CommentNotificationService;
 import ba.com.zira.sdr.api.CommentService;
 import ba.com.zira.sdr.api.model.comment.Comment;
 import ba.com.zira.sdr.api.model.comment.CommentCreateRequest;
@@ -27,7 +28,15 @@ import ba.com.zira.sdr.api.model.comment.CommentUpdateRequest;
 import ba.com.zira.sdr.core.impl.CommentServiceImpl;
 import ba.com.zira.sdr.core.mapper.CommentMapper;
 import ba.com.zira.sdr.core.validation.CommentRequestValidation;
+import ba.com.zira.sdr.dao.AlbumDAO;
+import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.ChordProgressionDAO;
 import ba.com.zira.sdr.dao.CommentDAO;
+import ba.com.zira.sdr.dao.EraDAO;
+import ba.com.zira.sdr.dao.InstrumentDAO;
+import ba.com.zira.sdr.dao.LabelDAO;
+import ba.com.zira.sdr.dao.PersonDAO;
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.CommentEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
@@ -37,18 +46,27 @@ public class CommentServiceTest extends BasicTestConfiguration {
 
     @Autowired
     private CommentMapper commentMapper;
-
+    CommentNotificationService commentNotificationService;
     private CommentDAO commentDAO;
     private RequestValidator requestValidator;
     private CommentRequestValidation commentRequestValidation;
     private CommentService commentService;
+    private SongDAO songDAO;
+    AlbumDAO albumDAO;
+    ArtistDAO artistDAO;
+    LabelDAO labelDAO;
+    InstrumentDAO instrumentDAO;
+    ChordProgressionDAO chordProgressionDAO;
+    EraDAO eraDAO;
+    PersonDAO personDAO;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.commentDAO = Mockito.mock(CommentDAO.class);
         this.commentRequestValidation = Mockito.mock(CommentRequestValidation.class);
-        this.commentService = new CommentServiceImpl(commentDAO, commentMapper, commentRequestValidation);
+        this.commentService = new CommentServiceImpl(commentNotificationService, commentDAO, commentMapper, commentRequestValidation,
+                songDAO, albumDAO, artistDAO, labelDAO, instrumentDAO, chordProgressionDAO, eraDAO, personDAO);
     }
 
     @Test(enabled = true)
