@@ -16,6 +16,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
+import ba.com.zira.sdr.api.instrument.InstrumentSearchResponse;
 import ba.com.zira.sdr.api.instrument.InstrumentSongResponse;
 import ba.com.zira.sdr.api.instrument.ResponseSongInstrumentEra;
 import ba.com.zira.sdr.api.model.lov.LoV;
@@ -92,6 +93,31 @@ public class InstrumentDAO extends AbstractDAO<InstrumentEntity, Long> {
 
         return entityManager.createQuery(criteriaQuery).getResultStream().map(r -> (InstrumentEntity) r.get(0))
                 .collect(Collectors.toList());
+
+    }
+
+    public List<InstrumentSearchResponse> search(final String name, final String sortBy, final int page, final int pageSize) {
+        var query = "select distinct new ba.com.zira.sdr.api.instrument.InstrumentSearchResponse(si.id, si.name, si.outlineText, si.modified, si.created) from InstrumentEntity si where"
+                + " (si.name like :name or :name is null or :name = '')  ";
+
+        if ("instrument_name".equals(sortBy)) {
+            query += " order by si.name";
+        } else if ("last_created".equals(sortBy)) {
+            query += " order by si.created desc";
+        }
+        var q = entityManager.createQuery(query, InstrumentSearchResponse.class);
+
+        if (name != null && !name.isEmpty()) {
+            q.setParameter("name", "%" + name + "%");
+        } else {
+            q.setParameter("name", null);
+        }
+
+        int firstResult = (page - 1) * pageSize;
+        int maxResults = pageSize;
+        q.setFirstResult(firstResult);
+        q.setMaxResults(maxResults);
+        return q.getResultList();
 
     }
 

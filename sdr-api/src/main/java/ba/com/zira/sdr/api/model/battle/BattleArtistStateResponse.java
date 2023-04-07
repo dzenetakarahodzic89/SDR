@@ -16,4 +16,13 @@ public class BattleArtistStateResponse implements Serializable {
     int numberOfSongsLost = 0;
     Long countryId;
 
+    public BattleArtistStateResponse(Long id, String name, List<SongStructure> songs, Long countryId) {
+        this.id = id;
+        this.name = name;
+        this.songs = songs;
+        this.countryId = countryId;
+        this.numberOfSongsLost = 0;
+        this.numberOfSongsWon = 0;
+    }
+
 }
