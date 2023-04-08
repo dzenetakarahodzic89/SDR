@@ -19,7 +19,7 @@ public class BattleNotificationService {
 
     NotificationFeignClient notificationFeignClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(BattleNotificationService.class);
-    private static final String NO_MSG_FOUND = "No template found";
+    private static final String TEMPLATE = "Template";
     private static final String UNABLE_JSON = "Unable to parse json";
 
     public void sendNotification(EntityRequest<BattleFinishedNotificationRequest> req) throws ApiException {
@@ -35,14 +35,14 @@ public class BattleNotificationService {
         try {
             String msg = objectMapper.writeValueAsString(req.getEntity());
             ticket.setParameter(msg);
-            LOGGER.info(NO_MSG_FOUND, msg);
+            LOGGER.info(TEMPLATE, msg);
         } catch (Exception ex) {
             throw ApiException.createFrom(req, ResponseCode.REQUEST_INVALID, UNABLE_JSON);
         }
-        ticket.setLogicalUnit("SDR");
-        ticket.setActivity(type);
-        ticket.setActivityStep(type);
-        ticket.setExecutionStatus(type);
+        ticket.setLogicalUnit("SDR_BATTLE_TURN_FINISH");
+        ticket.setActivity("Notification");
+        ticket.setActivityStep("Send");
+        ticket.setExecutionStatus("Send");
         ticket.setDirectInd(false);
         ticket.setUserListTo(req.getEntity().getUserSentTo());
         return ticket;
