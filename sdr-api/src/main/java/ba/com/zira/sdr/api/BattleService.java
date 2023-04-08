@@ -15,6 +15,7 @@ import ba.com.zira.sdr.api.model.battle.BattleSingleOverviewResponse;
 import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
 import ba.com.zira.sdr.api.model.battle.BattleTurnUpdateRequest;
 import ba.com.zira.sdr.api.model.battle.PreBattleCreateRequest;
+import ba.com.zira.sdr.api.model.battle.WinnerCountryNamesResponse;
 
 /**
  * The Interface BattleService.
@@ -53,5 +54,7 @@ public interface BattleService {
     public PayloadResponse<String> preBattleTurn(EntityRequest<PreBattleCreateRequest> request) throws ApiException;
 
     public PayloadResponse<String> attackBattle(EntityRequest<BattleTurnUpdateRequest> request) throws ApiException;
+
+    PayloadResponse<WinnerCountryNamesResponse> getWinnerLoserCountryName(EntityRequest<Long> request) throws ApiException;
 
 }
