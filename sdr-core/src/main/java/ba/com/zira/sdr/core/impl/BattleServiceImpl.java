@@ -35,6 +35,7 @@ import ba.com.zira.sdr.api.model.battle.ArtistSongInformation;
 import ba.com.zira.sdr.api.model.battle.ArtistStructure;
 import ba.com.zira.sdr.api.model.battle.Battle;
 import ba.com.zira.sdr.api.model.battle.BattleArtistStateResponse;
+import ba.com.zira.sdr.api.model.battle.BattleFinishedNotificationRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateRequest;
 import ba.com.zira.sdr.api.model.battle.BattleGenerateResponse;
 import ba.com.zira.sdr.api.model.battle.BattleLog;
@@ -48,6 +49,7 @@ import ba.com.zira.sdr.api.model.battle.CountryResults;
 import ba.com.zira.sdr.api.model.battle.CountryState;
 import ba.com.zira.sdr.api.model.battle.MapState;
 import ba.com.zira.sdr.api.model.battle.PreBattleCreateRequest;
+import ba.com.zira.sdr.api.model.battle.SongBattleResult;
 import ba.com.zira.sdr.api.model.battle.SongStructure;
 import ba.com.zira.sdr.api.model.battle.TeamBattleState;
 import ba.com.zira.sdr.api.model.battle.TeamStructure;
@@ -92,6 +94,9 @@ public class BattleServiceImpl implements BattleService {
     MusicRiskAIBattleHelper musicRiskAIBattleHelper;
     @NonNull
     LookupService lookupService;
+
+    @NonNull
+    BattleNotificationService battleNotificationService;
 
     private N2bObjectMapper objectMapper = new N2bObjectMapper();
 
@@ -465,7 +470,7 @@ public class BattleServiceImpl implements BattleService {
         var newRequest = new BattleTurnEntity();
         newRequest.setBattle(turnFull.getBattle());
         newRequest.setCreated(LocalDateTime.now());
-        newRequest.setCreatedBy(turnFull.getCreatedBy());
+        newRequest.setCreatedBy(request.getUserId());
         newRequest.setModified(turnFull.getModified());
         newRequest.setModifiedBy(turnFull.getModifiedBy());
         newRequest.setTurnNumber(turnFull.getTurnNumber() + 1);
@@ -509,7 +514,8 @@ public class BattleServiceImpl implements BattleService {
                 }
             }
         } else {
-            newRequest.setStatus("In process");
+            // WAITING FOR BATTLE TURN TO BE DECIDED
+            newRequest.setStatus("WAITING");
             Long prevKey = combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
             combatState.getBattleLogs().get(0).getTextHistory().put(prevKey + 1,
                     MessageFormat.format("Country {0} is starting to attack {1}", move.getAttackerName(), move.getAttackedName()));
@@ -531,7 +537,12 @@ public class BattleServiceImpl implements BattleService {
     @Override
     public PayloadResponse<String> attackBattle(EntityRequest<BattleTurnUpdateRequest> request) throws ApiException {
         var inProgressTurn = battleTurnDAO.findByPK(request.getEntity().getBattleTurnId());
-
+        var battle = battleDAO.findByPK(inProgressTurn.getBattle().getId());
+        var notificationReq = new BattleFinishedNotificationRequest();
+        notificationReq.setResults(new ArrayList<>());
+        notificationReq.setBattleName(battle.getName());
+        notificationReq.setTurnNumber(inProgressTurn.getTurnNumber());
+        notificationReq.setUserSentTo(inProgressTurn.getCreatedBy());
         var requestEntity = request.getEntity();
         var loggedUser = request.getUser().getUserId();
         MapState mapState = null;
@@ -559,11 +570,19 @@ public class BattleServiceImpl implements BattleService {
         var battleResult = new BattleLogBattleResult();
         Long prevKeyResult = combatState.getBattleLogs().get(0).getTextHistory().keySet().stream().max(Long::compare).orElse(0L);
         battleResult.setId(prevKeyResult + 1);
-        battleResult.setTurnNumber(inProgressTurn.getTurnNumber() + 1);
+        battleResult.setTurnNumber(inProgressTurn.getTurnNumber());
         for (var songBattle : requestEntity.getSongBattles()) {
             songBattle.setBattleResultId(battleResult.getId());
         }
         combatState.getBattleLogs().get(0).getTurnHistory().addAll(requestEntity.getSongBattles());
+        for (var result : requestEntity.getSongBattles()) {
+            var newResult = new SongBattleResult();
+            newResult.setSongAName(result.getPlayerASongName());
+            newResult.setSongBName(result.getPlayerBSongName());
+            newResult.setSongAStatus(result.getLoserSongId().equals(result.getPlayerASongId()) ? "Lost" : "Won");
+            newResult.setSongBStatus(result.getLoserSongId().equals(result.getPlayerBSongId()) ? "Lost" : "Won");
+            notificationReq.getResults().add(newResult);
+        }
         var foundNpcTeamIndex = 0;
         for (var i = 0; i < teamState.getActiveNpcTeams().size(); i++) {
             var item = teamState.getActiveNpcTeams().get(i);
@@ -610,20 +629,28 @@ public class BattleServiceImpl implements BattleService {
         }
         combatState.getBattleLogs().get(0).getBattleResults().add(battleResult);
         inProgressTurn.setStatus(FINISHED);
-
+        notificationReq.setUserSentTo(inProgressTurn.getCreatedBy());
+        inProgressTurn.setCreatedBy(request.getUserId());
+        notificationReq.setUserDecided(request.getUserId());
         var battleTurnResponse = new BattleSingleResponse();
         battleTurnResponse.setTurnCombatState(combatState);
         battleTurnResponse.setMapState(mapState);
         battleTurnResponse.setTeamState(teamState);
         battleTurnResponse.setTurn(inProgressTurn.getTurnNumber());
         battleTurnResponse = musicRiskAIBattleHelper.simulateTurnForAI(battleTurnResponse);
-
         try {
             inProgressTurn.setTeamState(objectMapper.writeValueAsString(battleTurnResponse.getTeamState()));
             inProgressTurn.setTurnCombatState(objectMapper.writeValueAsString(battleTurnResponse.getTurnCombatState()));
             inProgressTurn.setMapState(objectMapper.writeValueAsString(battleTurnResponse.getMapState()));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+        }
+        System.out.println(notificationReq);
+        notificationReq.setCountriesCombat(FINISHED);
+        try {
+            battleNotificationService.sendNotification(new EntityRequest<>(notificationReq, request));
+        } catch (Exception e) {
+            LOGGER.error("handleError => {}", e.getMessage());
         }
 
         battleTurnDAO.merge(inProgressTurn);
