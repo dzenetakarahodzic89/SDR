@@ -31,9 +31,10 @@ public class BattleSingleResponse implements Serializable {
 
     private TeamsState teamState;
     private Long battleTurnId;
+    private String status;
 
     public BattleSingleResponse(Long id, String name, Long turn, String mapStateJson, String teamStateJson, String turnCombatJSON,
-            Long battleturnId) throws JsonProcessingException {
+            Long battleturnId, String status) throws JsonProcessingException {
         this.id = id;
         this.name = name;
         this.turn = turn;
@@ -41,6 +42,7 @@ public class BattleSingleResponse implements Serializable {
         this.teamStateJson = teamStateJson;
         this.turnCombatStateJson = turnCombatJSON;
         this.battleTurnId = battleturnId;
+        this.status = status;
 
         var mapper = new N2bObjectMapper();
 

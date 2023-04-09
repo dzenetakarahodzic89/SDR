@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.BattleTurnService;
 import ba.com.zira.sdr.api.model.battle.ActivePlayerTeamUpdateRequest;
+import ba.com.zira.sdr.api.model.battle.BattleUnfinishedTurnResponse;
 import ba.com.zira.sdr.api.model.battle.EligibleArtistsInformation;
 import ba.com.zira.sdr.api.model.battle.TeamInformation;
 import ba.com.zira.sdr.api.model.battle.TeamStructure;
@@ -58,5 +60,10 @@ public class BattleTurnRestService {
     public PayloadResponse<TurnCombatState> getBattleLogsForTurn(
             @Parameter(required = true, description = "Turn id") @PathVariable Long turnId) throws ApiException {
         return battleTurnService.getBattleLogs(new EntityRequest<>(turnId));
+    }
+
+    @GetMapping(value = "/get-random-unfinished")
+    public PayloadResponse<BattleUnfinishedTurnResponse> getRandomUnfinishedBattleTurn() throws ApiException {
+        return battleTurnService.getRandomUnfinishedBattleTurn(new EmptyRequest());
     }
 }
