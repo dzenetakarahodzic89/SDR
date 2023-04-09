@@ -14,7 +14,7 @@ public class CommentNotificationRequest implements Serializable {
     @Schema(description = "User that created the object")
     private String createdBy;
     @Schema(description = "User that created the comment")
-    private String userName;
+    private String userCode;
     @Schema(description = "Id of the object")
     private String objectName;
     @Schema(description = "Type of the object_type")

@@ -13,6 +13,7 @@ import ba.com.zira.sdr.api.model.comment.CommentNotificationRequest;
 import ba.com.zira.sdr.core.client.feign.NotificationFeignClient;
 import ch.qos.logback.classic.Logger;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 
 @Service
 @AllArgsConstructor
@@ -25,11 +26,11 @@ public class CommentNotificationServiceImpl implements CommentNotificationServic
 
     @Override
     public void sendNotification(EntityRequest<CommentNotificationRequest> req) throws ApiException {
-
+        @NonNull
         NotificationTicket ticket = notify(req);
         System.out.println("commentNotificationRequest ----->  " + req);
         System.out.println("ticket ----------->   " + ticket);
-        notificationFeignClient.sendTicket(new EntityRequest<>(ticket));
+        notificationFeignClient.sendTicket(new EntityRequest<>(ticket, req));
     }
 
     public NotificationTicket notify(EntityRequest<CommentNotificationRequest> req) throws ApiException {
@@ -49,6 +50,7 @@ public class CommentNotificationServiceImpl implements CommentNotificationServic
         ticket.setActivityStep("Send");
         ticket.setExecutionStatus("Send");
         ticket.setDirectInd(false);
+        ticket.setFrom(req.getEntity().getUserCode());
         ticket.setUserListTo(req.getEntity().getCreatedBy());
         return ticket;
     }

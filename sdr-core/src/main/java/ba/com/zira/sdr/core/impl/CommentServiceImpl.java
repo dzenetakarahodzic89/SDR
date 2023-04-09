@@ -73,6 +73,7 @@ public class CommentServiceImpl implements CommentService {
             SongEntity songEntity = songDAO.findByPK(request.getEntity().getObjectId());
             commentNotification.setCreatedBy(songEntity.getCreatedBy());
             commentNotification.setObjectName(songEntity.getName());
+
         }
         if (request.getEntity().getObjectType() == ObjectType.ALBUM) {
             AlbumEntity albumEntity = albumDAO.findByPK(request.getEntity().getObjectId());
@@ -109,14 +110,14 @@ public class CommentServiceImpl implements CommentService {
             commentNotification.setCreatedBy(chordprogressionEntity.getCreatedBy());
             commentNotification.setObjectName(chordprogressionEntity.getName());
         }
-        commentNotification.setUserName(request.getUserId());
+        commentNotification.setUserCode(request.getUserId());
         commentNotification.setObjectType(request.getEntity().getObjectType());
         return commentNotification;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PayloadResponse<Comment> create(final EntityRequest<CommentCreateRequest> request) {
+    public PayloadResponse<Comment> create(final EntityRequest<CommentCreateRequest> request) throws ApiException {
         var commentEntity = commentModelMapper.dtoToEntity(request.getEntity());
         commentEntity.setStatus(Status.ACTIVE.value());
         commentEntity.setCreated(LocalDateTime.now());
@@ -127,11 +128,7 @@ public class CommentServiceImpl implements CommentService {
 
         var commentNotification = createCommentNotificationRequest(request);
 
-        try {
-            commentNotificationService.sendNotification(new EntityRequest<>(commentNotification, request));
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
+        commentNotificationService.sendNotification(new EntityRequest<>(commentNotification, request));
 
         System.out.println("commentNotification --------->  " + commentNotification);
         return new PayloadResponse<>(request, ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
