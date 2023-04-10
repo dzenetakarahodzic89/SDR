@@ -30,6 +30,18 @@ import ba.com.zira.sdr.dao.model.SongPlaylistEntity_;
 @Repository
 public class PlaylistDAO extends AbstractDAO<PlaylistEntity, Long> {
 
+    public List<PlaylistEntity> findByUserCode(String userCode) {
+
+        final CriteriaQuery<PlaylistEntity> criteriaQuery = builder.createQuery(PlaylistEntity.class);
+        final Root<PlaylistEntity> root = criteriaQuery.from(PlaylistEntity.class);
+
+        criteriaQuery.where(builder.equal(root.get(PlaylistEntity_.userCode), userCode));
+
+        criteriaQuery.select(root).distinct(true);
+        return entityManager.createQuery(criteriaQuery).getResultList();
+
+    }
+
     public List<PlaylistEntity> findPlaylistsByNameAndGenre(String name, Long genreId, String sortBy) {
 
         final CriteriaQuery<Tuple> criteriaQuery = builder.createQuery(Tuple.class);
