@@ -645,7 +645,6 @@ public class BattleServiceImpl implements BattleService {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        System.out.println(notificationReq);
         notificationReq.setCountriesCombat(FINISHED);
         try {
             battleNotificationService.sendNotification(new EntityRequest<>(notificationReq, request));

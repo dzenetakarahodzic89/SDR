@@ -41,6 +41,7 @@ public class BattleNotificationService {
         }
         ticket.setLogicalUnit("SDR_BATTLE_TURN_FINISH");
         ticket.setActivity("Notification");
+        ticket.setRequester(req.getUserId());
         ticket.setActivityStep("Send");
         ticket.setExecutionStatus("Send");
         ticket.setDirectInd(false);
