@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "Properties for creation of a comment")
+@Schema(description = "Properties for creation of a notification")
 public class CommentNotificationRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 

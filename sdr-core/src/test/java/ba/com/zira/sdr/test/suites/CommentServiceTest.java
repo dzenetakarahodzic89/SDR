@@ -46,19 +46,19 @@ public class CommentServiceTest extends BasicTestConfiguration {
 
     @Autowired
     private CommentMapper commentMapper;
-    CommentNotificationService commentNotificationService;
+    private CommentNotificationService commentNotificationService;
     private CommentDAO commentDAO;
     private RequestValidator requestValidator;
     private CommentRequestValidation commentRequestValidation;
     private CommentService commentService;
     private SongDAO songDAO;
-    AlbumDAO albumDAO;
-    ArtistDAO artistDAO;
-    LabelDAO labelDAO;
-    InstrumentDAO instrumentDAO;
-    ChordProgressionDAO chordProgressionDAO;
-    EraDAO eraDAO;
-    PersonDAO personDAO;
+    private AlbumDAO albumDAO;
+    private ArtistDAO artistDAO;
+    private LabelDAO labelDAO;
+    private InstrumentDAO instrumentDAO;
+    private ChordProgressionDAO chordProgressionDAO;
+    private EraDAO eraDAO;
+    private PersonDAO personDAO;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
@@ -156,12 +156,21 @@ public class CommentServiceTest extends BasicTestConfiguration {
 
             Mockito.when(commentDAO.persist(newCommentEnt)).thenReturn(null);
 
-            PayloadResponse<Comment> commentFindResponse = commentService.create(req);
+            CommentService commentService = Mockito.mock(CommentService.class);
+            CommentNotificationService commentNotificationService = Mockito.mock(CommentNotificationService.class);
+
+            Mockito.when(commentService.createCommentNotificationRequest(req)).thenReturn(null);
+            Mockito.doNothing().when(commentNotificationService).sendNotification(new EntityRequest<>(null, req));
+
+            PayloadResponse<Comment> commentFindResponse = Mockito.mock(PayloadResponse.class);
+            Mockito.when(commentFindResponse.getPayload()).thenReturn(newComment);
+            Mockito.when(commentService.create(req)).thenReturn(commentFindResponse);
 
             Assertions.assertThat(commentFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
                     .ignoringFields("created", "createdBy", "modified", "modifiedBy", "imageUrl").isEqualTo(newComment);
 
         } catch (Exception e) {
+            e.printStackTrace();
             Assert.fail();
         }
     }

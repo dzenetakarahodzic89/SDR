@@ -28,8 +28,6 @@ public class CommentNotificationServiceImpl implements CommentNotificationServic
     public void sendNotification(EntityRequest<CommentNotificationRequest> req) throws ApiException {
         @NonNull
         NotificationTicket ticket = notify(req);
-        System.out.println("commentNotificationRequest ----->  " + req);
-        System.out.println("ticket ----------->   " + ticket);
         notificationFeignClient.sendTicket(new EntityRequest<>(ticket, req));
     }
 
@@ -50,7 +48,7 @@ public class CommentNotificationServiceImpl implements CommentNotificationServic
         ticket.setActivityStep("Send");
         ticket.setExecutionStatus("Send");
         ticket.setDirectInd(false);
-        ticket.setFrom(req.getEntity().getUserCode());
+        ticket.setRequester(req.getEntity().getUserCode());
         ticket.setUserListTo(req.getEntity().getCreatedBy());
         return ticket;
     }

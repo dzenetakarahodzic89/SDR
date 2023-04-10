@@ -8,6 +8,7 @@ import ba.com.zira.commons.message.response.PagedPayloadResponse;
 import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.sdr.api.model.comment.Comment;
 import ba.com.zira.sdr.api.model.comment.CommentCreateRequest;
+import ba.com.zira.sdr.api.model.comment.CommentNotificationRequest;
 import ba.com.zira.sdr.api.model.comment.CommentUpdateRequest;
 import ba.com.zira.sdr.api.model.comment.CommentsFetchRequest;
 
@@ -69,4 +70,6 @@ public interface CommentService {
     PayloadResponse<Comment> update(EntityRequest<CommentUpdateRequest> entityRequest) throws ApiException;
 
     ListPayloadResponse<Comment> fetchComments(final EntityRequest<CommentsFetchRequest> request) throws ApiException;
+
+    public CommentNotificationRequest createCommentNotificationRequest(EntityRequest<CommentCreateRequest> req);
 }

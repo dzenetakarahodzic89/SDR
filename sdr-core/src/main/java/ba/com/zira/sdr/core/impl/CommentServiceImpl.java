@@ -67,13 +67,13 @@ public class CommentServiceImpl implements CommentService {
         return new PagedPayloadResponse<>(request, ResponseCode.OK, commentEntities, commentModelMapper::entitiesToDtos);
     }
 
+    @Override
     public CommentNotificationRequest createCommentNotificationRequest(EntityRequest<CommentCreateRequest> request) {
         CommentNotificationRequest commentNotification = new CommentNotificationRequest();
         if (request.getEntity().getObjectType() == ObjectType.SONG) {
             SongEntity songEntity = songDAO.findByPK(request.getEntity().getObjectId());
             commentNotification.setCreatedBy(songEntity.getCreatedBy());
             commentNotification.setObjectName(songEntity.getName());
-
         }
         if (request.getEntity().getObjectType() == ObjectType.ALBUM) {
             AlbumEntity albumEntity = albumDAO.findByPK(request.getEntity().getObjectId());
@@ -112,6 +112,7 @@ public class CommentServiceImpl implements CommentService {
         }
         commentNotification.setUserCode(request.getUserId());
         commentNotification.setObjectType(request.getEntity().getObjectType());
+
         return commentNotification;
     }
 
@@ -127,10 +128,7 @@ public class CommentServiceImpl implements CommentService {
         commentDAO.persist(commentEntity);
 
         var commentNotification = createCommentNotificationRequest(request);
-
         commentNotificationService.sendNotification(new EntityRequest<>(commentNotification, request));
-
-        System.out.println("commentNotification --------->  " + commentNotification);
         return new PayloadResponse<>(request, ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
     }
 

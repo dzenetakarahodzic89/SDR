@@ -6,6 +6,6 @@ import ba.com.zira.sdr.api.model.comment.CommentNotificationRequest;
 
 public interface CommentNotificationService {
 
-    void sendNotification(EntityRequest<CommentNotificationRequest> req) throws ApiException;
+    public void sendNotification(EntityRequest<CommentNotificationRequest> req) throws ApiException;
 
 }
