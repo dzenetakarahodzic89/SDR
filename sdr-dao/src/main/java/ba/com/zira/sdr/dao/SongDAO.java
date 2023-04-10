@@ -183,58 +183,73 @@ public class SongDAO extends AbstractDAO<SongEntity, Long> {
 
     }
 
-    public List<SongSearchResponse> find(final String songName, final String sortBy, final Long remixId, final Long coverId,
-            final List<Long> artistIds, final List<Long> albumIds, final List<Long> genreIds, final int page, final int pageSize) {
-        var query = "select distinct new ba.com.zira.sdr.api.model.song.SongSearchResponse(ss.id, ss.name, ss.outlineText, ss.modified, ss.playtime, ss.created) from SongEntity ss left join SongArtistEntity ssa on ss.id = ssa.artist.id  left join AlbumEntity sa on sa.id = ssa.album.id \r\n"
-                + "left join GenreEntity sg on ss.genre.id = sg.id where lower(ss.name) like lower(CONCAT('%', :songName, '%')) ";
-
-        if (remixId != null) {
-            query += "and ss.remix.id = :remixId ";
-        }
-        if (coverId != null) {
-            query += "and ss.cover.id = :coverId ";
-        }
-        if (artistIds != null && !artistIds.isEmpty()) {
-            query += "and ssa.artist.id in :artistIds ";
-        }
-        if (albumIds != null && !albumIds.isEmpty()) {
-            query += "and sa.id in :albumIds ";
-        }
-        if (genreIds != null && !genreIds.isEmpty()) {
-            query += "and sg.id in :genreIds ";
-        }
-
+    public List<SongSearchResponse> find(String songName, String sortBy, Long remixId, Long coverId, List<Long> artistIds,
+            List<Long> albumIds, List<Long> genreIds, int page, int pageSize) {
+        var query = "select distinct  new ba.com.zira.sdr.api.model.song.SongSearchResponse(ss.id, ss.name, ss.outlineText, ss.modified, ss.playtime, ss.created) from SongEntity ss left join SongArtistEntity ssa on ss.id = ssa.song.id "
+                + "left join AlbumEntity sa on sa.id = ssa.album.id join GenreEntity sg on ss.genre.id = sg.id "
+                + "where (:songName is null or :songName = '' or lower(ss.name) like lower(CONCAT('%', :songName, '%')))\r\n"
+                + " and (:remixId is null or ss.remix.id is not null) and (:coverId is null or ss.cover.id is not null) and (coalesce(:artistIds, null) is null or ssa.artist.id in :artistIds) and (coalesce(:albumIds, null) is null or ssa.album.id in :albumIds) and (coalesce(:genreIds, null) is null or ss.genre.id in :genreIds)";
         if ("last_date".equals(sortBy)) {
             query += " order by ss.modified desc";
         }
-
-        else {
+        if ("name".equals(sortBy)) {
             query += " order by ss.name";
         }
         var q = entityManager.createQuery(query, SongSearchResponse.class);
-        q.setParameter(SONG_NAME, songName != null ? songName : "");
+
         if (remixId != null) {
-            q.setParameter(REMIX_ID, remixId);
+            q.setParameter("remixId", true);
+            if (remixId == 0) {
+                q.setParameter("remixId", null);
+            }
         }
+
+        else {
+            q.setParameter("remixId", null);
+        }
+
         if (coverId != null) {
-            q.setParameter(COVER_ID, coverId);
+            q.setParameter("coverId", true);
+            if (coverId == 0) {
+                q.setParameter("coverId", null);
+            }
+        } else {
+            q.setParameter("coverId", null);
         }
-        if (artistIds != null && !artistIds.isEmpty()) {
-            q.setParameter(ARTIST_ID, artistIds);
+
+        if (songName != null && !songName.isEmpty()) {
+            q.setParameter("songName", "%" + songName + "%");
+        } else {
+            q.setParameter("songName", null);
         }
-        if (albumIds != null && !albumIds.isEmpty()) {
-            q.setParameter(ALBUM_ID, albumIds);
+
+        if (artistIds != null) {
+            q.setParameter("artistIds", artistIds);
+        } else {
+            q.setParameter("artistIds", null);
         }
-        if (genreIds != null && !genreIds.isEmpty()) {
-            q.setParameter(GENRE_ID, genreIds);
+
+        if (albumIds != null) {
+            q.setParameter("albumIds", albumIds);
+        } else {
+            q.setParameter("albumIds", null);
         }
+
+        if (genreIds != null) {
+            q.setParameter("genreIds", genreIds);
+        } else {
+            q.setParameter("genreIds", null);
+        }
+
         // Apply pagination
         int firstResult = (page - 1) * pageSize;
         int maxResults = pageSize;
         q.setFirstResult(firstResult);
         q.setMaxResults(maxResults);
+        List<SongSearchResponse> songs = q.getResultList();
 
-        return q.getResultList();
+        return songs;
+
     }
 
     public List<LoV> findSongsToFetchFromSpotify(int responseLimit) {
