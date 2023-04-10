@@ -12,9 +12,10 @@ import org.springframework.stereotype.Repository;
 
 import ba.com.zira.commons.dao.AbstractDAO;
 import ba.com.zira.sdr.api.model.battle.ArtistStructure;
+import ba.com.zira.sdr.api.model.battle.BattleSingleResponse;
+import ba.com.zira.sdr.api.model.battle.SongStructure;
 import ba.com.zira.sdr.dao.model.BattleEntity;
 import ba.com.zira.sdr.dao.model.BattleEntity_;
-import ba.com.zira.sdr.api.model.battle.SongStructure;
 import ba.com.zira.sdr.dao.model.BattleTurnEntity;
 import ba.com.zira.sdr.dao.model.BattleTurnEntity_;
 
@@ -95,5 +96,12 @@ public class BattleTurnDAO extends AbstractDAO<BattleTurnEntity, Long> {
                 .setMaxResults(1);
 
         return q.getSingleResult();
+    }
+
+    public BattleSingleResponse getRandomUnfinishedBattleTurn(String user) {
+        var hql = "select new ba.com.zira.sdr.api.model.battle.BattleSingleResponse(sb.id,sb.name, sbt.turnNumber, sbt.mapState, sbt.teamState,sbt.turnCombatState,sbt.id,sbt.status) from BattleEntity sb join BattleTurnEntity sbt on sb.id =sbt.battle where sbt.status like :status and sbt.createdBy not like :user order by random()";
+        TypedQuery<BattleSingleResponse> query = entityManager.createQuery(hql, BattleSingleResponse.class)
+                .setParameter("status", "WAITING").setParameter("user", user).setMaxResults(1);
+        return query.getSingleResult();
     }
 }
