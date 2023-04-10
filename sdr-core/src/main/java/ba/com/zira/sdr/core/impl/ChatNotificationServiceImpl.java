@@ -71,7 +71,7 @@ public class ChatNotificationServiceImpl implements ChatNotificationService {
         ticket.setExecutionStatus("Send");
         ticket.setDirectInd(false);
         ticket.setUserListTo(receiver);
-
+        ticket.setRequester(req.getEntity().getPoster());
         LOGGER.info("Set user list to: {}", ticket.getUserListTo());
 
         return ticket;
