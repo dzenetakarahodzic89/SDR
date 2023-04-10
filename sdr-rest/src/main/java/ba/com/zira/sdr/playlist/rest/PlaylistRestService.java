@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -71,6 +72,12 @@ public class PlaylistRestService {
         return playlistService
                 .searchByNameSongGenre(new EntityRequest<PlaylistSearchRequest>(new PlaylistSearchRequest(name, songId, genreId, sortBy)));
 
+    }
+
+    @Operation(summary = "Get playlist")
+    @GetMapping(value = "/user")
+    public ListPayloadResponse<Playlist> getAllForCurrentUser() throws ApiException {
+        return playlistService.getAllForUser(new EmptyRequest());
     }
 
     @Operation(summary = "Create playlist")

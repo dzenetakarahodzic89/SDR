@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -146,6 +147,14 @@ public class PlaylistServiceImpl implements PlaylistService {
         List<PlaylistResponse> playlist = playlistDAO.getPlaylistInfo(req.getEntity());
 
         return new ListPayloadResponse<>(req, ResponseCode.OK, playlist);
+    }
+
+    @Override
+    public ListPayloadResponse<Playlist> getAllForUser(EmptyRequest req) throws ApiException {
+        List<PlaylistEntity> entities = playlistDAO.findByUserCode(req.getUserId());
+        List<Playlist> dtos = playlistMapper.entitiesToDtos(entities);
+        return new ListPayloadResponse<>(req, ResponseCode.OK, dtos);
+
     }
 
     @Override

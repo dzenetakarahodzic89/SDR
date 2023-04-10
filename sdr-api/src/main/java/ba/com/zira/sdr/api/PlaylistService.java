@@ -1,6 +1,7 @@
 package ba.com.zira.sdr.api;
 
 import ba.com.zira.commons.exception.ApiException;
+import ba.com.zira.commons.message.request.EmptyRequest;
 import ba.com.zira.commons.message.request.EntityRequest;
 import ba.com.zira.commons.message.request.FilterRequest;
 import ba.com.zira.commons.message.response.ListPayloadResponse;
@@ -89,5 +90,7 @@ public interface PlaylistService {
     ListPayloadResponse<PlaylistResponse> getAll(EntityRequest<Long> req) throws ApiException;
 
     ListPayloadResponse<PlaylistResponse> getAllPlaylistInfo(EntityRequest<Long> req) throws ApiException;
+
+    ListPayloadResponse<Playlist> getAllForUser(EmptyRequest req) throws ApiException;
 
 }
