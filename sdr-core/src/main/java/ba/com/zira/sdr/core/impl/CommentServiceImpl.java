@@ -3,6 +3,8 @@ package ba.com.zira.sdr.core.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +17,12 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.enums.Status;
 import ba.com.zira.commons.model.response.ResponseCode;
 import ba.com.zira.sdr.api.CommentService;
+import ba.com.zira.sdr.api.MentionUserNotificationService;
 import ba.com.zira.sdr.api.model.comment.Comment;
 import ba.com.zira.sdr.api.model.comment.CommentCreateRequest;
 import ba.com.zira.sdr.api.model.comment.CommentUpdateRequest;
 import ba.com.zira.sdr.api.model.comment.CommentsFetchRequest;
+import ba.com.zira.sdr.api.model.comment.MentionUserNotificationRequest;
 import ba.com.zira.sdr.core.mapper.CommentMapper;
 import ba.com.zira.sdr.core.validation.CommentRequestValidation;
 import ba.com.zira.sdr.dao.CommentDAO;
@@ -32,6 +36,9 @@ public class CommentServiceImpl implements CommentService {
     CommentDAO commentDAO;
     CommentMapper commentModelMapper;
     CommentRequestValidation commentRequestValidation;
+    MentionUserNotificationService mentionUserNotificationService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommentServiceImpl.class);
 
     @Override
     public PagedPayloadResponse<Comment> find(final FilterRequest request) {
@@ -48,11 +55,28 @@ public class CommentServiceImpl implements CommentService {
         commentEntity.setCreatedBy(request.getUserId());
         commentEntity.setUserCode(request.getUserId());
         commentDAO.persist(commentEntity);
+
+        if (!request.getEntity().getMentionTargets().isEmpty()) {
+
+            MentionUserNotificationRequest mentionUserNotificationReq = new MentionUserNotificationRequest();
+            mentionUserNotificationReq.setCommentContent(request.getEntity().getContent());
+            mentionUserNotificationReq.setMentionInitiator(request.getEntity().getCreatedBy());
+            mentionUserNotificationReq.setMentionTargets(request.getEntity().getMentionTargets());
+            mentionUserNotificationReq.setObjectType(request.getEntity().getObjectType());
+            mentionUserNotificationReq.setObjectName(request.getEntity().getObjectName());
+            mentionUserNotificationReq.setOverviewUrl(request.getEntity().getOverviewUrl());
+
+            try {
+                mentionUserNotificationService.sendNotificationForMentioningUser(new EntityRequest<>(mentionUserNotificationReq, request));
+            } catch (Exception e) {
+                LOGGER.error("sendNotificationForMentioningUser => {}", e.getMessage());
+            }
+        }
+
         return new PayloadResponse<>(request, ResponseCode.OK, commentModelMapper.entityToDto(commentEntity));
     }
 
     @Override
-
     @Transactional(rollbackFor = Exception.class)
     public PayloadResponse<Comment> update(final EntityRequest<CommentUpdateRequest> request) {
         commentRequestValidation.validateUpdateCommentModelRequest(request);

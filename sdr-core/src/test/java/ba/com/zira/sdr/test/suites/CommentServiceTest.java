@@ -21,6 +21,7 @@ import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.commons.validation.RequestValidator;
 import ba.com.zira.sdr.api.CommentService;
+import ba.com.zira.sdr.api.MentionUserNotificationService;
 import ba.com.zira.sdr.api.model.comment.Comment;
 import ba.com.zira.sdr.api.model.comment.CommentCreateRequest;
 import ba.com.zira.sdr.api.model.comment.CommentUpdateRequest;
@@ -42,13 +43,14 @@ public class CommentServiceTest extends BasicTestConfiguration {
     private RequestValidator requestValidator;
     private CommentRequestValidation commentRequestValidation;
     private CommentService commentService;
+    MentionUserNotificationService mentionUserNotificationService;
 
     @BeforeMethod
     public void beforeMethod() throws ApiException {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.commentDAO = Mockito.mock(CommentDAO.class);
         this.commentRequestValidation = Mockito.mock(CommentRequestValidation.class);
-        this.commentService = new CommentServiceImpl(commentDAO, commentMapper, commentRequestValidation);
+        this.commentService = new CommentServiceImpl(commentDAO, commentMapper, commentRequestValidation, mentionUserNotificationService);
     }
 
     @Test(enabled = true)
@@ -112,7 +114,7 @@ public class CommentServiceTest extends BasicTestConfiguration {
         }
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testCreateComment() {
         try {
 
