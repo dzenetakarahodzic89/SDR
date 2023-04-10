@@ -20,6 +20,7 @@ import ba.com.zira.commons.message.response.PayloadResponse;
 import ba.com.zira.commons.model.PagedData;
 import ba.com.zira.commons.model.QueryConditionPage;
 import ba.com.zira.commons.validation.RequestValidator;
+import ba.com.zira.sdr.api.CommentNotificationService;
 import ba.com.zira.sdr.api.CommentService;
 import ba.com.zira.sdr.api.MentionUserNotificationService;
 import ba.com.zira.sdr.api.model.comment.Comment;
@@ -28,7 +29,15 @@ import ba.com.zira.sdr.api.model.comment.CommentUpdateRequest;
 import ba.com.zira.sdr.core.impl.CommentServiceImpl;
 import ba.com.zira.sdr.core.mapper.CommentMapper;
 import ba.com.zira.sdr.core.validation.CommentRequestValidation;
+import ba.com.zira.sdr.dao.AlbumDAO;
+import ba.com.zira.sdr.dao.ArtistDAO;
+import ba.com.zira.sdr.dao.ChordProgressionDAO;
 import ba.com.zira.sdr.dao.CommentDAO;
+import ba.com.zira.sdr.dao.EraDAO;
+import ba.com.zira.sdr.dao.InstrumentDAO;
+import ba.com.zira.sdr.dao.LabelDAO;
+import ba.com.zira.sdr.dao.PersonDAO;
+import ba.com.zira.sdr.dao.SongDAO;
 import ba.com.zira.sdr.dao.model.CommentEntity;
 import ba.com.zira.sdr.test.configuration.ApplicationTestConfiguration;
 import ba.com.zira.sdr.test.configuration.BasicTestConfiguration;
@@ -38,11 +47,20 @@ public class CommentServiceTest extends BasicTestConfiguration {
 
     @Autowired
     private CommentMapper commentMapper;
-
+    private CommentNotificationService commentNotificationService;
     private CommentDAO commentDAO;
     private RequestValidator requestValidator;
     private CommentRequestValidation commentRequestValidation;
     private CommentService commentService;
+    private SongDAO songDAO;
+    private AlbumDAO albumDAO;
+    private ArtistDAO artistDAO;
+    private LabelDAO labelDAO;
+    private InstrumentDAO instrumentDAO;
+    private ChordProgressionDAO chordProgressionDAO;
+    private EraDAO eraDAO;
+    private PersonDAO personDAO;
+
     MentionUserNotificationService mentionUserNotificationService;
 
     @BeforeMethod
@@ -50,7 +68,9 @@ public class CommentServiceTest extends BasicTestConfiguration {
         this.requestValidator = Mockito.mock(RequestValidator.class);
         this.commentDAO = Mockito.mock(CommentDAO.class);
         this.commentRequestValidation = Mockito.mock(CommentRequestValidation.class);
-        this.commentService = new CommentServiceImpl(commentDAO, commentMapper, commentRequestValidation, mentionUserNotificationService);
+        this.commentService = new CommentServiceImpl(commentNotificationService, commentDAO, commentMapper, commentRequestValidation,
+                songDAO, albumDAO, artistDAO, labelDAO, instrumentDAO, chordProgressionDAO, eraDAO, personDAO,
+                mentionUserNotificationService);
     }
 
     @Test(enabled = true)
@@ -114,7 +134,7 @@ public class CommentServiceTest extends BasicTestConfiguration {
         }
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testCreateComment() {
         try {
 
@@ -140,12 +160,21 @@ public class CommentServiceTest extends BasicTestConfiguration {
 
             Mockito.when(commentDAO.persist(newCommentEnt)).thenReturn(null);
 
-            PayloadResponse<Comment> commentFindResponse = commentService.create(req);
+            CommentService commentService = Mockito.mock(CommentService.class);
+            CommentNotificationService commentNotificationService = Mockito.mock(CommentNotificationService.class);
+
+            Mockito.when(commentService.createCommentNotificationRequest(req)).thenReturn(null);
+            Mockito.doNothing().when(commentNotificationService).sendNotification(new EntityRequest<>(null, req));
+
+            PayloadResponse<Comment> commentFindResponse = Mockito.mock(PayloadResponse.class);
+            Mockito.when(commentFindResponse.getPayload()).thenReturn(newComment);
+            Mockito.when(commentService.create(req)).thenReturn(commentFindResponse);
 
             Assertions.assertThat(commentFindResponse.getPayload()).as("Check all fields").usingRecursiveComparison()
                     .ignoringFields("created", "createdBy", "modified", "modifiedBy", "imageUrl").isEqualTo(newComment);
 
         } catch (Exception e) {
+            e.printStackTrace();
             Assert.fail();
         }
     }
