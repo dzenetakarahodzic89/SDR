@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite">
+
+	<test thread-count="5" name="Label">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.LabelRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.LabelServiceTest" />
+		</classes>
+	</test>
+
+	<test thread-count="5" name="Country">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.CountryRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.CountryServiceTest" />
+		</classes>
+
+	</test>
+	<test thread-count="5" name="Album">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.AlbumRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.AlbumServiceTest" />
+		</classes>
+	</test>
+
+	<test thread-count="5" name="SongFftResult">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.SongFftResultRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.SongFftResultServiceTest" />
+		</classes>
+	</test>
+
+	<test thread-count="5" name="Chord Progression">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.ChordProgressionRequestValidationTest" />
+			<class
+				name="ba.com.zira.sdr.test.suites.ChordProgressionServiceTest" />
+		</classes>
+
+	</test>
+	<test thread-count="6" name="Artist">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.ArtistRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.ArtistServiceTest" />
+		</classes>
+	</test>
+	
+	<test thread-count="5" name="Person">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.PersonRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.PersonServiceTest" />
+		</classes>
+
+	</test>
+	
+	<test thread-count="5" name="Lyric">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.LyricRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.LyricServiceTest" />
+		</classes>
+	</test>
+	
+	<test thread-count="5" name="SongArtist">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.SongArtistRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.SongArtistServiceTest" />
+		</classes>
+	</test>
+	
+	<test thread-count="5" name="Comment">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.CommentRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.CommentServiceTest" />
+		</classes>
+	</test>
+	
+	<test thread-count="5" name="Genre">
+		<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.GenreRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.GenreServiceTest" />
+		</classes>
+	</test>
+
+    <test thread-count="6" name="Artist">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ArtistRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ArtistServiceTest"/>
+	    </classes>
+    </test>
+    
+    
+    
+    <test thread-count="6" name="NoteSheet">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.NoteSheetRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.NoteSheetServiceTest"/>
+	    </classes>
+    </test>
+
+	<test thread-count="5" name="SpotifyIntegration">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.SpotifyIntegrationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.SpotifyIntegrationServiceTest"/>
+		</classes>
+	</test>
+	
+	<test thread-count="5" name="UserRecommendation">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.UserRecommendationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.UserRecommendationServiceTest"/>
+		</classes>
+	</test>
+
+	 	<test thread-count="5" name="Instrument">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.InstrumentRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.InstrumentServiceTest"/>
+		</classes>
+	</test>
+	
+    <test thread-count="5" name="SongInstrument">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.SongInstrumentRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.SongInstrumentServiceTest"/>
+	    </classes>
+    </test>
+    
+    
+    
+    
+    <test thread-count="5" name="ConnectedMedia">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ConnectedMediaRequestValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.ConnectedMediaServiceTest"/>
+	    </classes>
+    </test>
+
+<test thread-count="5" name="ShazamIntegration">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.ShazamIntegrationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.ShazamIntegrationServiceTest"/>
+		</classes>
+	</test>
+	
+	<test thread-count="5" name="DeezerIntegration">
+		<classes>
+			<class
+					name="ba.com.zira.sdr.test.suites.DeezerIntegrationRequestValidationTest"/>
+			<class
+					name="ba.com.zira.sdr.test.suites.DeezerIntegrationServiceTest"/>
+		</classes>
+	</test>
+        <test thread-count="5" name="MoritsIntegration">
+	    <classes>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.MoritsIntegrationValidationTest"/>
+	      	<class 
+	      		name="ba.com.zira.sdr.test.suites.MoritsIntegrationServiceTest"/>
+	    </classes>
+    </test>
+
+	<test thread-count="5" name="Playlist">
+		    <classes>
+		      	<class 
+		      		name="ba.com.zira.sdr.test.suites.PlaylistRequestValidationTest"/>
+		      	<class 
+		      		name="ba.com.zira.sdr.test.suites.PlaylistServiceTest"/>
+		    </classes>
+	    </test>
+    
+
+		<test thread-count="5" name="SongSimilarityDetail">
+			<classes>
+			<class
+				name="ba.com.zira.sdr.test.suites.SongSimilarityDetailRequestValidationTest" />
+			<class name="ba.com.zira.sdr.test.suites.SongSimilarityDetailServiceTest" />
+		</classes>
+	</test>
+	
+	<test thread-count="5" name="SongPlaylist">
+		    <classes>
+		      	<class 
+		      		name="ba.com.zira.sdr.test.suites.SongPlaylistRequestValidationTest"/>
+		      	<class 
+		      		name="ba.com.zira.sdr.test.suites.SongPlaylistServiceTest"/>
+		    </classes>
+	    </test>
+</suite> 

@@ -1,0 +1,17 @@
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata
+*.class
+*.html
+
+# Maven
+target/
+/bin/
+
+\.flattened-pom\.xml
+mdr-service/application.pid
+
+mdr-core/test-output/
+.idea/

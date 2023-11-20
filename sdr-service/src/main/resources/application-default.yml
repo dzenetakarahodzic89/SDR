@@ -1,0 +1,24 @@
+#DO NOT MODIFY THIS FILE!!!
+#Use bootstrap-override.properties instead.
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://172.20.20.45:8081/eureka
+spring:
+  config:
+    import: optional:configserver:http://172.20.20.45:8888/
+  cloud:
+    config:
+      enabled: true
+    discovery:
+      service-id: configuration
+      enabled: true
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 160000000
+        readTimeout: 160000000
